@@ -1,0 +1,536 @@
+{
+    "id": "<report_0x2469a0f6>",
+    "url": "https://www.intezer.com/blog/threat-hunting/yara-rules-minimize-false-positives",
+    "title": "How to Write YARA Rules That Minimize False Positives",
+    "meta": [
+        {
+            "id": "<chapter_0xaf2eef19>",
+            "title": "How to Write YARA Rules That Minimize False Positives",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf6870ded>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2a036f52>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2017/10/Ari-60x60.jpg"
+                    },
+                    "text": "",
+                    "html": "<img class=\"user-photo\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2017/10/Ari-60x60.jpg\"/>"
+                },
+                {
+                    "id": "<sentence_0xda887093>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Written by Ari Eitan - 12 May 2022",
+                    "html": "Written by Ari Eitan - 12 May 2022"
+                },
+                {
+                    "id": "<sentence_0x79f264>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb05fac05>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/writing-advanced-yara-rules-guide-1270x475.png"
+                    },
+                    "text": "",
+                    "html": "<img class=\"featured-img\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/writing-advanced-yara-rules-guide-1270x475.png\"/>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x283e24d>",
+            "title": "How to Write YARA Rules That Minimize False Positives",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x31d341a3>",
+            "title": "Generate Advanced YARA Rules Based on Code Reuse",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x23818591>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.",
+                    "html": "<p>Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.</p>"
+                },
+                {
+                    "id": "<sentence_0xc76d59fa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While YARA is a popular tool for SOC and IR teams, the main challenge is deciding what to base your YARA rules on for maximum effectiveness. In this post, we will explain how identifying code reuse between malicious files can be used to automatically develop advanced YARA rules to increase the accuracy of malware detection, reduce false positives, and improve threat hunting capabilities.",
+                    "html": "<p>While YARA is a popular tool for SOC and IR teams, the main challenge is deciding what to base your YARA rules on for maximum effectiveness. In this post, we will explain how identifying code reuse between malicious files can be used to automatically develop advanced YARA rules to increase the accuracy of malware detection, reduce false positives, and improve threat hunting capabilities.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x51cf457>",
+            "title": "What Are YARA Rules?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1955fc6d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "YARA, short for yet another recursive acronym, is a tool used in malware detection and classification. Malware researchers leverage YARA to create descriptions of malware families based on textual or binary patterns. Each description, or signature, is a YARA rule consisting of a set of strings and a boolean expression to determine its logic. When written effectively, YARA rules identify commonalities in malware and classify malicious files to other forms of malware that display similar patterns. More advanced YARA rules can be used to find additional variants of malware and hunt for samples. ()",
+                    "html": "<p>YARA, short for \u201cyet another recursive acronym,\u201d is a tool used in malware detection and classification. Malware researchers leverage YARA to create descriptions of malware families based on textual or binary patterns. Each description, or signature, is a YARA \u201crule\u201d consisting of a set of strings and a boolean expression to determine its logic. When written effectively, YARA rules identify commonalities in malware and classify malicious files to other forms of malware that display similar patterns. More advanced YARA rules can be used to find additional variants of malware and hunt for samples. (<a class=\"blog-text-link\" href=\"#yara-rule-examples\">Click here to jump down to examples of code-based YARA rules.</a>)</p>"
+                },
+                {
+                    "id": "<sentence_0x8995d8c2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While most security vendors use their own signature mechanisms, YARA is an open standard tool which can be used with many platforms and applied to different use cases. For example, YARA enables an organization to create detections of its own, which is relevant for identifying targeted malware that generic or classic signatures often struggle to detect.<crlf>This poses a significant advantage for security teams since they do not need to wait for signature updates from their security vendors. Security teams can create personalized, sophisticated YARA signatures even for targeted attacks and custom created malware.",
+                    "html": "<p>While most security vendors use their own signature mechanisms, YARA is an open standard tool which can be used with many platforms and applied to different use cases. For example, YARA enables an organization to create detections of its own, which is relevant for identifying targeted malware that generic or classic signatures often struggle to detect. \nThis poses a significant advantage for security teams since they do not need to wait for signature updates from their security vendors. Security teams can create personalized, sophisticated YARA signatures even for targeted attacks and custom created malware.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9fb916a2>",
+            "title": "The Challenges in Writing Effective YARA Rules",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x47734248>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The vast majority of YARA rules available today are simple-based rules focused on string reuse found in a malwares binary. Strings can include a log message or hard-coded user agent, which are criteria not guaranteed to be unique. Therefore they can result in false positives and can be easily replaced or encrypted by the adversary to avoid detection.",
+                    "html": "<p>The vast majority of YARA rules available today are simple-based rules focused on string reuse found in a malware\u2019s binary. Strings can include a log message or hard-coded user agent, which are criteria not guaranteed to be unique. Therefore they can result in false positives and can be easily replaced or encrypted by the adversary to avoid detection.</p>"
+                },
+                {
+                    "id": "<sentence_0xcac387f9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The most effective YARA rules are designed to achieve high detection and classification rates while reducing the number of false positives. Researchers must select the right textual or binary patterns to optimize detection results and accurately classify a file to its respective malware family. This is difficult because files share hundreds and even thousands of strings and it is imperative that rules are not too generic nor too specific.<crlf>For example, if a researcher is defining a YARA rule based on a file that contains an embedded library, and the rule is based on the generic library alone which is not a malicious piece of code in itself the researcher will receive a hit on every single file that uses this library, in other words increasing the number of false positives generated.",
+                    "html": "<p>The most effective YARA rules are designed to achieve high detection and classification rates while reducing the number of false positives. Researchers must select the right textual or binary patterns to optimize detection results and accurately classify a file to its respective malware family. This is difficult because files share hundreds and even thousands of strings and it is imperative that rules are not too generic nor too specific.\nFor example, if a researcher is defining a YARA rule based on a file that contains an embedded library, and the rule is based on the generic library alone \u2013 which is not a malicious piece of code in itself \u2013 the researcher will receive a hit on every single file that uses this library, in other words increasing the number of false positives generated.</p>"
+                },
+                {
+                    "id": "<sentence_0xe886a243>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The ideal signature will have the right balance: broad enough to identify many variants of the malware but specific enough to avoid false positives.",
+                    "html": "<p>The ideal signature will have the right balance: broad enough to identify many variants of the malware but specific enough to avoid false positives.</p>"
+                },
+                {
+                    "id": "<sentence_0xbf24d0a3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Heres an example:",
+                    "html": "<p>Here\u2019s an example:</p>"
+                },
+                {
+                    "id": "<sentence_0x50f0a8b4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x122d81fe>": "https://lh3.googleusercontent.com/Ej6_zmVbVJD9j1kcOf5svO9w-mTQXWrbpst8yW84lpifbpAT2nJ9_5I1Bgbn1z92_-sxCfuo4jkZtDz9pfPbHYMLCCk5V_3O9m_V-Mz0tdV30gdekRuvIqi_LR7hESN0KcaOmRYL8KMFdI1N5w"
+                    },
+                    "text": "",
+                    "html": "<p><img height=\"222\" src=\"https://lh3.googleusercontent.com/Ej6_zmVbVJD9j1kcOf5svO9w-mTQXWrbpst8yW84lpifbpAT2nJ9_5I1Bgbn1z92_-sxCfuo4jkZtDz9pfPbHYMLCCk5V_3O9m_V-Mz0tdV30gdekRuvIqi_LR7hESN0KcaOmRYL8KMFdI1N5w\" width=\"225\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xd4862610>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The above example represents a file that has been disassembled into tiny pieces of binary code, or genes. If a YARA rule is created based on the files trusted code (green), many false positives will be generated.",
+                    "html": "<p>The above example represents a file that has been disassembled into tiny pieces of binary code, or genes. If a YARA rule is created based on the file\u2019s trusted code (green), many false positives will be generated.</p>"
+                },
+                {
+                    "id": "<sentence_0x11c9d342>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "On the other hand, ensuring a YARA signature is not too specific is also important. Taking a piece of code as it is, for example, and developing a rule that contains all of the codes addresses will make the YARA rule very specific to this particular file only. The rule will not likely generate hits for other or future variants of the malware that contain different values.",
+                    "html": "<p>On the other hand, ensuring a YARA signature is not too specific is also important. Taking a piece of code as it is, for example, and developing a rule that contains all of the code\u2019s addresses will make the YARA rule very specific to this particular file only. The rule will not likely generate hits for other or future variants of the malware that contain different values.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6cac4ee6>",
+            "title": "Writing Advanced YARA Rules is Difficult to Scale",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x55fdaafc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa587be98>": "https://www.intezer.com/blog/malware-analysis/the-role-of-malware-analysis-in-cybersecurity/"
+                    },
+                    "text": "More complex YARA rules can be created by incorporating features such as wild cards (a type of hexadecimal string), case-insensitive strings, and regular expressions. While advanced YARA rules can be powerful instruments for detecting malware, writing them requires a high degree of technical ability and an understanding of YARA, and can be a time-consuming process.<crlf>Writing advanced YARA rules and malware analysis in general is difficult to scale at high volumes, especially since not every organization has access to a team of highly-skilled researchers or reverse engineers. How can a security team create advanced YARA rules and still achieve automation, especially if the organization is faced with a high volume of alerts? The answer lies in studying patterns in code reuse.",
+                    "html": "<p>More complex YARA rules can be created by incorporating features such as wild cards (a type of hexadecimal string), case-insensitive strings, and regular expressions. While advanced YARA rules can be powerful instruments for detecting malware, writing them requires a high degree of technical ability and an understanding of YARA, and can be a time-consuming process.\nWriting advanced YARA rules and <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/the-role-of-malware-analysis-in-cybersecurity/\" rel=\"noreferrer noopener\" target=\"_blank\">malware analysis</a> in general is difficult to scale at high volumes, especially since not every organization has access to a team of highly-skilled researchers or reverse engineers. How can a security team create advanced YARA rules and still achieve automation, especially if the organization is faced with a high volume of alerts? The answer lies in studying patterns in code reuse.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8c3c6831>",
+            "title": "Defining Code Reuse",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdbc9086a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Almost every software or malware today contains previously written code. Developers of trusted applications will employ code reuse to make their work more efficient and to bring tools to market faster. The same approach applies for malware authors. As attackers write more malware they will establish code patterns. For defenders, this provides an opportunity for attribution and identifying threat actor capabilities.",
+                    "html": "<p>Almost every software or malware today contains previously written code. Developers of trusted applications will employ code reuse to make their work more efficient and to bring tools to market faster. The same approach applies for malware authors. As attackers write more malware they will establish code patterns. For defenders, this provides an opportunity for attribution and identifying threat actor capabilities.</p>"
+                },
+                {
+                    "id": "<sentence_0xe510db2e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch.",
+                    "html": "<p>Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:\n\u2022 Accurately determining the intent of the software. For example, is the file trusted or malicious?\n\u2022 Classifying a malicious file to its relevant malware family.\n\u2022 Uncovering the level of sophistication and potential risk of the threat. For example, are you \n dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored\n attack? The answer will shape your response.\n\u2022 Making attribution to the threat actor responsible for creating the malware.\nNot only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x533dcd11>",
+            "title": "Generate Automatic, Advanced YARA Rules with Code Reuse",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8a4bde5b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Just as attackers reuse code to deploy new malware, defenders can identify patterns in code reuse to create advanced YARA rules. Heres how:",
+                    "html": "<p>Just as attackers reuse code to deploy new malware, defenders can identify patterns in code reuse to create advanced YARA rules. Here\u2019s how:</p>"
+                },
+                {
+                    "id": "<sentence_0x4aa6fb9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By identifying a malicious files unique binary code, a signature can be produced for detecting only those genes. This will enable detection of the exact same malware with high confidence and a low false positive rate.<crlf>Detecting samples of the same variants (the same opcodes with different addresses) can be replaced with wildcards.<crlf>Detecting different variants of the same malware family or campaign (same baseline of code but with different functionalities or capabilities) to look for a partial match.<crlf>Detecting future variants that the attacker may release based on code reuse.",
+                    "html": "<ul><li>By identifying a malicious file\u2019s unique binary code, a signature can be produced for detecting only those genes. This will enable detection of the exact same malware with high confidence and a low false positive rate.</li><li>Detecting samples of the same variants (the same opcodes with different addresses) can be replaced with wildcards.</li><li>Detecting different variants of the same malware family or campaign (same baseline of code but with different functionalities or capabilities) to look for a partial match.</li><li>Detecting future variants that the attacker may release based on code reuse.</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xbbef51c6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Lets look at that example again:",
+                    "html": "<p>Let\u2019s look at that example again:</p>"
+                },
+                {
+                    "id": "<sentence_0xea266666>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x122d81fe>": "https://lh3.googleusercontent.com/Ej6_zmVbVJD9j1kcOf5svO9w-mTQXWrbpst8yW84lpifbpAT2nJ9_5I1Bgbn1z92_-sxCfuo4jkZtDz9pfPbHYMLCCk5V_3O9m_V-Mz0tdV30gdekRuvIqi_LR7hESN0KcaOmRYL8KMFdI1N5w"
+                    },
+                    "text": "",
+                    "html": "<p><img height=\"244\" src=\"https://lh3.googleusercontent.com/Ej6_zmVbVJD9j1kcOf5svO9w-mTQXWrbpst8yW84lpifbpAT2nJ9_5I1Bgbn1z92_-sxCfuo4jkZtDz9pfPbHYMLCCk5V_3O9m_V-Mz0tdV30gdekRuvIqi_LR7hESN0KcaOmRYL8KMFdI1N5w\" width=\"248\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xaa1fc83b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As demonstrated in the previous example, creating a YARA rule based on a files trusted code will result in false positives. At the same time, developing a rule that contains all of the codes addresses will make the rule very specific to this particular file only. The rule will not likely generate hits for other or future variants of the malware that contain different values.",
+                    "html": "<p>As demonstrated in the previous example, creating a YARA rule based on a file\u2019s trusted code will result in false positives. At the same time, developing a rule that contains all of the code\u2019s addresses will make the rule very specific to this particular file only. The rule will not likely generate hits for other or future variants of the malware that contain different values.</p>"
+                },
+                {
+                    "id": "<sentence_0x62deacc8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By identifying the malicious (red) and unique code (purple), a researcher can create a YARA rule that will achieve very accurate results. With a YARA rule based on code reuse, you can expect to:",
+                    "html": "<p>By identifying the malicious (red) and unique code (purple), a researcher can create a YARA rule that will achieve very accurate results. With a YARA rule based on code reuse, you can expect to: </p>"
+                },
+                {
+                    "id": "<sentence_0x9658c30c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Receive hits on different hashes that contain the exact same code.<crlf>Receive hits on different hashes that contain some but not all of the original code. This is useful for identifying new variants that are similar to the malware that the signature is based on.",
+                    "html": "<ul><li>Receive hits on different hashes that contain the exact same code.</li><li>Receive hits on different hashes that contain some but not all of the original code. This is useful for identifying new variants that are similar to the malware that the signature is based on.</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x246b2275>",
+            "title": "Example YARA Rule for Emotet Malware",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xbb2270e9>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x550676c4>": "https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53"
+                    },
+                    "text": "The following example demonstrates a code-based YARA rule produced for Emotet, a common financial trojan. With the code-based YARA signature in place, any future sample or variant that reuses some aspects of Emotets code will be detected.",
+                    "html": "<p>The following example demonstrates a code-based YARA rule produced for <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53\" rel=\"noreferrer noopener\" target=\"_blank\">Emotet</a>, a common financial trojan. With the code-based YARA signature in place, any future sample or variant that reuses some aspects of Emotet\u2019s code will be detected.</p>"
+                },
+                {
+                    "id": "<sentence_0xaa918258>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd73ce4cc>": "https://www.intezer.com/intezer-analyze/",
+                        "<img_0xf9b944e5>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/image-11.png"
+                    },
+                    "text": "Example YARA rule, generated by Intezer to detect Emotet.",
+                    "html": "<figure class=\"aligncenter size-full\"><img alt=\"yara rule example for emotet\" class=\"wp-image-25611\" height=\"548\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/image-11.png\" width=\"1350\"/><figcaption>Example YARA rule, generated by <a class=\"blog-text-link\" href=\"https://www.intezer.com/intezer-analyze/\" rel=\"noreferrer noopener\" target=\"_blank\">Intezer</a> to detect Emotet.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x3db8e800>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x490af376>": "https://analyze.intezer.com/analyses/1bab09b1-00b4-4cd5-abf9-9f08bfe7dd68/sub/643a4fd5-220a-4253-bb45-781ca4079aa9/code-reuse",
+                        "<img_0x448ea7ba>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Screenshot-2022-05-11-at-1.56.25-PM-1530x826.png"
+                    },
+                    "text": "Intezer analysis of Emotet, with red box highlighting the button to generate a code-based YARA signature (SHA256: 5f2aa0bb76749cce2c13c1049521a3e70389c773632245e1f915ca6c522d1402)",
+                    "html": "<figure class=\"wp-block-image size-large\"><img alt=\"\" class=\"wp-image-25613\" height=\"826\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Screenshot-2022-05-11-at-1.56.25-PM-1530x826.png\" width=\"1530\"/><figcaption>Intezer analysis of Emotet, with red box highlighting the button to generate a code-based YARA signature (SHA256: <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/analyses/1bab09b1-00b4-4cd5-abf9-9f08bfe7dd68/sub/643a4fd5-220a-4253-bb45-781ca4079aa9/code-reuse\" rel=\"noreferrer noopener\" target=\"_blank\">5f2aa0bb76749cce2c13c1049521a3e70389c773632245e1f915ca6c522d1402</a>) </figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x30339a0f>",
+            "title": "Example YARA Rule for WannaCry Variant2",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfcc15780>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x80feacd0>": "https://analyze.intezer.com/families/0b13c0d4-7779-4c06-98fa-4d33ca98f8a9"
+                    },
+                    "text": "This is an example of a YARA signature that was produced via code from a WannaCry sample. Deployed in May 2017, WannaCry was one of the largest, high profile ransomware attacks in history, infecting over 200,000 computers across 150 countries.",
+                    "html": "<p>This is an example of a YARA signature that was produced via code from a <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/0b13c0d4-7779-4c06-98fa-4d33ca98f8a9\" rel=\"noreferrer noopener\" target=\"_blank\">WannaCry</a> sample. Deployed in May 2017, WannaCry was one of the largest, high profile ransomware attacks in history, infecting over 200,000 computers across 150 countries. </p>"
+                },
+                {
+                    "id": "<sentence_0x75e3424d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xba86126>": "https://lh3.googleusercontent.com/WPdQ8LnX5RgUFl0pbGtRbhwn_qitTdjNJLBcpAJwHELMfjXYVtV2r3LZUhWrKAfH2Hgm46Lq-_pJhIAWrpFJb1chITRhUFSWn8ivZMP5U0AIg6eN6Ih6AE8begtalTLLZ2kF7YQdgLE5YmJxHA"
+                    },
+                    "text": "Example YARA rule for WannaCry.",
+                    "html": "<figure class=\"aligncenter\"><img alt=\"example yara rule to reduce false positives\" src=\"https://lh3.googleusercontent.com/WPdQ8LnX5RgUFl0pbGtRbhwn_qitTdjNJLBcpAJwHELMfjXYVtV2r3LZUhWrKAfH2Hgm46Lq-_pJhIAWrpFJb1chITRhUFSWn8ivZMP5U0AIg6eN6Ih6AE8begtalTLLZ2kF7YQdgLE5YmJxHA\"/><figcaption>Example YARA rule for WannaCry.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x47fbdcf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x490af376>": "https://analyze.intezer.com/analyses/1bab09b1-00b4-4cd5-abf9-9f08bfe7dd68/sub/643a4fd5-220a-4253-bb45-781ca4079aa9/code-reuse",
+                        "<img_0xffa992db>": "https://lh6.googleusercontent.com/1R0A5cUPbFAF56kkdB3On0uFF94-l8wBmg9y577nCRZFPRL7LgRweCNP26medDMFaMcbTHSXGxfGJIXQVNUzo7Y4kBQ2dvO7adAg-BUsX3mN1dMkSeKtJpbei6XnTz0uEVkqjmVb0TdBBQD0bA"
+                    },
+                    "text": "Genetic analysis of WannaCry in Intezer Analyze (SHA256: bf293bda73c5b4c1ec66561ad20d7e2bc6692d051282d35ce8b7b7020c753467)",
+                    "html": "<figure class=\"aligncenter\"><img alt=\"generate and download yara rules from Intezer\" src=\"https://lh6.googleusercontent.com/1R0A5cUPbFAF56kkdB3On0uFF94-l8wBmg9y577nCRZFPRL7LgRweCNP26medDMFaMcbTHSXGxfGJIXQVNUzo7Y4kBQ2dvO7adAg-BUsX3mN1dMkSeKtJpbei6XnTz0uEVkqjmVb0TdBBQD0bA\"/><figcaption>Genetic analysis of WannaCry in Intezer Analyze (SHA256: <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/analyses/1bab09b1-00b4-4cd5-abf9-9f08bfe7dd68/sub/643a4fd5-220a-4253-bb45-781ca4079aa9/code-reuse\" rel=\"noreferrer noopener\" target=\"_blank\">bf293bda73c5b4c1ec66561ad20d7e2bc6692d051282d35ce8b7b7020c753467</a>)</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x49196323>",
+            "title": "Generating YARA Rules with Intezer Analyze",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9cae85ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Leveraging proprietary genetic code analysis technology, Intezer Analyze can generate automatic YARA signatures based on a files code, enabling users to improve their threat hunting capabilities by detecting future variants of the malware. As highlighted above, code-based YARA signatures can effectively reduce false positives and save precious resources in the form of time and analyst efforts. This is particularly valuable for organizations dealing with a large volume of alerts.",
+                    "html": "<p>Leveraging proprietary genetic code analysis technology, Intezer Analyze can generate automatic YARA signatures based on a file\u2019s code, enabling users to improve their threat hunting capabilities by detecting future variants of the malware. As highlighted above, code-based YARA signatures can effectively reduce false positives and save precious resources in the form of time and analyst efforts. This is particularly valuable for organizations dealing with a large volume of alerts.</p>"
+                },
+                {
+                    "id": "<sentence_0x2c4b9c8d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x60b985a7>": "https://www.intezer.com/blog/threat-hunting/scale-incident-response-detection-engineering/"
+                    },
+                    "text": "You can also use Detect & Hunt to find file-based detection opportunities for creating new YARA rules. You can filter these detection opportunities by the artifact type, family, and verdict.",
+                    "html": "<p>You can also use <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/threat-hunting/scale-incident-response-detection-engineering/\">Detect &amp; Hunt</a> to find file-based detection opportunities for creating new YARA rules. You can filter these detection opportunities by the artifact type, family, and verdict. </p>"
+                },
+                {
+                    "id": "<sentence_0xf4295f98>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xff05a306>": "https://analyze.intezer.com/analyses/7615483d-cc99-4738-9e01-9d6eccfd1052/detect-hunt?tab=file_based",
+                        "<img_0xda3aa34b>": "https://lh4.googleusercontent.com/XT0dYwXCiYHdO7gFCqFS4T_VPRPMDZx2PqcxQB7fMScGhCqIdpFsEL31RMz5YV0RtCvQQSUDJhatCTACNa_HtQI_7YCuVUG10dCqRiDjpBVnEIrGj_w2QNXDT-8EoBbqcKXWlr9Wm9DCSbsl7A"
+                    },
+                    "text": "NanoCoreRAT sample, SHA256: 0689544cd227b93df10df4d99ea04270d0f9f76259aa34cb8f6707a02e70081d",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"\" src=\"https://lh4.googleusercontent.com/XT0dYwXCiYHdO7gFCqFS4T_VPRPMDZx2PqcxQB7fMScGhCqIdpFsEL31RMz5YV0RtCvQQSUDJhatCTACNa_HtQI_7YCuVUG10dCqRiDjpBVnEIrGj_w2QNXDT-8EoBbqcKXWlr9Wm9DCSbsl7A\"/><figcaption>NanoCoreRAT sample, SHA256: <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/analyses/7615483d-cc99-4738-9e01-9d6eccfd1052/detect-hunt?tab=file_based\" rel=\"noreferrer noopener\" target=\"_blank\">0689544cd227b93df10df4d99ea04270d0f9f76259aa34cb8f6707a02e70081d</a></figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x958457c3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This feature also allows for some more advanced usages. It can be used in several scenarios, including:",
+                    "html": "<p class=\"has-text-align-center\">This feature also allows for some more advanced usages. It can be used in several scenarios, including: </p>"
+                },
+                {
+                    "id": "<sentence_0x184aa4ff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The user can adjust the thresholds of the rule. The default value is 70% of the entire code but it is possible to modify the rule to be more specific, or more flexible.<crlf>The user can combine or split different YARA signatures to build stronger rules to better fit his or her needs.<crlf>The user can add to the automated rules with a string reuse feature to make the signature even more powerful for threat hunting.",
+                    "html": "<ol><li>The user can adjust the thresholds of the rule. The default value is 70% of the entire code but it is possible to modify the rule to be more specific, or more flexible.</li><li>The user can combine or split different YARA signatures to build stronger rules to better fit his or her needs.</li><li>The user can add to the automated rules with a string reuse feature to make the signature even more powerful for threat hunting.</li></ol>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7c39a6c>",
+            "title": "Key Takeaways for Writing Effective Rules",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1a6f679b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat.",
+                    "html": "<ul><li>Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.</li><li>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a file\u2019s textual or binary patterns.</li><li>In today\u2019s YARA landscape many signatures are based on string reuse. The challenge is to identify the \u201cunique\u201d strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.</li><li>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.</li><li>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat.</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x99350741>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc3040e16>": "https://analyze.intezer.com/create-account"
+                    },
+                    "text": "Create a free Intezer account here start analyzing files to generate custom YARA rules or download YARA rules for public malware samples in Intezer now.",
+                    "html": "<p><a class=\"blog-text-link\" href=\"https://analyze.intezer.com/create-account\" rel=\"noreferrer noopener\" target=\"_blank\">Create a free Intezer account here</a> \u2013 start analyzing files to generate custom YARA rules or download YARA rules for public malware samples in Intezer now.</p>"
+                },
+                {
+                    "id": "<sentence_0x1753da1c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2a036f52>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2017/10/Ari-60x60.jpg"
+                    },
+                    "text": "",
+                    "html": "<img class=\"user-photo\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2017/10/Ari-60x60.jpg\"/>"
+                },
+                {
+                    "id": "<sentence_0xba2c58b0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Ari Eitan",
+                    "html": " Ari Eitan"
+                },
+                {
+                    "id": "<sentence_0x3616f647>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x797151e2>": "https://twitter.com/arieitan"
+                    },
+                    "text": "",
+                    "html": "<a class=\"twitter-link blog-text-link\" href=\"https://twitter.com/arieitan\" target=\"_blank\"></a>"
+                },
+                {
+                    "id": "<sentence_0xeb505315>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xfc57322f>": "https://www.linkedin.com/in/ari-eitan-04b47b70/"
+                    },
+                    "text": "",
+                    "html": "<a class=\"linkedin-link blog-text-link\" href=\"https://www.linkedin.com/in/ari-eitan-04b47b70/\" target=\"_blank\"></a>"
+                },
+                {
+                    "id": "<sentence_0x58e2c29c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST).",
+                    "html": "<p>Ari manages the team responsible for the genetic algorithm behind Intezer\u2019s code genome database. In his role as VP of Research, Eitan leads the company\u2019s malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDF\u2019s cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST).</p>"
+                },
+                {
+                    "id": "<sentence_0xbf1be4a0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x74e56423>": "https://www.intezer.com/tag/code-reuse/"
+                    },
+                    "text": "code reuse",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/code-reuse/\" rel=\"tag\">code reuse</a>"
+                },
+                {
+                    "id": "<sentence_0xeb60d8fd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x1b114930>": "https://www.intezer.com/tag/detection-rules/"
+                    },
+                    "text": "detection rules",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/detection-rules/\" rel=\"tag\">detection rules</a>"
+                },
+                {
+                    "id": "<sentence_0xf7637ab1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x58a63d6b>": "https://www.intezer.com/tag/emotet/"
+                    },
+                    "text": "Emotet",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/emotet/\" rel=\"tag\">Emotet</a>"
+                },
+                {
+                    "id": "<sentence_0x9f8f50cf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd7d34d18>": "https://www.intezer.com/tag/false-positives/"
+                    },
+                    "text": "false positives",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/false-positives/\" rel=\"tag\">false positives</a>"
+                },
+                {
+                    "id": "<sentence_0x7c340b6c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x92c4b77f>": "https://www.intezer.com/tag/threat-detection/"
+                    },
+                    "text": "Threat Detection",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/threat-detection/\" rel=\"tag\">Threat Detection</a>"
+                },
+                {
+                    "id": "<sentence_0x461c708>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x1eaf7893>": "https://www.intezer.com/tag/wannacry/"
+                    },
+                    "text": "WannaCry",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/wannacry/\" rel=\"tag\">WannaCry</a>"
+                },
+                {
+                    "id": "<sentence_0x70d11d50>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4f300b4d>": "https://www.intezer.com/tag/yara-rules/"
+                    },
+                    "text": "yara rules",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/yara-rules/\" rel=\"tag\">yara rules</a>"
+                }
+            ]
+        }
+    ]
+}

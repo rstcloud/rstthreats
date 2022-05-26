@@ -1,0 +1,2909 @@
+<html lang="en-US" class="no-js no-svg"><head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1">
+	    <link rel="profile" href="https://gmpg.org/xfn/11">
+	    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+	<!-- This site is optimized with the Yoast SEO plugin v18.5.1 - https://yoast.com/wordpress/plugins/seo/ -->
+	<title>Zloader 2: The Silent Night - Avast Threat Labs</title>
+	<link rel="canonical" href="https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="Zloader 2: The Silent Night - Avast Threat Labs">
+	<meta property="og:description" content="Technical analysis of the Zloader botnet which was recently brough to court for a takedown operation and prosecution of its authors.">
+	<meta property="og:url" content="https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/">
+	<meta property="og:site_name" content="Avast Threat Labs">
+	<meta property="article:published_time" content="2022-04-14T19:08:05+00:00">
+	<meta property="article:modified_time" content="2022-04-14T19:10:19+00:00">
+	<meta property="og:image" content="https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/vincent-chin-KRVmB7wraZ4-unsplash-1024x576.png">
+	<meta property="og:image:width" content="1024">
+	<meta property="og:image:height" content="576">
+	<meta property="og:image:type" content="image/png">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:creator" content="@AvastThreatLabs">
+	<meta name="twitter:site" content="@AvastThreatLabs">
+	<meta name="twitter:label1" content="Written by">
+	<meta name="twitter:data1" content="Vladimir Martyanov">
+	<meta name="twitter:label2" content="Est. reading time">
+	<meta name="twitter:data2" content="11 minutes">
+	<script type="text/javascript" async="" src="https://www.google-analytics.com/plugins/ua/linkid.js"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="application/ld+json" class="yoast-schema-graph">{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://decoded.avast.io/#website","url":"https://decoded.avast.io/","name":"Avast Threat Labs","description":"Uncovering Tactics, Techniques and Procedures of malicious actors","potentialAction":[{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://decoded.avast.io/?s={search_term_string}"},"query-input":"required name=search_term_string"}],"inLanguage":"en-US"},{"@type":"ImageObject","@id":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/#primaryimage","inLanguage":"en-US","url":"https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/vincent-chin-KRVmB7wraZ4-unsplash.png","contentUrl":"https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/vincent-chin-KRVmB7wraZ4-unsplash.png","width":2560,"height":1439},{"@type":"WebPage","@id":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/#webpage","url":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/","name":"Zloader 2: The Silent Night - Avast Threat Labs","isPartOf":{"@id":"https://decoded.avast.io/#website"},"primaryImageOfPage":{"@id":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/#primaryimage"},"datePublished":"2022-04-14T19:08:05+00:00","dateModified":"2022-04-14T19:10:19+00:00","author":{"@id":"https://decoded.avast.io/#/schema/person/20cae7259a1f36c5302aec14b2c37825"},"breadcrumb":{"@id":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/#breadcrumb"},"inLanguage":"en-US","potentialAction":[{"@type":"ReadAction","target":["https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/"]}]},{"@type":"BreadcrumbList","@id":"https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://decoded.avast.io/"},{"@type":"ListItem","position":2,"name":"Zloader 2: The Silent Night"}]},{"@type":"Person","@id":"https://decoded.avast.io/#/schema/person/20cae7259a1f36c5302aec14b2c37825","name":"Vladimir Martyanov","image":{"@type":"ImageObject","@id":"https://decoded.avast.io/#personlogo","inLanguage":"en-US","url":"https://secure.gravatar.com/avatar/729ca82e534e1a96bb3cbf780af544c0?s=96&d=mm&r=g","contentUrl":"https://secure.gravatar.com/avatar/729ca82e534e1a96bb3cbf780af544c0?s=96&d=mm&r=g","caption":"Vladimir Martyanov"},"url":"https://decoded.avast.io/author/vladimirmartyanov/"}]}</script>
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//s.w.org">
+<link rel="alternate" type="application/rss+xml" title="Avast Threat Labs » Feed" href="https://decoded.avast.io/feed/">
+<link rel="alternate" type="application/rss+xml" title="Avast Threat Labs » Comments Feed" href="https://decoded.avast.io/comments/feed/">
+		<!-- This site uses the Google Analytics by MonsterInsights plugin v8.5.0 - Using Analytics tracking - https://www.monsterinsights.com/ -->
+							<script src="//www.googletagmanager.com/gtag/js?id=UA-143774004-1" data-cfasync="false" data-wpfc-render="false" type="text/javascript" async=""></script>
+			<script data-cfasync="false" data-wpfc-render="false" type="text/javascript">
+				var mi_version = '8.5.0';
+				var mi_track_user = true;
+				var mi_no_track_reason = '';
+				
+								var disableStrs = [
+															'ga-disable-UA-143774004-1',
+									];
+
+				/* Function to detect opted out users */
+				function __gtagTrackerIsOptedOut() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						if ( document.cookie.indexOf( disableStrs[ index ] + '=true' ) > -1 ) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				/* Disable tracking if the opt-out cookie exists. */
+				if ( __gtagTrackerIsOptedOut() ) {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				/* Opt-out function */
+				function __gtagTrackerOptout() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						document.cookie = disableStrs[ index ] + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				if ( 'undefined' === typeof gaOptout ) {
+					function gaOptout() {
+						__gtagTrackerOptout();
+					}
+				}
+								window.dataLayer = window.dataLayer || [];
+
+				window.MonsterInsightsDualTracker = {
+					helpers: {},
+					trackers: {},
+				};
+				if ( mi_track_user ) {
+					function __gtagDataLayer() {
+						dataLayer.push( arguments );
+					}
+
+					function __gtagTracker( type, name, parameters ) {
+						if (!parameters) {
+							parameters = {};
+						}
+
+						if (parameters.send_to) {
+							__gtagDataLayer.apply( null, arguments );
+							return;
+						}
+
+						if ( type === 'event' ) {
+							
+															parameters.send_to = monsterinsights_frontend.ua;
+								__gtagDataLayer( type, name, parameters );
+													} else {
+							__gtagDataLayer.apply( null, arguments );
+						}
+					}
+					__gtagTracker( 'js', new Date() );
+					__gtagTracker( 'set', {
+						'developer_id.dZGIzZG' : true,
+											} );
+															__gtagTracker( 'config', 'UA-143774004-1', {"forceSSL":"true","link_attribution":"true"} );
+										window.gtag = __gtagTracker;											(function () {
+							/* https://developers.google.com/analytics/devguides/collection/analyticsjs/ */
+							/* ga and __gaTracker compatibility shim. */
+							var noopfn = function () {
+								return null;
+							};
+							var newtracker = function () {
+								return new Tracker();
+							};
+							var Tracker = function () {
+								return null;
+							};
+							var p = Tracker.prototype;
+							p.get = noopfn;
+							p.set = noopfn;
+							p.send = function (){
+								var args = Array.prototype.slice.call(arguments);
+								args.unshift( 'send' );
+								__gaTracker.apply(null, args);
+							};
+							var __gaTracker = function () {
+								var len = arguments.length;
+								if ( len === 0 ) {
+									return;
+								}
+								var f = arguments[len - 1];
+								if ( typeof f !== 'object' || f === null || typeof f.hitCallback !== 'function' ) {
+									if ( 'send' === arguments[0] ) {
+										var hitConverted, hitObject = false, action;
+										if ( 'event' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[3] ) {
+												hitObject = {
+													'eventAction': arguments[3],
+													'eventCategory': arguments[2],
+													'eventLabel': arguments[4],
+													'value': arguments[5] ? arguments[5] : 1,
+												}
+											}
+										}
+										if ( 'pageview' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[2] ) {
+												hitObject = {
+													'eventAction': 'page_view',
+													'page_path' : arguments[2],
+												}
+											}
+										}
+										if ( typeof arguments[2] === 'object' ) {
+											hitObject = arguments[2];
+										}
+										if ( typeof arguments[5] === 'object' ) {
+											Object.assign( hitObject, arguments[5] );
+										}
+										if ( 'undefined' !== typeof arguments[1].hitType ) {
+											hitObject = arguments[1];
+											if ( 'pageview' === hitObject.hitType ) {
+												hitObject.eventAction = 'page_view';
+											}
+										}
+										if ( hitObject ) {
+											action = 'timing' === arguments[1].hitType ? 'timing_complete' : hitObject.eventAction;
+											hitConverted = mapArgs( hitObject );
+											__gtagTracker( 'event', action, hitConverted );
+										}
+									}
+									return;
+								}
+
+								function mapArgs( args ) {
+									var arg, hit = {};
+									var gaMap = {
+										'eventCategory': 'event_category',
+										'eventAction': 'event_action',
+										'eventLabel': 'event_label',
+										'eventValue': 'event_value',
+										'nonInteraction': 'non_interaction',
+										'timingCategory': 'event_category',
+										'timingVar': 'name',
+										'timingValue': 'value',
+										'timingLabel': 'event_label',
+										'page' : 'page_path',
+										'location' : 'page_location',
+										'title' : 'page_title',
+									};
+									for ( arg in args ) {
+																				if ( ! ( ! args.hasOwnProperty(arg) || ! gaMap.hasOwnProperty(arg) ) ) {
+											hit[gaMap[arg]] = args[arg];
+										} else {
+											hit[arg] = args[arg];
+										}
+									}
+									return hit;
+								}
+
+								try {
+									f.hitCallback();
+								} catch ( ex ) {
+								}
+							};
+							__gaTracker.create = newtracker;
+							__gaTracker.getByName = newtracker;
+							__gaTracker.getAll = function () {
+								return [];
+							};
+							__gaTracker.remove = noopfn;
+							__gaTracker.loaded = true;
+							window['__gaTracker'] = __gaTracker;
+						})();
+									} else {
+										console.log( "" );
+					( function () {
+							function __gtagTracker() {
+								return null;
+							}
+							window['__gtagTracker'] = __gtagTracker;
+							window['gtag'] = __gtagTracker;
+					} )();
+									}
+			</script>
+				<!-- / Google Analytics by MonsterInsights -->
+		<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/decoded.avast.io\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.9.3"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([10084,65039,8205,55357,56613],[10084,65039,8203,55357,56613])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+</script><script src="https://decoded.avast.io/wp-includes/js/wp-emoji-release.min.js?ver=5.9.3" type="text/javascript" defer=""></script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel="stylesheet" id="wp-block-library-css" href="https://decoded.avast.io/wp-includes/css/dist/block-library/style.min.css?ver=5.9.3" type="text/css" media="all">
+<style id="global-styles-inline-css" type="text/css">
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--color--johannes-acc: #ff7900;--wp--preset--color--johannes-meta: #989da2;--wp--preset--color--johannes-bg: #ffffff;--wp--preset--color--johannes-bg-alt-1: #2d364c;--wp--preset--color--johannes-bg-alt-2: #2d364c;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 12.8px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 40px;--wp--preset--font-size--x-large: 42px;--wp--preset--font-size--normal: 16px;--wp--preset--font-size--huge: 52px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+</style>
+<link rel="stylesheet" id="johannes-fonts-css" href="https://fonts.googleapis.com/css?family=Muli%3Aregular%2C900%2C700&amp;ver=1.1.3" type="text/css" media="all">
+<link rel="stylesheet" id="johannes-main-css" href="https://decoded.avast.io/wp-content/themes/johannes/assets/css/min.css?ver=1.1.3" type="text/css" media="all">
+<style id="johannes-main-inline-css" type="text/css">
+body{font-family: 'Muli', Arial, sans-serif;font-weight: 400;font-style: normal;color: #ffffff;background: #ffffff;}.johannes-header{font-family: 'Muli', Arial, sans-serif;font-weight: 700;font-style: normal;}h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.h0,.display-1,.wp-block-cover .wp-block-cover-image-text, .wp-block-cover .wp-block-cover-text, .wp-block-cover h2, .wp-block-cover-image .wp-block-cover-image-text, .wp-block-cover-image .wp-block-cover-text, .wp-block-cover-image h2,.entry-category a,.single-md-content .entry-summary,p.has-drop-cap:not(:focus)::first-letter,.johannes_posts_widget .entry-header > a {font-family: 'Muli', Arial, sans-serif;font-weight: 900;font-style: normal;}b,strong,.entry-tags a,.entry-category a,.entry-meta a,.wp-block-tag-cloud a{font-weight: 900; }.entry-content strong{font-weight: bold;}.header-top{background: #424851;color: #989da2;}.header-top nav > ul > li > a,.header-top .johannes-menu-social a{color: #989da2;}.header-top nav > ul > li:hover > a,.header-top nav > ul > li.current-menu-item > a,.header-top .johannes-menu-social li:hover a{color: #ffffff;}.header-middle,.header-mobile{color: #ffffff;background: #2d364c;}.header-middle > .container {height: 130px;}.header-middle a,.johannes-mega-menu .sub-menu li:hover a,.header-mobile a{color: #ffffff;}.header-middle li:hover > a,.header-middle .current-menu-item > a,.header-middle .johannes-mega-menu .sub-menu li a:hover,.header-middle .johannes-site-branding .site-title a:hover,.header-mobile .site-title a,.header-mobile a:hover{color: #ff8000;}.header-middle .johannes-site-branding .site-title a{color: #ffffff;}.header-middle .sub-menu{background: #2d364c;}.johannes-cover-indent .header-middle .johannes-menu>li>a:hover,.johannes-cover-indent .header-middle .johannes-menu-action a:hover{color: #ff8000;}.header-sticky-main{color: #ffffff;background: #2d364c;}.header-sticky-main a,.header-sticky-main .johannes-mega-menu .sub-menu li:hover a,.header-sticky-main .johannes-mega-menu .has-arrows .owl-nav > div{color: #ffffff;}.header-sticky-main li:hover > a,.header-sticky-main .current-menu-item > a,.header-sticky-main .johannes-mega-menu .sub-menu li a:hover,.header-sticky-main .johannes-site-branding .site-title a:hover{color: #ff8000;}.header-sticky-main .johannes-site-branding .site-title a{color: #ffffff;}.header-sticky-main .sub-menu{background: #2d364c;}.header-sticky-contextual{color: #2d364c;background: #ffffff;}.header-sticky-contextual,.header-sticky-contextual a{font-family: 'Muli', Arial, sans-serif;font-weight: 400;font-style: normal;}.header-sticky-contextual a{color: #2d364c;}.header-sticky-contextual .meta-comments:after{background: #2d364c;}.header-sticky-contextual .meks_ess a:hover{color: #ff8000;background: transparent;}.header-bottom{color: #424851;background: #ffffff;border-top: 1px solid rgba(66,72,81,0.1);border-bottom: 1px solid rgba(66,72,81,0.1);}.johannes-header-bottom-boxed .header-bottom{background: transparent;border: none;}.johannes-header-bottom-boxed .header-bottom-slots{background: #ffffff;border-top: 1px solid rgba(66,72,81,0.1);border-bottom: 1px solid rgba(66,72,81,0.1);}.header-bottom-slots{height: 70px;}.header-bottom a,.johannes-mega-menu .sub-menu li:hover a,.johannes-mega-menu .has-arrows .owl-nav > div{color: #424851;}.header-bottom li:hover > a,.header-bottom .current-menu-item > a,.header-bottom .johannes-mega-menu .sub-menu li a:hover,.header-bottom .johannes-site-branding .site-title a:hover{color: #f13b3b;}.header-bottom .johannes-site-branding .site-title a{color: #424851;}.header-bottom .sub-menu{background: #ffffff;}.johannes-menu-action .search-form input[type=text]{background: #ffffff;}.johannes-header-multicolor .header-middle .slot-l,.johannes-header-multicolor .header-sticky .header-sticky-main .container > .slot-l,.johannes-header-multicolor .header-mobile .slot-l,.johannes-header-multicolor .slot-l .johannes-site-branding:after{background: #424851;}.johannes-cover-indent .johannes-cover{min-height: 450px;}.page.johannes-cover-indent .johannes-cover{min-height: 250px;}.single.johannes-cover-indent .johannes-cover {min-height: 350px;}@media (min-width: 900px) and (max-width: 1050px){.header-middle > .container {height: 100px;}.header-bottom > .container,.header-bottom-slots {height: 50px;}}.johannes-modal{background: #ffffff;}.johannes-modal .johannes-menu-social li a:hover,.meks_ess a:hover{background: #ffffff;}.johannes-modal .johannes-menu-social li:hover a{color: #ffffff;}.johannes-modal .johannes-modal-close{color: #ffffff;}.johannes-modal .johannes-modal-close:hover{color: #ff7900;}.meks_ess a:hover{color: #ffffff;}h1,h2,h3,h4,h5,h6,.h1,.h2,.h3,.h4,.h5,.h6,.h0,.display-1,.has-large-font-size {color: #424851;}.entry-title a,a{color: #ffffff;}.johannes-post .entry-title a{color: #424851;}.entry-content a:not([class*=button]),.comment-content a:not([class*=button]){color: #ff7900;}.entry-content a:not([class*=button]):hover,.comment-content a:not([class*=button]):hover{color: #ffffff;}.entry-title a:hover,a:hover,.entry-meta a,.written-by a,.johannes-overlay .entry-meta a:hover,body .johannes-cover .section-bg+.container .johannes-breadcrumbs a:hover,.johannes-cover .section-bg+.container .section-head a:not(.johannes-button):not(.cat-item):hover,.entry-content .wp-block-tag-cloud a:hover{color: #ff7900;}.entry-meta,.entry-content .entry-tags a,.entry-content .fn a,.comment-metadata,.entry-content .comment-metadata a,.written-by > span,.johannes-breadcrumbs{color: #989da2;}.entry-meta a:hover,.written-by a:hover,.entry-content .wp-block-tag-cloud a{color: #ffffff;}.entry-meta .meta-item + .meta-item:before{background:#ffffff;}.entry-format i{color: #ffffff;background:#ffffff;}.category-pill .entry-category a{background-color: #ff7900;color: #fff;}.category-pill .entry-category a:hover{background-color: #ffffff;color: #ffffff;}.johannes-overlay.category-pill .entry-category a:hover,.johannes-cover.category-pill .entry-category a:hover {background-color: #ffffff;color: #ffffff;}.white-bg-alt-2 .johannes-bg-alt-2 .category-pill .entry-category a:hover,.white-bg-alt-2 .johannes-bg-alt-2 .entry-format i{background-color: #ffffff;color: #ffffff;}.media-shadow:after{background: rgba(255,255,255,0.1);}.entry-content .entry-tags a:hover,.entry-content .fn a:hover{color: #ff7900;}.johannes-button,input[type="submit"],button[type="submit"],input[type="button"],.wp-block-button .wp-block-button__link,.comment-reply-link,#cancel-comment-reply-link,.johannes-pagination a,.johannes-pagination,.meks-instagram-follow-link .meks-widget-cta,.mks_autor_link_wrap a,.mks_read_more a,.category-pill .entry-category a{font-family: 'Muli', Arial, sans-serif;font-weight: 900;font-style: normal;}.johannes-bg-alt-1,.has-arrows .owl-nav,.has-arrows .owl-stage-outer:after,.media-shadow:after {background-color: #2d364c}.johannes-bg-alt-2 {background-color: #2d364c}.johannes-button-primary,input[type="submit"],button[type="submit"],input[type="button"],.johannes-pagination a{box-shadow: 0 10px 15px 0 rgba(255,121,0,0.2);background: #ff7900;color: #fff;}.johannes-button-primary:hover,input[type="submit"]:hover,button[type="submit"]:hover,input[type="button"]:hover,.johannes-pagination a:hover{box-shadow: 0 0 0 0 rgba(255,121,0,0);color: #fff;}.johannes-button.disabled{background: #2d364c;color: #ffffff; box-shadow: none;}.johannes-button-secondary,.comment-reply-link,#cancel-comment-reply-link,.meks-instagram-follow-link .meks-widget-cta,.mks_autor_link_wrap a,.mks_read_more a{box-shadow: inset 0 0px 0px 1px #ffffff;color: #ffffff;opacity: .5;}.johannes-button-secondary:hover,.comment-reply-link:hover,#cancel-comment-reply-link:hover,.meks-instagram-follow-link .meks-widget-cta:hover,.mks_autor_link_wrap a:hover,.mks_read_more a:hover{box-shadow: inset 0 0px 0px 1px #ff7900; opacity: 1;color: #ff7900;}.johannes-breadcrumbs a,.johannes-action-close:hover,.single-md-content .entry-summary span,form label .required{color: #ff7900;}.johannes-breadcrumbs a:hover{color: #ffffff;}.section-title:after{background-color: #ff7900;}hr{background: rgba(255,255,255,0.2);}.wp-block-preformatted,.wp-block-verse,pre,code, kbd, pre, samp, address{background:#2d364c;}.entry-content ul li:before,.wp-block-quote:before,.comment-content ul li:before{color: #ffffff;}.wp-block-quote.is-large:before{color: #ff7900;}.wp-block-table.is-style-stripes tr:nth-child(odd){background:#2d364c;}.wp-block-table.is-style-regular tbody tr,.entry-content table tr,.comment-content table tr{border-bottom: 1px solid rgba(255,255,255,0.1);}.wp-block-pullquote:not(.is-style-solid-color){color: #ffffff;border-color: #ff7900;}.wp-block-pullquote{background: #ff7900;color: #ffffff;}.johannes-sidebar-none .wp-block-pullquote.alignfull.is-style-solid-color{box-shadow: -526px 0 0 #ff7900, -1052px 0 0 #ff7900,526px 0 0 #ff7900, 1052px 0 0 #ff7900;}.wp-block-button .wp-block-button__link{background: #ff7900;color: #fff;box-shadow: 0 10px 15px 0 rgba(255,121,0,0.2);}.wp-block-button .wp-block-button__link:hover{box-shadow: 0 0 0 0 rgba(255,121,0,0);}.is-style-outline .wp-block-button__link {background: 0 0;color:#ff7900;border: 2px solid currentcolor;}.entry-content .is-style-solid-color a:not([class*=button]){color:#ffffff;}.entry-content .is-style-solid-color a:not([class*=button]):hover{color:#ffffff;}input[type=color], input[type=date], input[type=datetime-local], input[type=datetime], input[type=email], input[type=month], input[type=number], input[type=password], input[type=range], input[type=search], input[type=tel], input[type=text], input[type=time], input[type=url], input[type=week], select, textarea{border: 1px solid rgba(255,255,255,0.3);}body .johannes-wrapper .meks_ess{border-color: rgba(255,255,255,0.1); }.widget_eu_cookie_law_widget #eu-cookie-law input, .widget_eu_cookie_law_widget #eu-cookie-law input:focus, .widget_eu_cookie_law_widget #eu-cookie-law input:hover{background: #ff7900;color: #fff;}.double-bounce1, .double-bounce2{background-color: #ff7900;}.johannes-pagination .page-numbers.current,.paginated-post-wrapper span{background: #2d364c;color: #ffffff;}.widget li{color: rgba(255,255,255,0.8);}.widget_calendar #today a{color: #fff;}.widget_calendar #today a{background: #ff7900;}.tagcloud a{border-color: rgba(255,255,255,0.5);color: rgba(255,255,255,0.8);}.tagcloud a:hover{color: #ff7900;border-color: #ff7900;}.rssSummary,.widget p{color: #ffffff;}.johannes-bg-alt-1 .count,.johannes-bg-alt-1 li a,.johannes-bg-alt-1 .johannes-accordion-nav{background-color: #2d364c;}.johannes-bg-alt-2 .count,.johannes-bg-alt-2 li a,.johannes-bg-alt-2 .johannes-accordion-nav,.johannes-bg-alt-2 .cat-item .count, .johannes-bg-alt-2 .rss-date, .widget .johannes-bg-alt-2 .post-date, .widget .johannes-bg-alt-2 cite{background-color: #2d364c;color: #FFF;}.white-bg-alt-1 .widget .johannes-bg-alt-1 select option,.white-bg-alt-2 .widget .johannes-bg-alt-2 select option{background: #2d364c;}.widget .johannes-bg-alt-2 li a:hover{color: #ff7900;}.widget_categories .johannes-bg-alt-1 ul li .dots:before,.widget_archive .johannes-bg-alt-1 ul li .dots:before{color: #ffffff;}.widget_categories .johannes-bg-alt-2 ul li .dots:before,.widget_archive .johannes-bg-alt-2 ul li .dots:before{color: #FFF;}.search-alt input[type=search], .search-alt input[type=text], .widget_search input[type=search], .widget_search input[type=text],.mc-field-group input[type=email], .mc-field-group input[type=text]{border-bottom: 1px solid rgba(255,255,255,0.2);}.johannes-sidebar-hidden{background: #ffffff;}.johannes-footer{background: #ffffff;color: #424851;}.johannes-footer a,.johannes-footer .widget-title{color: #424851;}.johannes-footer a:hover{color: #f13b3b;}.johannes-footer-widgets + .johannes-copyright{border-top: 1px solid rgba(66,72,81,0.1);}.johannes-footer .widget .count,.johannes-footer .widget_categories li a,.johannes-footer .widget_archive li a,.johannes-footer .widget .johannes-accordion-nav{background-color: #ffffff;}.footer-divider{border-top: 1px solid rgba(66,72,81,0.1);}.johannes-footer .rssSummary,.johannes-footer .widget p{color: #424851;}.johannes-empty-message{background: #2d364c;}.error404 .h0{color: #ff7900;}.johannes-goto-top,.johannes-goto-top:hover{background: #ffffff;color: #ffffff;}.johannes-ellipsis div{background: #ff7900;}.white-bg-alt-2 .johannes-bg-alt-2 .section-subnav .johannes-button-secondary:hover{color: #ff7900;}.section-subnav a{color: #ffffff;}.johannes-cover .section-subnav a{color: #fff;}.section-subnav a:hover{color: #ff7900;}@media(min-width: 600px){.size-johannes-fa-a{ height: 450px !important;}.size-johannes-single-3{ height: 450px !important;}.size-johannes-single-4{ height: 540px !important;}.size-johannes-page-3{ height: 360px !important;}.size-johannes-page-4{ height: 405px !important;}.size-johannes-wa-3{ height: 405px !important;}.size-johannes-wa-4{ height: 567px !important;}.size-johannes-archive-2{ height: 405px !important;}.size-johannes-archive-3{ height: 405px !important;}}@media(min-width: 900px){.size-johannes-a{ height: 484px !important;}.size-johannes-b{ height: 491px !important;}.size-johannes-c{ height: 304px !important;}.size-johannes-d{ height: 194px !important;}.size-johannes-e{ height: 304px !important;}.size-johannes-f{ height: 214px !important;}.size-johannes-fa-a{ height: 500px !important;}.size-johannes-fa-b{ height: 635px !important;}.size-johannes-fa-c{ height: 540px !important;}.size-johannes-fa-d{ height: 344px !important;}.size-johannes-fa-e{ height: 442px !important;}.size-johannes-single-1{ height: 484px !important;}.size-johannes-single-2{ height: 484px !important;}.size-johannes-single-3{ height: 500px !important;}.size-johannes-single-4{ height: 600px !important;}.size-johannes-single-5{ height: 442px !important;}.size-johannes-page-1{ height: 484px !important;}.size-johannes-page-2{ height: 484px !important;}.size-johannes-page-3{ height: 400px !important;}.size-johannes-page-4{ height: 450px !important;}.size-johannes-wa-1{ height: 442px !important;}.size-johannes-wa-2{ height: 304px !important;}.size-johannes-wa-3{ height: 450px !important;}.size-johannes-wa-4{ height: 630px !important;}.size-johannes-archive-2{ height: 450px !important;}.size-johannes-archive-3{ height: 450px !important;}}@media(min-width: 900px){.has-small-font-size{ font-size: 1.3rem;}.has-normal-font-size{ font-size: 1.6rem;}.has-large-font-size{ font-size: 4.0rem;}.has-huge-font-size{ font-size: 5.2rem;}}.has-johannes-acc-background-color{ background-color: #ff7900;}.has-johannes-acc-color{ color: #ff7900;}.has-johannes-meta-background-color{ background-color: #989da2;}.has-johannes-meta-color{ color: #989da2;}.has-johannes-bg-background-color{ background-color: #ffffff;}.has-johannes-bg-color{ color: #ffffff;}.has-johannes-bg-alt-1-background-color{ background-color: #2d364c;}.has-johannes-bg-alt-1-color{ color: #2d364c;}.has-johannes-bg-alt-2-background-color{ background-color: #2d364c;}.has-johannes-bg-alt-2-color{ color: #2d364c;}body{font-size:1.6rem;}.johannes-header{font-size:1.4rem;}.display-1{font-size:3rem;}h1, .h1{font-size:2.6rem;}h2, .h2{font-size:2.4rem;}h3, .h3{font-size:2.2rem;}h4, .h4,.wp-block-cover .wp-block-cover-image-text,.wp-block-cover .wp-block-cover-text,.wp-block-cover h2,.wp-block-cover-image .wp-block-cover-image-text,.wp-block-cover-image .wp-block-cover-text,.wp-block-cover-image h2{font-size:2rem;}h5, .h5{font-size:1.8rem;}h6, .h6{font-size:1.6rem;}.entry-meta{font-size:1.2rem;}.section-title {font-size:2.4rem;}.widget-title{font-size:2.0rem;}.mks_author_widget h3{font-size:2.2rem;}.widget,.johannes-breadcrumbs{font-size:1.4rem;}.wp-block-quote.is-large p, .wp-block-quote.is-style-large p{font-size:2.2rem;}.johannes-site-branding .site-title.logo-img-none{font-size: 2.6rem;}.johannes-cover-indent .johannes-cover{margin-top: -70px;}.johannes-menu-social li a:after, .menu-social-container li a:after{font-size:1.6rem;}.johannes-modal .johannes-menu-social li>a:after,.johannes-menu-action .jf{font-size:2.4rem;}.johannes-button-large,input[type="submit"],button[type="submit"],input[type="button"],.johannes-pagination a,.page-numbers.current,.johannes-button-medium,.meks-instagram-follow-link .meks-widget-cta,.mks_autor_link_wrap a,.mks_read_more a,.wp-block-button .wp-block-button__link{font-size:1.3rem;}.johannes-button-small,.comment-reply-link,#cancel-comment-reply-link{font-size:1.2rem;}.category-pill .entry-category a,.category-pill-small .entry-category a{font-size:1.1rem;}@media (min-width: 600px){ .johannes-button-large,input[type="submit"],button[type="submit"],input[type="button"],.johannes-pagination a,.page-numbers.current,.wp-block-button .wp-block-button__link{font-size:1.4rem;}.category-pill .entry-category a{font-size:1.4rem;}.category-pill-small .entry-category a{font-size:1.1rem;}}@media (max-width: 374px){.johannes-overlay .h1,.johannes-overlay .h2,.johannes-overlay .h3,.johannes-overlay .h4,.johannes-overlay .h5{font-size: 2.2rem;}}@media (max-width: 600px){ .johannes-layout-fa-d .h5{font-size: 2.4rem;}.johannes-layout-f.category-pill .entry-category a{background-color: transparent;color: #ff7900;}.johannes-layout-c .h3,.johannes-layout-d .h5{font-size: 2.4rem;}.johannes-layout-f .h3{font-size: 1.8rem;}}@media (min-width: 600px) and (max-width: 1050px){ .johannes-layout-fa-c .h2{font-size:3.6rem;}.johannes-layout-fa-d .h5{font-size:2.4rem;}.johannes-layout-fa-e .display-1,.section-head-alt .display-1{font-size:5.2rem;}}@media (max-width: 1050px){ body.single-post .single-md-content{max-width: 766px;width: 100%;}body.page .single-md-content.col-lg-6,body.page .single-md-content.col-lg-6{flex: 0 0 100%}body.page .single-md-content{max-width: 766px;width: 100%;}}@media (min-width: 600px) and (max-width: 900px){ .display-1{font-size:4.6rem;}h1, .h1{font-size:4rem;}h2, .h2,.johannes-layout-fa-e .display-1,.section-head-alt .display-1{font-size:3.2rem;}h3, .h3,.johannes-layout-fa-c .h2,.johannes-layout-fa-d .h5,.johannes-layout-d .h5,.johannes-layout-e .h2{font-size:2.8rem;}h4, .h4,.wp-block-cover .wp-block-cover-image-text,.wp-block-cover .wp-block-cover-text,.wp-block-cover h2,.wp-block-cover-image .wp-block-cover-image-text,.wp-block-cover-image .wp-block-cover-text,.wp-block-cover-image h2{font-size:2.4rem;}h5, .h5{font-size:2rem;}h6, .h6{font-size:1.8rem;}.section-title {font-size:3.2rem;}.johannes-section.wa-layout .display-1{font-size: 3rem;}.johannes-layout-f .h3{font-size: 3.2rem}.johannes-site-branding .site-title.logo-img-none{font-size: 3rem;}}@media (min-width: 900px){ body{font-size:1.6rem;}.johannes-header{font-size:1.4rem;}.display-1{font-size:5.2rem;}h1, .h1 {font-size:5.2rem;}h2, .h2 {font-size:4.0rem;}h3, .h3 {font-size:3.6rem;}h4, .h4,.wp-block-cover .wp-block-cover-image-text,.wp-block-cover .wp-block-cover-text,.wp-block-cover h2,.wp-block-cover-image .wp-block-cover-image-text,.wp-block-cover-image .wp-block-cover-text,.wp-block-cover-image h2 {font-size:3.2rem;}h5, .h5 {font-size:2.8rem;}h6, .h6 {font-size:2.4rem;}.widget-title{font-size:2.0rem;}.section-title{font-size:4.0rem;}.wp-block-quote.is-large p, .wp-block-quote.is-style-large p{font-size:2.6rem;}.johannes-section-instagram .h2{font-size: 3rem;}.johannes-site-branding .site-title.logo-img-none{font-size: 4rem;}.entry-meta{font-size:1.4rem;}.johannes-cover-indent .johannes-cover {margin-top: -130px;}.johannes-cover-indent .johannes-cover .section-head{top: 32.5px;}}.section-description .search-alt input[type=text],.search-alt input[type=text]{color: #ffffff;}::-webkit-input-placeholder {color: rgba(255,255,255,0.5);}::-moz-placeholder {color: rgba(255,255,255,0.5);}:-ms-input-placeholder {color: rgba(255,255,255,0.5);}:-moz-placeholder{color: rgba(255,255,255,0.5);}.section-description .search-alt input[type=text]::-webkit-input-placeholder {color: #ffffff;}.section-description .search-alt input[type=text]::-moz-placeholder {color: #ffffff;}.section-description .search-alt input[type=text]:-ms-input-placeholder {color: #ffffff;}.section-description .search-alt input[type=text]:-moz-placeholder{color: #ffffff;}.section-description .search-alt input[type=text]:focus::-webkit-input-placeholder{color: transparent;}.section-description .search-alt input[type=text]:focus::-moz-placeholder {color: transparent;}.section-description .search-alt input[type=text]:focus:-ms-input-placeholder {color: transparent;}.section-description .search-alt input[type=text]:focus:-moz-placeholder{color: transparent;}
+</style>
+<link rel="stylesheet" id="meks_ess-main-css" href="https://decoded.avast.io/wp-content/plugins/meks-easy-social-share/assets/css/main.css?ver=1.2.7" type="text/css" media="all">
+<script type="text/javascript">
+            window._nslDOMReady = function (callback) {
+                if ( document.readyState === "complete" || document.readyState === "interactive" ) {
+                    callback();
+                } else {
+                    document.addEventListener( "DOMContentLoaded", callback );
+                }
+            };
+            </script><script type="text/javascript" src="https://decoded.avast.io/wp-content/plugins/google-analytics-for-wordpress/assets/js/frontend-gtag.min.js?ver=8.5.0" id="monsterinsights-frontend-script-js"></script>
+<script data-cfasync="false" data-wpfc-render="false" type="text/javascript" id="monsterinsights-frontend-script-js-extra">/* <![CDATA[ */
+var monsterinsights_frontend = {"js_events_tracking":"true","download_extensions":"doc,pdf,ppt,zip,xls,docx,pptx,xlsx","inbound_paths":"[{\"path\":\"\\\/go\\\/\",\"label\":\"affiliate\"},{\"path\":\"\\\/recommend\\\/\",\"label\":\"affiliate\"}]","home_url":"https:\/\/decoded.avast.io","hash_tracking":"false","ua":"UA-143774004-1","v4_id":""};/* ]]> */
+</script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-includes/js/jquery/jquery.min.js?ver=3.6.0" id="jquery-core-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2" id="jquery-migrate-js"></script>
+<link rel="https://api.w.org/" href="https://decoded.avast.io/wp-json/"><link rel="alternate" type="application/json" href="https://decoded.avast.io/wp-json/wp/v2/posts/5735"><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://decoded.avast.io/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://decoded.avast.io/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 5.9.3">
+<link rel="shortlink" href="https://decoded.avast.io/?p=5735">
+<link rel="alternate" type="application/json+oembed" href="https://decoded.avast.io/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fdecoded.avast.io%2Fvladimirmartyanov%2Fzloader-the-silent-night%2F">
+<link rel="alternate" type="text/xml+oembed" href="https://decoded.avast.io/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fdecoded.avast.io%2Fvladimirmartyanov%2Fzloader-the-silent-night%2F&amp;format=xml">
+<link rel="icon" href="https://decoded.avast.io/wp-content/uploads/sites/2/2019/07/cropped-Asset-25ldpi-32x32.png" sizes="32x32">
+<link rel="icon" href="https://decoded.avast.io/wp-content/uploads/sites/2/2019/07/cropped-Asset-25ldpi-192x192.png" sizes="192x192">
+<link rel="apple-touch-icon" href="https://decoded.avast.io/wp-content/uploads/sites/2/2019/07/cropped-Asset-25ldpi-180x180.png">
+<meta name="msapplication-TileImage" content="https://decoded.avast.io/wp-content/uploads/sites/2/2019/07/cropped-Asset-25ldpi-270x270.png">
+<style type="text/css">div.nsl-container[data-align="left"] {
+    text-align: left;
+}
+
+div.nsl-container[data-align="center"] {
+    text-align: center;
+}
+
+div.nsl-container[data-align="right"] {
+    text-align: right;
+}
+
+
+div.nsl-container .nsl-container-buttons a {
+    text-decoration: none !important;
+    box-shadow: none !important;
+    border: 0;
+}
+
+div.nsl-container .nsl-container-buttons {
+    display: flex;
+    padding: 5px 0;
+}
+
+div.nsl-container.nsl-container-block .nsl-container-buttons {
+    display: inline-grid;
+    grid-template-columns: minmax(145px, auto);
+}
+
+div.nsl-container-block-fullwidth .nsl-container-buttons {
+    flex-flow: column;
+    align-items: center;
+}
+
+div.nsl-container-block-fullwidth .nsl-container-buttons a,
+div.nsl-container-block .nsl-container-buttons a {
+    flex: 1 1 auto;
+    display: block;
+    margin: 5px 0;
+    width: 100%;
+}
+
+div.nsl-container-inline {
+    margin: -5px;
+    text-align: left;
+}
+
+div.nsl-container-inline .nsl-container-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+div.nsl-container-inline .nsl-container-buttons a {
+    margin: 5px;
+    display: inline-block;
+}
+
+div.nsl-container-grid .nsl-container-buttons {
+    flex-flow: row;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+div.nsl-container-grid .nsl-container-buttons a {
+    flex: 1 1 auto;
+    display: block;
+    margin: 5px;
+    max-width: 280px;
+    width: 100%;
+}
+
+@media only screen and (min-width: 650px) {
+    div.nsl-container-grid .nsl-container-buttons a {
+        width: auto;
+    }
+}
+
+div.nsl-container .nsl-button {
+    cursor: pointer;
+    vertical-align: top;
+    border-radius: 4px;
+}
+
+div.nsl-container .nsl-button-default {
+    color: #fff;
+    display: flex;
+}
+
+div.nsl-container .nsl-button-icon {
+    display: inline-block;
+}
+
+div.nsl-container .nsl-button-svg-container {
+    flex: 0 0 auto;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+}
+
+div.nsl-container svg {
+    height: 24px;
+    width: 24px;
+    vertical-align: top;
+}
+
+div.nsl-container .nsl-button-default div.nsl-button-label-container {
+    margin: 0 24px 0 12px;
+    padding: 10px 0;
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 16px;
+    line-height: 20px;
+    letter-spacing: .25px;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: clip;
+    white-space: nowrap;
+    flex: 1 1 auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-transform: none;
+    display: inline-block;
+}
+
+div.nsl-container .nsl-button-google[data-skin="dark"] .nsl-button-svg-container {
+    margin: 1px;
+    padding: 7px;
+    border-radius: 3px;
+    background: #fff;
+}
+
+div.nsl-container .nsl-button-google[data-skin="light"] {
+    border-radius: 1px;
+    box-shadow: 0 1px 5px 0 rgba(0, 0, 0, .25);
+    color: RGBA(0, 0, 0, 0.54);
+}
+
+div.nsl-container .nsl-button-apple .nsl-button-svg-container {
+    padding: 0 6px;
+}
+
+div.nsl-container .nsl-button-apple .nsl-button-svg-container svg {
+    height: 40px;
+    width: auto;
+}
+
+div.nsl-container .nsl-button-apple[data-skin="light"] {
+    color: #000;
+    box-shadow: 0 0 0 1px #000;
+}
+
+div.nsl-container .nsl-button-facebook[data-skin="white"] {
+    color: #000;
+    box-shadow: inset 0 0 0 1px #000;
+}
+
+div.nsl-container .nsl-button-facebook[data-skin="light"] {
+    color: #1877F2;
+    box-shadow: inset 0 0 0 1px #1877F2;
+}
+
+div.nsl-container .nsl-button-apple div.nsl-button-label-container {
+    font-size: 17px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+div.nsl-container .nsl-button-slack div.nsl-button-label-container {
+    font-size: 17px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+div.nsl-container .nsl-button-slack[data-skin="light"] {
+    color: #000000;
+    box-shadow: inset 0 0 0 1px #DDDDDD;
+}
+
+.nsl-clear {
+    clear: both;
+}
+
+.nsl-container {
+    clear: both;
+}
+
+/*Button align start*/
+
+div.nsl-container-inline[data-align="left"] .nsl-container-buttons {
+    justify-content: flex-start;
+}
+
+div.nsl-container-inline[data-align="center"] .nsl-container-buttons {
+    justify-content: center;
+}
+
+div.nsl-container-inline[data-align="right"] .nsl-container-buttons {
+    justify-content: flex-end;
+}
+
+
+div.nsl-container-grid[data-align="left"] .nsl-container-buttons {
+    justify-content: flex-start;
+}
+
+div.nsl-container-grid[data-align="center"] .nsl-container-buttons {
+    justify-content: center;
+}
+
+div.nsl-container-grid[data-align="right"] .nsl-container-buttons {
+    justify-content: flex-end;
+}
+
+div.nsl-container-grid[data-align="space-around"] .nsl-container-buttons {
+    justify-content: space-around;
+}
+
+div.nsl-container-grid[data-align="space-between"] .nsl-container-buttons {
+    justify-content: space-between;
+}
+
+/* Button align end*/
+
+/* Redirect */
+
+#nsl-redirect-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(1px);
+    background-color: RGBA(0, 0, 0, .32);;
+}
+
+#nsl-redirect-overlay-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+#nsl-redirect-overlay-spinner {
+    content: '';
+    display: block;
+    margin: 20px;
+    border: 9px solid RGBA(0, 0, 0, .6);
+    border-top: 9px solid #fff;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 1px RGBA(0, 0, 0, .6), 0 0 0 1px RGBA(0, 0, 0, .6);
+    width: 40px;
+    height: 40px;
+    animation: nsl-loader-spin 2s linear infinite;
+}
+
+@keyframes nsl-loader-spin {
+    0% {
+        transform: rotate(0deg)
+    }
+    to {
+        transform: rotate(360deg)
+    }
+}
+
+#nsl-redirect-overlay-title {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #3C434A;
+}
+
+#nsl-redirect-overlay-text {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    text-align: center;
+    font-size: 14px;
+    color: #3C434A;
+}
+
+/* Redirect END*/</style>		<style type="text/css" id="wp-custom-css">
+			.johannes-cover-indent .header-mobile .johannes-site-branding, .johannes-cover-indent .johannes-header-main .johannes-site-branding {
+    -webkit-filter: none;
+    filter: none;
+}
+
+/* edited by milos */
+
+
+
+
+/* GENERIC */
+/* --------------------------- */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-weight:600;
+}
+
+article h1, article h2, article h3, article h4, article h5, article h6, article .h1, article .h2, article .h3, article .h4, article .h5, article .h6 {
+	text-align:left;
+}
+
+.johannes-goto-top {
+	border-radius:10px;
+}
+
+
+
+/* TODO
+.johannes-goto-top, .johannes-goto-top:hover {
+    border-radius: 10px 10px 0 0;
+		opacity:1 !important;
+}
+.johannes-goto-top {
+	bottom:-20px;
+	transition: all .15s ease-in-out;
+	width:50px;
+	height:65px;
+  background-color: #ff7900;
+}
+
+.johannes-goto-top:hover {
+	bottom:0px;
+}
+*/
+
+/* CATEGORY LISTING */
+/* --------------------------- */
+h2.entry-title, .h2 {
+	font-size: 3.2rem;
+	font-weight: 700;
+}
+
+.entry-category {
+    margin-bottom: 1.5rem;
+}
+
+.category-pill .entry-category a {
+	font-size: 1.4rem;
+	font-weight: 600;
+	padding: 6px 12px;
+	border-radius:10px;
+}
+
+/* orange gray version */
+.category-pill .entry-category a {
+	background-color: #ff7800;
+	color:#fff;
+	box-shadow: none;
+}
+
+/* dark gray version 
+.category-pill .entry-category a {
+	background-color: #999;
+	color:#eee;
+	box-shadow: none;
+}
+*/
+/* light gray version
+.category-pill .entry-category a {
+	background-color: #efefef;
+	box-shadow: 0px 2px 9px -6px rgba(0,0,0,0.75);
+	color:#aaa;
+}
+ */
+
+
+/* TEST EFFECT ONLY */
+.home .johannes-post {
+ transition: transform .2s;
+}
+.home .johannes-post:hover {
+	transform: scale(1.05);
+}
+
+
+/* the last child fix */
+@media only screen and (min-width: 900px) {
+	.johannes-items .col-12:last-child .johannes-post p:last-child {
+		margin-bottom: 28.8px;
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.johannes-items .col-12:last-child .johannes-post p:last-child {
+		margin-bottom: 28.8px;
+	}
+}
+
+
+/* POST DETAIL */
+/* --------------------------- */
+/*
+.johannes-related .johannes-post {
+	border-bottom: none;
+}
+
+.johannes-related .entry-category a {
+	background-color: #424f6f;
+	color:#cfd6e8;
+}
+*/
+.johannes-related .h2 {
+	font-size: 4.7rem;
+}
+
+.section-title:after {
+	background:none;
+}
+
+@media only screen and (min-width: 900px) {
+	.section-title:after {
+		margin: 16.8px auto 0;
+	}
+}
+
+
+/* edited by milos */
+
+
+/* GENERIC */
+/* --------------------------- */
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+	font-weight:600;
+}
+
+/* CATEGORY LISTING */
+/* --------------------------- */
+h2.entry-title, .h2 {
+	font-size: 3.2rem;
+	font-weight: 700;
+}
+
+.entry-category {
+    margin-bottom: 1.5rem;
+}
+
+.category-pill .entry-category a {
+	font-size: 1.4rem;
+	font-weight: 600;
+	padding: 6px 12px;
+	border-radius:10px;
+}
+
+/* orange gray version */
+.category-pill .entry-category a {
+	background-color: #ff7800;
+	color:#fff;
+	box-shadow: none;
+}
+
+/* dark gray version 
+.category-pill .entry-category a {
+	background-color: #999;
+	color:#eee;
+	box-shadow: none;
+}
+*/
+/* light gray version
+.category-pill .entry-category a {
+	background-color: #efefef;
+	box-shadow: 0px 2px 9px -6px rgba(0,0,0,0.75);
+	color:#aaa;
+}
+ */
+
+
+/* TEST EFFECT ONLY 
+.home .johannes-post {
+ transition: transform .2s;
+}
+.home .johannes-post:hover {
+	transform: scale(1.05);
+}
+*/
+
+/* the last child fix */
+@media only screen and (min-width: 900px) {
+	.johannes-items .col-12:last-child .johannes-post p:last-child {
+		margin-bottom: 28.8px;
+	}
+}
+
+@media only screen and (min-width: 600px) {
+	.johannes-items .col-12:last-child .johannes-post p:last-child {
+		margin-bottom: 28.8px;
+	}
+}
+
+
+/* POST DETAIL */
+/* --------------------------- */
+/*
+.johannes-related .johannes-post {
+	border-bottom: none;
+}
+
+.johannes-related .entry-category a {
+	background-color: #424f6f;
+	color:#cfd6e8;
+}
+*/
+.johannes-related .h2 {
+	font-size: 4.7rem;
+}
+
+.section-title:after {
+	background:none;
+}
+
+@media only screen and (min-width: 900px) {
+	.section-title:after {
+		margin: 16.8px auto 0;
+	}
+}
+
+
+
+
+
+@media only screen and (min-width: 500px) {
+	.slot-r div+ul, .slot-r nav+ul, .slot-r ul+ul {
+		margin: 0px;
+	}
+}
+
+.cu-double-top:before {
+    content: "\f102";
+    font: normal normal normal 25px/1 FontAwesome;
+}
+
+.cu-double-left:before {
+    content: "\f100";
+    font: normal normal normal 25px/1 FontAwesome;
+}
+
+.cu-search:before {
+    content: "\f002";
+    font: normal normal normal 18px/1 FontAwesome;
+}
+
+@media only screen and (min-width: 900px) {
+
+.back-link {
+    position: absolute;
+    z-index: 1004;
+    background: #ff7800;
+    text-align: center;
+
+    line-height: 1.2rem;
+    font-size: 1.3rem;
+    height: auto;
+    color: #fff;
+}
+
+.back-link-loc-left {
+    top: 10px;
+    border-radius: 0 10px 10px 0;
+    transform:translate(-75%,0);
+    padding: 5px 0 5px 1rem;
+    transition: all .15s ease-in-out;
+}
+
+.back-link-loc-left a{
+    display:inline-block;
+}
+
+.back-link-loc-left i{
+    padding: 0 1rem 0 1rem;
+}
+	
+.back-link-loc-left:hover {
+    left:0px;
+    transform:translate(0,0);
+}
+
+.back-link-loc-top {
+    left: 49%;
+    position: absolute;
+    top: -35px;
+    border-radius: 0 0 10px 10px;
+    padding: 10px 0 0 0;
+    transition: all .15s ease-in-out;
+}
+
+
+
+.back-link.back-link-loc-top a, .back-link.back-link-loc-left a {
+    color: #fff;
+}
+
+.back-link-loc-top:hover {
+    top: 0;
+}
+}
+
+.header-mobile .back-link {
+    display: flex;
+    align-items: center;
+		margin-right: 20px;
+}
+
+.header-mobile .back-link:hover {
+	background-color: #FF7d00;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+.header-mobile .back-link a {
+    display:none;
+}
+
+.header-mobile .back-link:hover a {
+    display:initial;
+		color:#FFF;
+}
+
+@media only screen and (min-width: 900px) {
+	.widget-inside {
+		padding-top: 0;
+		padding-bottom: 0;
+}
+}
+
+
+.johannes-menu-action .jf {
+	margin-left:20px;
+}
+
+
+
+
+/* ---- dark m0de ---- */
+body {
+	background:#111;
+	color: #fff !important;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .h0, .display-1, .has-large-font-size {
+    color: #fff;
+}
+
+.johannes-wrapper {
+		background:#1d1d1d;
+}
+
+.johannes-header-main .header-middle nav {
+	background-color: rgba(0,0,0,.6);
+  border-top-left-radius: 10px;
+	border-bottom-left-radius: 10px
+}
+
+.johannes-header-main .slot-r>nav>ul>li:first-child {
+    padding-left: 30px;
+}
+
+.johannes-header-main .johannes-hamburger li {
+	background-color: rgba(0,0,0,.6);
+  border-top-right-radius: 10px;
+	border-bottom-right-radius: 10px;
+	padding-right:30px;
+}
+
+/* SEARCH SIDEBAR */
+/* --------------------------- */
+.johannes-sidebar-hidden.johannes-sidebar {
+	padding-left: 0px;
+	padding-right: 0px;
+}
+
+.johannes-sidebar-branding .johannes-action-close {
+	padding-right: 40px;
+}
+
+
+.johannes-cover-indent .header-mobile .johannes-site-branding, .johannes-cover-indent .johannes-header-main .johannes-site-branding {
+    -webkit-filter: none;
+    filter: none;
+}
+
+.johannes-sidebar-hidden.johannes-sidebar {
+	background:#252525;
+}
+.johannes-sidebar .johannes-bg-alt-2 {
+	background:#252525;
+}
+
+.johannes-sidebar-hidden.johannes-sidebar .johannes-bg-alt-1 {
+	background:none;
+}
+
+.johannes-sidebar-hidden.johannes-sidebar .search-form button[type="submit"] {
+	box-shadow:none;
+	border-radius:10px;
+	font-weight:600;
+	font-size:1.7rem;
+	transition: all .15s ease-in-out;
+	background: #fff;
+	color: #2d364c;
+}
+
+.johannes-sidebar-hidden.johannes-sidebar .search-form button[type="submit"]:hover {
+	background-color: #ff7800;
+	color:#fff;	
+}
+.white-bg-alt-1 .johannes-bg-alt-1 .tagcloud a, .white-bg-alt-2 .johannes-bg-alt-2 .tagcloud a {
+	background: #444;
+	color: #ccc;
+	border-radius:10px;
+	border:none;
+	font-weight:800;
+	font-size:1.1rem !important;
+	transition: all .15s ease-in-out;
+}
+
+.white-bg-alt-1 .johannes-bg-alt-1 .tagcloud a:hover, .white-bg-alt-2 .johannes-bg-alt-2 .tagcloud a:hover {
+	background-color: #ff7800;
+	color:#fff;
+	border:none;
+	/*transform: scale(1.05);*/
+}
+
+.johannes-action-close {
+	color:#fff;
+}
+
+
+.widget {
+	margin-bottom:0px;
+}
+
+.widget-inside {
+	padding: 15px 30px;
+}
+
+.widget a.rsswidget, .widget_recent_comments a, .widget_recent_entries a,
+.widget ul a {
+	font-weight: 500
+}
+
+.white-bg-alt-1 .johannes-bg-alt-1 .tagcloud a, .white-bg-alt-2 .johannes-bg-alt-2 .tagcloud a {
+	font-weight: 700;
+}
+
+.widget_categories ul {
+	display:flex;
+	flex-flow: row wrap;
+  align-items: stretch;
+}
+
+.widget li {
+	margin-bottom: 3px;
+}
+
+.widget.widget_categories li {
+	margin-bottom:10px;
+}
+
+.widget.widget_categories li a {
+	background: none;
+	border-radius: 10px;
+	border: none;
+	font-size: 1.5rem;
+	font-weight: 700;
+	line-height: 30px;
+	text-align: center;
+	padding:0 12px;
+	text-transform: uppercase;
+	margin: 0 10px;
+}
+
+.johannes-sidebar .widget-title {
+    margin-bottom: 2rem;
+}
+
+.johannes-sidebar .johannes-bg-alt-2 li a {
+	background:none;
+}
+
+
+.johannes-sidebar #recent-posts-2, .johannes-sidebar #categories-2, .johannes-sidebar #tag_cloud-2, .johannes-sidebar #archives-2, .johannes-sidebar #meta-2 {
+    border-bottom: 3px solid #252525;
+		box-shadow: 0px 0px 75px 0px rgba(0,0,0,0.5);
+}
+
+.johannes-sidebar #recent-posts-2 ul li  {
+	margin-bottom:1.5rem;
+}
+
+.johannes-sidebar #recent-posts-2 ul li a {
+	border-left: 3px solid #ccc;
+	padding-left: 1rem;
+	color: #ccc;
+}
+
+.johannes-sidebar #recent-posts-2 ul li a:hover {
+	border-left: 3px solid #ff7900;
+	color:#ff7900;
+}
+
+.johannes-sidebar #archives-2 ul li  {
+	margin-bottom:0.5rem;
+}
+
+.johannes-sidebar #archives-2 ul li a, .johannes-sidebar #meta-2 ul li a {
+	color: #ccc;
+}
+
+.johannes-sidebar #archives-2 ul li a:hover, 
+.johannes-sidebar #meta-2 ul li a:hover {
+	color: #ff7900;
+}
+
+.johannes-sidebar-branding {
+	height:100px;
+}
+
+.johannes-sidebar-branding img {
+	height:60px;
+	margin-top: 5px;
+}
+
+.johannes-sidebar-branding picture {
+	padding-left:30px;
+}
+
+
+
+/* --------------------------- */
+
+
+
+
+
+
+.johannes-cover {
+    border-bottom: 3px solid #252525;
+		box-shadow: 0px 0px 20px 0px rgba(0,0,0,1);	
+}
+
+.johannes-section.wa-layout.johannes-cover {
+    margin-bottom: 48px;
+
+}
+
+.entry-tags a {
+	font-size: 1.4rem;
+	font-weight: 600;
+	padding: 6px 20px;
+	border-radius:10px;
+	background-color: #444;
+	color:#ccc;	
+	margin: 10px 10px 0 0;
+	transition: all .15s ease-in-out;
+}
+
+.entry-tags a:hover {
+	background:#ff7800;
+	color:#fff;
+	transform: scale(1.05);
+}
+
+
+.entry-tags {
+	color: #1d1d1d;
+}
+.entry-tags span {
+    display: block;
+    font-size: 2.2rem;
+    opacity: 1;
+    border-top: 2px solid #252525;
+    padding: 10px 0;
+    color: #ccc;
+}
+
+.entry-meta a {
+	color:#999;
+}
+.entry-meta a:hover {
+	color:#fff;
+}
+
+.white-bg-alt-2 .johannes-bg-alt-2 .category-pill .entry-category a:hover {
+	background:none;
+	color:#fff;
+}
+
+/* uncatorized */
+.entry-content a {
+	font-weight:600;
+}
+.category-pill .entry-category a, .johannes-sidebar li.cat-item-1 a, .widget.widget_categories li.cat-item-1 a {
+	border-left: 2px solid #999;
+	border-top: 2px solid rgba(0,0,0,0);
+	border-right: 2px solid #999;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	color:#999;
+	background:none;
+	box-shadow: none;
+	transition: all .15s ease-in-out;
+}
+.category-pill .entry-category a:hover, .johannes-sidebar li.cat-item-1 a:hover, .widget.widget_categories li.cat-item-1 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #999;
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #999;
+	color:#fff;
+	background:none;
+}
+
+
+.category-uncategorized .entry-title a {
+	color:#fff;
+	border-left:3px solid #999;
+	padding-left:2rem;
+}
+
+/* network */
+.category-network .entry-content a {
+	color:#f8099c;
+	font-weight:600;
+}
+.category-pill .entry-category a.cat-20, .johannes-sidebar li.cat-item-20 a, .widget.widget_categories li.cat-item-20 a {
+	box-shadow:none;
+	border-left: 2px solid #f8099c;
+	border-top: 2px solid rgba(0,0,0,0);
+	border-right: 2px solid #f8099c;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: all .15s ease-in-out;
+	color:#f8098c;
+}
+.category-pill .entry-category a.cat-20:hover, .johannes-sidebar li.cat-item-20 a:hover, .widget.widget_categories li.cat-item-20 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #f8099c;
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #f8099c;
+	color:#fff;
+}
+.category-network .entry-title a {
+	color:#fff;
+	border-left:3px solid #f8098c;
+	padding-left:2rem;
+}
+
+/* PC */
+.category-pc .entry-content a {
+	color:#a7f432;
+	font-weight:600;
+}
+.category-pill .entry-category a.cat-21, .johannes-sidebar li.cat-item-21 a, .widget.widget_categories li.cat-item-21 a {
+	box-shadow:none;
+	border-left: 2px solid #a7f432;
+	border-top: 2px solid rgba(0,0,0,0);
+	border-right: 2px solid #a7f432;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: all .15s ease-in-out;
+	color:#a7f432;
+}
+.category-pill .entry-category a.cat-21:hover, .johannes-sidebar li.cat-item-21 a:hover, .widget.widget_categories li.cat-item-21 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #a7f432;
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #a7f432;
+	color:#fff;
+}
+.category-pc .entry-title a {
+	color:#fff;
+	border-left:3px solid #a7f432;
+	padding-left:2rem;
+}
+
+/* mobile */
+.category-mobile .entry-content a {
+	color:#0cbfe9;
+	font-weight:600;
+}
+.category-pill .entry-category a.cat-22, .johannes-sidebar li.cat-item-22 a, .widget.widget_categories li.cat-item-22 a {
+	box-shadow:none;
+	border-left: 2px solid #0cbfe9;
+	border-top: 2px solid rgba(0,0,0,0);	
+	border-right: 2px solid #0cbfe9;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: all .15s ease-in-out;
+	color:#0cbfe9;
+}
+.category-pill .entry-category a.cat-22:hover, .johannes-sidebar li.cat-item-22 a:hover, .widget.widget_categories li.cat-item-22 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #0cbfe9;	
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #0cbfe9;
+	color:#fff;
+}
+.category-mobile .entry-title a {
+	color:#fff;
+	border-left:3px solid #0cbfe9;
+	padding-left:2rem;
+}
+
+/* iot */
+.category-iot .entry-content a {
+	color:#fe5a1d;
+	font-weight:600;
+}
+.category-pill .entry-category a.cat-23, .johannes-sidebar li.cat-item-23 a, .widget.widget_categories li.cat-item-23 a {
+	box-shadow:none;
+	border-left: 2px solid #fe5a1d;
+	border-top: 2px solid rgba(0,0,0,0);
+	border-right: 2px solid #fe5a1d;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: all .15s ease-in-out;
+	color:#fe5a1d;
+}
+.category-pill .entry-category a.cat-23:hover, .johannes-sidebar li.cat-item-23 a:hover, .widget.widget_categories li.cat-item-23 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #fe5a1d;
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #fe5a1d;
+	color:#fff;
+}
+.category-iot .entry-title a {
+	color:#fff;
+	border-left:3px solid #fe5a1d;
+	padding-left:2rem;
+}
+
+/* events */
+.category-events .entry-content a {
+	color:#ff003f;
+	font-weight:600;
+}
+.category-pill .entry-category a.cat-32, .johannes-sidebar li.cat-item-32 a, .widget.widget_categories li.cat-item-32 a {
+	box-shadow:none;
+	border-left: 2px solid #ff003f;
+	border-top: 2px solid rgba(0,0,0,0);
+	border-right: 2px solid #ff003f;
+	border-bottom: 2px solid rgba(0,0,0,0);
+	transition: all .15s ease-in-out;
+	color:#ff003f;
+}
+.category-pill .entry-category a.cat-32:hover, .johannes-sidebar li.cat-item-32 a:hover, .widget.widget_categories li.cat-item-32 a:hover {
+	border-left: 2px solid rgba(0,0,0,0);
+	border-top: 2px solid #ff003f;
+	border-right: 2px solid rgba(0,0,0,0);
+	border-bottom: 2px solid #ff003f;
+	color:#fff;
+}
+.category-events .entry-title a {
+	color:#fff;
+	border-left:3px solid #ff003f;
+	padding-left:2rem;
+}
+
+
+.johannes-bg-alt-2.johannes-related {
+	box-shadow: inset 0 0 250px 0 rgba(0,0,0,0.75);
+	margin:0;
+	border-top:3px solid #252525;
+}
+
+
+
+li#menu-item-367 a:hover {
+	color:#0cbfe9;
+}
+li#menu-item-368 a:hover {
+	color:#f8099c;
+}
+li#menu-item-369 a:hover {
+	color:#a7f432;
+}
+#menu-item-370 a:hover {
+	color:#fe5a1d;
+}
+li#menu-item-371 a:hover {
+	color:#999;
+}
+
+
+/* TEST HOVER EFFECT */
+/*.home*/ .johannes-post {
+  transition: all .15s ease-in-out;
+	padding:2rem 0 1.5rem 0;
+	border-radius:20px;
+	border:3px solid #252525;
+	background: linear-gradient(to bottom, #1d1d1d 0%,#252525 100%);
+	margin-bottom:4rem;
+}
+/*.home*/ .johannes-post:hover {
+	transform: scale(1.05);
+	box-shadow: 0px 0px 20px -10px rgba(0,0,0,1);
+	border:3px solid #252525;
+	background: -moz-linear-gradient(top, #1d1d1d 0%, #252525 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, #1d1d1d 0%,#252525 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, #1d1d1d 0%,#252525 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+	/* sorry old crappy IE 
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1d1d1d', endColorstr='#252525',GradientType=0 ); */ /* IE6-9 */
+}
+
+
+.johannes-related .johannes-post {
+	padding:2rem 2.5rem
+}
+
+body .johannes-wrapper .meks_ess a {
+	border-radius:10px;
+	margin-right:1.8rem;
+}
+body .johannes-wrapper .meks_ess {
+    border:none;
+}
+
+
+.johannes-footer {
+	background:#111;
+	border-top: 3px solid #252525;
+	box-shadow: 0px 0px 20px -10px rgba(0,0,0,1);
+	color:#666;
+}
+.footer-divider {
+	display:none;
+}
+
+
+.header-mobile img {
+		height: 50px;
+	}
+
+.johannes-header-main .container {
+	padding-left:48px;
+}
+
+.johannes-header-main img {
+		height: 80px
+}
+
+.slot-r div+ul, .slot-r nav+ul, .slot-r ul+ul {
+	margin-left:0;
+}
+
+body .johannes-wrapper .meks_ess {
+	padding-top: 0;
+}
+
+/*
+@media (max-width: 1050px)
+{
+	body.single-post .single-md-content   {
+		max-width:100%;
+	}
+}
+*/
+
+@media (min-width: 359px)
+{
+	.container {
+			max-width: 90%;
+	}
+/*	
+	body.single-post .single-md-content {
+	max-width:90%;
+	}
+*/
+}
+
+@media (min-width: 600px)
+{
+/*	
+	body.single-post .single-md-content {
+	max-width:80%;
+	}
+*/
+	.meks_ess.no-labels {
+		position: absolute;
+		left: 100%;
+		margin-top: 0;
+		margin-left: 20px;
+	}
+	
+	.johannes-section .johannes-share-label {
+		display:none !important;
+	}
+	
+	body .johannes-wrapper .meks_ess a {
+		min-width: 38px;
+		margin-bottom: 8px;
+		border-radius:8px;
+	}
+}
+
+@media (min-width: 900px) {
+/*
+	body.single-post .single-md-content {
+	max-width: 90%;
+	}
+*/
+}
+
+.johannes-menu-mobile .johannes-search {
+	display:none;
+}
+
+.header-mobile .slot-l {
+	max-width:50%;
+}
+
+@media (min-width: 900px) {
+	.avast-search {
+		top: 80px;
+	}
+}
+
+@media (min-width: 1050px) {
+	.avast-search {
+		top: 100px;
+	}
+}
+
+.avast-search {
+	position:absolute;
+	display:flex;
+	height:3rem;
+	/*transform:translate(10px, 110%)*/
+  font-weight:500;
+	font-style:italic;
+}
+
+.johannes-menu-mobile .avast-search {
+	height:3rem;
+	font-weight:500;
+	font-style:italic;
+	position:initial;
+	margin-top: 10px;
+}
+
+.avast-search button {
+	min-height: 0 !important;
+	line-height:3rem;
+	padding: 0px 0px 0px 10px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	background-color: #FFFFFF00;
+	color: #FFF;
+	box-shadow:none !important;
+	padding-right:10px;
+	border-width: 2px;
+	border-color: #fff;
+	border-style:solid;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+}
+
+.avast-search button:hover {
+	color: #FF7D00;
+}
+
+
+.avast-search input {
+	padding: 0px 10px 0px 10px;
+	border-bottom-left-radius: 5px;
+	border-top-left-radius: 5px;
+	border-width: 2px;
+	color: #FFF;
+	background-color: #00000000;
+	border-left: none;
+	border-right: none;
+	border-top: none;
+	border-color: #FFF;
+}
+
+.avast-search input:focus {
+	outline:none;
+}
+
+.avast-search ::placeholder {
+	color: #FFF;
+}
+
+
+@media (min-width: 900px) {
+	.size-johannes-wa-3 {
+			height: 450px !important;
+	}
+}
+@media (min-width: 600px) {
+	.size-johannes-wa-3 {
+			height: 450px !important;
+	}
+}
+
+
+.wp-block-table.is-style-regular tbody tr, .entry-content table tr, .comment-content table tr {
+    border-bottom: 1px solid #666;
+}
+
+.wp-block-table td {
+    border-right: 1px solid #666;
+}
+
+.wp-block-table td:last-child {
+    border-right: none;
+}
+
+.wp-block-table tr:first-child {
+	/*border-top: 1px solid #666;*/
+	background-color: #333;
+}
+
+code {
+	background: inherit;
+	color: limegreen;
+}
+
+@media (min-width: 900px) {
+	.container {
+     max-width: 1224px;
+	}
+}
+
+article {
+	word-wrap: break-word;
+	text-align:justify;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  hyphens: auto;
+}
+
+.entry-title a {text-align:left;}
+
+
+
+@media only screen and (max-width: 900px) {
+	
+	table {
+		display:flex;
+		word-wrap:break-word;
+	}
+	
+	article table td {
+		display: flex;
+		word-wrap:break-word;
+		border-right: 1px solid #666;
+		border-left: 1px solid #666;
+	}
+  .wp-block-table td:last-child {
+    border-right: 1px solid #666;
+}
+	.wp-block-table tr:first-child {
+	 border-top: 1px solid #666;
+}
+}
+
+.wp-block-pullquote:not(.is-style-solid-color) {
+	padding-left: 2em;
+	margin: 2em 0.2em;
+	/*border: none;*/
+	color: #aaa;
+	position:relative;
+	/*background-color: #252525;*/
+	border-radius: 10px;
+	border: 2px solid #252525;
+  background: linear-gradient(to bottom, #1d1d1d 0%,#252525 100%);	
+}
+
+.wp-block-pullquote cite {
+    font-size:0.7em;
+	margin-bottom:0.5em;
+}
+
+.wp-block-pullquote p {
+    border-left: 4px solid #444;
+		padding-left: 15px;
+}
+
+
+.wp-block-pullquote:not(.is-style-solid-color):before {
+	content: '\201c';
+	position: absolute;
+	top: 0.25em;
+	left: 0.1em;
+	font-size: 10em;
+	line-height: 0em;
+	color: #999;
+	font-weight: normal;
+	opacity:0.7;
+}
+
+.wp-block-pullquote:not(.is-style-solid-color):after {
+	content: '\201d';
+	position: absolute;
+	bottom: -0.21em;
+	right: 0.1em;
+	font-size: 10em;
+	line-height: 0em;
+	color: #999;
+	font-weight: normal;
+	opacity:0.7;
+}
+
+.category-events .wp-block-pullquote:not(.is-style-solid-color):after, .category-events .wp-block-pullquote:not(.is-style-solid-color):before {
+	color: #ff003f;
+}
+
+.category-iot .wp-block-pullquote:not(.is-style-solid-color):after, .category-iot .wp-block-pullquote:not(.is-style-solid-color):before {
+	color: #fe5a1d;
+}
+
+.category-mobile .wp-block-pullquote:not(.is-style-solid-color):after, .category-mobile .wp-block-pullquote:not(.is-style-solid-color):before {
+	color: #0cbfe9;
+}
+
+.category-network .wp-block-pullquote:not(.is-style-solid-color):after, .category-network .wp-block-pullquote:not(.is-style-solid-color):before {
+	color: #f8098c;
+}
+
+.category-pc .wp-block-pullquote:not(.is-style-solid-color):after, .category-pc .wp-block-pullquote:not(.is-style-solid-color):before {
+	color: #a7f432;
+}
+
+/*
+body.search .johannes-section.johannes-cover {
+	background-image: url("https://decoded.avast.io/wp-content/uploads/sites/2/2019/07/shutterstock_1295299108-1.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover; 
+}
+
+body.search .johannes-section.johannes-cover:before {
+	content: "";
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+    background-color: rgba(0,0,0,.5);
+    left: 0;
+    top: 0;
+    opacity: 1;
+}
+*/
+
+.entry-content h3 {font-size:3.2rem;}
+
+@media (max-width: 900px) and (min-width: 600px) {
+.entry-content h3 {
+    font-size: 2.5rem;
+}
+}
+
+.johannes-cover>.section-bg+.container { 
+	text-shadow: 3px 2px 6px rgba(0,0,0,0.5); 
+}
+
+@media (min-width: 900px) {
+.col-lg-8 {
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 80%;
+    -ms-flex: 0 0 80%;
+    flex: 0 0 80%;
+    max-width: 80%;
+	}}
+
+/* ul li category colors */
+.entry-content ul li:before {
+	padding-left: 2rem;
+}
+.category-uncategorized .entry-content ul li:before {
+	color: #999;
+}
+.category-network .entry-content ul li:before {
+	color: #f8098c;
+}
+.category-pc .entry-content ul li:before {
+	color: #a7f432;
+}
+.category-mobile .entry-content ul li:before {
+	color: #0cbfe9;
+}
+.category-iot .entry-content ul li:before {
+	color: #fe5a1d;
+}
+.category-events .entry-content ul li:before {
+	color: #ff003f;
+}
+
+/* ol margin fix */
+.entry-content>ol li {
+  margin: 20px 20px 0 20px;
+}
+
+.twitter-tweet {margin:auto;}		</style>
+		<style id="kirki-inline-styles"></style>	<style id="johannes-align-fix" type="text/css">.alignfull { width: 1885px; margin-left: -942.5px; margin-right: -942.5px; }</style><style id="johannes-alignwide-fix" type="text/css">.alignwide { max-width: 1128px;}</style></head>
+
+	<body class="post-template-default single single-post postid-5735 single-format-standard wp-custom-logo wp-embed-responsive johannes-sidebar-none johannes-cover-indent white-bg-alt-1 white-bg-alt-2 johannes-header-no-margin johannes-header-labels-hidden johannes-v_1_1_3 johannes-child">
+
+	<div class="johannes-wrapper">
+
+	    		    <header class="johannes-header johannes-header-main d-none d-lg-block">
+		        				<div class="back-link back-link-loc-left">
+					<a href="https://avast.io/">
+						More on<br>Avast Inside Out<br>					</a>
+					<i class="cu-double-left"></i>
+				</div>
+					    	
+		        <div class="header-middle header-layout-1">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="slot-l">
+            <div class="johannes-site-branding">
+    <span class="site-title h1 "><a href="https://decoded.avast.io/" rel="home"><picture class="johannes-logo"><source media="(min-width: 1050px)" srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png, https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi-1.png 2x"><source srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png"><img src="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png" alt="Avast Threat Labs"></picture></a></span></div>        </div>
+        <div class="slot-r">
+        	            	    <nav class="menu-main-menu-container"><ul id="menu-main-menu" class="johannes-menu johannes-menu-primary"><li id="menu-item-367" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-367"><a href="https://decoded.avast.io/category/mobile/">Mobile</a></li>
+<li id="menu-item-368" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-368"><a href="https://decoded.avast.io/category/network/">Network</a></li>
+<li id="menu-item-369" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-369"><a href="https://decoded.avast.io/category/pc/">PC</a></li>
+<li id="menu-item-370" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-370"><a href="https://decoded.avast.io/category/iot/">IoT</a></li>
+<li id="menu-item-371" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-371"><a href="https://www.avast.com/en-us/careers">Careers</a></li>
+</ul></nav>                                    	             		<ul class="johannes-menu-action johannes-hamburger">
+	<li><a href="javascript:void(0);"><span class="header-el-label">Menu</span><i class="jf jf-menu"></i></a></li>
+</ul>
+             	             		<form class="avast-search" action="https://decoded.avast.io/" method="get">
+	<input name="s" type="test" value="" placeholder="Type here to search...">
+	<button type="submit"><i class="cu-search"></i></button>
+</form>             	                    </div>
+    </div>
+</div>		    	
+		    </header>
+
+		    <div class="johannes-header header-mobile d-lg-none">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="slot-l">
+            <div class="johannes-site-branding">
+    <span class="site-title h1 "><a href="https://decoded.avast.io/" rel="home"><picture class="johannes-logo"><source media="(min-width: 1050px)" srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png"><source srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png"><img src="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png" alt="Avast Threat Labs"></picture></a></span></div>        </div>
+        <div class="slot-r">
+            		<div class="back-link back-link-loc-left">
+		    <a href="https://avast.io/">
+			<span>More on Avast Inside Out</span>
+		    </a>
+	            <i class="cu-double-top"></i>
+		</div>
+            	        <div class="mobile-search">
+				<a href="/?s="><i class="cu-search"></i></a>
+			</div>
+			<ul class="johannes-menu-action johannes-hamburger">
+	<li><a href="javascript:void(0);"><span class="header-el-label">Menu</span><i class="jf jf-menu"></i></a></li>
+</ul>
+        </div>
+    </div>
+</div>
+
+		    
+	    
+
+            <div class="johannes-section category-pill johannes-cover johannes-bg-alt-2 johannes-section-margin-alt size-johannes-single-3">
+    
+                <div class="section-bg">
+            <img width="1920" height="500" src="https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/vincent-chin-KRVmB7wraZ4-unsplash-1920x500.png" class="attachment-johannes-single-3 size-johannes-single-3 wp-post-image" alt="">                        </div>
+        
+    <div class="container">
+        <div class="section-head johannes-content-alt section-head-alt">
+                                      <h1 class="entry-title">Zloader 2: The Silent Night</h1>                            <div class="entry-meta">
+                    <span class="meta-item meta-author"><span class="vcard author">by <a href="https://decoded.avast.io/author/vladimirmartyanov/">Vladimir Martyanov</a></span></span><span class="meta-item meta-date"><span class="updated">April 14, 2022</span></span><span class="meta-item meta-rtime">13 min read</span>                </div>
+                    </div>
+    </div>
+</div>
+
+
+<div class="johannes-section">
+    <div class="container">
+        <div class="section-content row justify-content-center">
+            
+            
+            <div class="col-12 col-lg-8 single-md-content col-md-special johannes-order-1 ">
+                 
+                <article id="post-5735" class="post-5735 post type-post status-publish format-standard has-post-thumbnail hentry category-pc tag-analysis tag-botnet tag-malware tag-reversing tag-takedown">
+
+                    
+                    
+                    
+                    <div class="entry-content entry-single clearfix">
+                        
+<p>In this study we are considering one of <em>Zeus</em> successors – <em>Zloader 2</em>. We’ll show how it works and its code peculiarities. We’ll present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families.</p>
+
+
+
+<h2>Introduction</h2>
+
+
+
+<p><em>Zloader 2</em> (also known as <em>Silent Night</em>) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions it’s able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.</p>
+
+
+
+<h2>History</h2>
+
+
+
+<p>According to <a href="https://zeusmuseum.com/zeus%201/" target="_blank" rel="noreferrer noopener">ZeusMuseum</a>, first versions of <em>Zeus</em> were observed in 2006-2008. Later, in 2011 its source code <a href="https://threatpost.com/zeus-source-code-leaked-051011/75217/" target="_blank" rel="noreferrer noopener">leaked</a>. As a result, new versions and variants appeared. One of the <em>Zeus</em> successors named <em>Zloader</em> <a href="https://blog.malwarebytes.com/cybercrime/2017/01/zbot-with-legitimate-applications-on-board/" target="_blank" rel="noreferrer noopener">appeared</a> at the turn of 2016 and 2017. Finally, another successor named <em>Silent Night</em> <a href="https://blog.malwarebytes.com/threat-analysis/2020/05/the-silent-night-zloader-zbot/" target="_blank" rel="noreferrer noopener">appeared</a> in 2019. It was for sale on the underground market. </p>
+
+
+
+<p>The earliest version of this variant we found has a SHA256:<br><code>384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a</code><br>Timestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted.</p>
+
+
+
+<p>Microsoft recently <a href="https://blogs.microsoft.com/on-the-issues/2022/04/13/zloader-botnet-disrupted-malware-ukraine/">announced</a> a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the <em>Zloader</em> botnet and took the whole case to court.</p>
+
+
+
+<p>Although the original name of the malware likely was <em>Silent Night</em> and the <a href="https://zeusmuseum.com/zloader%202/" target="_blank" rel="noreferrer noopener">ZeusMuseum</a> calls it <em>Zloader 2</em> we are simply going to use the name <em>Zloader</em>.</p>
+
+
+
+<h2>Technical analysis</h2>
+
+
+
+<h3>Modules and components</h3>
+
+
+
+<p>Zloader consists of different modules and components:</p>
+
+
+
+<ul><li><strong>Downloader</strong> – initial infector</li><li><strong>Backdoor</strong> – main module, exists in x86 and x64 versions</li><li><strong>VNC module</strong> (x86 and x64)</li><li><strong>Web Injects</strong> – received from C&amp;C</li><li>Additional libraries (<strong>openssl</strong>, <strong>sqlite</strong>, <strong>zlib</strong>, Mozilla libraries)</li></ul>
+
+
+
+<p>Backdoors, VNC modules and additional libraries have assigned module IDs that are used by other components to refer to them.</p>
+
+
+
+<h3>Distribution</h3>
+
+
+
+<p><em>Zloader</em> was distributed using classic email spam. In 2021 the attackers abused <em>Google AdWords</em> to advertise sites with fake <em>Zoom</em> communication tool which actually installed <em>Zloader</em>. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature.</p>
+
+
+
+<p>Map showing the distribution of infected systems:</p>
+
+
+
+<p class="has-text-align-center"><img loading="lazy" width="624" height="389" src="https://lh6.googleusercontent.com/ZmMYYUJfjI2rdiRWIRRvPDsaecgIezMrlYIA8BAYAjlcPVJenIp7lbvrmEpN_XtJs4NRcT19doiFw9__EqI5ZBEPXkQSQUfRKHS69lh2muuBOU-s536GyrlNd74KEyeAh-21EFu7"></p>
+
+
+
+<h3>Code peculiarities</h3>
+
+
+
+<p>Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called.</p>
+
+
+
+<p>Second, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other “replacement” functions. To add more insult to the injury multiple “replacement” functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned “replacement” functions. </p>
+
+
+
+<p>Strings are encrypted with a simple XOR algorithm.</p>
+
+
+
+<p>Samples have very little imported functions. APIs are resolved in runtime by the hashes of their names.</p>
+
+
+
+<p>As a result, more than a half of the file size is useless and serves as an obfuscation of simple operations.</p>
+
+
+
+<p></p>
+
+
+
+<p class="has-text-align-center"><img loading="lazy" src="https://lh6.googleusercontent.com/I0WQosnGRXyP_gEuuGswjk_VglMMG0ypH-tgkzHAjZMo8d_E01Xv1fWvAd-KCPIw0R3cwyAfgy2PvRCI6FM5ZwG0Kd52lV5Wc6krjcqV8aeI_a0-jje8CI9Ns2L_00UP9xl47EoW" width="624" height="528"></p>
+
+
+
+<h3>Configuration</h3>
+
+
+
+<p>Both <strong>Downloader</strong> and <strong>Backdoor </strong>modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like <code>vcvslrpvwwfanquofupxt</code>. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:</p>
+
+
+
+<ul><li>Botnet name (<code>divader</code> on the picture below)</li><li>Campaign name (<code>xls_s_2010</code>)</li><li>List of hardcoded C&amp;Cs</li><li>RC4 key (<code>03d5ae30a0bd934a23b6a7f0756aa504</code>)</li></ul>
+
+
+
+<p></p>
+
+
+
+<p class="has-text-align-center"><img loading="lazy" src="https://lh4.googleusercontent.com/md7sG8nyfvIkMyTJMfr5EBH1oOxnHKbLb5kCic-vkhKCC9cLTlDFTjBwpRjnJ3a1vrq5yoZc_61byCVL9bzk-0z9T0tFJmhDo8-EPTT5DLyzxBM0L4B7W2_Z7HV2Jbv_azoeblT3" width="624" height="881"></p>
+
+
+
+<h3>BinStorage</h3>
+
+
+
+<p>We have to briefly cover the <em>BinStorage</em> – the data format used by <em>Zloader</em> to communicate with C&amp;Cs and to store various data: web injects, system information, stolen data and logs. <em>BinStorages</em> consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing <code>FieldID - DWORD</code> describing the meaning of the data.</p>
+
+
+
+<p>Some FieldIDs are hardcoded. For example, in <code>FieldID=0x4E20</code> the last working C&amp;C is stored. Other FieldIDs are derived from file paths (used to store stolen files).</p>
+
+
+
+<h3>Registry usage</h3>
+
+
+
+<p>Zloader modules (at least Downloaders and Backdoors) use a registry to store various data necessary for their work. The ROOT_KEY for this data is <code>HKEY_CURRENT_USER\Software\Microsoft\</code></p>
+
+
+
+<p>The most important and interesting data structure, stored by the Zloader in the registry is called <code>MAIN_STRUCT</code>. It’s subkey in the <code>ROOT_KEY</code> and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the <code>MAIN_STRUCT</code>.</p>
+
+
+
+<p><code>MAIN_STRUCT</code> is encrypted using RC4 with the key from the configuration. It stores:</p>
+
+
+
+<ul><li>Registry paths to other storages, used by Zloader</li><li>Files and directories path, used by Zloader</li><li>Encryption key(s) to decrypt those storages</li></ul>
+
+
+
+<h3>Files usage</h3>
+
+
+
+<p>Root path is <code>%APPDATA%</code>. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the <code>MAIN_STRUCT</code>.</p>
+
+
+
+<h3>Networking</h3>
+
+
+
+<p>As was mentioned before, communication between the bot and C&amp;C is done using BinStorages. Depending on the actual type of the message, field list may be changed, but there are 5 constant fields sent to C&amp;C:</p>
+
+
+
+<ul><li>Some DWORD from the Configuration</li><li>Botnet name from the Configuration</li><li>BotID, derived from the system information</li><li>Debug flag from the Configuration</li><li>16 random bytes</li></ul>
+
+
+
+<p>Requests are encrypted using the RC4 key from the Configuration. C&amp;C responses are signed with RSA.</p>
+
+
+
+<h4>PING request</h4>
+
+
+
+<p>This request is used to check if C&amp;C is alive. Response contains only random bytes sent by a bot.</p>
+
+
+
+<h4>DOWNLOAD MODULE request</h4>
+
+
+
+<p>This request is used to download modules by their ID from the C&amp;C. The response is not in a BinStorage form!</p>
+
+
+
+<h4>GET CONFIG request</h4>
+
+
+
+<p>Used to receive configuration updates: new C&amp;Cs, WebInjects, tasks for downloading etc.</p>
+
+
+
+<h4>C&amp;Cs and DGA</h4>
+
+
+
+<p>As was shown before, built in configuration has a list of hardcoded C&amp;Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&amp;Cs, Zloader uses DGA – Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration.</p>
+
+
+
+<p>There is a 3rd type of C&amp;Cs – received in the response from the server. They’re stored into the Registry.</p>
+
+
+
+<h3>Downloader module</h3>
+
+
+
+<p>Analysis based on version 1.6.28.0, <code>44ede6e1b9be1c013f13d82645f7a9cff7d92b267778f19b46aa5c1f7fa3c10b</code></p>
+
+
+
+<p>Function of Downloader is to download, install and run the next module – the Backdoor.</p>
+
+
+
+<h4>Main function</h4>
+
+
+
+<p>Just after the start of the Downloader module, junk code is started. It consists of many junk functions, which forms a kind of a “network”. In the image below there is a call graph from just a single junk function. These functions also trying to read, write and delete some <code>*.txt</code> files <code>%TEMP%</code>. The purpose of this is to delay the execution of the payload and, We suppose, to complicate the emulation, debugging and analysis.</p>
+
+
+
+<p>The second and the last task of the Main function is to start <code>msiexec.exe</code> and perform the PE injection of the code into it. Injected data consists of two buffers: the big one, where the Downloader is stored in the encrypted form and the small one (0x42 bytes) with decryption code. Just after the injection Downloader terminates himself.</p>
+
+
+
+<h4>Injected code</h4>
+
+
+
+<p>Control flow passed to the small buffer, which decrypts the Downloader in the address space of msiexec.exe After the decryption, Downloader begins to execute its main task.&nbsp;</p>
+
+
+
+<p>First of all, the injected code tries to read <code>MAIN_STRUCT</code> from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: <code>MAIN_STRUCT</code> is created, Downloader module is copied into <code>%APPDATA%</code> and added to the autorun key <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> with random value name.</p>
+
+
+
+<p>In any case, the Backdoor module is requested from the disk or from the network and executed.</p>
+
+
+
+<h3>Backdoor module</h3>
+
+
+
+<p>Analysis based on version 1.6.28.0, <code>c7441a27727069ce11f8d54676f8397e85301b4d65d4d722c6b239a495fd0282</code></p>
+
+
+
+<p>There are actually two Backdoor modules: for 32-bit systems (moduleID <code>0x3EE</code>) and for 64-bit systems (moduleID <code>0x3E9</code>). Downloader always requests a 32-bit Backdoor.</p>
+
+
+
+<p>Backdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger.</p>
+
+
+
+<p>Key Backdoor abilities:</p>
+
+
+
+<ul><li>Starting VNC module</li><li>Injecting WebInjects into the pages visited using browsers</li><li>Downloading and execute arbitrary file</li><li>Keylogging</li><li>Making screenshots</li><li>Stealing files and sending to C&amp;C</li></ul>
+
+
+
+<h4>Stealing files</h4>
+
+
+
+<p>The largest group of software from which Zloader steal files is crypto wallets:</p>
+
+
+
+<ul><li>Electrum</li><li>Ethereum</li><li>Exodus cryptowallet</li><li>Zcash</li><li>Bitcoin-Qt</li><li>Etc.</li></ul>
+
+
+
+<p>It also steals data from browsers: cookies from Chrome, Firefox and IE; saved logins from Chrome. And, finally, it is able to steal accounts information from Microsoft Outlook.</p>
+
+
+
+<h4>Hooking</h4>
+
+
+
+<p>To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:</p>
+
+
+
+<ul><li>explorer.exe</li><li>msiexec.exe</li><li>iexplore.exe</li><li>firefox.exe</li><li>chrome.exe</li><li>msedge.exe</li></ul>
+
+
+
+<p>64-bit version of Backdoor is injected into 64-bit processes, 32-bit version – into 32-bit processes.</p>
+
+
+
+<p>Injected code hooks the following WinAPI functions:</p>
+
+
+
+<ul><li>NtCreateUserProcess</li><li>NtCreateThread</li><li>ZwDeviceIoControlFile</li><li>TranslateMessage</li><li>CertGetCertificateChain</li><li>CertVerifyCertificateChainPolicy</li></ul>
+
+
+
+<p>Hooks might be divided in 3 groups, depending on the purpose:</p>
+
+
+
+<ol><li><code>NtCreateUserProcess</code> and <code>NtCreateThread</code> are hooked to inject a Backdoor module to newly created threads and processes.</li><li><code>ZwDeviceIoControlFile</code>, <code>CertGetCertificateChain</code> and <code>CertVerifyCertificateChainPolicy</code> are hooked to support WebInjection mechanism</li><li><code>TranslateMessage</code> is hooked to log the keys pressed and to create screenshots</li></ol>
+
+
+
+<h4>Web Injecting</h4>
+
+
+
+<p>First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is “Main Instance” and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks <code>ZwDeviceIoControlFile</code> and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.</p>
+
+
+
+<p>Hooked ZwDeviceIoControlFile function is waiting for <code>IOCTL_AFD_CONNECT</code> or <code>IOCTL_AFD_SUPER_CONNECT</code> and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates.</p>
+
+
+
+<h2>Botnets, Campaigns and their activity</h2>
+
+
+
+<p>Most active botnets and campaigns use RC4 key <code>03d5ae30a0bd934a23b6a7f0756aa504</code> and we’ll focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x.</p>
+
+
+
+<h3>Botnet and Campaign names</h3>
+
+
+
+<p>Among botnet names it is worth mentioning the following groups:</p>
+
+
+
+<ol><li><code>DLLobnova</code>, <code>AktualizacjaDLL</code>, <code>googleaktualizacija</code>, <code>googleaktualizacija1</code>, <code>obnovlenie19</code>, <code>vasja</code>, <code>ivan</code></li><li><code>9092zi</code>, <code>9092ti</code>, <code>9092ca</code>, <code>9092us</code>, <code>909222</code>, <code>9092ge</code></li></ol>
+
+
+
+<p>The first one contains transliterated Slavic words and names (<code>vasja</code>, <code>ivan</code>), maybe with errors. It sheds light on the origins of bad guys – they are definitely Slavs.</p>
+
+
+
+<p>Samples with botnet names from the second group were first observed in November 2021 and we found 6 botnet names from this group in the next two months. Letters after numbers, like <code>ca</code> and <code>us</code> might be country codes.</p>
+
+
+
+<p>We see the same picture with campaign names: quite a big amount of Slavic words and the same <code>9092*</code> group.&nbsp;</p>
+
+
+
+<h3>WebInjects</h3>
+
+
+
+<p>We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc.</p>
+
+
+
+<p>Injected code is usually small: from dozens of bytes up to 20 kb. To perform its tasks, it loads JavaScript code from external domains, controlled by bad guys. Analysis of these domains allowed us to find connections between Zloader operators and other cybercrime gangs.</p>
+
+
+
+<h3>Download tasks</h3>
+
+
+
+<p>Zloader is able to download and execute arbitrary files by the commands from his C&amp;Cs, but for a long time we haven’t seen these commands at all. Things changed on 24 November 2021, when botnet <code>9092ca</code> received a command to download and execute the file from <code>teamworks455[.]com</code>. This domain was mentioned in [6].</p>
+
+
+
+<p>Another two download tasks contained <code>braves[.]fun</code> and <code>endoftheendi[.]com</code></p>
+
+
+
+<h2>Connections</h2>
+
+
+
+<p>During our tracking we have noticed links to other malware families we originally thought were unrelated.</p>
+
+
+
+<h3>Raccoon Stealer</h3>
+
+
+
+<p>Two out of three download tasks contained links to Raccoon Stealer. Downloaded samples have the following sha256 hashes:</p>
+
+
+
+<ul><li><code>5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc</code></li><li><code>5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed</code></li></ul>
+
+
+
+<p>Both of them have the same Raccoon configuration with Telegram channel <code>kumchakl1</code>. </p>
+
+
+
+<p>Moreover, Raccoon was mentioned in [6] before we received commands from C&amp;Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer <a href="https://decoded.avast.io/vladimirmartyanov/raccoon-stealer-trash-panda-abuses-telegram/" target="_blank" rel="noreferrer noopener">here</a>.</p>
+
+
+
+<h3>Ursnif</h3>
+
+
+
+<p>Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions.</p>
+
+
+
+<h4>Digital Signatures</h4>
+
+
+
+<p>It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!</p>
+
+
+
+<p>As an example, consider a signature:<br>Issuer <code>BABJNCXZHQCJUVWAJJ</code> <br>Thumbprint <code>46C79BD6482E287647B1D6700176A5F6F5AC6D57</code>.</p>
+
+
+
+<p>Zloader sample signed with it has a SHA256 hash:<br><code>2a9ff0a0e962d28c488af9767770d48b9128b19ee43e8df392efb2f1c5a696f</code>. </p>
+
+
+
+<p>Signed Ursnif sample has a SHA256 hash:<br><code>54e6e6b23dec0432da2b36713a206169468f4f9d7691ccf449d7d946617eca45</code></p>
+
+
+
+<p>It is not the only digital signature, shared among Ursnif and Zloader samples.</p>
+
+
+
+<h4>Infrastructure</h4>
+
+
+
+<p>As we mentioned before, the first observed download command contained a link to <code>teamworks455[.]com</code>. We checked the TLS certificate for this site and realized that it was for another site – <code>dotxvcnjlvdajkwerwoh[.]com</code>. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data.</p>
+
+
+
+<p>Another example – <code>aerulonoured[.]su</code> – host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021.</p>
+
+
+
+<p>Third example – <code>qyfurihpsbhbuvitilgw[.]com</code> which was found in Zeus configuration update, received from C&amp;C on 20 October 2021. It must be added to a C&amp;C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021</p>
+
+
+
+<p>And, finally, 4th example – <code>etjmejjcxjtwweitluuw[.]com</code> This domain was generated using DGA from key <code>03d5ae30a0bd934a23b6a7f0756aa504</code> and date – 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&amp;C. The same host was found in Ursnif WebInjects on 1 November 2021</p>
+
+
+
+<h2>Conclusion</h2>
+
+
+
+<p>We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the <em>Zloader</em> botnet and prosecution of people who created and operated it.</p>
+
+
+
+<p></p>
+                                            </div>
+
+                </article>
+
+                                    <div class="entry-tags clearfix">
+                        <span>Tagged as</span><a href="https://decoded.avast.io/tag/analysis/" rel="tag">analysis</a>, <a href="https://decoded.avast.io/tag/botnet/" rel="tag">botnet</a>, <a href="https://decoded.avast.io/tag/malware/" rel="tag">malware</a>, <a href="https://decoded.avast.io/tag/reversing/" rel="tag">reversing</a>, <a href="https://decoded.avast.io/tag/takedown/" rel="tag">takedown</a>                    </div>
+                
+                                     
+		<div class="meks_ess no-labels"><span class="johannes-share-label">Share:</span><a href="#" onclick="return false;" class="meks_ess-item socicon-twitter" data-url="http://twitter.com/intent/tweet?url=https%3A%2F%2Fdecoded.avast.io%2Fvladimirmartyanov%2Fzloader-the-silent-night%2F&amp;text=Zloader%202%3A%20The%20Silent%20Night"><span>Twitter</span></a><a href="#" onclick="return false;" class="meks_ess-item socicon-facebook" data-url="http://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fdecoded.avast.io%2Fvladimirmartyanov%2Fzloader-the-silent-night%2F&amp;t=Zloader%202%3A%20The%20Silent%20Night"><span>Facebook</span></a></div>                
+                               
+		        
+
+            </div>
+
+            
+        </div>
+    </div>
+</div>
+
+        <div class="johannes-section johannes-related section-margin johannes-bg-alt-2">
+        <div class="container">
+            <div class="section-head">
+                <h5 class="section-title h2">Further reading</h5>
+            </div>
+            <div class="section-content row justify-content-center">
+                <div class="col-12 ">
+                    <div class="row johannes-items johannes-posts">
+                                                                        <div class="col-12 col-md-6">
+                            
+<article class="johannes-post johannes-layout-c category-pill post-5657 post type-post status-publish format-standard has-post-thumbnail hentry category-pc tag-analysis tag-backdoor tag-malware tag-tds tag-webshell">
+    	    <div class="entry-media">
+	        <a href="https://decoded.avast.io/janrubin/parrot-tds-takes-over-web-servers-and-threatens-millions/"><img width="540" height="304" src="https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/parrot_5-540x304.jpg" class="attachment-johannes-c size-johannes-c wp-post-image" alt="" loading="lazy" srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/parrot_5-540x304.jpg 540w, https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/parrot_5-344x194.jpg 344w, https://decoded.avast.io/wp-content/uploads/sites/2/2022/04/parrot_5-1128x635.jpg 1128w" sizes="(max-width: 540px) 100vw, 540px"></a>
+	    </div>
+        <div class="entry-header">
+    	        	        <div class="entry-category">
+	            <a href="https://decoded.avast.io/category/pc/" rel="tag" class="cat-item cat-21">PC</a>	        </div>
+                <h2 class="entry-title h3"><a href="https://decoded.avast.io/janrubin/parrot-tds-takes-over-web-servers-and-threatens-millions/">Parrot TDS takes over web servers and threatens millions</a></h2>        	        <div class="entry-meta">
+	            <span class="meta-item meta-rtime">11 min read</span>	        </div>
+            </div>
+    	    <div class="entry-content">
+	        <p>Parrot TDS is a new Traffic Direction System that is using tens of thousands of compromised websites. The TDS provides bad actors access to carry out malicious activity via the infected sites.</p>
+	    </div>
+        </article>                        </div>
+                                                                        <div class="col-12 col-md-6">
+                            
+<article class="johannes-post johannes-layout-c category-pill post-5626 post type-post status-publish format-standard has-post-thumbnail hentry category-network category-pc tag-analysis tag-backdoor tag-malware tag-rat">
+    	    <div class="entry-media">
+	        <a href="https://decoded.avast.io/threatintel/avast-finds-compromised-philippine-navy-certificate-used-in-remote-access-tool/"><img width="540" height="304" src="https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/GettyImages-984824408_edited-540x304.jpg" class="attachment-johannes-c size-johannes-c wp-post-image" alt="" loading="lazy" srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/GettyImages-984824408_edited-540x304.jpg 540w, https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/GettyImages-984824408_edited-344x194.jpg 344w, https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/GettyImages-984824408_edited-1128x635.jpg 1128w" sizes="(max-width: 540px) 100vw, 540px"></a>
+	    </div>
+        <div class="entry-header">
+    	        	        <div class="entry-category">
+	            <a href="https://decoded.avast.io/category/network/" rel="tag" class="cat-item cat-20">Network</a><a href="https://decoded.avast.io/category/pc/" rel="tag" class="cat-item cat-21">PC</a>	        </div>
+                <h2 class="entry-title h3"><a href="https://decoded.avast.io/threatintel/avast-finds-compromised-philippine-navy-certificate-used-in-remote-access-tool/">Avast Finds Compromised Philippine Navy Certificate Used in Remote Access Tool</a></h2>        	        <div class="entry-meta">
+	            <span class="meta-item meta-rtime">4 min read</span>	        </div>
+            </div>
+    	    <div class="entry-content">
+	        <p>Avast Threat Intelligence Team has found a remote access tool (RAT) actively being used in the wild in the Philippines that uses what appears to be a compromised digital certificate belonging to the Philippine Navy.</p>
+	    </div>
+        </article>                        </div>
+                                            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    
+    
+    <footer id="johannes-footer" class="johannes-footer">
+        <div class="container">
+
+                            <div class="footer-divider"></div>
+                
+	<div class="row johannes-footer-widgets justify-content-center">
+	    	        	    	        	    	        	    	        	    	</div>
+            
+                            <div class="johannes-copyright">
+                    <p>2022 Copyright © Avast Software s.r.o.</p>
+                </div>
+                    </div>
+    </footer>
+
+    
+
+</div>
+
+
+    <a href="javascript:void(0)" id="johannes-goto-top" class="johannes-goto-top"><i class="jf jf-chevron-up"></i></a>
+
+<div class="johannes-action-overlay">
+
+</div><div class="johannes-sidebar johannes-sidebar-hidden">
+
+	<div class="johannes-sidebar-branding">
+	    <span class="site-title h1 "><a href="https://decoded.avast.io/" rel="home"><picture class="johannes-logo"><source media="(min-width: 1050px)" srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png"><source srcset="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png"><img src="https://decoded.avast.io/wp-content/uploads/sites/2/2019/06/Asset-22ldpi.png" alt="Avast Threat Labs"></picture></a></span>	    <span class="johannes-action-close"><i class="jf jf-close" aria-hidden="true"></i></span>
+	</div>	
+
+		<div class="johannes-menu-mobile widget d-md-block d-lg-none">
+		<div class="widget-inside johannes-bg-alt-2">
+		<h4 class="widget-title">Menu</h4>
+			    <nav class="menu-main-menu-container"><ul id="menu-main-menu-1" class="johannes-menu johannes-menu-primary"><li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-367"><a href="https://decoded.avast.io/category/mobile/">Mobile</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-368"><a href="https://decoded.avast.io/category/network/">Network</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent menu-item-369"><a href="https://decoded.avast.io/category/pc/">PC</a></li>
+<li class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-370"><a href="https://decoded.avast.io/category/iot/">IoT</a></li>
+<li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-371"><a href="https://www.avast.com/en-us/careers">Careers</a></li>
+</ul></nav>			                                    <form class="avast-search" action="https://decoded.avast.io/" method="get">
+	<input name="s" type="test" value="" placeholder="Type here to search...">
+	<button type="submit"><i class="cu-search"></i></button>
+</form>                            		</div>
+	</div>
+
+		    <div id="categories-2" class="widget widget_categories"><div class="widget-inside johannes-bg-alt-2"><h4 class="widget-title">Categories</h4>
+			<ul>
+					<li class="cat-item cat-item-32"><a href="https://decoded.avast.io/category/events/">Events</a>
+</li>
+	<li class="cat-item cat-item-23"><a href="https://decoded.avast.io/category/iot/" title="Threats targetting the Internet of things devices">IoT</a>
+</li>
+	<li class="cat-item cat-item-22"><a href="https://decoded.avast.io/category/mobile/" title="Threats targetting mobile phones">Mobile</a>
+</li>
+	<li class="cat-item cat-item-20"><a href="https://decoded.avast.io/category/network/" title="Platform agnostic threats like social engineering, phishing, fake stores..">Network</a>
+</li>
+	<li class="cat-item cat-item-21"><a href="https://decoded.avast.io/category/pc/" title="Threats targetting PCs and Macs">PC</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="https://decoded.avast.io/category/uncategorized/">Uncategorized</a>
+</li>
+			</ul>
+
+			</div></div><div id="tag_cloud-2" class="widget widget_tag_cloud"><div class="widget-inside johannes-bg-alt-2"><h4 class="widget-title">Tags</h4><div class="tagcloud"><a href="https://decoded.avast.io/tag/analysis/" class="tag-cloud-link tag-link-5 tag-link-position-1" style="font-size: 21.466666666667pt;" aria-label="analysis (30 items)">analysis</a>
+<a href="https://decoded.avast.io/tag/android/" class="tag-cloud-link tag-link-6 tag-link-position-2" style="font-size: 12.933333333333pt;" aria-label="Android (6 items)">Android</a>
+<a href="https://decoded.avast.io/tag/apt/" class="tag-cloud-link tag-link-63 tag-link-position-3" style="font-size: 10.933333333333pt;" aria-label="APT (4 items)">APT</a>
+<a href="https://decoded.avast.io/tag/backdoor/" class="tag-cloud-link tag-link-65 tag-link-position-4" style="font-size: 14.933333333333pt;" aria-label="backdoor (9 items)">backdoor</a>
+<a href="https://decoded.avast.io/tag/brazil/" class="tag-cloud-link tag-link-38 tag-link-position-5" style="font-size: 8pt;" aria-label="brazil (2 items)">brazil</a>
+<a href="https://decoded.avast.io/tag/cobalt-strike/" class="tag-cloud-link tag-link-120 tag-link-position-6" style="font-size: 8pt;" aria-label="cobalt strike (2 items)">cobalt strike</a>
+<a href="https://decoded.avast.io/tag/crypter/" class="tag-cloud-link tag-link-79 tag-link-position-7" style="font-size: 8pt;" aria-label="crypter (2 items)">crypter</a>
+<a href="https://decoded.avast.io/tag/cryptocurrency/" class="tag-cloud-link tag-link-105 tag-link-position-8" style="font-size: 9.6pt;" aria-label="cryptocurrency (3 items)">cryptocurrency</a>
+<a href="https://decoded.avast.io/tag/cryptomining/" class="tag-cloud-link tag-link-9 tag-link-position-9" style="font-size: 14.266666666667pt;" aria-label="cryptomining (8 items)">cryptomining</a>
+<a href="https://decoded.avast.io/tag/csrf/" class="tag-cloud-link tag-link-26 tag-link-position-10" style="font-size: 9.6pt;" aria-label="csrf (3 items)">csrf</a>
+<a href="https://decoded.avast.io/tag/cve/" class="tag-cloud-link tag-link-73 tag-link-position-11" style="font-size: 8pt;" aria-label="cve (2 items)">cve</a>
+<a href="https://decoded.avast.io/tag/decryptors/" class="tag-cloud-link tag-link-134 tag-link-position-12" style="font-size: 10.933333333333pt;" aria-label="decryptors (4 items)">decryptors</a>
+<a href="https://decoded.avast.io/tag/desktop/" class="tag-cloud-link tag-link-139 tag-link-position-13" style="font-size: 9.6pt;" aria-label="desktop (3 items)">desktop</a>
+<a href="https://decoded.avast.io/tag/dirtymoe/" class="tag-cloud-link tag-link-117 tag-link-position-14" style="font-size: 12pt;" aria-label="DirtyMoe (5 items)">DirtyMoe</a>
+<a href="https://decoded.avast.io/tag/dns-hijack/" class="tag-cloud-link tag-link-27 tag-link-position-15" style="font-size: 9.6pt;" aria-label="dns hijack (3 items)">dns hijack</a>
+<a href="https://decoded.avast.io/tag/exploit/" class="tag-cloud-link tag-link-28 tag-link-position-16" style="font-size: 10.933333333333pt;" aria-label="exploit (4 items)">exploit</a>
+<a href="https://decoded.avast.io/tag/exploit-kit/" class="tag-cloud-link tag-link-121 tag-link-position-17" style="font-size: 8pt;" aria-label="exploit kit (2 items)">exploit kit</a>
+<a href="https://decoded.avast.io/tag/fake-app/" class="tag-cloud-link tag-link-7 tag-link-position-18" style="font-size: 8pt;" aria-label="fake-app (2 items)">fake-app</a>
+<a href="https://decoded.avast.io/tag/ghostdns/" class="tag-cloud-link tag-link-29 tag-link-position-19" style="font-size: 9.6pt;" aria-label="ghostdns (3 items)">ghostdns</a>
+<a href="https://decoded.avast.io/tag/google-play-store/" class="tag-cloud-link tag-link-40 tag-link-position-20" style="font-size: 8pt;" aria-label="Google Play Store (2 items)">Google Play Store</a>
+<a href="https://decoded.avast.io/tag/hidding/" class="tag-cloud-link tag-link-111 tag-link-position-21" style="font-size: 8pt;" aria-label="hidding (2 items)">hidding</a>
+<a href="https://decoded.avast.io/tag/hw/" class="tag-cloud-link tag-link-53 tag-link-position-22" style="font-size: 8pt;" aria-label="HW (2 items)">HW</a>
+<a href="https://decoded.avast.io/tag/iot/" class="tag-cloud-link tag-link-13 tag-link-position-23" style="font-size: 14.266666666667pt;" aria-label="iot (8 items)">iot</a>
+<a href="https://decoded.avast.io/tag/magnitude/" class="tag-cloud-link tag-link-122 tag-link-position-24" style="font-size: 8pt;" aria-label="Magnitude (2 items)">Magnitude</a>
+<a href="https://decoded.avast.io/tag/malware/" class="tag-cloud-link tag-link-37 tag-link-position-25" style="font-size: 22pt;" aria-label="malware (33 items)">malware</a>
+<a href="https://decoded.avast.io/tag/misconfiguration/" class="tag-cloud-link tag-link-112 tag-link-position-26" style="font-size: 8pt;" aria-label="misconfiguration (2 items)">misconfiguration</a>
+<a href="https://decoded.avast.io/tag/mobile/" class="tag-cloud-link tag-link-8 tag-link-position-27" style="font-size: 14.933333333333pt;" aria-label="mobile (9 items)">mobile</a>
+<a href="https://decoded.avast.io/tag/obfuscation/" class="tag-cloud-link tag-link-57 tag-link-position-28" style="font-size: 12pt;" aria-label="obfuscation (5 items)">obfuscation</a>
+<a href="https://decoded.avast.io/tag/p-code/" class="tag-cloud-link tag-link-110 tag-link-position-29" style="font-size: 12pt;" aria-label="P-Code (5 items)">P-Code</a>
+<a href="https://decoded.avast.io/tag/passwords/" class="tag-cloud-link tag-link-94 tag-link-position-30" style="font-size: 8pt;" aria-label="passwords (2 items)">passwords</a>
+<a href="https://decoded.avast.io/tag/phishing/" class="tag-cloud-link tag-link-31 tag-link-position-31" style="font-size: 10.933333333333pt;" aria-label="phishing (4 items)">phishing</a>
+<a href="https://decoded.avast.io/tag/ransomware/" class="tag-cloud-link tag-link-47 tag-link-position-32" style="font-size: 12.933333333333pt;" aria-label="ransomware (6 items)">ransomware</a>
+<a href="https://decoded.avast.io/tag/rat/" class="tag-cloud-link tag-link-34 tag-link-position-33" style="font-size: 9.6pt;" aria-label="rat (3 items)">rat</a>
+<a href="https://decoded.avast.io/tag/research/" class="tag-cloud-link tag-link-109 tag-link-position-34" style="font-size: 12pt;" aria-label="Research (5 items)">Research</a>
+<a href="https://decoded.avast.io/tag/reversing/" class="tag-cloud-link tag-link-45 tag-link-position-35" style="font-size: 18pt;" aria-label="reversing (16 items)">reversing</a>
+<a href="https://decoded.avast.io/tag/rootkit/" class="tag-cloud-link tag-link-126 tag-link-position-36" style="font-size: 8pt;" aria-label="Rootkit (2 items)">Rootkit</a>
+<a href="https://decoded.avast.io/tag/router/" class="tag-cloud-link tag-link-25 tag-link-position-37" style="font-size: 9.6pt;" aria-label="router (3 items)">router</a>
+<a href="https://decoded.avast.io/tag/security/" class="tag-cloud-link tag-link-54 tag-link-position-38" style="font-size: 9.6pt;" aria-label="security (3 items)">security</a>
+<a href="https://decoded.avast.io/tag/series/" class="tag-cloud-link tag-link-113 tag-link-position-39" style="font-size: 17.333333333333pt;" aria-label="series (14 items)">series</a>
+<a href="https://decoded.avast.io/tag/stealer/" class="tag-cloud-link tag-link-36 tag-link-position-40" style="font-size: 13.6pt;" aria-label="stealer (7 items)">stealer</a>
+<a href="https://decoded.avast.io/tag/takedown/" class="tag-cloud-link tag-link-50 tag-link-position-41" style="font-size: 8pt;" aria-label="takedown (2 items)">takedown</a>
+<a href="https://decoded.avast.io/tag/threat-intel/" class="tag-cloud-link tag-link-11 tag-link-position-42" style="font-size: 8pt;" aria-label="threat-intel (2 items)">threat-intel</a>
+<a href="https://decoded.avast.io/tag/vb/" class="tag-cloud-link tag-link-108 tag-link-position-43" style="font-size: 12pt;" aria-label="VB (5 items)">VB</a>
+<a href="https://decoded.avast.io/tag/vulnerability/" class="tag-cloud-link tag-link-12 tag-link-position-44" style="font-size: 10.933333333333pt;" aria-label="vulnerability (4 items)">vulnerability</a>
+<a href="https://decoded.avast.io/tag/worm/" class="tag-cloud-link tag-link-49 tag-link-position-45" style="font-size: 8pt;" aria-label="worm (2 items)">worm</a></div>
+</div></div>
+		<div id="recent-posts-2" class="widget widget_recent_entries"><div class="widget-inside johannes-bg-alt-2">
+		<h4 class="widget-title">Recent Posts</h4>
+		<ul>
+											<li>
+					<a href="https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/" aria-current="page">Zloader 2: The Silent Night</a>
+									</li>
+											<li>
+					<a href="https://decoded.avast.io/janrubin/parrot-tds-takes-over-web-servers-and-threatens-millions/">Parrot TDS takes over web servers and threatens millions</a>
+									</li>
+											<li>
+					<a href="https://decoded.avast.io/threatintel/avast-finds-compromised-philippine-navy-certificate-used-in-remote-access-tool/">Avast Finds Compromised Philippine Navy Certificate Used in Remote Access Tool</a>
+									</li>
+											<li>
+					<a href="https://decoded.avast.io/luigicamastra/operation-dragon-castling-apt-group-targeting-betting-companies/">Operation Dragon Castling: APT group targeting betting companies</a>
+									</li>
+											<li>
+					<a href="https://decoded.avast.io/martinhron/meris-and-trickbot-standing-on-the-shoulders-of-giants/">Mēris and TrickBot standing on the shoulders of giants</a>
+									</li>
+					</ul>
+
+		</div></div><div id="archives-2" class="widget widget_archive"><div class="widget-inside johannes-bg-alt-2"><h4 class="widget-title">Archive</h4>
+			<ul>
+					<li><a href="https://decoded.avast.io/2022/04/">April 2022</a></li>
+	<li><a href="https://decoded.avast.io/2022/03/">March 2022</a></li>
+	<li><a href="https://decoded.avast.io/2022/02/">February 2022</a></li>
+	<li><a href="https://decoded.avast.io/2022/01/">January 2022</a></li>
+	<li><a href="https://decoded.avast.io/2021/12/">December 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/11/">November 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/10/">October 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/09/">September 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/08/">August 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/07/">July 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/06/">June 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/05/">May 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/04/">April 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/03/">March 2021</a></li>
+	<li><a href="https://decoded.avast.io/2021/02/">February 2021</a></li>
+	<li><a href="https://decoded.avast.io/2020/12/">December 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/11/">November 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/10/">October 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/09/">September 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/08/">August 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/06/">June 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/05/">May 2020</a></li>
+	<li><a href="https://decoded.avast.io/2020/04/">April 2020</a></li>
+	<li><a href="https://decoded.avast.io/2019/12/">December 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/09/">September 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/08/">August 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/07/">July 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/04/">April 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/03/">March 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/02/">February 2019</a></li>
+	<li><a href="https://decoded.avast.io/2019/01/">January 2019</a></li>
+	<li><a href="https://decoded.avast.io/2018/08/">August 2018</a></li>
+	<li><a href="https://decoded.avast.io/2018/01/">January 2018</a></li>
+	<li><a href="https://decoded.avast.io/2017/10/">October 2017</a></li>
+			</ul>
+
+			</div></div><div id="meta-2" class="widget widget_meta"><div class="widget-inside johannes-bg-alt-2"><h4 class="widget-title">Meta</h4>
+		<ul>
+						<li><a rel="nofollow" href="https://decoded.avast.io/wp-login.php">Log in</a></li>
+			<li><a href="https://decoded.avast.io/feed/">Entries feed</a></li>
+			<li><a href="https://decoded.avast.io/comments/feed/">Comments feed</a></li>
+
+			<li><a href="https://wordpress.org/">WordPress.org</a></li>
+		</ul>
+
+		</div></div>    
+</div>
+<script type="text/javascript" src="https://decoded.avast.io/wp-content/plugins/guest-author-name/assets/guest-author-post.js?ver=1.00" id="guest_author_post_scripts-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-includes/js/imagesloaded.min.js?ver=4.1.4" id="imagesloaded-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-includes/js/masonry.min.js?ver=4.2.2" id="masonry-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-includes/js/jquery/jquery.masonry.min.js?ver=3.1.2b" id="jquery-masonry-js"></script>
+<script type="text/javascript" id="johannes-main-js-extra">
+/* <![CDATA[ */
+var johannes_js_settings = {"rtl_mode":"","header_sticky":"","header_sticky_offset":"300","header_sticky_up":"","popup":"1","go_to_top":"1","grid":{"column":50,"gutter":{"xs":15,"sm":15,"md":30,"lg":30,"xl":48},"breakpoint":{"xs":0,"sm":374,"md":600,"lg":900,"xl":1128}}};
+/* ]]> */
+</script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-content/themes/johannes/assets/js/min.js?ver=1.1.3" id="johannes-main-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-content/plugins/meks-easy-social-share/assets/js/main.js?ver=1.2.7" id="meks_ess-main-js"></script>
+<script type="text/javascript" src="https://decoded.avast.io/wp-content/plugins/page-links-to/dist/new-tab.js?ver=3.3.6" id="page-links-to-js"></script>
+<script type="text/javascript">(function (undefined) {var _localizedStrings={"redirect_overlay_title":"Hold On","redirect_overlay_text":"You are being redirected to another page,<br>it may take a few seconds."};var _targetWindow="prefer-popup";var _redirectOverlay="overlay-with-spinner-and-message";
+window.NSLPopup = function (url, title, w, h) {
+    var userAgent = navigator.userAgent,
+        mobile = function () {
+            return /\b(iPhone|iP[ao]d)/.test(userAgent) ||
+                /\b(iP[ao]d)/.test(userAgent) ||
+                /Android/i.test(userAgent) ||
+                /Mobile/i.test(userAgent);
+        },
+        screenX = window.screenX !== undefined ? window.screenX : window.screenLeft,
+        screenY = window.screenY !== undefined ? window.screenY : window.screenTop,
+        outerWidth = window.outerWidth !== undefined ? window.outerWidth : document.documentElement.clientWidth,
+        outerHeight = window.outerHeight !== undefined ? window.outerHeight : document.documentElement.clientHeight - 22,
+        targetWidth = mobile() ? null : w,
+        targetHeight = mobile() ? null : h,
+        V = screenX < 0 ? window.screen.width + screenX : screenX,
+        left = parseInt(V + (outerWidth - targetWidth) / 2, 10),
+        right = parseInt(screenY + (outerHeight - targetHeight) / 2.5, 10),
+        features = [];
+    if (targetWidth !== null) {
+        features.push('width=' + targetWidth);
+    }
+    if (targetHeight !== null) {
+        features.push('height=' + targetHeight);
+    }
+    features.push('left=' + left);
+    features.push('top=' + right);
+    features.push('scrollbars=1');
+
+    var newWindow = window.open(url, title, features.join(','));
+
+    if (window.focus) {
+        newWindow.focus();
+    }
+
+    return newWindow;
+};
+
+var isWebView = null;
+
+function checkWebView() {
+    if (isWebView === null) {
+        function _detectOS(ua) {
+            if (/Android/.test(ua)) {
+                return "Android";
+            } else if (/iPhone|iPad|iPod/.test(ua)) {
+                return "iOS";
+            } else if (/Windows/.test(ua)) {
+                return "Windows";
+            } else if (/Mac OS X/.test(ua)) {
+                return "Mac";
+            } else if (/CrOS/.test(ua)) {
+                return "Chrome OS";
+            } else if (/Firefox/.test(ua)) {
+                return "Firefox OS";
+            }
+            return "";
+        }
+
+        function _detectBrowser(ua) {
+            var android = /Android/.test(ua);
+
+            if (/Opera Mini/.test(ua) || / OPR/.test(ua) || / OPT/.test(ua)) {
+                return "Opera";
+            } else if (/CriOS/.test(ua)) {
+                return "Chrome for iOS";
+            } else if (/Edge/.test(ua)) {
+                return "Edge";
+            } else if (android && /Silk\//.test(ua)) {
+                return "Silk";
+            } else if (/Chrome/.test(ua)) {
+                return "Chrome";
+            } else if (/Firefox/.test(ua)) {
+                return "Firefox";
+            } else if (android) {
+                return "AOSP";
+            } else if (/MSIE|Trident/.test(ua)) {
+                return "IE";
+            } else if (/Safari\//.test(ua)) {
+                return "Safari";
+            } else if (/AppleWebKit/.test(ua)) {
+                return "WebKit";
+            }
+            return "";
+        }
+
+        function _detectBrowserVersion(ua, browser) {
+            if (browser === "Opera") {
+                return /Opera Mini/.test(ua) ? _getVersion(ua, "Opera Mini/") :
+                    / OPR/.test(ua) ? _getVersion(ua, " OPR/") :
+                        _getVersion(ua, " OPT/");
+            } else if (browser === "Chrome for iOS") {
+                return _getVersion(ua, "CriOS/");
+            } else if (browser === "Edge") {
+                return _getVersion(ua, "Edge/");
+            } else if (browser === "Chrome") {
+                return _getVersion(ua, "Chrome/");
+            } else if (browser === "Firefox") {
+                return _getVersion(ua, "Firefox/");
+            } else if (browser === "Silk") {
+                return _getVersion(ua, "Silk/");
+            } else if (browser === "AOSP") {
+                return _getVersion(ua, "Version/");
+            } else if (browser === "IE") {
+                return /IEMobile/.test(ua) ? _getVersion(ua, "IEMobile/") :
+                    /MSIE/.test(ua) ? _getVersion(ua, "MSIE ")
+                        :
+                        _getVersion(ua, "rv:");
+            } else if (browser === "Safari") {
+                return _getVersion(ua, "Version/");
+            } else if (browser === "WebKit") {
+                return _getVersion(ua, "WebKit/");
+            }
+            return "0.0.0";
+        }
+
+        function _getVersion(ua, token) {
+            try {
+                return _normalizeSemverString(ua.split(token)[1].trim().split(/[^\w\.]/)[0]);
+            } catch (o_O) {
+            }
+            return "0.0.0";
+        }
+
+        function _normalizeSemverString(version) {
+            var ary = version.split(/[\._]/);
+            return (parseInt(ary[0], 10) || 0) + "." +
+                (parseInt(ary[1], 10) || 0) + "." +
+                (parseInt(ary[2], 10) || 0);
+        }
+
+        function _isWebView(ua, os, browser, version, options) {
+            switch (os + browser) {
+                case "iOSSafari":
+                    return false;
+                case "iOSWebKit":
+                    return _isWebView_iOS(options);
+                case "AndroidAOSP":
+                    return false;
+                case "AndroidChrome":
+                    return parseFloat(version) >= 42 ? /; wv/.test(ua) : /\d{2}\.0\.0/.test(version) ? true : _isWebView_Android(options);
+            }
+            return false;
+        }
+
+        function _isWebView_iOS(options) {
+            var document = (window["document"] || {});
+
+            if ("WEB_VIEW" in options) {
+                return options["WEB_VIEW"];
+            }
+            return !("fullscreenEnabled" in document || "webkitFullscreenEnabled" in document || false);
+        }
+
+        function _isWebView_Android(options) {
+            if ("WEB_VIEW" in options) {
+                return options["WEB_VIEW"];
+            }
+            return !("requestFileSystem" in window || "webkitRequestFileSystem" in window || false);
+        }
+
+        var options = {};
+        var nav = window.navigator || {};
+        var ua = nav.userAgent || "";
+        var os = _detectOS(ua);
+        var browser = _detectBrowser(ua);
+        var browserVersion = _detectBrowserVersion(ua, browser);
+
+        isWebView = _isWebView(ua, os, browser, browserVersion, options);
+    }
+
+    return isWebView;
+}
+
+function isAllowedWebViewForUserAgent(provider) {
+    var googleAllowedWebViews = [
+        'Instagram',
+        'FBAV',
+        'FBAN',
+        'Line',
+    ], facebookAllowedWebViews = [
+        'Instagram',
+        'FBAV',
+        'FBAN'
+    ], whitelist = [];
+
+    switch (provider) {
+        case 'facebook':
+            whitelist = facebookAllowedWebViews;
+            break;
+        case 'google':
+            whitelist = googleAllowedWebViews;
+            break;
+    }
+
+    var nav = window.navigator || {};
+    var ua = nav.userAgent || "";
+
+    if (whitelist.length && ua.match(new RegExp(whitelist.join('|')))) {
+        return true;
+    }
+
+    return false;
+}
+
+window._nslDOMReady(function () {
+
+    window.nslRedirect = function (url) {
+        if (_redirectOverlay) {
+            var overlay = document.createElement('div');
+            overlay.id = "nsl-redirect-overlay";
+            var overlayHTML = '',
+                overlayContainer = "<div id='nsl-redirect-overlay-container'>",
+                overlayContainerClose = "</div>",
+                overlaySpinner = "<div id='nsl-redirect-overlay-spinner'></div>",
+                overlayTitle = "<p id='nsl-redirect-overlay-title'>" + _localizedStrings.redirect_overlay_title + "</p>",
+                overlayText = "<p id='nsl-redirect-overlay-text'>" + _localizedStrings.redirect_overlay_text + "</p>";
+
+            switch (_redirectOverlay) {
+                case "overlay-only":
+                    break;
+                case "overlay-with-spinner":
+                    overlayHTML = overlayContainer + overlaySpinner + overlayContainerClose;
+                    break;
+                default:
+                    overlayHTML = overlayContainer + overlaySpinner + overlayTitle + overlayText + overlayContainerClose;
+                    break;
+            }
+
+            overlay.insertAdjacentHTML("afterbegin", overlayHTML);
+            document.body.appendChild(overlay);
+        }
+
+        window.location = url;
+    };
+
+    var targetWindow = _targetWindow || 'prefer-popup',
+        lastPopup = false;
+
+
+    var buttonLinks = document.querySelectorAll(' a[data-plugin="nsl"][data-action="connect"], a[data-plugin="nsl"][data-action="link"]');
+    buttonLinks.forEach(function (buttonLink) {
+        buttonLink.addEventListener('click', function (e) {
+            if (lastPopup && !lastPopup.closed) {
+                e.preventDefault();
+                lastPopup.focus();
+            } else {
+
+                var href = this.href,
+                    success = false;
+                if (href.indexOf('?') !== -1) {
+                    href += '&';
+                } else {
+                    href += '?';
+                }
+
+                var redirectTo = this.dataset.redirect;
+                if (redirectTo === 'current') {
+                    href += 'redirect=' + encodeURIComponent(window.location.href) + '&';
+                } else if (redirectTo && redirectTo !== '') {
+                    href += 'redirect=' + encodeURIComponent(redirectTo) + '&';
+                }
+
+                if (targetWindow !== 'prefer-same-window' && checkWebView()) {
+                    targetWindow = 'prefer-same-window';
+                }
+
+                if (targetWindow === 'prefer-popup') {
+                    lastPopup = NSLPopup(href + 'display=popup', 'nsl-social-connect', this.dataset.popupwidth, this.dataset.popupheight);
+                    if (lastPopup) {
+                        success = true;
+                        e.preventDefault();
+                    }
+                } else if (targetWindow === 'prefer-new-tab') {
+                    var newTab = window.open(href + 'display=popup', '_blank');
+                    if (newTab) {
+                        if (window.focus) {
+                            newTab.focus();
+                        }
+                        success = true;
+                        e.preventDefault();
+                    }
+                }
+
+                if (!success) {
+                    window.location = href;
+                    e.preventDefault();
+                }
+            }
+        });
+    });
+
+    var googleLoginButtons = document.querySelectorAll(' a[data-plugin="nsl"][data-provider="google"]');
+    if (googleLoginButtons.length && checkWebView() && !isAllowedWebViewForUserAgent('google')) {
+        googleLoginButtons.forEach(function (googleLoginButton) {
+            googleLoginButton.remove();
+        });
+    }
+
+    var facebookLoginButtons = document.querySelectorAll(' a[data-plugin="nsl"][data-provider="facebook"]');
+    if (facebookLoginButtons.length && checkWebView() && /Android/.test(window.navigator.userAgent) && !isAllowedWebViewForUserAgent('facebook')) {
+        facebookLoginButtons.forEach(function (facebookLoginButton) {
+            facebookLoginButton.remove();
+        });
+    }
+});})();</script>
+
+</body></html>

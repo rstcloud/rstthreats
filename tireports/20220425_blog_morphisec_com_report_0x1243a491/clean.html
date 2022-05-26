@@ -1,0 +1,116 @@
+<div>
+<h1>New Core Impact Backdoor Delivered Via VMWare Vulnerability</h1>
+Posted by
+<a class="author-link" href="https://blog.morphisec.com/author/morphisec-labs">Morphisec Labs</a> on April 25, 2022
+<ul class="hs-blog-social-share-list">
+<li class="hs-blog-social-share-item hs-blog-social-share-item-twitter">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-linkedin">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-facebook">
+</li>
+</ul>
+<p>Morphisec is a world leader in preventing evasive polymorphic threats launched from zero-day exploits. On April 14 and 15, Morphisec identified exploitation attempts for a week-old VMware Workspace ONE Access (formerly VMware Identity Manager) remote code execution (RCE) vulnerability. BleepingComputer reports <a href="https://www.bleepingcomputer.com/news/security/hackers-exploit-critical-vmware-cve-2022-22954-bug-patch-now/">similar attempts</a> have been seen in the wild. Due to indicators of a sophisticated Core Impact backdoor, Morphisec believes advanced persistent threat (APT) groups are behind these VMWare identity manager attack events. The tactics, techniques, and procedures used in the attack are common among groups such as the Iranian linked Rocket Kitten. </p>
+<p>VMWare is a $30 billion cloud computing and virtualization platform used by 500,000 organizations worldwide. A malicious actor exploiting this RCE vulnerability potentially gains an unlimited attack surface. This means highest privileged access into any components of the virtualized host and guest environment. Affected firms face significant security breaches, ransom, brand damage, and lawsuits. </p>
+<p>This new vulnerability is a server-side template injection that affects an Apache Tomcat component, and as a result, the malicious command is executed on the hosting server. As part of the attack chain, Morphisec has identified and prevented PowerShell commands executed as child processes to the legitimate Tomcat prunsrv.exe process application. A malicious actor with network access can use this vulnerability to achieve full remote code execution against VMware’s identity access management. Workspace ONE Access provides multi-factor authentication, conditional access, and single sign-on to SaaS, web, and native mobile apps. </p>
+<p>This attack turned around remarkably fast: </p>
+<ul>
+<li>A patch for the initial vulnerability was released on April 6 </li>
+<li>On April 11 a proof of concept for the attack appeared </li>
+<li>On April 13 exploits were identified in the wild</li>
+</ul>
+<p>Adversaries can use this attack to deploy ransomware or coin miners, as part of their initial access, lateral movement, or privilege escalation. Morphisec research observed attackers already exploiting this vulnerability to launch reverse HTTPS backdoors—mainly <a href="https://blog.morphisec.com/how-to-stop-ransomware-breach-prevention-vs-cobalt-strike-backdoor">Cobalt Strike</a>, Metasploit, or Core Impact beacons. With privileged access, these types of attacks may be able to bypass typical defenses including antivirus (AV) and endpoint detection and response (EDR). </p>
+<p>Morphisec Labs has analyzed this new attack in detail below. </p>
+<p><img alt="Morphisec console attack details" height="364" src="https://lh5.googleusercontent.com/ZDfr3dHIYOcoEk0Bgrq34kMhQn8vCDNz1KInCqaCbtBZM_Auc5LYX8Rq9xhQ7Bf4HC__Qlthmzt2wv2AQwx_r3cN2nc7W55uh6_qJ08tlGlePPgJ1FsRuQYkF2eujSGKXjIajnx4" width="624"/></p>
+<p>Morphisec console attack details</p>
+<h2>Technical Analysis</h2>
+<h2><img alt="Diagram of full VMWare identity manager attack chain" height="479" src="https://lh4.googleusercontent.com/c21cihysMbgvTbgr9NQc9-xM99WX6gtDT0cySd2JLiywFnBHj9Amv85Z2LyBwRjJvYe8gkUTV-dYfMGayDh8_lloNl5MB98HKNIXMLHhr47RwOrYfpBqj6HhA_53AX2kKAqgq-yP" width="624"/></h2>
+<p>Full attack chain</p>
+<p>The attacker gains initial access to an environment by exploiting a VMWare Identity Manager Service vulnerability. The attacker can then deploy a PowerShell stager that downloads the next stage, which Morphisec Labs identified as the PowerTrash Loader. Finally, an advanced penetration testing framework—Core Impact—is injected into memory.</p>
+<h2>VMWare Identity Manager Vulnerabilities</h2>
+<p>The Morphisec blog post <a href="https://blog.morphisec.com/log4j-exploit-hits-again-vulnerable-vmware-horizon-servers-at-risk">Log4j Exploit Hits Again: Vulnerable VMWare Horizon Servers at Risk</a> showed how attackers previously exploited VMWare’s Horizon Tomcat service. Unfortunately, malice never sleeps. Threat actors are now exploiting another VMWare component, the VMWare Identity Manager service. </p>
+<p>Several vulnerabilities have recently been reported for this service: </p>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-22958">CVE-2022-22958</a></p>
+</td>
+<td>
+<p>VMware Workspace ONE Access, Identity Manager, and vRealize Automation contain two remote code execution vulnerabilities (CVE-2022-22957 and CVE-2022-22958). A malicious actor with administrative access can trigger the deserialization of untrusted data through malicious JDBC URI, which may result in remote code execution.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-22957">CVE-2022-22957</a></p>
+</td>
+<td>
+<p>VMware Workspace ONE Access, Identity Manager, and vRealize Automation contain two remote code execution vulnerabilities (CVE-2022-22957 and CVE-2022-22958). A malicious actor with administrative access can trigger the deserialization of untrusted data through malicious JDBC URI, which may result in remote code execution.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-22954">CVE-2022-22954</a></p>
+</td>
+<td>
+<p>VMware Workspace ONE Access and Identity Manager contains a remote code execution vulnerability due to server-side template injection. A malicious actor with network access can trigger a server-side template injection that may result in remote code execution.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>While CVE-2022-22957 and CVE-2022-22958 are RCE vulnerabilities, they require administrative access to the server. CVE-2022-22954 however, doesn’t, and already has an open-source proof of concept in the wild.</p>
+<h2>Powershell Stager</h2>
+<p>The attacker exploited the service and ran the following PowerShell command:</p>
+<p><img alt="Stager encoded in base64 " height="108" src="https://lh5.googleusercontent.com/q-UyatKarGabkkrbugxJr4kXyzN_qM1izE5tVNe0VHFXof7x0sD6VOnKusCWDaWtao7jEZRNSE0tvAhqv-NyiWJlVT-1dg00Z7Wo7gL50915iig57xD8vbiHlQpDEgduRvcuxgmJ" width="624"/></p>
+<p>Stager encoded in base64 </p>
+<p>Which translates to:</p>
+<p><img alt="Decoded stager" height="48" src="https://lh6.googleusercontent.com/mcR82IQ4zY7mLFm4olnzPXFnMoI2sThi8KBqHK2IAi7EjHs2aORSZgTbwbFe_ZiJ2aU3saaM-AuxThCsShtGKoPLXE18bprvU51wmyti2Wx-2GeQGUBWXdd0z55sO0umdIUcCa-H" width="624"/></p>
+<p>Decoded stager</p>
+<p>As you can see at the end, this is an encoded command where each character is subtracted by one. When doing so we get the URL from which the next stage is downloaded:</p>
+<p><img alt="Decoded #2 stager" height="64" src="https://lh6.googleusercontent.com/CYL8yWTnUiWQshfRuJLxad_YQFEGI1G85Fwi1HVA9FVv8D_9SMOg4Z4iOxYCEVS8VZazjWM2AoI_a7lnDgYmzaSA9ptg7OfEWthC93VqeSAMqlUHWmjfdAjxyeFzZBiNBpHRfhBX" width="624"/></p>
+<p>Decoded #2 stager</p>
+<h2>PowerTrash Loader</h2>
+<p>The PowerTrash Loader is a highly obfuscated PowerShell script with approximately 40,000 lines of code.</p>
+<p><img alt="Snippet from the PowerTrash Loader" height="297" src="https://lh4.googleusercontent.com/EXIbXhQjDx65jsnuee2tNyInwX0kRf-RpLZ1Xa48lp3vmY0ofT9DZYO_6Qk373eAczwW6DF3S8Pj-HUX5ELRRZXpORsXkKSxEBXOV_KDHUNKCXY_qiBBhzkw9Fj8FqxH5wfn0ZRq" width="374"/></p>
+<p>Snippet from the PowerTrash Loader</p>
+<p>This loader decompresses the deflated payload and reflectively loads it in memory, without leaving forensic evidence on the disk. We’ve previously seen the PowerTrash Loader leading to <a href="https://blog.morphisec.com/the-evolution-of-the-fin7-jssloader">JSSLoader</a>. </p>
+<p>This time the final payload was different—a Core Impact Agent.</p>
+<h2>Core Impact Agent</h2>
+<p>Core Impact is a penetration testing framework developed by Core Security. As with other penetration testing frameworks, these aren’t always used with good intentions. <a href="https://documents.trendmicro.com/assets/wp/wp-operation-woolen-goldfish.pdf">TrendMicro reported</a> a modified version of Core Impact was used in the Woolen-GoldFish campaign tied to the Rocket Kitten APT35 group.</p>
+<p>We can extract the C2 address, client version, and communication encryption key located in an embedded string:</p>
+<p><img alt="C2 address, client version, and communication encryption key" height="524" src="https://lh3.googleusercontent.com/ZilhDTa8nTymPDuUutjy_TKYkrCE_wIewvDSvInqPd2uIh0ItdRHJLPiaUqpvmt3HsF-gL6u-GN4NNiPiCXeZV7qG0m1p5on9ojnmQhCDoJkxAgHJ7k1w5i20NiOi7cDyO_SOnuN" width="407"/></p>
+<p>C2 Server: 185.117.90[.]187 </p>
+<p>Client Version: 7F F7 FF 83 (HEX)</p>
+<p>256-Bit Key: cd19dbaa04ea4b61ace6f8cdfe72dc99a6f807bcda39ceab2fefd1771d44ad288b76bc20eaf9ee26c9a175bb055f0f2eb800ae6010ddd7b509e061651ab5e883d491244f8c04cbc645717043c74722bee317754ea1df13e446ca9b1728f1389785daecf915ce27f6806c7bfa2b5764e88e2957d2e9fcfd79597b3421ea4b5e6f (ASCII)</p>
+<h2>Additional Threat Relations</h2>
+<p>A reverse look-up on the Stager server leads to a new web hosting server named ‘Stark Industries’ registered in London.</p>
+<p><img alt="Stager server IP reverse lookup result" height="61" src="https://lh3.googleusercontent.com/fbkWkYg8T6phE21qa2uLpjld_iRI4RE4f5EMuSH-_ZIKqXOEoJbCcQlV_XLIUlzuAptxDPWdUpgk7n1ufdTQ-wO9oY28ulJ9_Ah2kWY5tPV1bVuGPfEehrAiXVhzrKQKH3Ms0ma_" width="624"/></p>
+<p>Stager server IP reverse lookup result</p>
+<p>The company was registered on February 2022 and is <a href="https://suite.endole.co.uk/insight/company/13906017-stark-industries-solutions-ltd?page=people-contacts">linked to a person</a> named Ivan Neculiti:</p>
+<p><img alt="Ivan Neculiti identity in suite.endole.co.uk" height="67" src="https://lh3.googleusercontent.com/OQ5NfXwpMfLWHmpwB9azd792WbTgWa307C3MvIqyJGnukZnQMmiJpmt_d74eJKwaFcS5kCOpnPD1afRJRj68V62h2MrBRMMyAWh4fJ0gxELtPIe3aFMRjKGeWUQcWHTuGsEqQPf-" width="343"/>
+Ivan Neculiti identity in suite.endole.co.uk</p>
+<p>There is a dedicated profile page for him on <a href="https://hucksters.net/person/neculiti-ivan">hucksters.net</a> which exposes spammers, fraudsters, and other bad actors.</p>
+<p>Ivan is infamous for owning web hosting companies used for malicious and illegal activities. Among them is pq[.]hosting which is easily correlated to stark-industries[.]solutions.</p>
+<p><img alt="Correlation between the web hosting companies" height="131" src="https://lh5.googleusercontent.com/jxPsf26-N6hOGEfQw22iIBL2lHLJwtgeBVA07-Mi2Ekk2uBPxKh_MyK2wRWQeecNhPC5JuZ8Bjs29ziRhroFWqbYZDvh7XhqVKTRMFjqWccr_wk-sXgC7XzmO-iU0wGZGHCoVSYJ" width="457"/></p>
+<p>Correlation between the web hosting companies</p>
+<h2>Indicators of Compromise</h2>
+<p>Stage1 Serving URL:</p>
+<p>hxxp://138.124.184[.]220/work_443.bin_m2.ps1 </p>
+<p>Stage2 - work_443.bin_m2.ps1:</p>
+<p>746FFC3BB7FBE4AD229AF1ED9B6E1DB314880C0F9CB55AEC5F56DA79BCE2F79B</p>
+<p>Stage3 - Core Impact:</p>
+<p> 7BC14D231C92EEEB58197C9FCA5C8D029D7E5CF9FBFE257759F5C87DA38207D9</p>
+<p>C2 Server:</p>
+<p>185.117.90[.]187</p>
+<h2>Protect Yourself Against This VMWare Identity Manager Attack</h2>
+<p>The widespread use of VMWare identity access management combined with the unfettered remote access this attack provides is a recipe for devastating breaches across industries. Anyone using VMWare’s identity access management should immediately apply the patches VMWare has released. Organizations unable to immediately apply the patch(es) should consider virtual patching. VMWare customers should also review their VMware architecture to ensure the affected components are not accidentally published on the internet, which dramatically increases the exploitation risks.</p>
+<p>Morphisec customers are protected against these backdoor attacks and others like it. Morphisec’s MTD technology implements a virtual patch by creating a dynamic attack surface to prevent the successful deployment of CoreImpact, Cobalt Strike and Metasploit beacons. These beacons are highly evasive and can bypass the AV, EDR, MDR, and XDR deployed on endpoints. Morphisec’s MTD technology provides early visibility and prevention of vulnerability exploitation. It enables quick containment without creating false positive alerts. </p>
+<p>For better risk management, organizations should adopt a preventative approach that proactively stops breaches before they infiltrate. Morphisec’s Moving Target Defense technology uses polymorphism against attackers to hide vulnerabilities from threat actors while reducing your attack surface. To learn more, read Morphisec’s white paper: <a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy">Zero Trust + Moving Target Defense: Stopping Ransomware, Zero-Day, and Other Advanced Threats Where NGAV and EDR Are Failing</a>.</p>
+<p><a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy" rel="noopener" target="_blank"><img alt="Moving Target Defense white paper" src="https://blog.morphisec.com/hs-fs/hubfs/MO-ZeroDay-RD-400X300-v14%20(1).png?width=400&amp;name=MO-ZeroDay-RD-400X300-v14%20(1).png" width="400"/></a></p>
+<p> </p>
+<h3>Subscribe to our blog</h3>
+<p>Stay in the loop with industry insight, cyber security trends, and cyber attack information and company updates.</p>
+<a class="cta_button" href="https://blog.morphisec.com/cs/c/?cta_guid=262dcaf9-2354-46c6-b31c-babe01409164&amp;signature=AAH58kGBKcDMZweMmwj90fX3-da2CySWfw&amp;pageId=71884688903&amp;placement_guid=91ae0282-4842-46a2-a64f-055310ee09b0&amp;click=d429e8d4-aa67-4c85-9f68-e170537a983d&amp;hsutk=701a6cb0649b611b5f74cc82938a9c90&amp;canon=https%3A%2F%2Fblog.morphisec.com%2Fvmware-identity-manager-attack-backdoor&amp;portal_id=1534169&amp;redirect_url=APefjpGZwGNJqcl6oYkgL24W-y8Qunh_3uT1pGh6nXXn-yY1J1EILeMB6OQnaE6MKt4GAXPo7MBWa55R05vaITN1HO7FBWXQv-MTyoIkhu-7uamNr-OWR-l9V4zUCawBwp-0uNBAuS6oHx3wdKr6Hy3w8-Rd11Q4NT-N-oLXc2o_JphH2niP7OPtsfmNG5Y26VSYKE9oyTB7Z0W3lsimLqV3JpYIyCJrrN5YXF5FnMN-1XN_9_FJtUxdf7a3phBIo-kRvPaG8QeOzp5-aiv5nqcP5aDvFm2qcw&amp;__hstc=182053752.701a6cb0649b611b5f74cc82938a9c90.1650920981460.1650920981460.1650920981460.1&amp;__hssc=182053752.1.1650920981461&amp;__hsfp=98101046&amp;contentType=blog-post" id="cta_button_1534169_262dcaf9-2354-46c6-b31c-babe01409164"><img alt="New call-to-action" class="hs-cta-img" id="hs-cta-img-91ae0282-4842-46a2-a64f-055310ee09b0" src="https://1534169.fs1.hubspotusercontent-na1.net/hubfs/1534169/hub_generated/resized/75f3c3f3-55b1-4dd5-9095-cc0ea27a21e0.png" style="max-width:80%;height:auto;width:auto;"/></a><img height="1" id="pixel-91ae0282-4842-46a2-a64f-055310ee09b0-262dcaf9-2354-46c6-b31c-babe01409164" src="https://track.hubspot.com/__ptq.gif?k=12&amp;aij=%5B%2291ae0282-4842-46a2-a64f-055310ee09b0%22%2C%22262dcaf9-2354-46c6-b31c-babe01409164%22%5D&amp;rfc=8&amp;sd=1900x1080&amp;cd=24-bit&amp;cs=UTF-8&amp;ln=en-us&amp;bfp=98101046&amp;v=1.1&amp;a=1534169&amp;pi=71884688903&amp;ct=blog-post&amp;ccu=https%3A%2F%2Fblog.morphisec.com%2Fvmware-identity-manager-attack-backdoor&amp;cpi=71884688903&amp;cgi=3742504875&amp;lpi=71884688903&amp;lvi=71884688903&amp;lvc=en-us&amp;pu=https%3A%2F%2Fblog.morphisec.com%2Fvmware-identity-manager-attack-backdoor&amp;t=VMWare+Identity+Manager+Attack%3A+New+Backdoor+Discovered&amp;cts=1650920981491&amp;vi=701a6cb0649b611b5f74cc82938a9c90&amp;nc=true&amp;ce=false&amp;cc=0" width="1"/>
+<h3>Search Our Site</h3>
+<ul class="hs-search-field__suggestions"></ul>
+</div>

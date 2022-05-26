@@ -1,0 +1,222 @@
+<div>
+<p>Cyber Threats</p>
+<h1 class="article-details__title">Thwarting Loaders: From SocGholish to BLISTER’s LockBit Payload</h1>
+<p>Both BLISTER and SocGholish are loaders known for their evasion tactics. Our report details what these loaders are capable of and our investigation into a campaign that uses both to deliver the LockBit ransomware.</p>
+<p>By: Earle Maui Earnshaw, Mohamed Fahmy, Ian Kenefick, Ryan Maglaque, Abdelrhman Sharshar, Lucas Silva
+		
+			April 05, 2022
+Read time: 7 min (1847 words)
+	</p>
+<a class="addthis_button_compact addthis_link">
+<img alt="Share" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/share-more.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="addthis_button_print addthis_link">
+<img alt="Print" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/printer.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<p>Save to Folio</p>
+<a class="bs-modal" href="#" target="target" title="Subscribe">
+ Subscribe
+</a>
+<p>The Trend MicroTM Managed XDR team has made a series of discoveries involving the BLISTER loader and SocGholish. We observed SocGholish’s discreet activity despite its low detections and a BLISTER loader sample used by threat actors to drop a LockBit payload. Close monitoring of and prompt response to both cases prevented their respective payloads from being delivered.</p>
+<p>Both <a href="https://www.elastic.co/blog/elastic-security-uncovers-blister-malware-campaign" target="_blank">BLISTER</a> and <a href="https://digital.nhs.uk/cyber-alerts/2021/cc-3917#:~:text=SocGholish%20is%20an%20advanced%20delivery,malware%2C%20including%20ransomware%20and%20RATs." target="_blank">SocGholish</a> are known for their stealth and evasion tactics in order to deliver damaging payloads. Notably, these two have been used in <a href="https://redcanary.com/blog/intelligence-insights-january-2022/" target="_blank">campaigns together</a>, with SocGholish dropping BLISTER as a second-stage loader. Combined, these two loaders aim to evade detection and suspicion to drop and execute payloads, specifically LockBit in this case. Our investigation follows what these loaders are capable of if they not stopped from the outset.</p>
+<p>SocGholish infrastructure</p>
+<p>SocGholish has been around longer than BLISTER, having already established itself well among threat actors for its advanced delivery framework. Reports <a href="https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence/wastedlocker-ransomware-us" target="_blank">show</a> that its framework of attack has previously been used by threat actors from as early as 2020.</p>
+<p>Our investigation began when the Trend Micro Managed XDR threat hunting team flagged activity from one endpoint. Further investigation uncovered more beneath the surface.</p>
+<p>In this case, the user had unknowingly accessed a compromised legitimate website, which prompted a drive-by download of a malicious file into their system. This method of distributing malicious files is a distinct marker of SocGholish.</p>
+<p>The download zip file (C:\Users\victim\Downloads\download.1313a9.zip) contained the malicious JavaScript Chrome.Update.1313a9.js, which masquerades as an update for the browser. The contained script here is obfuscated. Thankfully, user execution is still required for this threat to proceed.</p>
+<figure class="image-figure">
+<img alt="Figure 1. Code snippet of the JavaScript" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/Figure%201%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 1. Code snippet of the JavaScript</figcaption>
+</figure>
+<p>We investigated what would happen if the script were executed and learned that this allows the malware to proceed with connecting to its command-and-control (C&amp;C) domain and deploy several discovery commands to gather information regarding the system. Afterward, it logs the information into to files with .tmp extensions.</p>
+<figure class="image-figure">
+<img alt="Figure 2. PRCA of the discovery commands execution as seen in Trend Micro Vision One™" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%202%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 2. PRCA of the discovery commands execution as seen in Trend Micro Vision One™</figcaption>
+</figure>
+<p>The executed commands as seen in Figure 2 are as follows:</p>
+<ul>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C net group "domain admins" /domain &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad613A2.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C cmdkey /list &gt;&gt; "C:\Users\victim\AppData\Local\Temp\radF9A30.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C net user victim /domain &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad6FDE0.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C nltest /domain_trusts &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad8B102.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C cmdkey /list &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad2A57D.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C nltest /dclist: &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad3FBC3.tmp"</li>
+<li class="rich-text-li">"C:\Windows\System32\cmd.exe" /C whoami /all &gt;&gt; "C:\Users\victim\AppData\Local\Temp\rad95E90.tmp"</li>
+</ul>
+<p>The malware then drops an additional .js file that executes a few other discovery commands. Finally, it downloads and executes the Cobalt Strike beacon, which is used to execute remote commands. Aside from the aforementioned scripts, a few others were also dropped but were immediately mitigated by the product.</p>
+<figure class="image-figure">
+<img alt="Figure 3. Vision One showing the deployment of JavaScript and Cobalt Strike" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%203%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 3. Vision One showing the deployment of JavaScript and Cobalt Strike</figcaption>
+</figure>
+<p>Low detections of Cobalt Strike and the BLISTER connection</p>
+<p>The Cobalt Strike file was particularly interesting, because at the time of this investigation, it had a low detection rate. We wanted to see why that was and what evasion tactics it employed.</p>
+<table border="1" cellpadding="1" cellspacing="0" width="100%">
+<tbody><tr><th scope="col">Date</th>
+<th scope="col">Detection</th>
+</tr><tr><td>Jan 19, 2022</td>
+<td>2</td>
+</tr><tr><td>Jan 20, 2022</td>
+<td>3</td>
+</tr><tr><td>Jan 26, 2022</td>
+<td>3</td>
+</tr><tr><td>Jan 31, 2022</td>
+<td>2</td>
+</tr><tr><td>Feb 7, 2022</td>
+<td>2</td>
+</tr><tr><td>Feb 10, 2022</td>
+<td>2</td>
+</tr></tbody></table>
+<p>Table 1. VirusTotal detection history</p>
+<p>Indeed, further investigation showed that the Cobalt Strike file was a<a href="https://www.virustotal.com/gui/file/53941f5be6753cbdd535b7608e852ea34f04cd7d57cccf800f0203235f8b9bf3/details" target="_blank"> tampered version</a> of a legitimate DLL where an export function was modified to contain the Cobalt Strike. This is the first time we have observed this in the SocGholish infrastructure.</p>
+<figure class="image-figure">
+<img alt="Figure 4. Comparison of the original DLL to the patched DLL" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%204%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 4. Comparison of the original DLL to the patched DLL</figcaption>
+</figure>
+<p>The sample, wimgapi.dll, will create a thread that will essentially put itself to sleep for 10 minutes before decrypting and executing its shell code. It also pauses operations in order to evade detection — a well-documented <a href="https://attack.mitre.org/techniques/T1497/003/" target="_blank">defense evasion technique</a>.</p>
+<p>It also performs additional commands before decrypting and executing the shell code as an added evasion tactic. These commands are the following:</p>
+<ul>
+<li class="rich-text-li">It creates the folder C:\\ProgramData\\TermSvc. </li>
+<li class="rich-text-li">It then drops drops the files C:\\ProgramData\\TermSvc\TermSvc.exe, which is the copy of the file (Rundll32.exe in this case ) that executes the sample wimgapi.dll and the file %User Startup%\\TermSvc.lnk, which executes the aforementioned dropped copy (Rundll32.exe).</li>
+</ul>
+<p>It then proceeds to decrypt, load, and execute the shell code that connects to the URL sikescomposite[.]com. It utilizes VirtualAlloc, VirtualProtect, and CreateThread to decrypt the shell code and execute in memory. </p>
+<p>We also observed the harvesting of API functions, which are called only when needed as seen in their shell code (Figure 5). This is another tactic that obscures the shell code.</p>
+<figure class="image-figure">
+<img alt="Figure 5. The code for harvesting of API functions and calling them when needed" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%205%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 5. The code for harvesting of API functions and calling them when needed</figcaption>
+</figure>
+<p>As a malleable Cobalt Strike C&amp;C stager, the behavior of wimgapi.dll might be dependent on what is downloaded from the accessed URL. With regard to this incident, we have observed the following after its deployment</p>
+<ul>
+<li class="rich-text-li">Account discovery</li>
+<li class="rich-text-li">Pass-the-hash for privilege escalation</li>
+<li class="rich-text-li">Spawned WerFault.exe process that generates the following activity: Network sniffing of port 135</li>
+<li class="rich-text-li">Copying of browser login data</li>
+<li class="rich-text-li">Lateral movement via dropping Cobalt Strike copies into remote machines</li>
+</ul>
+<figure class="image-figure">
+<img alt="Figure 6. Dropping of Cobalt Strike to remote machines as seen in Vision One" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%206%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 6. Dropping of Cobalt Strike to remote machines as seen in Vision One</figcaption>
+</figure>
+<p>Aside from the malicious behavior demonstrated by Cobalt Strike, one of the C&amp;C IP addresses (198[.]71[.]233[.]254) can be linked to Emotet and Dridex attacks. This IP address, which is used by multiple JavaScript C&amp;C domains, was found hosting and dropping Emotet and Dridex samples from the end of 2021 to this year.</p>
+<p>The way Cobalt Strike was used in this scenario (masking tampered DLLs as legitimate) is interesting, because we have yet to observe it in other SocGholish campaigns. This indicates that the threat actors behind SocGholish are selling access to or are joining forces with a third party. Interestingly, another case investigated by the Trend Micro Managed XDR seems to show the third party to be the threat actors behind BLISTER.</p>
+<p>From SocGholish to BLISTER and LockBit</p>
+<p>We also discovered the use of BLISTER loader a newer type of malware that was first identified in December 2021, in deploying the LockBit <a href="https://www.trendmicro.com/vinfo/us/security/definition/ransomware">ransomware</a>. The delivery of BLISTER loader might be through malicious installers, specifically the SocGholish framework. It can also have an embedded Cobalt Strike or BitRat payload in its resource section.</p>
+<p><a href="https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-lockbit">LockBit</a> is a <a href="https://www.trendmicro.com/vinfo/us/security/definition/ransomware-as-a-service-raas">ransomware-as-a-service</a> (RaaS) cartel that has one of the most active ransomware operations today. The gang is infamous for its sophisticated malware capabilities and strong affiliate network. It typically infects systems using unauthorized access to internet facing infrastructure.</p>
+<p>Curiously, the MDR team found that recent detections used BLISTER, which employs SocGholish’s tactic of using fake browser updates to drop malicious files. It also uses several techniques such as the following to avoid detection: </p>
+<ul>
+<li class="rich-text-li">Use of valid code signing certificates to persist in the system</li>
+<li class="rich-text-li">Use of direct system calls to avoid hooks of the antivirus Userland</li>
+<li class="rich-text-li">Delay of code execution for 10 minutes to evade sandbox detection</li>
+<li class="rich-text-li">Injection of the payload into a legitimate process such as <a href="https://answers.microsoft.com/en-us/windows/forum/all/werfaultexe-application-error/5c92f613-c691-4cf1-99cd-c3f74591d0c0#:~:text=The%20werfault.exe%20is%20used,to%20receive%20information%20about%20solutions.">werfault.exe</a> and renaming legitimate <a href="https://docs.microsoft.com/en-us/troubleshoot/windows-client/deployment/dynamic-link-library">DLLs</a> like Rundll32.exe to stay under the radar.</li>
+</ul>
+<p>Likely, through the drive-by download scheme of SocGholish, the file called ssql.exe was dropped. This file serves as a dropper that was created with NullSoft, an open-source system for creating Windows installers, as seen in Figure 7.</p>
+<figure class="image-figure">
+<img alt="Figure 7. The ssql.exe dropper created through NullSoft" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%207%20socgholish%20blistera.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 7. The ssql.exe dropper created through NullSoft</figcaption>
+</figure>
+<p>Once ssql.exe is executed, it drops a BLISTER loader sample to %Temp%\wimgapi_64\wimgapi.dll. The file wimgapi.dll is then loaded in memory and the export WIMDeleteImageMounts is executed.</p>
+<figure class="image-figure">
+<img alt="Figure 8. BLISTER is dropped." src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%208%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 8. BLISTER is dropped.</figcaption>
+</figure>
+<figure class="image-figure">
+<img alt="Figure 9. WIMDeleteImageMounts is executed." src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%209%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 9. WIMDeleteImageMounts is executed.</figcaption>
+</figure>
+<p>The DLL decodes the shell code found in its RCData resource and executes it. Similarly, the shellcode sleeps for 10 minutes and then decrypts and decompresses the Cobalt Strike beacon.</p>
+<p>Vision One generated an image (Figure 10) to show the infection chain based on our samples.</p>
+<figure class="image-figure">
+<img alt="Figure 10. Image of BLISTER loader’s infection chain generated through Vision One " src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%2010%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 10. Image of BLISTER loader’s infection chain generated through Vision One </figcaption>
+</figure>
+<p>After the execution of the Cobalt Strike payload, the threat actors dropped and executed batch scripts to stop antivirus agents (KillAV) running in the environment and critical services (SQL, Veeam, Exchange, and others). The script will also update the Group Policy Object (GPO) in the machine, add the computer host name to a centralized text file, and creates scheduled task “updater” to execute the batch file on startup and finally clear the Windows Events logs.</p>
+<figure class="image-figure">
+<img alt="Figure 11. KillAV used by the LockBit ransomware group to try to stop antivirus agents" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%2011%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 11. KillAV used by the LockBit ransomware group to try to stop antivirus agents</figcaption>
+</figure>
+<figure class="image-figure">
+<img alt="Figure 12. Batch script used by the LockBit ransomware group to stop critical services and third-party antivirus software" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/figure%2012%20socgholish%20blister.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 12. Batch script used by the LockBit ransomware group to stop critical services and third-party antivirus software</figcaption>
+</figure>
+<p>After successfully reaching this point, the LockBit sample would ultimately be executed. Our detections of the domains that were created and the SocGholish certificates that were used suggest the likelihood that the campaign began in November 2021 and has persisted up to the present.</p>
+<p>Conclusion</p>
+<p>These investigations gave us the opportunity to learn more about SocGholish and BLISTER loader. These cases highlight the continued evolution of threats that are made to evade detection. Notably, we observed evasive tactics like masking a tampered DLL as legitimate and placing shell code temporarily to sleep. Organizations should also take note of the continuing trend of using Cobalt Strike in targeting victim entities and living-off-the-land binaries (LOLBins) to blend in with the environment.</p>
+<p>For these cases, close monitoring and prompt detection prevented all that was described here from coming to pass. Early containment and mitigation are essential to cut off more damaging attacks that compromise environments, steal data, or deploy ransomware.</p>
+<p>Organizations should remain vigilant and ensure that they have solid cybersecurity measures in place. These additional security recommendations can also help them protect their assets from modern ransomware threats like LockBit: </p>
+<ul>
+<li class="rich-text-li">Enabling multifactor authentication (MFA) can prevent malicious actors from compromising user accounts as part of their infiltration process. </li>
+<li class="rich-text-li">Users should be wary of opening unverified emails. Embedded links should never be clicked and attached files should never be opened without the proper precautions and verification as these can kickstart the ransomware installation process. </li>
+<li class="rich-text-li">Organizations should always adhere to the <a href="https://www.trendmicro.com/vinfo/us/security/news/virtualization-and-cloud/best-practices-backing-up-data">3-2-1 rule</a>: Create three backup copies on two different file formats, with one of the backups in a separate location. </li>
+<li class="rich-text-li">Patching and updating software and other systems at the soonest possible time can address exploitable vulnerabilities that can lead to a ransomware infection. </li>
+<li class="rich-text-li">Organizations can better protect themselves from ransomware attacks by implementing multilayered security setups that combine elements such as the automated detection of files and other indicators with constant monitoring for the presence of <a href="https://www.trendmicro.com/vinfo/us/security/news/cybercrime-and-digital-threats/locked-loaded-and-in-the-wrong-hands-legitimate-tools-weaponized-for-ransomware-in-2021">weaponized legitimate tool</a>s in their IT environment.</li>
+</ul>
+<p>New malware techniques are bound to emerge as threat actors attempt to breach more systems. Organizations can defend themselves against such threats by using multilayered detection and response solutions such as <a href="https://www.trendmicro.com/en_us/business/products/detection-response.html">Trend Micro Vision One™</a>, a purpose-built threat defense platform that provides added value and new benefits beyond extended detection and response (XDR) solutions. This technology provides powerful XDR capabilities that collect and automatically correlate data across multiple security layers — email, endpoints, servers, cloud workloads, and networks — to prevent attacks via automated protection while also ensuring that no significant incidents go unnoticed. </p>
+<p>A list of the indicators of compromise (IOCs) can be found <a href="https://www.trendmicro.com/content/dam/trendmicro/global/en/research/22/d/thwarting-loaders-from-socgholish-to-blisters-lockbit-payload/iocs-from-socgholish-to-blisters-lockbit-payload.txt">here</a>. </p>
+Tags
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/ransomware">Ransomware</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:article-type/research">Research</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:medium/article">Articles, News, Reports</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/cyber-threats">Cyber Threats</a>
+<h3 class="article-authors__title">
+	
+		Authors
+	
+</h3>
+<ul class="article-authors__list">
+<li class="article-authors__list-items">
+<p>Earle Maui Earnshaw</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Mohamed Fahmy</p>
+<p>Threat Intelligence Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Ian Kenefick</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Ryan Maglaque</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Abdelrhman Sharshar</p>
+<p>Threat Intelligence Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Lucas Silva</p>
+<p>Threat Analyst</p>
+</li>
+</ul>
+<a class="article-authors__button" href="mailto:tm_research@trendmicro.com" id="article-authors-contact-us-button" target="target">
+		Contact Us
+	</a>
+<a class="article-authors__button subscribe bs-modal" href="#" target="target">
+		Subscribe
+	</a>
+<h3 class="related--articles-title">Related Articles</h3>
+<ul class="related--articles-items">
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/d/macos-suhelper-root-privilege-escalation-vulnerability-a-deep-di.html">
+					MacOS SUHelper Root Privilege Escalation Vulnerability: A Deep Dive Into CVE-2022-22639 
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/d/an-in-depth-look-at-ics-vulnerabilities-part-2.html">
+					An In-Depth Look at ICS Vulnerabilities Part 2
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/c/an-in-depth-look-at-ics-vulnerabilities-part-1.html">
+					An In-Depth Look at ICS Vulnerabilities Part 1
+				</a>
+</li>
+</ul>
+<a href="https://www.trendmicro.com/en_us/research.html">
+				See all articles
+			</a>
+<a href="https://www.trendmicro.com/en_us/research.html">
+</a>
+</div>

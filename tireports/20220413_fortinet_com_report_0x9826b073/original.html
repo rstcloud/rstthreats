@@ -1,0 +1,1239 @@
+<html lang="en" data-template="post-page"><head>
+    <meta charset="UTF-8">
+    <title>Enemybot: A Look into Keksec's Latest DDoS Botnet | FortiGuard Labs </title>
+    <meta name="keywords" content="threat research,Threat Research,botnet,Cybersecurity Architect">
+    <meta name="description" content="FortiGuard Labs observed a new DDoS botnet calling itself “Enemybot” and attributing itself to the Keksec threat group. Read our blog to learn its methods of obfuscation, how it leverages vulnerabilities to infect devices, and executes commands once inside an infected device.">
+    <meta name="template" content="post-page">
+    
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<meta name="google-site-verification" content="tiQ03tSujT2TSsWJ6tNHiiUn8cwYVmdMQrGUCNrPQmo">
+
+<meta property="og:site_name" content="Fortinet Blog">
+<meta property="og:title" content="Enemybot: A Look into Keksec's Latest DDoS Botnet | FortiGuard Labs ">
+<meta property="og:url" content="https://www.fortinet.com/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet.html">
+<meta property="og:type" content="article">
+<meta property="og:description" content="FortiGuard Labs observed a new DDoS botnet calling itself “Enemybot” and attributing itself to the Keksec threat group. Read our blog to learn its methods of obfuscation, how it leverages vulnerabi…">
+<meta property="og:image" content="https://www.fortinet.com/content/dam/fortinet-blog/article-images/Enemybot-hero.jpeg">
+
+<meta property="twitter:card" content="summary">
+<meta property="twitter:site" content="@Fortinet">
+
+<meta property="article:author" content="Joie Salvio and Roy Tay">
+
+    <meta property="article:section" content="Threat Research">
+
+
+    <meta property="article:published_time" content="2022-04-12T00:00:00.000-07:00">
+
+
+    <meta property="article:tag" content="threat research">
+
+    <meta property="article:tag" content="botnet">
+
+    <meta property="article:tag" content="Cybersecurity Architect">
+
+
+<link rel="shortcut icon" href="/etc/designs/fortinet-blog/favicon.ico">
+
+
+    
+<link rel="stylesheet" href="/etc.clientlibs/fortinet-blog/clientlibs/clientlib-base.min.css" type="text/css">
+
+
+
+
+
+
+
+
+
+
+<!-- SEO Script -->
+
+
+
+
+<!-- OneTrust Cookies Consent Notice start for fortinet.com -->
+
+
+
+    <script type="text/javascript" async="" src="//j.6sc.co/6si.min.js"></script><script src="https://cdn.cookielaw.org/scripttemplates/otSDKStub.js" data-document-language="true" type="text/javascript" charset="UTF-8" data-domain-script="f85f39fc-d7aa-467a-b762-fbb722748016"></script>
+    <script type="text/javascript">
+
+function OptanonWrapper() {
+    {
+       try{
+            $('#cookiescript_injected').remove(); // remove old cookie script
+        }catch(e){}
+        window.dataLayer.push({
+            event: 'OneTrustGroupsUpdated'
+        });
+        Optanon.InsertScript('//assets.adobedtm.com/launch-EN23cb8375449840dc93b13f34d935b8b9.min.js','head',null, null, '1',true);
+    }
+}
+
+</script>
+
+
+<!-- OneTrust Cookies Consent Notice end for fortinet.com -->
+    
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+<script src="https://cdn.cookielaw.org/scripttemplates/6.10.0/otBannerSdk.js" async="" type="text/javascript"></script><style id="onetrust-style">#onetrust-banner-sdk{-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}#onetrust-banner-sdk .onetrust-vendors-list-handler{cursor:pointer;color:#1f96db;font-size:inherit;font-weight:bold;text-decoration:none;margin-left:5px}#onetrust-banner-sdk .onetrust-vendors-list-handler:hover{color:#1f96db}#onetrust-banner-sdk .ot-close-icon,#onetrust-pc-sdk .ot-close-icon,#ot-sync-ntfy .ot-close-icon{background-image:url("data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4IiB3aWR0aD0iMzQ4LjMzM3B4IiBoZWlnaHQ9IjM0OC4zMzNweCIgdmlld0JveD0iMCAwIDM0OC4zMzMgMzQ4LjMzNCIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgMzQ4LjMzMyAzNDguMzM0OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGc+PHBhdGggZmlsbD0iIzU2NTY1NiIgZD0iTTMzNi41NTksNjguNjExTDIzMS4wMTYsMTc0LjE2NWwxMDUuNTQzLDEwNS41NDljMTUuNjk5LDE1LjcwNSwxNS42OTksNDEuMTQ1LDAsNTYuODVjLTcuODQ0LDcuODQ0LTE4LjEyOCwxMS43NjktMjguNDA3LDExLjc2OWMtMTAuMjk2LDAtMjAuNTgxLTMuOTE5LTI4LjQxOS0xMS43NjlMMTc0LjE2NywyMzEuMDAzTDY4LjYwOSwzMzYuNTYzYy03Ljg0Myw3Ljg0NC0xOC4xMjgsMTEuNzY5LTI4LjQxNiwxMS43NjljLTEwLjI4NSwwLTIwLjU2My0zLjkxOS0yOC40MTMtMTEuNzY5Yy0xNS42OTktMTUuNjk4LTE1LjY5OS00MS4xMzksMC01Ni44NWwxMDUuNTQtMTA1LjU0OUwxMS43NzQsNjguNjExYy0xNS42OTktMTUuNjk5LTE1LjY5OS00MS4xNDUsMC01Ni44NDRjMTUuNjk2LTE1LjY4Nyw0MS4xMjctMTUuNjg3LDU2LjgyOSwwbDEwNS41NjMsMTA1LjU1NEwyNzkuNzIxLDExLjc2N2MxNS43MDUtMTUuNjg3LDQxLjEzOS0xNS42ODcsNTYuODMyLDBDMzUyLjI1OCwyNy40NjYsMzUyLjI1OCw1Mi45MTIsMzM2LjU1OSw2OC42MTF6Ii8+PC9nPjwvc3ZnPg==");background-size:contain;background-repeat:no-repeat;background-position:center;height:12px;width:12px}#onetrust-banner-sdk .powered-by-logo,#onetrust-banner-sdk .ot-pc-footer-logo a,#onetrust-pc-sdk .powered-by-logo,#onetrust-pc-sdk .ot-pc-footer-logo a,#ot-sync-ntfy .powered-by-logo,#ot-sync-ntfy .ot-pc-footer-logo a{background-size:contain;background-repeat:no-repeat;background-position:center;height:25px;width:152px;display:block}#onetrust-banner-sdk h3 *,#onetrust-banner-sdk h4 *,#onetrust-banner-sdk h6 *,#onetrust-banner-sdk button *,#onetrust-banner-sdk a[data-parent-id] *,#onetrust-pc-sdk h3 *,#onetrust-pc-sdk h4 *,#onetrust-pc-sdk h6 *,#onetrust-pc-sdk button *,#onetrust-pc-sdk a[data-parent-id] *,#ot-sync-ntfy h3 *,#ot-sync-ntfy h4 *,#ot-sync-ntfy h6 *,#ot-sync-ntfy button *,#ot-sync-ntfy a[data-parent-id] *{font-size:inherit;font-weight:inherit;color:inherit}#onetrust-banner-sdk .ot-hide,#onetrust-pc-sdk .ot-hide,#ot-sync-ntfy .ot-hide{display:none !important}#onetrust-pc-sdk .ot-sdk-row .ot-sdk-column{padding:0}#onetrust-pc-sdk .ot-sdk-container{padding-right:0}#onetrust-pc-sdk .ot-sdk-row{flex-direction:initial;width:100%}#onetrust-pc-sdk [type="checkbox"]:checked,#onetrust-pc-sdk [type="checkbox"]:not(:checked){pointer-events:initial}#onetrust-pc-sdk [type="checkbox"]:disabled+label::before,#onetrust-pc-sdk [type="checkbox"]:disabled+label:after,#onetrust-pc-sdk [type="checkbox"]:disabled+label{pointer-events:none;opacity:0.7}#onetrust-pc-sdk #vendor-list-content{transform:translate3d(0, 0, 0)}#onetrust-pc-sdk li input[type="checkbox"]{z-index:1}#onetrust-pc-sdk li .ot-checkbox label{z-index:2}#onetrust-pc-sdk li .ot-checkbox input[type="checkbox"]{height:auto;width:auto}#onetrust-pc-sdk li .host-title a,#onetrust-pc-sdk li .ot-host-name a,#onetrust-pc-sdk li .accordion-text,#onetrust-pc-sdk li .ot-acc-txt{z-index:2;position:relative}#onetrust-pc-sdk input{margin:3px 0.1ex}#onetrust-pc-sdk .toggle-always-active{opacity:0.6;cursor:default}#onetrust-pc-sdk .screen-reader-only,#onetrust-pc-sdk .ot-scrn-rdr{border:0;clip:rect(0 0 0 0);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute;width:1px}#onetrust-pc-sdk .pc-logo,#onetrust-pc-sdk .ot-pc-logo{height:60px;width:180px;background-position:center;background-size:contain;background-repeat:no-repeat}#onetrust-pc-sdk .ot-tooltip .ot-tooltiptext{visibility:hidden;width:120px;background-color:#555;color:#fff;text-align:center;padding:5px 0;border-radius:6px;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-60px;opacity:0;transition:opacity 0.3s}#onetrust-pc-sdk .ot-tooltip .ot-tooltiptext::after{content:"";position:absolute;top:100%;left:50%;margin-left:-5px;border-width:5px;border-style:solid;border-color:#555 transparent transparent transparent}#onetrust-pc-sdk .ot-tooltip:hover .ot-tooltiptext{visibility:visible;opacity:1}#onetrust-pc-sdk .ot-tooltip{position:relative;display:inline-block;z-index:3}#onetrust-pc-sdk .ot-tooltip svg{color:grey;height:20px;width:20px}#onetrust-pc-sdk.ot-fade-in,.onetrust-pc-dark-filter.ot-fade-in{animation-name:onetrust-fade-in;animation-duration:400ms;animation-timing-function:ease-in-out}#onetrust-pc-sdk.ot-hide{display:none !important}.onetrust-pc-dark-filter.ot-hide{display:none !important}#ot-sdk-btn.ot-sdk-show-settings,#ot-sdk-btn.optanon-show-settings{color:#68b631;border:1px solid #68b631;height:auto;white-space:normal;word-wrap:break-word;padding:0.8em 2em;font-size:0.8em;line-height:1.2;cursor:pointer;-moz-transition:0.1s ease;-o-transition:0.1s ease;-webkit-transition:1s ease;transition:0.1s ease}#ot-sdk-btn.ot-sdk-show-settings:hover,#ot-sdk-btn.optanon-show-settings:hover{color:#fff;background-color:#68b631}.onetrust-pc-dark-filter{background:rgba(0,0,0,0.5);z-index:2147483646;width:100%;height:100%;overflow:hidden;position:fixed;top:0;bottom:0;left:0}@keyframes onetrust-fade-in{0%{opacity:0}100%{opacity:1}}@media only screen and (min-width: 426px) and (max-width: 896px) and (orientation: landscape){#onetrust-pc-sdk p{font-size:0.75em}}#onetrust-banner-sdk .banner-option-input:focus+label{outline:1px solid #000;outline-style:auto}
+#onetrust-banner-sdk,#onetrust-pc-sdk,#ot-sdk-cookie-policy,#ot-sync-ntfy{font-size:16px}#onetrust-banner-sdk *,#onetrust-banner-sdk ::after,#onetrust-banner-sdk ::before,#onetrust-pc-sdk *,#onetrust-pc-sdk ::after,#onetrust-pc-sdk ::before,#ot-sdk-cookie-policy *,#ot-sdk-cookie-policy ::after,#ot-sdk-cookie-policy ::before,#ot-sync-ntfy *,#ot-sync-ntfy ::after,#ot-sync-ntfy ::before{-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box}#onetrust-banner-sdk div,#onetrust-banner-sdk span,#onetrust-banner-sdk h1,#onetrust-banner-sdk h2,#onetrust-banner-sdk h3,#onetrust-banner-sdk h4,#onetrust-banner-sdk h5,#onetrust-banner-sdk h6,#onetrust-banner-sdk p,#onetrust-banner-sdk img,#onetrust-banner-sdk svg,#onetrust-banner-sdk button,#onetrust-banner-sdk section,#onetrust-banner-sdk a,#onetrust-banner-sdk label,#onetrust-banner-sdk input,#onetrust-banner-sdk ul,#onetrust-banner-sdk li,#onetrust-banner-sdk nav,#onetrust-banner-sdk table,#onetrust-banner-sdk thead,#onetrust-banner-sdk tr,#onetrust-banner-sdk td,#onetrust-banner-sdk tbody,#onetrust-banner-sdk .ot-main-content,#onetrust-banner-sdk .ot-toggle,#onetrust-banner-sdk #ot-content,#onetrust-banner-sdk #ot-pc-content,#onetrust-banner-sdk .checkbox,#onetrust-pc-sdk div,#onetrust-pc-sdk span,#onetrust-pc-sdk h1,#onetrust-pc-sdk h2,#onetrust-pc-sdk h3,#onetrust-pc-sdk h4,#onetrust-pc-sdk h5,#onetrust-pc-sdk h6,#onetrust-pc-sdk p,#onetrust-pc-sdk img,#onetrust-pc-sdk svg,#onetrust-pc-sdk button,#onetrust-pc-sdk section,#onetrust-pc-sdk a,#onetrust-pc-sdk label,#onetrust-pc-sdk input,#onetrust-pc-sdk ul,#onetrust-pc-sdk li,#onetrust-pc-sdk nav,#onetrust-pc-sdk table,#onetrust-pc-sdk thead,#onetrust-pc-sdk tr,#onetrust-pc-sdk td,#onetrust-pc-sdk tbody,#onetrust-pc-sdk .ot-main-content,#onetrust-pc-sdk .ot-toggle,#onetrust-pc-sdk #ot-content,#onetrust-pc-sdk #ot-pc-content,#onetrust-pc-sdk .checkbox,#ot-sdk-cookie-policy div,#ot-sdk-cookie-policy span,#ot-sdk-cookie-policy h1,#ot-sdk-cookie-policy h2,#ot-sdk-cookie-policy h3,#ot-sdk-cookie-policy h4,#ot-sdk-cookie-policy h5,#ot-sdk-cookie-policy h6,#ot-sdk-cookie-policy p,#ot-sdk-cookie-policy img,#ot-sdk-cookie-policy svg,#ot-sdk-cookie-policy button,#ot-sdk-cookie-policy section,#ot-sdk-cookie-policy a,#ot-sdk-cookie-policy label,#ot-sdk-cookie-policy input,#ot-sdk-cookie-policy ul,#ot-sdk-cookie-policy li,#ot-sdk-cookie-policy nav,#ot-sdk-cookie-policy table,#ot-sdk-cookie-policy thead,#ot-sdk-cookie-policy tr,#ot-sdk-cookie-policy td,#ot-sdk-cookie-policy tbody,#ot-sdk-cookie-policy .ot-main-content,#ot-sdk-cookie-policy .ot-toggle,#ot-sdk-cookie-policy #ot-content,#ot-sdk-cookie-policy #ot-pc-content,#ot-sdk-cookie-policy .checkbox,#ot-sync-ntfy div,#ot-sync-ntfy span,#ot-sync-ntfy h1,#ot-sync-ntfy h2,#ot-sync-ntfy h3,#ot-sync-ntfy h4,#ot-sync-ntfy h5,#ot-sync-ntfy h6,#ot-sync-ntfy p,#ot-sync-ntfy img,#ot-sync-ntfy svg,#ot-sync-ntfy button,#ot-sync-ntfy section,#ot-sync-ntfy a,#ot-sync-ntfy label,#ot-sync-ntfy input,#ot-sync-ntfy ul,#ot-sync-ntfy li,#ot-sync-ntfy nav,#ot-sync-ntfy table,#ot-sync-ntfy thead,#ot-sync-ntfy tr,#ot-sync-ntfy td,#ot-sync-ntfy tbody,#ot-sync-ntfy .ot-main-content,#ot-sync-ntfy .ot-toggle,#ot-sync-ntfy #ot-content,#ot-sync-ntfy #ot-pc-content,#ot-sync-ntfy .checkbox{font-family:inherit;font-weight:normal;-webkit-font-smoothing:auto;letter-spacing:normal;line-height:normal;padding:0;margin:0;height:auto;min-height:0;max-height:none;width:auto;min-width:0;max-width:none;border-radius:0;border:none;clear:none;float:none;position:static;bottom:auto;left:auto;right:auto;top:auto;text-align:left;text-decoration:none;text-indent:0;text-shadow:none;text-transform:none;white-space:normal;background:none;overflow:visible;vertical-align:baseline;visibility:visible;z-index:auto;box-shadow:none}#onetrust-banner-sdk label:before,#onetrust-banner-sdk label:after,#onetrust-banner-sdk .checkbox:after,#onetrust-banner-sdk .checkbox:before,#onetrust-pc-sdk label:before,#onetrust-pc-sdk label:after,#onetrust-pc-sdk .checkbox:after,#onetrust-pc-sdk .checkbox:before,#ot-sdk-cookie-policy label:before,#ot-sdk-cookie-policy label:after,#ot-sdk-cookie-policy .checkbox:after,#ot-sdk-cookie-policy .checkbox:before,#ot-sync-ntfy label:before,#ot-sync-ntfy label:after,#ot-sync-ntfy .checkbox:after,#ot-sync-ntfy .checkbox:before{content:"";content:none}
+#onetrust-banner-sdk .ot-sdk-container,#onetrust-pc-sdk .ot-sdk-container,#ot-sdk-cookie-policy .ot-sdk-container{position:relative;width:100%;max-width:100%;margin:0 auto;padding:0 20px;box-sizing:border-box}#onetrust-banner-sdk .ot-sdk-column,#onetrust-banner-sdk .ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-column,#onetrust-pc-sdk .ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-columns{width:100%;float:left;box-sizing:border-box;padding:0;display:initial}@media (min-width: 400px){#onetrust-banner-sdk .ot-sdk-container,#onetrust-pc-sdk .ot-sdk-container,#ot-sdk-cookie-policy .ot-sdk-container{width:90%;padding:0}}@media (min-width: 550px){#onetrust-banner-sdk .ot-sdk-container,#onetrust-pc-sdk .ot-sdk-container,#ot-sdk-cookie-policy .ot-sdk-container{width:100%}#onetrust-banner-sdk .ot-sdk-column,#onetrust-banner-sdk .ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-column,#onetrust-pc-sdk .ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-columns{margin-left:4%}#onetrust-banner-sdk .ot-sdk-column:first-child,#onetrust-banner-sdk .ot-sdk-columns:first-child,#onetrust-pc-sdk .ot-sdk-column:first-child,#onetrust-pc-sdk .ot-sdk-columns:first-child,#ot-sdk-cookie-policy .ot-sdk-column:first-child,#ot-sdk-cookie-policy .ot-sdk-columns:first-child{margin-left:0}#onetrust-banner-sdk .ot-sdk-one.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-one.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-one.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-one.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-one.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-one.ot-sdk-columns{width:4.66666666667%}#onetrust-banner-sdk .ot-sdk-two.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-two.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-two.ot-sdk-columns{width:13.3333333333%}#onetrust-banner-sdk .ot-sdk-three.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-three.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-three.ot-sdk-columns{width:22%}#onetrust-banner-sdk .ot-sdk-four.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-four.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-four.ot-sdk-columns{width:30.6666666667%}#onetrust-banner-sdk .ot-sdk-five.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-five.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-five.ot-sdk-columns{width:39.3333333333%}#onetrust-banner-sdk .ot-sdk-six.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-six.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-six.ot-sdk-columns{width:48%}#onetrust-banner-sdk .ot-sdk-seven.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-seven.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-seven.ot-sdk-columns{width:56.6666666667%}#onetrust-banner-sdk .ot-sdk-eight.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-eight.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-eight.ot-sdk-columns{width:65.3333333333%}#onetrust-banner-sdk .ot-sdk-nine.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-nine.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-nine.ot-sdk-columns{width:74%}#onetrust-banner-sdk .ot-sdk-ten.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-ten.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-ten.ot-sdk-columns{width:82.6666666667%}#onetrust-banner-sdk .ot-sdk-eleven.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-eleven.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-eleven.ot-sdk-columns{width:91.3333333333%}#onetrust-banner-sdk .ot-sdk-twelve.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-twelve.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-twelve.ot-sdk-columns{width:100%;margin-left:0}#onetrust-banner-sdk .ot-sdk-one-third.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-one-third.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-one-third.ot-sdk-column{width:30.6666666667%}#onetrust-banner-sdk .ot-sdk-two-thirds.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-two-thirds.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-two-thirds.ot-sdk-column{width:65.3333333333%}#onetrust-banner-sdk .ot-sdk-one-half.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-one-half.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-one-half.ot-sdk-column{width:48%}#onetrust-banner-sdk .ot-sdk-offset-by-one.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-one.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-one.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-one.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-one.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-one.ot-sdk-columns{margin-left:8.66666666667%}#onetrust-banner-sdk .ot-sdk-offset-by-two.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-two.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-two.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-two.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-two.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-two.ot-sdk-columns{margin-left:17.3333333333%}#onetrust-banner-sdk .ot-sdk-offset-by-three.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-three.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-three.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-three.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-three.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-three.ot-sdk-columns{margin-left:26%}#onetrust-banner-sdk .ot-sdk-offset-by-four.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-four.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-four.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-four.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-four.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-four.ot-sdk-columns{margin-left:34.6666666667%}#onetrust-banner-sdk .ot-sdk-offset-by-five.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-five.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-five.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-five.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-five.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-five.ot-sdk-columns{margin-left:43.3333333333%}#onetrust-banner-sdk .ot-sdk-offset-by-six.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-six.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-six.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-six.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-six.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-six.ot-sdk-columns{margin-left:52%}#onetrust-banner-sdk .ot-sdk-offset-by-seven.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-seven.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-seven.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-seven.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-seven.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-seven.ot-sdk-columns{margin-left:60.6666666667%}#onetrust-banner-sdk .ot-sdk-offset-by-eight.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-eight.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-eight.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-eight.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-eight.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-eight.ot-sdk-columns{margin-left:69.3333333333%}#onetrust-banner-sdk .ot-sdk-offset-by-nine.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-nine.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-nine.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-nine.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-nine.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-nine.ot-sdk-columns{margin-left:78%}#onetrust-banner-sdk .ot-sdk-offset-by-ten.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-ten.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-ten.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-ten.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-ten.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-ten.ot-sdk-columns{margin-left:86.6666666667%}#onetrust-banner-sdk .ot-sdk-offset-by-eleven.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-eleven.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-eleven.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-eleven.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-eleven.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-eleven.ot-sdk-columns{margin-left:95.3333333333%}#onetrust-banner-sdk .ot-sdk-offset-by-one-third.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-one-third.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-one-third.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-one-third.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-one-third.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-one-third.ot-sdk-columns{margin-left:34.6666666667%}#onetrust-banner-sdk .ot-sdk-offset-by-two-thirds.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-two-thirds.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-two-thirds.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-two-thirds.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-two-thirds.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-two-thirds.ot-sdk-columns{margin-left:69.3333333333%}#onetrust-banner-sdk .ot-sdk-offset-by-one-half.ot-sdk-column,#onetrust-banner-sdk .ot-sdk-offset-by-one-half.ot-sdk-columns,#onetrust-pc-sdk .ot-sdk-offset-by-one-half.ot-sdk-column,#onetrust-pc-sdk .ot-sdk-offset-by-one-half.ot-sdk-columns,#ot-sdk-cookie-policy .ot-sdk-offset-by-one-half.ot-sdk-column,#ot-sdk-cookie-policy .ot-sdk-offset-by-one-half.ot-sdk-columns{margin-left:52%}}#onetrust-banner-sdk h1,#onetrust-banner-sdk h2,#onetrust-banner-sdk h3,#onetrust-banner-sdk h4,#onetrust-banner-sdk h5,#onetrust-banner-sdk h6,#onetrust-pc-sdk h1,#onetrust-pc-sdk h2,#onetrust-pc-sdk h3,#onetrust-pc-sdk h4,#onetrust-pc-sdk h5,#onetrust-pc-sdk h6,#ot-sdk-cookie-policy h1,#ot-sdk-cookie-policy h2,#ot-sdk-cookie-policy h3,#ot-sdk-cookie-policy h4,#ot-sdk-cookie-policy h5,#ot-sdk-cookie-policy h6{margin-top:0;font-weight:600;font-family:inherit}#onetrust-banner-sdk h1,#onetrust-pc-sdk h1,#ot-sdk-cookie-policy h1{font-size:1.5rem;line-height:1.2}#onetrust-banner-sdk h2,#onetrust-pc-sdk h2,#ot-sdk-cookie-policy h2{font-size:1.5rem;line-height:1.25}#onetrust-banner-sdk h3,#onetrust-pc-sdk h3,#ot-sdk-cookie-policy h3{font-size:1.5rem;line-height:1.3}#onetrust-banner-sdk h4,#onetrust-pc-sdk h4,#ot-sdk-cookie-policy h4{font-size:1.5rem;line-height:1.35}#onetrust-banner-sdk h5,#onetrust-pc-sdk h5,#ot-sdk-cookie-policy h5{font-size:1.5rem;line-height:1.5}#onetrust-banner-sdk h6,#onetrust-pc-sdk h6,#ot-sdk-cookie-policy h6{font-size:1.5rem;line-height:1.6}@media (min-width: 550px){#onetrust-banner-sdk h1,#onetrust-pc-sdk h1,#ot-sdk-cookie-policy h1{font-size:1.5rem}#onetrust-banner-sdk h2,#onetrust-pc-sdk h2,#ot-sdk-cookie-policy h2{font-size:1.5rem}#onetrust-banner-sdk h3,#onetrust-pc-sdk h3,#ot-sdk-cookie-policy h3{font-size:1.5rem}#onetrust-banner-sdk h4,#onetrust-pc-sdk h4,#ot-sdk-cookie-policy h4{font-size:1.5rem}#onetrust-banner-sdk h5,#onetrust-pc-sdk h5,#ot-sdk-cookie-policy h5{font-size:1.5rem}#onetrust-banner-sdk h6,#onetrust-pc-sdk h6,#ot-sdk-cookie-policy h6{font-size:1.5rem}}#onetrust-banner-sdk p,#onetrust-pc-sdk p,#ot-sdk-cookie-policy p{margin:0 0 1em 0;font-family:inherit;line-height:normal}#onetrust-banner-sdk a,#onetrust-pc-sdk a,#ot-sdk-cookie-policy a{color:#565656;text-decoration:underline}#onetrust-banner-sdk a:hover,#onetrust-pc-sdk a:hover,#ot-sdk-cookie-policy a:hover{color:#565656;text-decoration:none}#onetrust-banner-sdk .ot-sdk-button,#onetrust-banner-sdk button,#onetrust-pc-sdk .ot-sdk-button,#onetrust-pc-sdk button,#ot-sdk-cookie-policy .ot-sdk-button,#ot-sdk-cookie-policy button{margin-bottom:1rem;font-family:inherit}#onetrust-banner-sdk .ot-sdk-button,#onetrust-banner-sdk button,#onetrust-banner-sdk input[type="submit"],#onetrust-banner-sdk input[type="reset"],#onetrust-banner-sdk input[type="button"],#onetrust-pc-sdk .ot-sdk-button,#onetrust-pc-sdk button,#onetrust-pc-sdk input[type="submit"],#onetrust-pc-sdk input[type="reset"],#onetrust-pc-sdk input[type="button"],#ot-sdk-cookie-policy .ot-sdk-button,#ot-sdk-cookie-policy button,#ot-sdk-cookie-policy input[type="submit"],#ot-sdk-cookie-policy input[type="reset"],#ot-sdk-cookie-policy input[type="button"]{display:inline-block;height:38px;padding:0 30px;color:#555;text-align:center;font-size:0.9em;font-weight:400;line-height:38px;letter-spacing:0.01em;text-decoration:none;white-space:nowrap;background-color:transparent;border-radius:2px;border:1px solid #bbb;cursor:pointer;box-sizing:border-box}#onetrust-banner-sdk .ot-sdk-button:hover,#onetrust-banner-sdk :not(.ot-leg-btn-container)>button:hover,#onetrust-banner-sdk input[type="submit"]:hover,#onetrust-banner-sdk input[type="reset"]:hover,#onetrust-banner-sdk input[type="button"]:hover,#onetrust-banner-sdk .ot-sdk-button:focus,#onetrust-banner-sdk :not(.ot-leg-btn-container)>button:focus,#onetrust-banner-sdk input[type="submit"]:focus,#onetrust-banner-sdk input[type="reset"]:focus,#onetrust-banner-sdk input[type="button"]:focus,#onetrust-pc-sdk .ot-sdk-button:hover,#onetrust-pc-sdk :not(.ot-leg-btn-container)>button:hover,#onetrust-pc-sdk input[type="submit"]:hover,#onetrust-pc-sdk input[type="reset"]:hover,#onetrust-pc-sdk input[type="button"]:hover,#onetrust-pc-sdk .ot-sdk-button:focus,#onetrust-pc-sdk :not(.ot-leg-btn-container)>button:focus,#onetrust-pc-sdk input[type="submit"]:focus,#onetrust-pc-sdk input[type="reset"]:focus,#onetrust-pc-sdk input[type="button"]:focus,#ot-sdk-cookie-policy .ot-sdk-button:hover,#ot-sdk-cookie-policy :not(.ot-leg-btn-container)>button:hover,#ot-sdk-cookie-policy input[type="submit"]:hover,#ot-sdk-cookie-policy input[type="reset"]:hover,#ot-sdk-cookie-policy input[type="button"]:hover,#ot-sdk-cookie-policy .ot-sdk-button:focus,#ot-sdk-cookie-policy :not(.ot-leg-btn-container)>button:focus,#ot-sdk-cookie-policy input[type="submit"]:focus,#ot-sdk-cookie-policy input[type="reset"]:focus,#ot-sdk-cookie-policy input[type="button"]:focus{color:#333;border-color:#888;opacity:0.7}#onetrust-banner-sdk .ot-sdk-button:focus,#onetrust-banner-sdk :not(.ot-leg-btn-container)>button:focus,#onetrust-banner-sdk input[type="submit"]:focus,#onetrust-banner-sdk input[type="reset"]:focus,#onetrust-banner-sdk input[type="button"]:focus,#onetrust-pc-sdk .ot-sdk-button:focus,#onetrust-pc-sdk :not(.ot-leg-btn-container)>button:focus,#onetrust-pc-sdk input[type="submit"]:focus,#onetrust-pc-sdk input[type="reset"]:focus,#onetrust-pc-sdk input[type="button"]:focus,#ot-sdk-cookie-policy .ot-sdk-button:focus,#ot-sdk-cookie-policy :not(.ot-leg-btn-container)>button:focus,#ot-sdk-cookie-policy input[type="submit"]:focus,#ot-sdk-cookie-policy input[type="reset"]:focus,#ot-sdk-cookie-policy input[type="button"]:focus{outline:2px solid #000}#onetrust-banner-sdk .ot-sdk-button.ot-sdk-button-primary,#onetrust-banner-sdk button.ot-sdk-button-primary,#onetrust-banner-sdk input[type="submit"].ot-sdk-button-primary,#onetrust-banner-sdk input[type="reset"].ot-sdk-button-primary,#onetrust-banner-sdk input[type="button"].ot-sdk-button-primary,#onetrust-pc-sdk .ot-sdk-button.ot-sdk-button-primary,#onetrust-pc-sdk button.ot-sdk-button-primary,#onetrust-pc-sdk input[type="submit"].ot-sdk-button-primary,#onetrust-pc-sdk input[type="reset"].ot-sdk-button-primary,#onetrust-pc-sdk input[type="button"].ot-sdk-button-primary,#ot-sdk-cookie-policy .ot-sdk-button.ot-sdk-button-primary,#ot-sdk-cookie-policy button.ot-sdk-button-primary,#ot-sdk-cookie-policy input[type="submit"].ot-sdk-button-primary,#ot-sdk-cookie-policy input[type="reset"].ot-sdk-button-primary,#ot-sdk-cookie-policy input[type="button"].ot-sdk-button-primary{color:#fff;background-color:#33c3f0;border-color:#33c3f0}#onetrust-banner-sdk .ot-sdk-button.ot-sdk-button-primary:hover,#onetrust-banner-sdk button.ot-sdk-button-primary:hover,#onetrust-banner-sdk input[type="submit"].ot-sdk-button-primary:hover,#onetrust-banner-sdk input[type="reset"].ot-sdk-button-primary:hover,#onetrust-banner-sdk input[type="button"].ot-sdk-button-primary:hover,#onetrust-banner-sdk .ot-sdk-button.ot-sdk-button-primary:focus,#onetrust-banner-sdk button.ot-sdk-button-primary:focus,#onetrust-banner-sdk input[type="submit"].ot-sdk-button-primary:focus,#onetrust-banner-sdk input[type="reset"].ot-sdk-button-primary:focus,#onetrust-banner-sdk input[type="button"].ot-sdk-button-primary:focus,#onetrust-pc-sdk .ot-sdk-button.ot-sdk-button-primary:hover,#onetrust-pc-sdk button.ot-sdk-button-primary:hover,#onetrust-pc-sdk input[type="submit"].ot-sdk-button-primary:hover,#onetrust-pc-sdk input[type="reset"].ot-sdk-button-primary:hover,#onetrust-pc-sdk input[type="button"].ot-sdk-button-primary:hover,#onetrust-pc-sdk .ot-sdk-button.ot-sdk-button-primary:focus,#onetrust-pc-sdk button.ot-sdk-button-primary:focus,#onetrust-pc-sdk input[type="submit"].ot-sdk-button-primary:focus,#onetrust-pc-sdk input[type="reset"].ot-sdk-button-primary:focus,#onetrust-pc-sdk input[type="button"].ot-sdk-button-primary:focus,#ot-sdk-cookie-policy .ot-sdk-button.ot-sdk-button-primary:hover,#ot-sdk-cookie-policy button.ot-sdk-button-primary:hover,#ot-sdk-cookie-policy input[type="submit"].ot-sdk-button-primary:hover,#ot-sdk-cookie-policy input[type="reset"].ot-sdk-button-primary:hover,#ot-sdk-cookie-policy input[type="button"].ot-sdk-button-primary:hover,#ot-sdk-cookie-policy .ot-sdk-button.ot-sdk-button-primary:focus,#ot-sdk-cookie-policy button.ot-sdk-button-primary:focus,#ot-sdk-cookie-policy input[type="submit"].ot-sdk-button-primary:focus,#ot-sdk-cookie-policy input[type="reset"].ot-sdk-button-primary:focus,#ot-sdk-cookie-policy input[type="button"].ot-sdk-button-primary:focus{color:#fff;background-color:#1eaedb;border-color:#1eaedb}#onetrust-banner-sdk input[type="email"],#onetrust-banner-sdk input[type="number"],#onetrust-banner-sdk input[type="search"],#onetrust-banner-sdk input[type="text"],#onetrust-banner-sdk input[type="tel"],#onetrust-banner-sdk input[type="url"],#onetrust-banner-sdk input[type="password"],#onetrust-banner-sdk textarea,#onetrust-banner-sdk select,#onetrust-pc-sdk input[type="email"],#onetrust-pc-sdk input[type="number"],#onetrust-pc-sdk input[type="search"],#onetrust-pc-sdk input[type="text"],#onetrust-pc-sdk input[type="tel"],#onetrust-pc-sdk input[type="url"],#onetrust-pc-sdk input[type="password"],#onetrust-pc-sdk textarea,#onetrust-pc-sdk select,#ot-sdk-cookie-policy input[type="email"],#ot-sdk-cookie-policy input[type="number"],#ot-sdk-cookie-policy input[type="search"],#ot-sdk-cookie-policy input[type="text"],#ot-sdk-cookie-policy input[type="tel"],#ot-sdk-cookie-policy input[type="url"],#ot-sdk-cookie-policy input[type="password"],#ot-sdk-cookie-policy textarea,#ot-sdk-cookie-policy select{height:38px;padding:6px 10px;background-color:#fff;border:1px solid #d1d1d1;border-radius:4px;box-shadow:none;box-sizing:border-box}#onetrust-banner-sdk input[type="email"],#onetrust-banner-sdk input[type="number"],#onetrust-banner-sdk input[type="search"],#onetrust-banner-sdk input[type="text"],#onetrust-banner-sdk input[type="tel"],#onetrust-banner-sdk input[type="url"],#onetrust-banner-sdk input[type="password"],#onetrust-banner-sdk textarea,#onetrust-pc-sdk input[type="email"],#onetrust-pc-sdk input[type="number"],#onetrust-pc-sdk input[type="search"],#onetrust-pc-sdk input[type="text"],#onetrust-pc-sdk input[type="tel"],#onetrust-pc-sdk input[type="url"],#onetrust-pc-sdk input[type="password"],#onetrust-pc-sdk textarea,#ot-sdk-cookie-policy input[type="email"],#ot-sdk-cookie-policy input[type="number"],#ot-sdk-cookie-policy input[type="search"],#ot-sdk-cookie-policy input[type="text"],#ot-sdk-cookie-policy input[type="tel"],#ot-sdk-cookie-policy input[type="url"],#ot-sdk-cookie-policy input[type="password"],#ot-sdk-cookie-policy textarea{-webkit-appearance:none;-moz-appearance:none;appearance:none}#onetrust-banner-sdk textarea,#onetrust-pc-sdk textarea,#ot-sdk-cookie-policy textarea{min-height:65px;padding-top:6px;padding-bottom:6px}#onetrust-banner-sdk input[type="email"]:focus,#onetrust-banner-sdk input[type="number"]:focus,#onetrust-banner-sdk input[type="search"]:focus,#onetrust-banner-sdk input[type="text"]:focus,#onetrust-banner-sdk input[type="tel"]:focus,#onetrust-banner-sdk input[type="url"]:focus,#onetrust-banner-sdk input[type="password"]:focus,#onetrust-banner-sdk textarea:focus,#onetrust-banner-sdk select:focus,#onetrust-pc-sdk input[type="email"]:focus,#onetrust-pc-sdk input[type="number"]:focus,#onetrust-pc-sdk input[type="search"]:focus,#onetrust-pc-sdk input[type="text"]:focus,#onetrust-pc-sdk input[type="tel"]:focus,#onetrust-pc-sdk input[type="url"]:focus,#onetrust-pc-sdk input[type="password"]:focus,#onetrust-pc-sdk textarea:focus,#onetrust-pc-sdk select:focus,#ot-sdk-cookie-policy input[type="email"]:focus,#ot-sdk-cookie-policy input[type="number"]:focus,#ot-sdk-cookie-policy input[type="search"]:focus,#ot-sdk-cookie-policy input[type="text"]:focus,#ot-sdk-cookie-policy input[type="tel"]:focus,#ot-sdk-cookie-policy input[type="url"]:focus,#ot-sdk-cookie-policy input[type="password"]:focus,#ot-sdk-cookie-policy textarea:focus,#ot-sdk-cookie-policy select:focus{border:1px solid #000;outline:0}#onetrust-banner-sdk label,#onetrust-banner-sdk legend,#onetrust-pc-sdk label,#onetrust-pc-sdk legend,#ot-sdk-cookie-policy label,#ot-sdk-cookie-policy legend{display:block;margin-bottom:0.5rem;font-weight:600}#onetrust-banner-sdk fieldset,#onetrust-pc-sdk fieldset,#ot-sdk-cookie-policy fieldset{padding:0;border-width:0}#onetrust-banner-sdk input[type="checkbox"],#onetrust-banner-sdk input[type="radio"],#onetrust-pc-sdk input[type="checkbox"],#onetrust-pc-sdk input[type="radio"],#ot-sdk-cookie-policy input[type="checkbox"],#ot-sdk-cookie-policy input[type="radio"]{display:inline}#onetrust-banner-sdk label>.label-body,#onetrust-pc-sdk label>.label-body,#ot-sdk-cookie-policy label>.label-body{display:inline-block;margin-left:0.5rem;font-weight:normal}#onetrust-banner-sdk ul,#onetrust-pc-sdk ul,#ot-sdk-cookie-policy ul{list-style:circle inside}#onetrust-banner-sdk ol,#onetrust-pc-sdk ol,#ot-sdk-cookie-policy ol{list-style:decimal inside}#onetrust-banner-sdk ol,#onetrust-banner-sdk ul,#onetrust-pc-sdk ol,#onetrust-pc-sdk ul,#ot-sdk-cookie-policy ol,#ot-sdk-cookie-policy ul{padding-left:0;margin-top:0}#onetrust-banner-sdk ul ul,#onetrust-banner-sdk ul ol,#onetrust-banner-sdk ol ol,#onetrust-banner-sdk ol ul,#onetrust-pc-sdk ul ul,#onetrust-pc-sdk ul ol,#onetrust-pc-sdk ol ol,#onetrust-pc-sdk ol ul,#ot-sdk-cookie-policy ul ul,#ot-sdk-cookie-policy ul ol,#ot-sdk-cookie-policy ol ol,#ot-sdk-cookie-policy ol ul{margin:1.5rem 0 1.5rem 3rem;font-size:90%}#onetrust-banner-sdk li,#onetrust-pc-sdk li,#ot-sdk-cookie-policy li{margin-bottom:1rem}#onetrust-banner-sdk code,#onetrust-pc-sdk code,#ot-sdk-cookie-policy code{padding:0.2rem 0.5rem;margin:0 0.2rem;font-size:90%;white-space:nowrap;background:#f1f1f1;border:1px solid #e1e1e1;border-radius:4px}#onetrust-banner-sdk pre>code,#onetrust-pc-sdk pre>code,#ot-sdk-cookie-policy pre>code{display:block;padding:1rem 1.5rem;white-space:pre}#onetrust-banner-sdk th,#onetrust-banner-sdk td,#onetrust-pc-sdk th,#onetrust-pc-sdk td,#ot-sdk-cookie-policy th,#ot-sdk-cookie-policy td{padding:12px 15px;text-align:left;border-bottom:1px solid #e1e1e1}#onetrust-banner-sdk .ot-sdk-u-full-width,#onetrust-pc-sdk .ot-sdk-u-full-width,#ot-sdk-cookie-policy .ot-sdk-u-full-width{width:100%;box-sizing:border-box}#onetrust-banner-sdk .ot-sdk-u-max-full-width,#onetrust-pc-sdk .ot-sdk-u-max-full-width,#ot-sdk-cookie-policy .ot-sdk-u-max-full-width{max-width:100%;box-sizing:border-box}#onetrust-banner-sdk .ot-sdk-u-pull-right,#onetrust-pc-sdk .ot-sdk-u-pull-right,#ot-sdk-cookie-policy .ot-sdk-u-pull-right{float:right}#onetrust-banner-sdk .ot-sdk-u-pull-left,#onetrust-pc-sdk .ot-sdk-u-pull-left,#ot-sdk-cookie-policy .ot-sdk-u-pull-left{float:left}#onetrust-banner-sdk hr,#onetrust-pc-sdk hr,#ot-sdk-cookie-policy hr{margin-top:3rem;margin-bottom:3.5rem;border-width:0;border-top:1px solid #e1e1e1}#onetrust-banner-sdk .ot-sdk-container:after,#onetrust-banner-sdk .ot-sdk-row:after,#onetrust-banner-sdk .ot-sdk-u-cf,#onetrust-pc-sdk .ot-sdk-container:after,#onetrust-pc-sdk .ot-sdk-row:after,#onetrust-pc-sdk .ot-sdk-u-cf,#ot-sdk-cookie-policy .ot-sdk-container:after,#ot-sdk-cookie-policy .ot-sdk-row:after,#ot-sdk-cookie-policy .ot-sdk-u-cf{content:"";display:table;clear:both}#onetrust-banner-sdk .ot-sdk-row,#onetrust-pc-sdk .ot-sdk-row,#ot-sdk-cookie-policy .ot-sdk-row{margin:0;max-width:none;display:block}
+#onetrust-dark-filter{background:rgba(0,0,0,.5);z-index:2147483646;width:100%;height:100%;overflow:hidden;position:absolute;top:0;bottom:0;left:0}#onetrust-banner-sdk{box-shadow:0 0 18px rgba(0,0,0,.2)}#onetrust-banner-sdk.otCenterRounded{z-index:2147483645;top:10%;position:fixed;right:0;background-color:#fff;width:60%;max-width:650px;border-radius:2.5px;left:1em;margin:0 auto;font-size:14px;max-height:90%;overflow-x:hidden;overflow-y:auto}#onetrust-banner-sdk::-webkit-scrollbar{width:11px}#onetrust-banner-sdk::-webkit-scrollbar-thumb{border-radius:10px;background:#c1c1c1}#onetrust-banner-sdk{scrollbar-arrow-color:#c1c1c1;scrollbar-darkshadow-color:#c1c1c1;scrollbar-face-color:#c1c1c1;scrollbar-shadow-color:#c1c1c1}#onetrust-banner-sdk h3,#onetrust-banner-sdk p{color:dimgray}#onetrust-banner-sdk #onetrust-policy{margin-top:20px}#onetrust-banner-sdk #onetrust-policy-title{float:left;text-align:left;font-size:1em;line-height:1.4;margin-bottom:0;padding:0 0 10px 30px;width:calc(100% - 90px)}#onetrust-banner-sdk #onetrust-policy-text,#onetrust-banner-sdk .ot-b-addl-desc,#onetrust-banner-sdk .ot-gv-list-handler{clear:both;float:left;margin:0 30px 10px 30px;font-size:.813em;line-height:1.5}#onetrust-banner-sdk #onetrust-policy-text *,#onetrust-banner-sdk .ot-b-addl-desc *,#onetrust-banner-sdk .ot-gv-list-handler *{line-height:inherit;font-size:inherit;margin:0}#onetrust-banner-sdk .ot-gv-list-handler{padding:0;border:0;height:auto;width:auto}#onetrust-banner-sdk .ot-b-addl-desc{display:block}#onetrust-banner-sdk #onetrust-button-group-parent{padding:15px 30px;text-align:center}#onetrust-banner-sdk #onetrust-button-group-parent:not(.has-reject-all-button) #onetrust-button-group{text-align:right}#onetrust-banner-sdk #onetrust-button-group{text-align:center;display:inline-block;width:100%}#onetrust-banner-sdk #onetrust-reject-all-handler,#onetrust-banner-sdk #onetrust-pc-btn-handler{margin-right:1em}#onetrust-banner-sdk #onetrust-pc-btn-handler{border:1px solid #6cc04a;max-width:45%}#onetrust-banner-sdk .banner-actions-container{float:right;width:50%}#onetrust-banner-sdk #onetrust-pc-btn-handler.cookie-setting-link{background-color:#fff;border:none;color:#6cc04a;text-decoration:underline;padding-left:0}#onetrust-banner-sdk #onetrust-accept-btn-handler,#onetrust-banner-sdk #onetrust-reject-all-handler,#onetrust-banner-sdk #onetrust-pc-btn-handler{background-color:#6cc04a;color:#fff;border-color:#6cc04a;min-width:135px;padding:12px 10px;letter-spacing:.05em;line-height:1.4;font-size:.813em;font-weight:600;height:auto;white-space:normal;word-break:break-word;word-wrap:break-word}#onetrust-banner-sdk .has-reject-all-button #onetrust-pc-btn-handler{float:left;max-width:calc(40% - 18px)}#onetrust-banner-sdk .has-reject-all-button #onetrust-pc-btn-handler.cookie-setting-link{text-align:left;margin-right:0}#onetrust-banner-sdk .has-reject-all-button .banner-actions-container{max-width:60%;width:auto}#onetrust-banner-sdk .ot-close-icon{width:.8em;height:18px;border:none;display:inline-block;padding:0}#onetrust-banner-sdk #onetrust-close-btn-container{float:right;margin-right:20px}#onetrust-banner-sdk .banner_logo{display:none}#onetrust-banner-sdk #banner-options{float:left;padding:0 30px;width:calc(100% - 90px)}#onetrust-banner-sdk #banner-options label{margin:0;display:inline-block}#onetrust-banner-sdk .banner-option{margin-bottom:10px}#onetrust-banner-sdk .banner-option-input{position:absolute;cursor:pointer;width:auto;height:20px;opacity:0}#onetrust-banner-sdk .banner-option-input:checked~label .ot-arrow-container{transform:rotate(90deg)}#onetrust-banner-sdk .banner-option-input:checked~.banner-option-details{height:auto;display:block}#onetrust-banner-sdk .banner-option-header{cursor:pointer;display:inline-block}#onetrust-banner-sdk .banner-option-header :first-child{font-size:.82em;line-height:1.4;color:dimgray;font-weight:bold;float:left}#onetrust-banner-sdk .ot-arrow-container,#onetrust-banner-sdk .banner-option-details{transition:all 300ms ease-in 0s;-webkit-transition:all 300ms ease-in 0s;-moz-transition:all 300ms ease-in 0s;-o-transition:all 300ms ease-in 0s}#onetrust-banner-sdk .ot-arrow-container{display:inline-block;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:6px solid dimgray;margin-left:10px;margin-top:2px}#onetrust-banner-sdk .banner-option-details{display:none;font-size:.83em;line-height:1.5;height:0px;padding:10px 10px 5px 10px}#onetrust-banner-sdk .banner-option-details *{font-size:inherit;line-height:inherit;color:dimgray}#onetrust-banner-sdk .ot-dpd-container{float:left;margin:0 30px 10px 30px}#onetrust-banner-sdk .ot-dpd-title{font-weight:bold;padding-bottom:10px}#onetrust-banner-sdk .ot-dpd-title{font-size:1em;line-height:1.4}#onetrust-banner-sdk .ot-dpd-desc{font-size:.813em;line-height:1.5;margin-bottom:0}#onetrust-banner-sdk .ot-dpd-desc *{margin:0}#onetrust-banner-sdk .onetrust-vendors-list-handler{display:block;margin-left:0px;margin-top:5px;padding:0;margin-bottom:0;border:0;line-height:normal;height:auto;width:auto}#onetrust-banner-sdk :not(.ot-dpd-desc)>.ot-b-addl-desc{float:left;margin:0 30px 10px 30px}#onetrust-banner-sdk .ot-dpd-desc>.ot-b-addl-desc{margin-top:10px;margin-bottom:10px;font-size:1em;line-height:1.5;float:none}#onetrust-banner-sdk #onetrust-policy-text a{font-weight:bold;margin-left:5px}@media only screen and (max-width: 425px){#onetrust-banner-sdk #onetrust-accept-btn-handler,#onetrust-banner-sdk #onetrust-reject-all-handler,#onetrust-banner-sdk #onetrust-pc-btn-handler{width:100%;margin-bottom:10px}#onetrust-banner-sdk #onetrust-pc-btn-handler,#onetrust-banner-sdk #onetrust-reject-all-handler{margin-right:0}#onetrust-banner-sdk .has-reject-all-button #onetrust-pc-btn-handler.cookie-setting-link{text-align:center}#onetrust-banner-sdk .banner-actions-container,#onetrust-banner-sdk #onetrust-pc-btn-handler{width:100%;max-width:none}#onetrust-banner-sdk.otCenterRounded{left:0;width:95%;top:50%;transform:translateY(-50%);-webkit-transform:translateY(-50%)}}@media only screen and (max-width: 600px){#onetrust-banner-sdk .ot-sdk-container{width:auto;padding:0}#onetrust-banner-sdk #onetrust-policy-title{padding:0 22px 10px 22px}#onetrust-banner-sdk #onetrust-policy-text,#onetrust-banner-sdk :not(.ot-dpd-desc)>.ot-b-addl-desc,#onetrust-banner-sdk .ot-dpd-container{margin:0 22px 10px 22px;width:calc(100% - 44px)}#onetrust-banner-sdk #onetrust-button-group-parent{padding:15px 22px}#onetrust-banner-sdk #banner-options{padding:0 22px;width:calc(100% - 44px)}#onetrust-banner-sdk .banner-option{margin-bottom:6px}#onetrust-banner-sdk .has-reject-all-button #onetrust-pc-btn-handler{float:none;max-width:100%}#onetrust-banner-sdk .has-reject-all-button .banner-actions-container{width:100%;text-align:center;max-width:100%}}@media only screen and (min-width: 426px)and (max-width: 896px){#onetrust-banner-sdk.otCenterRounded{left:0;top:15%;transform:translateY(-13%);-webkit-transform:translateY(-13%);max-width:600px;width:95%}}
+        #onetrust-consent-sdk #onetrust-banner-sdk {background-color: #111;}
+            #onetrust-consent-sdk #onetrust-policy-title,
+                    #onetrust-consent-sdk #onetrust-policy-text,
+                    #onetrust-consent-sdk .ot-b-addl-desc,
+                    #onetrust-consent-sdk .ot-dpd-desc,
+                    #onetrust-consent-sdk .ot-dpd-title,
+                    #onetrust-consent-sdk #onetrust-policy-text *:not(.onetrust-vendors-list-handler),
+                    #onetrust-consent-sdk .ot-dpd-desc *:not(.onetrust-vendors-list-handler),
+                    #onetrust-consent-sdk #onetrust-banner-sdk #banner-options * {
+                        color: #fff;
+                    }
+            #onetrust-consent-sdk #onetrust-banner-sdk .banner-option-details {
+                    background-color: #E9E9E9;}
+            #onetrust-consent-sdk #onetrust-accept-btn-handler,
+                         #onetrust-banner-sdk #onetrust-reject-all-handler {
+                            background-color: #236093;border-color: #236093;
+                            color: #FFFFFF;
+                        }
+            #onetrust-consent-sdk #onetrust-pc-btn-handler,
+            #onetrust-consent-sdk #onetrust-pc-btn-handler.cookie-setting-link {
+                color: #3860BE; border-color: #3860BE;
+                background-color: 
+                #111;
+            }@media screen and (min-width: 767px) {
+#onetrust-banner-sdk #onetrust-policy-text{
+    font-size: .813rem !important;
+}
+	#onetrust-banner-sdk.otCenterRounded{
+		top: 20% !important;
+border-radius: 10px;	
+}
+}
+#onetrust-reject-all-handler{
+    background-color: #111 !important;
+    border-color: #111 !important;
+}#onetrust-pc-sdk{position:fixed;width:730px;max-width:730px;height:610px;left:0;right:0;top:0;bottom:0;margin:auto;font-size:16px;z-index:2147483647;border-radius:2px;background-color:#fff;box-shadow:0 2px 4px 0 rgba(0,0,0,0),0 7px 14px 0 rgba(50,50,93,.1)}#onetrust-pc-sdk *,#onetrust-pc-sdk ::after,#onetrust-pc-sdk ::before{box-sizing:content-box}#onetrust-pc-sdk #ot-addtl-venlst .ot-arw-cntr,#onetrust-pc-sdk .ot-hide-tgl{visibility:hidden}#onetrust-pc-sdk #ot-addtl-venlst .ot-arw-cntr *,#onetrust-pc-sdk .ot-hide-tgl *{visibility:hidden}#onetrust-pc-sdk #ot-pc-content,#onetrust-pc-sdk #ot-pc-lst{height:calc(100% - 185px)}#onetrust-pc-sdk li{list-style:none}#onetrust-pc-sdk ul,#onetrust-pc-sdk li{margin:0}#onetrust-pc-sdk a{text-decoration:none}#onetrust-pc-sdk .ot-link-btn{padding:0;margin-bottom:0;border:0;font-weight:normal;line-height:normal;width:auto;height:auto}#onetrust-pc-sdk .ot-grps-cntr *::-webkit-scrollbar,#onetrust-pc-sdk .ot-pc-scrollbar::-webkit-scrollbar{width:11px}#onetrust-pc-sdk .ot-grps-cntr *::-webkit-scrollbar-thumb,#onetrust-pc-sdk .ot-pc-scrollbar::-webkit-scrollbar-thumb{border-radius:10px;background:#c1c1c1}#onetrust-pc-sdk .ot-grps-cntr *,#onetrust-pc-sdk .ot-pc-scrollbar{scrollbar-arrow-color:#c1c1c1;scrollbar-darkshadow-color:#c1c1c1;scrollbar-face-color:#c1c1c1;scrollbar-shadow-color:#c1c1c1}#onetrust-pc-sdk .ot-pc-header{height:auto;padding:10px;display:table;vertical-align:middle;width:calc(100% - 20px);min-height:52px;border-bottom:1px solid #d8d8d8;position:relative}#onetrust-pc-sdk .ot-pc-logo{display:table-cell;vertical-align:middle;width:180px;height:40px}#onetrust-pc-sdk .ot-title-cntr{position:relative;display:table-cell;vertical-align:middle;width:calc(100% - 190px);padding-left:10px}#onetrust-pc-sdk .ot-always-active{font-size:.813em;line-height:1.5;font-weight:700;color:#3860be}#onetrust-pc-sdk .ot-close-cntr{float:right;position:absolute;right:10px;top:50%;transform:translateY(-50%)}#onetrust-pc-sdk #ot-pc-content{position:relative;overflow-y:auto;overflow-x:hidden}#onetrust-pc-sdk .ot-grps-cntr,#onetrust-pc-sdk .ot-grps-cntr>*{height:100%;overflow-y:auto}#onetrust-pc-sdk .category-menu-switch-handler{cursor:pointer;border-left:10px solid transparent;background-color:#f4f4f4;border-bottom:1px solid #d7d7d7;padding-top:12px;padding-right:5px;padding-bottom:12px;padding-left:12px;overflow:hidden}#onetrust-pc-sdk .category-menu-switch-handler h3{float:left;text-align:left;margin:0;color:dimgray;line-height:1.4;font-size:.875em;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk .ot-active-menu{border-left:10px solid #68b631;background-color:#fff;border-bottom:none;position:relative}#onetrust-pc-sdk .ot-active-menu h3{color:#263238;font-weight:bold}#onetrust-pc-sdk .ot-desc-cntr{word-break:break-word;word-wrap:break-word;padding-top:20px;padding-right:16px;padding-bottom:15px}#onetrust-pc-sdk .ot-grp-desc{word-break:break-word;word-wrap:break-word;text-align:left;font-size:.813em;line-height:1.5;margin:0}#onetrust-pc-sdk .ot-grp-desc *{font-size:inherit;line-height:inherit}#onetrust-pc-sdk #ot-pc-desc a{color:#3860be;cursor:pointer;font-size:1em}#onetrust-pc-sdk #ot-pc-desc a:hover{color:#1883fd}#onetrust-pc-sdk #ot-pc-desc *{font-size:inherit}#onetrust-pc-sdk #ot-pc-desc ul li{padding:10px 0px;border-bottom:1px solid #e2e2e2}#onetrust-pc-sdk .ot-btn-subcntr{float:right}#onetrust-pc-sdk .ot-close-icon{background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjQ3Ljk3MSIgaGVpZ2h0PSI0Ny45NzEiIHZpZXdCb3g9IjAgMCA0Ny45NzEgNDcuOTcxIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0Ny45NzEgNDcuOTcxOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PGc+PHBhdGggZD0iTTI4LjIyOCwyMy45ODZMNDcuMDkyLDUuMTIyYzEuMTcyLTEuMTcxLDEuMTcyLTMuMDcxLDAtNC4yNDJjLTEuMTcyLTEuMTcyLTMuMDctMS4xNzItNC4yNDIsMEwyMy45ODYsMTkuNzQ0TDUuMTIxLDAuODhjLTEuMTcyLTEuMTcyLTMuMDctMS4xNzItNC4yNDIsMGMtMS4xNzIsMS4xNzEtMS4xNzIsMy4wNzEsMCw0LjI0MmwxOC44NjUsMTguODY0TDAuODc5LDQyLjg1Yy0xLjE3MiwxLjE3MS0xLjE3MiwzLjA3MSwwLDQuMjQyQzEuNDY1LDQ3LjY3NywyLjIzMyw0Ny45NywzLDQ3Ljk3czEuNTM1LTAuMjkzLDIuMTIxLTAuODc5bDE4Ljg2NS0xOC44NjRMNDIuODUsNDcuMDkxYzAuNTg2LDAuNTg2LDEuMzU0LDAuODc5LDIuMTIxLDAuODc5czEuNTM1LTAuMjkzLDIuMTIxLTAuODc5YzEuMTcyLTEuMTcxLDEuMTcyLTMuMDcxLDAtNC4yNDJMMjguMjI4LDIzLjk4NnoiLz48L2c+PC9zdmc+");background-size:100%;background-repeat:no-repeat;background-position:center;height:16px;width:16px;display:inline-block}#onetrust-pc-sdk .ot-tgl{float:right;position:relative;z-index:1}#onetrust-pc-sdk .ot-tgl input:checked+.ot-switch .ot-switch-nob{background-color:#cddcf2}#onetrust-pc-sdk .ot-tgl input:checked+.ot-switch .ot-switch-nob:before{-webkit-transform:translateX(16px);-ms-transform:translateX(16px);transform:translateX(16px);background-color:#4285f4}#onetrust-pc-sdk .ot-tgl input:focus+.ot-switch .ot-switch-nob:before{box-shadow:0 0 1px #2196f3;outline:#000 auto 5px}#onetrust-pc-sdk .ot-switch{position:relative;display:inline-block;width:35px;height:10px;margin-bottom:0}#onetrust-pc-sdk .ot-switch-nob{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#f2f1f1;border:none;transition:all .2s ease-in 0s;-moz-transition:all .2s ease-in 0s;-o-transition:all .2s ease-in 0s;-webkit-transition:all .2s ease-in 0s;border-radius:46px}#onetrust-pc-sdk .ot-switch-nob:before{position:absolute;content:"";height:20px;width:20px;bottom:1px;background-color:#7d7d7d;-webkit-transition:.4s;border-radius:100%;top:-5px;transition:.4s}#onetrust-pc-sdk .ot-chkbox{z-index:1;position:relative}#onetrust-pc-sdk .ot-chkbox input:checked~label::before{background-color:#3860be}#onetrust-pc-sdk .ot-chkbox input+label::after{content:none;color:#fff}#onetrust-pc-sdk .ot-chkbox input:checked+label::after{content:""}#onetrust-pc-sdk .ot-chkbox input:focus+label::before{outline-style:solid;outline-width:2px;outline-style:auto}#onetrust-pc-sdk .ot-chkbox label{position:relative;height:20px;padding-left:30px;display:inline-block;cursor:pointer}#onetrust-pc-sdk .ot-chkbox label::before,#onetrust-pc-sdk .ot-chkbox label::after{position:absolute;content:"";display:inline-block;border-radius:3px}#onetrust-pc-sdk .ot-chkbox label::before{height:18px;width:18px;border:1px solid #3860be;left:0px}#onetrust-pc-sdk .ot-chkbox label::after{height:5px;width:9px;border-left:3px solid;border-bottom:3px solid;transform:rotate(-45deg);-o-transform:rotate(-45deg);-ms-transform:rotate(-45deg);-webkit-transform:rotate(-45deg);left:4px;top:5px}#onetrust-pc-sdk .ot-label-txt{display:none}#onetrust-pc-sdk .ot-fltr-opt .ot-label-txt{display:block}#onetrust-pc-sdk .ot-chkbox input,#onetrust-pc-sdk .ot-tgl input{position:absolute;opacity:0;width:0;height:0}#onetrust-pc-sdk .ot-arw-cntr{float:right;position:relative}#onetrust-pc-sdk .ot-arw{width:16px;height:16px;margin-left:5px;color:dimgray;display:inline-block;vertical-align:middle;-webkit-transition:all 300ms ease-in 0s;-moz-transition:all 300ms ease-in 0s;-o-transition:all 300ms ease-in 0s;transition:all 300ms ease-in 0s}#onetrust-pc-sdk input:checked~.ot-acc-hdr .ot-arw{transform:rotate(90deg);-o-transform:rotate(90deg);-ms-transform:rotate(90deg);-webkit-transform:rotate(90deg)}#onetrust-pc-sdk .ot-label-status{font-size:.75em;position:relative;top:2px;display:none;padding-right:5px;float:left}#onetrust-pc-sdk #ot-lst-cnt .ot-label-status{top:-6px}#onetrust-pc-sdk .ot-fltr-btns{margin-left:15px;overflow:hidden;margin-right:15px}#onetrust-pc-sdk .ot-fltr-btns button{padding:12px 30px}#onetrust-pc-sdk .ot-pc-footer{position:absolute;bottom:0px;width:100%;max-height:160px;border-top:1px solid #d8d8d8}#onetrust-pc-sdk .ot-pc-footer button{margin-top:20px;margin-bottom:20px;font-weight:600;font-size:.813em;min-height:40px;height:auto;line-height:normal;padding:10px 30px}#onetrust-pc-sdk .ot-tab-desc{margin-left:3%}#onetrust-pc-sdk .ot-grp-hdr1{display:inline-block;width:100%;margin-bottom:10px}#onetrust-pc-sdk .ot-desc-cntr h3{color:#263238;display:inline-block;vertical-align:middle;margin:0;font-weight:bold;font-size:.875em;line-height:1.3;max-width:70%}#onetrust-pc-sdk #ot-pvcy-hdr{margin-bottom:10px}#onetrust-pc-sdk .ot-vlst-cntr{overflow:hidden}#onetrust-pc-sdk .category-vendors-list-handler,#onetrust-pc-sdk .category-host-list-handler,#onetrust-pc-sdk .category-vendors-list-handler+a{display:block;float:left;color:#3860be;font-size:.813em;font-weight:400;line-height:1.1;cursor:pointer}#onetrust-pc-sdk .category-vendors-list-handler:hover,#onetrust-pc-sdk .category-host-list-handler:hover,#onetrust-pc-sdk .category-vendors-list-handler+a:hover{color:#1883fd}#onetrust-pc-sdk .category-vendors-list-handler+a::after{content:"";height:15px;width:15px;background-repeat:no-repeat;margin-left:5px;float:right;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 511.626 511.627'%3E%3Cg fill='%231276CE'%3E%3Cpath d='M392.857 292.354h-18.274c-2.669 0-4.859.855-6.563 2.573-1.718 1.708-2.573 3.897-2.573 6.563v91.361c0 12.563-4.47 23.315-13.415 32.262-8.945 8.945-19.701 13.414-32.264 13.414H82.224c-12.562 0-23.317-4.469-32.264-13.414-8.945-8.946-13.417-19.698-13.417-32.262V155.31c0-12.562 4.471-23.313 13.417-32.259 8.947-8.947 19.702-13.418 32.264-13.418h200.994c2.669 0 4.859-.859 6.57-2.57 1.711-1.713 2.566-3.9 2.566-6.567V82.221c0-2.662-.855-4.853-2.566-6.563-1.711-1.713-3.901-2.568-6.57-2.568H82.224c-22.648 0-42.016 8.042-58.102 24.125C8.042 113.297 0 132.665 0 155.313v237.542c0 22.647 8.042 42.018 24.123 58.095 16.086 16.084 35.454 24.13 58.102 24.13h237.543c22.647 0 42.017-8.046 58.101-24.13 16.085-16.077 24.127-35.447 24.127-58.095v-91.358c0-2.669-.856-4.859-2.574-6.57-1.713-1.718-3.903-2.573-6.565-2.573z'/%3E%3Cpath d='M506.199 41.971c-3.617-3.617-7.905-5.424-12.85-5.424H347.171c-4.948 0-9.233 1.807-12.847 5.424-3.617 3.615-5.428 7.898-5.428 12.847s1.811 9.233 5.428 12.85l50.247 50.248-186.147 186.151c-1.906 1.903-2.856 4.093-2.856 6.563 0 2.479.953 4.668 2.856 6.571l32.548 32.544c1.903 1.903 4.093 2.852 6.567 2.852s4.665-.948 6.567-2.852l186.148-186.148 50.251 50.248c3.614 3.617 7.898 5.426 12.847 5.426s9.233-1.809 12.851-5.426c3.617-3.616 5.424-7.898 5.424-12.847V54.818c-.001-4.952-1.814-9.232-5.428-12.847z'/%3E%3C/g%3E%3C/svg%3E")}#onetrust-pc-sdk .category-host-list-handler,#onetrust-pc-sdk .ot-vlst-cntr,#onetrust-pc-sdk #ot-pc-desc+.category-vendors-list-handler{margin-top:8px}#onetrust-pc-sdk .ot-grp-hdr1+.ot-vlst-cntr{margin-top:0px;margin-bottom:10px}#onetrust-pc-sdk .ot-always-active-group h3.ot-cat-header,#onetrust-pc-sdk .ot-subgrp.ot-always-active-group>h4{max-width:70%}#onetrust-pc-sdk .ot-always-active-group .ot-tgl-cntr{max-width:28%}#onetrust-pc-sdk .ot-grp-desc ul,#onetrust-pc-sdk li.ot-subgrp p ul{margin:0px;margin-left:15px;padding-bottom:8px}#onetrust-pc-sdk .ot-grp-desc ul li,#onetrust-pc-sdk li.ot-subgrp p ul li{font-size:inherit;padding-top:8px;display:list-item;list-style:disc}#onetrust-pc-sdk ul.ot-subgrps{margin:0;font-size:inherit}#onetrust-pc-sdk ul.ot-subgrps li{padding:0;border:none;position:relative}#onetrust-pc-sdk ul.ot-subgrps li h4,#onetrust-pc-sdk ul.ot-subgrps li p{font-size:.82em;line-height:1.4}#onetrust-pc-sdk ul.ot-subgrps li p{color:dimgray;clear:both;float:left;margin-top:10px;margin-bottom:0;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk ul.ot-subgrps li h4{color:#263238;font-weight:bold;margin-bottom:0;float:left;position:relative;top:3px}#onetrust-pc-sdk li.ot-subgrp{margin-left:30px;display:inline-block;width:calc(100% - 30px)}#onetrust-pc-sdk .ot-subgrp-tgl{float:right}#onetrust-pc-sdk .ot-subgrp-tgl.ot-always-active-subgroup{width:auto}#onetrust-pc-sdk .ot-pc-footer-logo{height:30px;width:100%;text-align:right;background:#f4f4f4;border-radius:0 0 2px 2px}#onetrust-pc-sdk .ot-pc-footer-logo a{display:inline-block;margin-top:5px;margin-right:10px}#onetrust-pc-sdk #accept-recommended-btn-handler{float:right;text-align:center}#onetrust-pc-sdk .save-preference-btn-handler{min-width:155px;background-color:#68b631;border-radius:2px;color:#fff;font-size:.9em;line-height:1.1;text-align:center;margin-left:15px;margin-right:15px}#onetrust-pc-sdk .ot-btn-subcntr button{margin-right:16px}#onetrust-pc-sdk.ot-ftr-stacked .save-preference-btn-handler,#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr{max-width:40%;white-space:normal;text-align:center}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr button{margin-left:auto;margin-right:auto;min-width:60%;max-width:90%}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr button:nth-child(2){margin-top:0}#onetrust-pc-sdk.ot-ftr-stacked #accept-recommended-btn-handler{float:none}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-container{overflow:hidden}#onetrust-pc-sdk #ot-pc-title{float:left;margin-left:10px;max-width:85%;overflow:hidden;position:relative;line-height:1.2;max-height:2.4em;padding-right:1em;font-size:1.37em}#onetrust-pc-sdk #ot-pc-title:before{content:"...";right:0px;bottom:0px;position:absolute}#onetrust-pc-sdk #ot-pc-title:after{position:absolute;content:"";width:1em;height:1em;right:0px;background:#fff}#onetrust-pc-sdk #ot-pc-lst{width:100%;position:relative}#onetrust-pc-sdk #ot-pc-lst .ot-acc-hdr{padding-top:17px;padding-right:15px;padding-bottom:17px;padding-left:20px;display:inline-block;width:calc(100% - 35px);vertical-align:middle}#onetrust-pc-sdk #ot-pc-lst .ot-acc-txt{padding-top:6px;padding-right:15px;padding-bottom:10px;padding-left:20px}#onetrust-pc-sdk .ot-lst-cntr{height:100%}#onetrust-pc-sdk #ot-pc-hdr{padding-top:15px;padding-right:30px;padding-bottom:15px;padding-left:20px;display:inline-block;width:calc(100% - 50px);height:20px;border-bottom:1px solid #d8d8d8}#onetrust-pc-sdk #ot-pc-hdr input{height:32px;width:100%;border-radius:50px;font-size:.8em;padding-right:35px;padding-left:15px;float:left}#onetrust-pc-sdk #ot-pc-hdr input::placeholder{color:#d4d4d4;font-style:italic}#onetrust-pc-sdk #ot-lst-cnt{height:calc(100% - 86px);padding-left:30px;padding-right:27px;padding-top:20px;margin-top:8px;margin-right:3px;margin-bottom:4px;margin-left:0;overflow-x:hidden;overflow-y:auto;transform:translate3d(0, 0, 0)}#onetrust-pc-sdk #ot-back-arw{height:12px;width:12px}#onetrust-pc-sdk #ot-lst-title{display:inline-block;font-size:1em}#onetrust-pc-sdk #ot-lst-title span{color:dimgray;font-weight:bold;margin-left:10px}#onetrust-pc-sdk #ot-lst-title span *{font-size:inherit}#onetrust-pc-sdk .ot-lst-subhdr{float:right;position:relative;bottom:6px}#onetrust-pc-sdk #ot-search-cntr{display:inline-block;vertical-align:middle;position:relative;width:300px}#onetrust-pc-sdk #ot-search-cntr svg{position:absolute;right:0px;width:30px;height:30px;font-size:1em;line-height:1;top:2px}#onetrust-pc-sdk #ot-fltr-cntr{display:inline-block;position:relative;margin-left:20px;vertical-align:middle;font-size:0}#onetrust-pc-sdk #filter-btn-handler{background-color:#3860be;border-radius:17px;-moz-transition:.1s ease;-o-transition:.1s ease;-webkit-transition:1s ease;transition:.1s ease;width:32px;height:32px;padding:0;margin:0;position:relative}#onetrust-pc-sdk #filter-btn-handler svg{cursor:pointer;width:15px;height:15px;position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);padding-top:5px}#onetrust-pc-sdk #filter-btn-handler path{fill:#fff}#onetrust-pc-sdk #ot-sel-blk{min-width:200px;min-height:30px;padding-left:20px}#onetrust-pc-sdk #ot-selall-vencntr,#onetrust-pc-sdk #ot-selall-adtlvencntr{float:left;height:100%}#onetrust-pc-sdk #ot-selall-vencntr label,#onetrust-pc-sdk #ot-selall-adtlvencntr label{height:100%;padding-left:0}#onetrust-pc-sdk #ot-selall-hostcntr{width:21px;height:21px;position:relative;left:20px}#onetrust-pc-sdk #ot-selall-vencntr.line-through label::after,#onetrust-pc-sdk #ot-selall-adtlvencntr.line-through label::after,#onetrust-pc-sdk #ot-selall-licntr.line-through label::after,#onetrust-pc-sdk #ot-selall-hostcntr.line-through label::after,#onetrust-pc-sdk #ot-selall-gnvencntr.line-through label::after{height:auto;border-left:0;left:5px;top:10.5px;transform:none;-o-transform:none;-ms-transform:none;-webkit-transform:none}#onetrust-pc-sdk .ot-ven-name,#onetrust-pc-sdk .ot-host-name{color:#2c3643;font-weight:bold;font-size:.813em;line-height:1.2;margin:0;height:auto;text-align:left;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk .ot-ven-name *,#onetrust-pc-sdk .ot-host-name *{font-size:inherit}#onetrust-pc-sdk .ot-host-desc{font-size:.69em;line-height:1.4;margin-top:5px;margin-bottom:5px;float:left;color:dimgray}#onetrust-pc-sdk .ot-host-name>a{text-decoration:underline;position:relative;z-index:2;float:left;margin-bottom:5px;font-weight:bold}#onetrust-pc-sdk .ot-host-hdr .ot-host-name+a{margin-top:5px}#onetrust-pc-sdk .ot-ven-hdr{width:88%;float:right}#onetrust-pc-sdk input:focus+.ot-acc-hdr{outline:#000 solid 1px !important}#onetrust-pc-sdk #ot-selall-hostcntr input[type=checkbox],#onetrust-pc-sdk #ot-selall-vencntr input[type=checkbox],#onetrust-pc-sdk #ot-selall-adtlvencntr input[type=checkbox]{position:absolute}#onetrust-pc-sdk .ot-host-item .ot-chkbox{float:left}#onetrust-pc-sdk.ot-addtl-vendors #ot-lst-cnt:not(.ot-host-cnt) .ot-sel-all-hdr{right:38px}#onetrust-pc-sdk.ot-addtl-vendors #ot-lst-cnt:not(.ot-host-cnt) #ot-sel-blk{background-color:#f9f9fc;border:1px solid #e2e2e2;width:auto;padding-bottom:5px;padding-top:5px}#onetrust-pc-sdk.ot-addtl-vendors #ot-lst-cnt:not(.ot-host-cnt) .ot-sel-all-chkbox{right:2px;width:auto}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr{position:relative;border-left:1px solid #e2e2e2;border-right:1px solid #e2e2e2;border-bottom:1px solid #e2e2e2}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr input{z-index:1}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr>.ot-acc-hdr{background:#f9f9fc;padding-top:10px;padding-bottom:10px;background-color:#f9f9fc}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr>.ot-acc-hdr input{z-index:2}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr>input[type=checkbox]:checked~.ot-acc-hdr{border-bottom:1px solid #e2e2e2}#onetrust-pc-sdk #ot-pc-lst .ot-acc-cntr .ot-addtl-venbox{display:none}#onetrust-pc-sdk #ot-addtl-venlst .ot-tgl-cntr{margin-right:13px}#onetrust-pc-sdk .ot-vensec-title{font-size:.813em;display:inline-block}#onetrust-pc-sdk .ot-ven-item>button:focus,#onetrust-pc-sdk .ot-host-item>button:focus,#onetrust-pc-sdk .ot-acc-cntr>button:focus{outline:#000 solid 2px}#onetrust-pc-sdk .ot-ven-item>button,#onetrust-pc-sdk .ot-host-item>button,#onetrust-pc-sdk .ot-acc-cntr>button{position:absolute;cursor:pointer;width:100%;height:100%;border:0;opacity:0;margin:0;top:0;left:0}#onetrust-pc-sdk .ot-ven-item>button~.ot-acc-hdr,#onetrust-pc-sdk .ot-host-item>button~.ot-acc-hdr,#onetrust-pc-sdk .ot-acc-cntr>button~.ot-acc-hdr{cursor:pointer}#onetrust-pc-sdk .ot-ven-item>button[aria-expanded=false]~.ot-acc-txt,#onetrust-pc-sdk .ot-host-item>button[aria-expanded=false]~.ot-acc-txt,#onetrust-pc-sdk .ot-acc-cntr>button[aria-expanded=false]~.ot-acc-txt{margin-top:0;max-height:0;opacity:0;overflow:hidden;width:100%;transition:.25s ease-out;display:none}#onetrust-pc-sdk .ot-ven-item>button[aria-expanded=true]~.ot-acc-txt,#onetrust-pc-sdk .ot-host-item>button[aria-expanded=true]~.ot-acc-txt,#onetrust-pc-sdk .ot-acc-cntr>button[aria-expanded=true]~.ot-acc-txt{transition:.1s ease-in;display:block}#onetrust-pc-sdk #ot-ven-lst,#onetrust-pc-sdk #ot-host-lst,#onetrust-pc-sdk #ot-addtl-venlst,#onetrust-pc-sdk #ot-gn-venlst{width:100%}#onetrust-pc-sdk #ot-ven-lst li,#onetrust-pc-sdk #ot-host-lst li,#onetrust-pc-sdk #ot-addtl-venlst li,#onetrust-pc-sdk #ot-gn-venlst li{border:1px solid #d7d7d7;border-radius:2px;position:relative;margin-top:10px}#onetrust-pc-sdk #ot-ven-lst .ot-tgl-cntr{width:65%}#onetrust-pc-sdk #ot-host-lst .ot-tgl-cntr{width:65%;float:left}#onetrust-pc-sdk label{margin-bottom:0}#onetrust-pc-sdk .ot-host-notice{float:right}#onetrust-pc-sdk .ot-ven-link,#onetrust-pc-sdk .ot-host-expand{color:dimgray;font-size:.75em;line-height:.9;display:inline-block}#onetrust-pc-sdk .ot-ven-link *,#onetrust-pc-sdk .ot-host-expand *{font-size:inherit}#onetrust-pc-sdk .ot-ven-link{position:relative;z-index:2}#onetrust-pc-sdk .ot-ven-link:hover{text-decoration:underline}#onetrust-pc-sdk .ot-ven-dets{border-radius:2px;background-color:#f8f8f8}#onetrust-pc-sdk .ot-ven-dets div:first-child p:first-child{border-top:none}#onetrust-pc-sdk .ot-ven-dets .ot-ven-disc:not(:first-child){border-top:1px solid #e9e9e9}#onetrust-pc-sdk .ot-ven-dets .ot-ven-disc:nth-child(n+3) p{display:inline-block}#onetrust-pc-sdk .ot-ven-dets .ot-ven-disc:nth-child(n+3) p:nth-of-type(odd){width:30%}#onetrust-pc-sdk .ot-ven-dets .ot-ven-disc:nth-child(n+3) p:nth-of-type(even){width:50%;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk .ot-ven-dets .ot-ven-disc p{padding-top:5px;padding-bottom:5px;display:block}#onetrust-pc-sdk .ot-ven-dets p{font-size:.69em;text-align:left;vertical-align:middle;word-break:break-word;word-wrap:break-word;margin:0;padding-bottom:10px;padding-left:15px;color:#2e3644}#onetrust-pc-sdk .ot-ven-dets p:first-child{padding-top:5px}#onetrust-pc-sdk .ot-ven-dets .ot-ven-pur p:first-child{border-top:1px solid #e9e9e9;border-bottom:1px solid #e9e9e9;padding-bottom:5px;margin-bottom:5px;font-weight:bold}#onetrust-pc-sdk .ot-host-name{float:left;width:calc(100% - 50px)}#onetrust-pc-sdk .ot-host-opt{display:inline-block;width:100%;margin:0;font-size:inherit}#onetrust-pc-sdk .ot-host-opt li>div div{font-size:.81em;padding:5px 0}#onetrust-pc-sdk .ot-host-opt li>div div:nth-child(1){width:30%;float:left}#onetrust-pc-sdk .ot-host-opt li>div div:nth-child(2){width:70%;float:left;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk #ot-host-lst li.ot-host-info{border:none;font-size:.8em;color:dimgray;float:left;text-align:left;padding:10px;margin-bottom:10px;width:calc(100% - 10px);background-color:#f8f8f8}#onetrust-pc-sdk #ot-host-lst li.ot-host-info a{color:dimgray}#onetrust-pc-sdk #no-results{text-align:center;margin-top:30px}#onetrust-pc-sdk #no-results p{font-size:1em;color:#2e3644;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk #no-results p span{font-weight:bold}#onetrust-pc-sdk .ot-tgl-cntr{display:inline-block;vertical-align:middle}#onetrust-pc-sdk .ot-arw-cntr,#onetrust-pc-sdk .ot-tgl-cntr{float:right}#onetrust-pc-sdk .ot-desc-cntr{padding-top:0px;margin-top:20px;padding-right:0px;border-radius:3px;overflow:hidden;padding-bottom:10px}#onetrust-pc-sdk .ot-leg-border-color{border:1px solid #e9e9e9}#onetrust-pc-sdk .ot-leg-border-color .ot-subgrp-cntr{border-top:1px solid #e9e9e9;padding-bottom:10px}#onetrust-pc-sdk .ot-category-desc{padding-bottom:10px}#onetrust-pc-sdk .ot-grp-hdr1{padding-left:10px;width:calc(100% - 20px);padding-top:10px;margin-bottom:0px;padding-bottom:8px}#onetrust-pc-sdk .ot-subgrp-cntr{padding-top:10px}#onetrust-pc-sdk .ot-desc-cntr>*:not(.ot-grp-hdr1){padding-left:10px;padding-right:10px}#onetrust-pc-sdk .ot-pli-hdr{overflow:hidden;padding-top:7.5px;padding-bottom:7.5px;background-color:#f8f8f8;border:none;border-bottom:1px solid #e9e9e9}#onetrust-pc-sdk .ot-pli-hdr span:first-child{text-align:left;max-width:80px;padding-right:5px}#onetrust-pc-sdk .ot-pli-hdr span:last-child{padding-right:20px;text-align:center}#onetrust-pc-sdk .ot-li-title{float:right;font-size:.813em}#onetrust-pc-sdk .ot-desc-cntr .ot-tgl-cntr:first-of-type,#onetrust-pc-sdk .ot-cat-header+.ot-tgl{padding-left:55px;padding-right:7px}#onetrust-pc-sdk .ot-always-active-group .ot-grp-hdr1 .ot-tgl-cntr:first-of-type{padding-left:0px}#onetrust-pc-sdk .ot-cat-header,#onetrust-pc-sdk .ot-subgrp h4{max-width:calc(100% - 133px)}#onetrust-pc-sdk #ot-lst-cnt #ot-sel-blk{width:100%;display:inline-block;padding:0}#onetrust-pc-sdk .ot-sel-all{display:inline-block;width:100%}#onetrust-pc-sdk .ot-sel-all-hdr,#onetrust-pc-sdk .ot-sel-all-chkbox{width:100%;float:right;position:relative}#onetrust-pc-sdk .ot-sel-all-chkbox{z-index:1}#onetrust-pc-sdk :not(.ot-hosts-ui) .ot-sel-all-hdr,#onetrust-pc-sdk :not(.ot-hosts-ui) .ot-sel-all-chkbox{right:23px;width:calc(100% - 23px)}#onetrust-pc-sdk .ot-consent-hdr,#onetrust-pc-sdk .ot-li-hdr{float:right;font-size:.813em;position:relative;line-height:normal;text-align:center;word-break:break-word;word-wrap:break-word}#onetrust-pc-sdk .ot-hosts-ui .ot-consent-hdr{float:left;position:relative;left:5px}#onetrust-pc-sdk .ot-li-hdr{max-width:100px;margin-right:10px}#onetrust-pc-sdk .ot-consent-hdr{max-width:55px}#onetrust-pc-sdk .ot-ven-ctgl{margin-left:10px}#onetrust-pc-sdk .ot-ven-litgl{margin-right:55px}#onetrust-pc-sdk .ot-ven-litgl.ot-ven-litgl-only{margin-right:86px}#onetrust-pc-sdk .ot-ven-ctgl,#onetrust-pc-sdk .ot-ven-litgl,#onetrust-pc-sdk .ot-ven-gvctgl{float:left}#onetrust-pc-sdk .ot-ven-ctgl label,#onetrust-pc-sdk .ot-ven-litgl label,#onetrust-pc-sdk .ot-ven-gvctgl label{width:22px;padding:0}#onetrust-pc-sdk #ot-selall-licntr{display:block;width:21px;height:21px;position:relative;float:right;right:80px}#onetrust-pc-sdk #ot-selall-licntr input{position:absolute}#onetrust-pc-sdk #ot-selall-vencntr,#onetrust-pc-sdk #ot-selall-adtlvencntr,#onetrust-pc-sdk #ot-selall-gnvencntr{float:right;width:21px;height:21px;position:relative;right:15px}#onetrust-pc-sdk #ot-ven-lst .ot-tgl-cntr{float:right;width:auto}#onetrust-pc-sdk .ot-ven-hdr{float:left;width:60%}#onetrust-pc-sdk #vdr-lst-dsc{font-size:.812em;line-height:1.5;padding:10px 15px 5px 15px}#onetrust-pc-sdk #ot-anchor{border:12px solid transparent;display:none;position:absolute;z-index:2147483647;top:40px;right:35px;transform:rotate(45deg);-o-transform:rotate(45deg);-ms-transform:rotate(45deg);-webkit-transform:rotate(45deg);background-color:#fff;-webkit-box-shadow:-3px -3px 5px -2px #c7c5c7;-moz-box-shadow:-3px -3px 5px -2px #c7c5c7;box-shadow:-3px -3px 5px -2px #c7c5c7}#onetrust-pc-sdk #ot-fltr-modal{width:300px;position:absolute;z-index:2147483646;top:46px;height:90%;max-height:350px;display:none;-moz-transition:.2s ease;-o-transition:.2s ease;-webkit-transition:2s ease;transition:.2s ease;opacity:1;right:0}#onetrust-pc-sdk #ot-fltr-modal button{max-width:200px;line-height:1;word-break:break-word;white-space:normal;height:auto;font-weight:bold}#onetrust-pc-sdk #ot-fltr-cnt{background-color:#fff;margin:5px;border-radius:3px;height:100%;margin-right:10px;padding-right:10px;-webkit-box-shadow:0px 0px 12px 2px #c7c5c7;-moz-box-shadow:0px 0px 12px 2px #c7c5c7;box-shadow:0px 0px 12px 2px #c7c5c7}#onetrust-pc-sdk .ot-fltr-scrlcnt{overflow-y:auto;overflow-x:hidden;clear:both;max-height:calc(100% - 60px)}#onetrust-pc-sdk .ot-fltr-opt{margin-bottom:25px;margin-left:15px;clear:both}#onetrust-pc-sdk .ot-fltr-opt span{cursor:pointer;color:dimgray;font-size:.8em;line-height:1.1;font-weight:normal}#onetrust-pc-sdk #clear-filters-handler{float:right;margin-top:15px;margin-bottom:10px;text-decoration:none;color:#3860be;font-size:.9em;border:none;padding:1px}#onetrust-pc-sdk #clear-filters-handler:hover{color:#1883fd}#onetrust-pc-sdk #clear-filters-handler:focus{outline:#000 solid 1px}#onetrust-pc-sdk #filter-apply-handler{margin-right:10px}#onetrust-pc-sdk .ot-grp-desc+.ot-leg-btn-container{margin-top:0}#onetrust-pc-sdk .ot-leg-btn-container{display:inline-block;width:100%;margin-top:10px}#onetrust-pc-sdk .ot-leg-btn-container button{height:32px;padding:6.5px 8px;margin-bottom:0;line-height:18px;letter-spacing:0}#onetrust-pc-sdk .ot-leg-btn-container svg{display:none;height:14px;width:14px;padding-right:5px;vertical-align:sub}#onetrust-pc-sdk .ot-active-leg-btn{cursor:default;pointer-events:none}#onetrust-pc-sdk .ot-active-leg-btn svg{display:inline-block}#onetrust-pc-sdk .ot-remove-objection-handler{border:none;text-decoration:underline;padding:0;font-size:.82em;font-weight:600;line-height:1.4;padding-left:10px}#onetrust-pc-sdk .ot-obj-leg-btn-handler span{font-weight:bold;text-align:center;font-size:.91em;line-height:1.5}#onetrust-pc-sdk.otPcTab[dir=rtl] input~.ot-acc-hdr .ot-arw,#onetrust-pc-sdk.otPcTab[dir=rtl] #ot-back-arw{transform:rotate(180deg);-o-transform:rotate(180deg);-ms-transform:rotate(180deg);-webkit-transform:rotate(180deg)}#onetrust-pc-sdk.otPcTab[dir=rtl] input:checked~.ot-acc-hdr .ot-arw{transform:rotate(270deg);-o-transform:rotate(270deg);-ms-transform:rotate(270deg);-webkit-transform:rotate(270deg)}#onetrust-pc-sdk.otPcTab[dir=rtl] #ot-search-cntr svg{right:15px}#onetrust-pc-sdk.otPcTab[dir=rtl] .ot-chkbox label::after{transform:rotate(45deg);-webkit-transform:rotate(45deg);-o-transform:rotate(45deg);-ms-transform:rotate(45deg);border-left:0;border-right:3px solid}#onetrust-pc-sdk #close-pc-btn-handler.ot-close-icon{padding:0;background-color:transparent;border:none;margin:0}@media(max-width: 767px){#onetrust-pc-sdk{width:100%;border:none}#onetrust-pc-sdk .ot-sdk-container,#onetrust-pc-sdk .ot-sdk-container{padding:0;margin:0}#onetrust-pc-sdk #ot-pc-title{margin-left:10px;max-width:60%}#onetrust-pc-sdk .ot-desc-cntr{margin:0;padding-top:20px;padding-right:20px;padding-bottom:15px;padding-left:20px;position:relative;left:auto}#onetrust-pc-sdk .ot-desc-cntr{margin-top:20px;margin-left:20px;padding:0;padding-bottom:10px}#onetrust-pc-sdk .ot-grps-cntr{max-height:none;overflow:hidden}#onetrust-pc-sdk #accept-recommended-btn-handler{float:none}}@media(min-width: 768px){#onetrust-pc-sdk.ot-tgl-with-label .ot-label-status{display:inline}#onetrust-pc-sdk.ot-tgl-with-label #ot-pc-lst .ot-label-status{display:none}#onetrust-pc-sdk.ot-tgl-with-label.ot-leg-opt-out .ot-pli-hdr{padding-right:8%}#onetrust-pc-sdk.ot-tgl-with-label .ot-cat-header{max-width:60%}#onetrust-pc-sdk.ot-tgl-with-label .ot-subgrp h4{max-width:58%}#onetrust-pc-sdk.ot-tgl-with-label .ot-desc-cntr .ot-tgl-cntr:first-of-type,#onetrust-pc-sdk.ot-tgl-with-label .ot-cat-header+.ot-tgl{padding-left:15px}}@media(max-width: 640px){#onetrust-pc-sdk{height:100%}#onetrust-pc-sdk .ot-pc-header{padding:10px;width:calc(100% - 20px)}#onetrust-pc-sdk #ot-pc-content{overflow:auto}#onetrust-pc-sdk .ot-sdk-row .ot-sdk-columns{width:100%}#onetrust-pc-sdk .ot-desc-cntr{margin:0;overflow:hidden}#onetrust-pc-sdk .ot-desc-cntr{margin-left:10px;width:calc(100% - 15px);margin-top:5px;margin-bottom:5px}#onetrust-pc-sdk .ot-ven-hdr{max-width:80%}#onetrust-pc-sdk #ot-lst-cnt{width:calc(100% - 18px);padding-top:13px;padding-right:5px;padding-left:10px}#onetrust-pc-sdk .ot-grps-cntr{width:100%}#onetrust-pc-sdk .ot-pc-footer{max-height:300px}#onetrust-pc-sdk #ot-pc-content,#onetrust-pc-sdk #ot-pc-lst{height:calc(100% - 322px)}}@media(max-width: 640px)and (orientation: portrait){#onetrust-pc-sdk #ot-pc-hdr{height:70px;padding:15px 0;width:100%}#onetrust-pc-sdk .ot-lst-subhdr{width:calc(100% - 15px);float:none;bottom:auto;display:inline-block;padding-top:8px;padding-left:15px}#onetrust-pc-sdk .ot-btn-subcntr{float:none}#onetrust-pc-sdk #ot-search-cntr{display:inline-block;width:calc(100% - 55px);position:relative}#onetrust-pc-sdk #ot-anchor{top:75px;right:30px}#onetrust-pc-sdk #ot-fltr-modal{top:81px}#onetrust-pc-sdk #ot-fltr-cntr{float:right;right:15px}#onetrust-pc-sdk #ot-lst-title{padding-left:15px}#onetrust-pc-sdk .ot-lst-cntr{overflow-y:scroll}#onetrust-pc-sdk #ot-lst-cnt{height:auto;overflow:hidden}#onetrust-pc-sdk .save-preference-btn-handler,#onetrust-pc-sdk #accept-recommended-btn-handler,#onetrust-pc-sdk .ot-pc-refuse-all-handler{width:calc(100% - 33px)}#onetrust-pc-sdk.ot-ftr-stacked .save-preference-btn-handler,#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr{max-width:none}#onetrust-pc-sdk.ot-ftr-stacked .ot-pc-footer button{margin:15px}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr button{min-width:none;max-width:none}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-subcntr button:nth-child(2){margin-top:15px}#onetrust-pc-sdk.ot-ftr-stacked .ot-btn-container button:not(:last-child){margin-bottom:0}}@media(max-width: 425px){#onetrust-pc-sdk #ot-pc-lst .ot-acc-txt{padding-top:6px;padding-bottom:10px}#onetrust-pc-sdk #ot-pc-lst .ot-host-notice{float:left;margin-left:30px}#onetrust-pc-sdk #ot-pc-lst .ot-arw-cntr{float:none;display:inline}#onetrust-pc-sdk #ot-pc-lst .ot-ven-hdr{float:left;width:100%;max-width:85%}#onetrust-pc-sdk.ot-addtl-vendors #ot-pc-lst .ot-acc-cntr .ot-arw-cntr:first-of-type{float:right}#onetrust-pc-sdk #ot-pc-title{max-width:100%}#onetrust-pc-sdk .ot-subgrp-cntr li.ot-subgrp{margin-left:10px;width:calc(100% - 10px)}#onetrust-pc-sdk #ot-ven-lst .ot-tgl-cntr{width:auto;float:right}#onetrust-pc-sdk #ot-ven-lst .ot-arw-cntr{float:right}#onetrust-pc-sdk .ot-ven-hdr{max-width:47%}#onetrust-pc-sdk .ot-always-active-group .ot-tgl-cntr:first-of-type{max-width:none;padding-left:20px}}@media only screen and (max-height: 425px)and (max-width: 896px)and (orientation: landscape){#onetrust-pc-sdk{height:100%;width:100%;max-width:none}#onetrust-pc-sdk .ot-always-active-group .ot-tgl-cntr{max-width:none}#onetrust-pc-sdk .ot-pc-header{padding:10px;width:calc(100% - 20px)}#onetrust-pc-sdk .ot-lst-cntr{overflow-y:scroll}#onetrust-pc-sdk #ot-lst-cnt{height:auto;overflow:hidden}#onetrust-pc-sdk #accept-recommended-btn-handler{float:right}#onetrust-pc-sdk .save-preference-btn-handler,#onetrust-pc-sdk #accept-recommended-btn-handler,#onetrust-pc-sdk .ot-pc-refuse-all-handler{width:auto}#onetrust-pc-sdk #ot-pc-content,#onetrust-pc-sdk #ot-pc-lst{height:calc(100% - 155px)}#onetrust-pc-sdk .ot-pc-footer-logo{display:none}#onetrust-pc-sdk.ot-shw-fltr .ot-lst-cntr{overflow:hidden}#onetrust-pc-sdk.ot-shw-fltr #ot-pc-lst{position:static}#onetrust-pc-sdk.ot-shw-fltr #ot-fltr-modal{top:0;width:100%;height:100%;max-height:none}#onetrust-pc-sdk.ot-shw-fltr #ot-fltr-modal>div{margin:0;box-sizing:initial;height:100%;max-height:none}#onetrust-pc-sdk.ot-shw-fltr #clear-filters-handler{padding-right:20px}#onetrust-pc-sdk.ot-shw-fltr #ot-anchor{display:none !important}#onetrust-pc-sdk .ot-pc-footer button{margin:10px}}@media(max-width: 425px),(max-width: 896px)and (max-height: 425px)and (orientation: landscape){#onetrust-pc-sdk .ot-pc-header{padding-right:20px}#onetrust-pc-sdk .ot-pc-logo{margin-left:0px;margin-top:5px;width:150px}#onetrust-pc-sdk .ot-close-icon{width:12px;height:12px}#onetrust-pc-sdk .ot-grp-hdr1{float:right;margin-left:10px;width:auto}#onetrust-pc-sdk .ot-grp-hdr1{margin-left:0px;padding-right:10px}#onetrust-pc-sdk #ot-pvcy-hdr,#onetrust-pc-sdk .ot-grp-hdr1 .ot-cat-header{display:none}#onetrust-pc-sdk .ot-grp-hdr1+.ot-vlst-cntr{padding-top:10px}}@media only screen and (max-height: 610px){#onetrust-pc-sdk{max-height:100%}}
+            #onetrust-consent-sdk #onetrust-pc-sdk,
+                #onetrust-consent-sdk #ot-search-cntr,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-switch.ot-toggle,
+                #onetrust-consent-sdk #onetrust-pc-sdk ot-grp-hdr1 .checkbox,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-title:after
+                ,#onetrust-consent-sdk #onetrust-pc-sdk #ot-sel-blk,
+                        #onetrust-consent-sdk #onetrust-pc-sdk #ot-fltr-cnt,
+                        #onetrust-consent-sdk #onetrust-pc-sdk #ot-anchor {
+                    background-color: #FFFFFF;
+                }
+               
+            #onetrust-consent-sdk #onetrust-pc-sdk h3,
+                #onetrust-consent-sdk #onetrust-pc-sdk h4,
+                #onetrust-consent-sdk #onetrust-pc-sdk h5,
+                #onetrust-consent-sdk #onetrust-pc-sdk h6,
+                #onetrust-consent-sdk #onetrust-pc-sdk p,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-ven-lst .ot-ven-opts p,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-desc,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-title,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-li-title,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-sel-all-hdr span,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-host-lst .ot-host-info,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-fltr-modal #modal-header,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-checkbox label span,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-lst #ot-sel-blk p,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-lst #ot-lst-title span,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-lst .back-btn-handler p,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-lst .ot-ven-name,
+                #onetrust-consent-sdk #onetrust-pc-sdk #ot-pc-lst #ot-ven-lst .consent-category,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-leg-btn-container .ot-inactive-leg-btn,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-label-status,
+                #onetrust-consent-sdk #onetrust-pc-sdk .ot-chkbox label span,
+                #onetrust-consent-sdk #onetrust-pc-sdk #clear-filters-handler 
+                {
+                    color: #696969;
+                }
+             #onetrust-consent-sdk #onetrust-pc-sdk .privacy-notice-link,
+                    #onetrust-consent-sdk #onetrust-pc-sdk .category-vendors-list-handler,
+                    #onetrust-consent-sdk #onetrust-pc-sdk .category-vendors-list-handler + a,
+                    #onetrust-consent-sdk #onetrust-pc-sdk .category-host-list-handler,
+                    #onetrust-consent-sdk #onetrust-pc-sdk .ot-ven-link,
+                    #onetrust-consent-sdk #onetrust-pc-sdk #ot-host-lst .ot-host-name a,
+                    #onetrust-consent-sdk #onetrust-pc-sdk #ot-host-lst .ot-acc-hdr .ot-host-expand,
+                    #onetrust-consent-sdk #onetrust-pc-sdk #ot-host-lst .ot-host-info a
+                    {
+                        color: #3860BE;
+                    }
+             #onetrust-consent-sdk #onetrust-banner-sdk a[href],
+                     #onetrust-consent-sdk #onetrust-banner-sdk .ot-link-btn
+                        {
+                            color: #3860BE;
+                        }           
+            #onetrust-consent-sdk #onetrust-pc-sdk .category-vendors-list-handler:hover { opacity: .7;}
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-acc-grpcntr.ot-acc-txt,
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-acc-txt .ot-subgrp-tgl .ot-switch.ot-toggle
+             {
+                background-color: #F8F8F8;
+            }
+            
+             #onetrust-consent-sdk #onetrust-pc-sdk #ot-host-lst .ot-host-info,
+                    #onetrust-consent-sdk #onetrust-pc-sdk .ot-acc-txt .ot-ven-dets
+                            {
+                                background-color: #F8F8F8;
+                            }
+        #onetrust-consent-sdk #onetrust-pc-sdk 
+            button:not(#clear-filters-handler):not(.ot-close-icon):not(#filter-btn-handler):not(.ot-remove-objection-handler):not(.ot-obj-leg-btn-handler):not([aria-expanded]):not(.ot-link-btn),
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-leg-btn-container .ot-active-leg-btn {
+                background-color: #236093;border-color: #236093;
+                color: #FFFFFF;
+            }
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-active-menu {
+                border-color: #236093;
+            }
+            
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-leg-btn-container .ot-remove-objection-handler{
+                background-color: transparent;
+                border:1px solid transparent;
+            }
+            #onetrust-consent-sdk #onetrust-pc-sdk .ot-leg-btn-container .ot-inactive-leg-btn {
+                background-color: #FFFFFF;
+                color: #78808E; border-color: #78808E;
+            }
+            #onetrust-consent-sdk #onetrust-pc-sdk .category-menu-switch-handler {
+                    background-color: #F4F4F4
+                }#onetrust-consent-sdk #onetrust-pc-sdk .ot-active-menu {
+                    background-color: #FFFFFF
+                }.ot-sdk-cookie-policy{font-family:inherit;font-size:16px}.ot-sdk-cookie-policy h3,.ot-sdk-cookie-policy h4,.ot-sdk-cookie-policy h6,.ot-sdk-cookie-policy p,.ot-sdk-cookie-policy li,.ot-sdk-cookie-policy a,.ot-sdk-cookie-policy th,.ot-sdk-cookie-policy #cookie-policy-description,.ot-sdk-cookie-policy .ot-sdk-cookie-policy-group,.ot-sdk-cookie-policy #cookie-policy-title{color:dimgray}.ot-sdk-cookie-policy #cookie-policy-description{margin-bottom:1em}.ot-sdk-cookie-policy h4{font-size:1.2em}.ot-sdk-cookie-policy h6{font-size:1em;margin-top:2em}.ot-sdk-cookie-policy th{min-width:75px}.ot-sdk-cookie-policy a,.ot-sdk-cookie-policy a:hover{background:#fff}.ot-sdk-cookie-policy thead{background-color:#f6f6f4;font-weight:bold}.ot-sdk-cookie-policy .ot-mobile-border{display:none}.ot-sdk-cookie-policy section{margin-bottom:2em}.ot-sdk-cookie-policy table{border-collapse:inherit}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy{font-family:inherit;font-size:16px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy h3,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy h4,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy h6,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy p,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy li,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy a,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy th,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-description,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-cookie-policy-group,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-title{color:dimgray}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-description{margin-bottom:1em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-subgroup{margin-left:1.5em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-description,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-cookie-policy-group-desc,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-table-header,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy a,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy span,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td{font-size:.9em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td span,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td a{font-size:inherit}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-cookie-policy-group{font-size:1em;margin-bottom:.6em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-cookie-policy-title{margin-bottom:1.2em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy>section{margin-bottom:1em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy th{min-width:75px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy a,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy a:hover{background:#fff}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy thead{background-color:#f6f6f4;font-weight:bold}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-mobile-border{display:none}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy section{margin-bottom:2em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-subgroup ul li{list-style:disc;margin-left:1.5em}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-subgroup ul li h4{display:inline-block}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table{border-collapse:inherit;margin:auto;border:1px solid #d7d7d7;border-radius:5px;border-spacing:initial;width:100%;overflow:hidden}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table th,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table td{border-bottom:1px solid #d7d7d7;border-right:1px solid #d7d7d7}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table tr:last-child td{border-bottom:0px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table tr th:last-child,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table tr td:last-child{border-right:0px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table .ot-host,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table .ot-cookies-type{width:25%}.ot-sdk-cookie-policy[dir=rtl]{text-align:left}#ot-sdk-cookie-policy h3{font-size:1.5em}@media only screen and (max-width: 530px){.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) table,.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) thead,.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) tbody,.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) th,.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) td,.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) tr{display:block}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) thead tr{position:absolute;top:-9999px;left:-9999px}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) tr{margin:0 0 1em 0}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) tr:nth-child(odd),.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) tr:nth-child(odd) a{background:#f6f6f4}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) td{border:none;border-bottom:1px solid #eee;position:relative;padding-left:50%}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) td:before{position:absolute;height:100%;left:6px;width:40%;padding-right:10px}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) .ot-mobile-border{display:inline-block;background-color:#e4e4e4;position:absolute;height:100%;top:0;left:45%;width:2px}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) td:before{content:attr(data-label);font-weight:bold}.ot-sdk-cookie-policy:not(#ot-sdk-cookie-policy-v2) li{word-break:break-word;word-wrap:break-word}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table{overflow:hidden}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table td{border:none;border-bottom:1px solid #d7d7d7}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy thead,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy tbody,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy th,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy tr{display:block}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table .ot-host,#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table .ot-cookies-type{width:auto}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy tr{margin:0 0 1em 0}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td:before{height:100%;width:40%;padding-right:10px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td:before{content:attr(data-label);font-weight:bold}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy li{word-break:break-word;word-wrap:break-word}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy thead tr{position:absolute;top:-9999px;left:-9999px;z-index:-9999}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table tr:last-child td{border-bottom:1px solid #d7d7d7;border-right:0px}#ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table tr:last-child td:last-child{border-bottom:0px}}
+                
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy h5,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy h6,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy li,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy p,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy a,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy span,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy td,
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-description {
+                        color: #696969;
+                    }
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy th {
+                        color: #696969;
+                    }
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy .ot-sdk-cookie-policy-group {
+                        color: #696969;
+                    }
+                    
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy #cookie-policy-title {
+                            color: #696969;
+                        }
+                    
+            
+                    #ot-sdk-cookie-policy-v2.ot-sdk-cookie-policy table th {
+                            background-color: #F8F8F8;
+                        }
+                    
+            </style><script type="text/javascript" src="//assets.adobedtm.com/launch-EN23cb8375449840dc93b13f34d935b8b9.min.js" async=""></script><script src="https://assets.adobedtm.com/extensions/EPa06d4a70bf964e93808ee073533d9238/AppMeasurement.min.js" async=""></script><script src="https://assets.adobedtm.com/extensions/EPa06d4a70bf964e93808ee073533d9238/AppMeasurement_Module_ActivityMap.min.js" async=""></script><script src="https://assets.adobedtm.com/b359cfb740b4/a792d4e6ffcd/70a6a5a113e5/RC448863e9e05a4b4880daa4a5fb7da328-source.min.js" async=""></script><script src="https://assets.adobedtm.com/b359cfb740b4/a792d4e6ffcd/70a6a5a113e5/RC3bae6526bab9473dbbab7449e16ead11-source.min.js" async=""></script><script src="https://assets.adobedtm.com/b359cfb740b4/a792d4e6ffcd/70a6a5a113e5/RCe61896415d84436c959b7a66783b3417-source.min.js" async=""></script></head>
+<body>
+
+
+
+
+
+<div class="root responsivegrid">
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="b1-header aem-GridColumn aem-GridColumn--default--12">
+
+
+<header class="b1-header__container">
+    <div class="b1-header__logo">
+        <a href="https://www.fortinet.com">
+            
+            <img class="desktop-logo" src="/content/dam/fortinet-blog/fortinet-logo-white.svg" alt="Enemybot: A Look into Keksec's Latest DDoS Botnet | FortiGuard Labs ">
+            <img class="mobile-logo" src="/content/dam/fortinet-blog/fortinet-logo-white.svg" alt="Enemybot: A Look into Keksec's Latest DDoS Botnet | FortiGuard Labs ">
+        </a>
+    </div>
+
+    <div class="b1-header__cta-list">
+      <a class="b1-header__cta-list-item " href="https://www.fortinet.com/blog">
+          <span>Blog</span>
+      </a>
+    </div>
+
+    <div class="b1-header__nav"><div class="b2-navigation">
+
+
+
+
+    <ul class="b2-navigation__list">
+        
+            <li class="b2-navigation-categories"><div class="b2-navigation__list-item nav-dropdown-title">Categories</div>
+                <ul class="navdropdown">
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/business-and-technology">
+                                <span>Business &amp; Technology </span>
+                            </a>
+                        </li>
+                    
+                
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/threat-research">
+                                <span>Threat Research</span>
+                            </a>
+                        </li>
+                    
+                
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/industry-trends">
+                                <span>Industry Trends</span>
+                            </a>
+                        </li>
+                    
+                
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/partners">
+                                <span>Partners</span>
+                            </a>
+                        </li>
+                    
+                
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/customer-stories">
+                                <span>Customer Stories</span>
+                            </a>
+                        </li>
+                    
+                
+                    
+                        <li>
+                            <a class="b2-navigation__dropdown__list-item" href="/blog/psirt-blogs">
+                                <span>PSIRT Blogs</span>
+                            </a>
+                        </li>
+                    
+                </ul>
+            </li>
+
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/business-and-technology">
+                    <span>Business &amp; Technology </span>
+                </a>
+            </li>
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/threat-research">
+                    <span>Threat Research</span>
+                </a>
+            </li>
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/industry-trends">
+                    <span>Industry Trends</span>
+                </a>
+            </li>
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/partners">
+                    <span>Partners</span>
+                </a>
+            </li>
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/customer-stories">
+                    <span>Customer Stories</span>
+                </a>
+            </li>
+        
+            <li class="m-nav-item">
+                <a class="b2-navigation__list-item false" href="/blog/psirt-blogs">
+                    <span>PSIRT Blogs</span>
+                </a>
+            </li>
+        
+        
+        
+            <li>
+                <a class="b2-navigation__list-item false" href="/blog/ciso-collective">
+                    <span>CISO Collective</span>
+                </a>
+            </li>
+        
+    <li><a class="b2-navigation__list-item false ftnt-subscription-btn"><span>Subscribe</span></a></li></ul>
+
+
+    
+
+</div>
+</div>
+
+    <div class="b1-header__search"><div class="b3-searchbox">
+
+
+<form class="b3-searchbox__form" action="/blog/search" method="get">
+    <input class="b3-searchbox__input" type="text" name="q" placeholder="Search Blogs">
+    <button class="b3-searchbox__icon" aria-label="Search" type="submit">
+        
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.688 14.18l-4.075-4.075C12.36 9.06 12.8 7.78 12.8 6.4 12.8 2.87 9.93 0 6.4 0 2.87 0 0 2.87 0 6.4c0 3.53 2.87 6.4 6.4 6.4 1.38 0 2.66-.44 3.705-1.187l4.075 4.075c.207.208.48.312.753.312.274 0 .547-.104.755-.312.416-.417.416-1.093 0-1.51zM2.133 6.4c0-2.357 1.91-4.267 4.267-4.267s4.267 1.91 4.267 4.267-1.91 4.267-4.267 4.267S2.133 8.757 2.133 6.4z" fill="#fff">
+        </path>
+    </svg>
+
+    </button>
+</form>
+
+
+    
+
+</div>
+</div>
+
+    <div class="b1-header__search-toggle">
+        
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.688 14.18l-4.075-4.075C12.36 9.06 12.8 7.78 12.8 6.4 12.8 2.87 9.93 0 6.4 0 2.87 0 0 2.87 0 6.4c0 3.53 2.87 6.4 6.4 6.4 1.38 0 2.66-.44 3.705-1.187l4.075 4.075c.207.208.48.312.753.312.274 0 .547-.104.755-.312.416-.417.416-1.093 0-1.51zM2.133 6.4c0-2.357 1.91-4.267 4.267-4.267s4.267 1.91 4.267 4.267-1.91 4.267-4.267 4.267S2.133 8.757 2.133 6.4z">
+        </path>
+    </svg>
+
+        <div class="b1-header__search-toggle-close">
+            <span class="b1-header__search-toggle-close-line"></span>
+            <span class="b1-header__search-toggle-close-line"></span>
+        </div>
+    </div>
+
+    <div class="b1-header__nav-toggle" aria-hidden="true">
+        <span class="b1-header__nav-toggle-line"></span>
+        <span class="b1-header__nav-toggle-line"></span>
+        <span class="b1-header__nav-toggle-line"></span>
+    </div>
+</header>
+
+    
+
+</div>
+<section class="b4-hero aem-GridColumn aem-GridColumn--default--12">
+
+
+
+<div class="b4-hero__container" style="background-image:url(/content/dam/fortinet-blog/article-images/Enemybot-hero.jpeg);">
+    <img class="ratio" alt="Enemybot: A Look into Keksec's Latest DDoS Botnet | FortiGuard Labs " aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAQAAAAe/WZNAAAADklEQVR42mNkgAJGDAYAAFEABCaLYqoAAAAASUVORK5CYII=">
+    <div class="b4-hero__text text-container">
+        <p data-ly-test="" class="b4-hero__kicker">Threat Research</p>
+        
+        
+        <h1 class="b4-hero__headline">Enemybot: A Look into Keksec's Latest DDoS Botnet</h1>
+        
+    </div>
+</div>
+</section>
+<section class="b15-blog-meta aem-GridColumn aem-GridColumn--default--12">
+
+<div class="b15-blog-meta__container text-container">
+    <span>By </span>
+
+    <span class="b15-blog-meta__author">
+
+        
+					
+
+                        
+
+                                  
+                                      
+                                            
+                                          
+                                              <a href="/blog/search?author=Joie+Salvio">Joie Salvio</a> and
+                                          
+                                           
+                                      
+                                  
+                          
+
+                                  
+                                      
+                                            
+                                              <a href="/blog/search?author=Roy+Tay">Roy Tay</a>
+                                          
+                                          
+                                           
+                                      
+                                  
+                          
+                    
+        
+    </span>
+    <span class="b15-blog-meta__">
+        
+
+              </span>
+
+
+
+    <span class="b15-blog-meta__date"> | April 12, 2022</span>
+</div>
+</section>
+<div class="responsivegrid aem-GridColumn aem-GridColumn--default--12">
+
+
+<div class="aem-Grid aem-Grid--12 aem-Grid--default--12 ">
+    
+    <div class="raw-import aem-GridColumn aem-GridColumn--default--12">
+<div class="text-container"></div>
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p><b>Affected Platforms:</b> Linux<br>
+<b>Impacted Users:</b> Any organization<br>
+<b>Impact:</b> Remote attackers gain control of the vulnerable systems<br>
+<b>Severity Level:</b> Critical<br>
+</p>
+<p>In mid-March, <a href="https://www.fortinet.com/fortiguard/labs?utm_source=blog&amp;utm_campaign=fortiguardlabs">FortiGuard Labs</a> observed a new <a href="https://www.fortinet.com/products/ddos/fortiddos.html?utm_source=blog&amp;utm_campaign=ddos">DDoS</a> botnet calling itself “Enemybot” and attributing itself to Keksec, a threat group that specializes in cryptomining and DDoS attacks.</p>
+<p>This botnet is mainly derived from Gafgyt’s source code but has been observed to borrow several modules from Mirai’s original source code.</p>
+<p>It uses several methods of obfuscation for its strings to hinder analysis and hide itself from other botnets. Furthermore, it connects to a command-and-control (C2) server that is hidden in the Tor network, making its takedown more complicated.</p>
+<p>Enemybot has been seen targeting routers from Seowon Intech, D-Link, and exploits a recently reported iRZ router vulnerability to infect more devices.</p>
+<p>This blog details how this malware leverages these vulnerabilities and the commands it can execute once inside an infected device.</p>
+<h2><b>Enemybot by Keksec</b></h2>
+<p>One of the first things Enemybot does is to drop a file in <i>/tmp/.pwned</i>, containing a message that attributes itself to Keksec. In earlier samples, this message was stored as cleartext. Only a few days after, a new sample was released with the message encoded with an XOR operation using a multiple-byte key. This suggests that this malware is being actively developed.</p>
+<p>A sample, SHA256:&nbsp;<span>fec09b614d67e8933e2c09671e042ce74b40048b5f0feed49ba81a2c18d4f473, captured on March 24, 2022 has the message in cleartext:</span></p>
+<p style="text-align: center;"><i>“ENEMEYBOT V3.1-ALCAPONE<a></a><a>&nbsp;</a></i>&nbsp;<i>hail KEKSEC”</i></p>
+<p>A sample from March 28, 2022 SHA256: 93706966361922b493d816fa6ee1347c90de49b6d59fc01c033abdd6549ac8b9, encoded the message with an XOR operation using a multi-byte key.</p>
+<p>Upon decoding, the message has also been changed to:</p>
+<p><i>“ENEMEYBOT V3.1-ALCAPONE - hail KEKSEC, ALSO U GOT haCkED MY [REDACTED] (Your device literally has the security of a [shitty device] / [smart doorbell])”</i></p>
+<p>&nbsp;</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of code snippet from decoding .pwned message" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image.img.png/1649429038246/picture1.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title"> Figure 1: Code snippet from decoding .pwned message</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p>Subsequently, FortiGuard Labs researchers discovered newer samples that reverted to the cleartext versions of the <i>/tmp/.pwned</i> message, which might suggest the possibility of multiple developers working with different versions of the codebase or having different programming habits.</p>
+<p>Keksec is known for operating multiple botnets, some of which are based on Gafgyt (a.k.a. Bashlite). Gafgyt is a DDoS botnet whose source code was leaked way back in 2015.</p>
+<p>In the case of Enemybot, although it is mainly based on Gafgyt, it was observed that some of its modules are clearly borrowed from Mirai’s source code. One of these is Enemybot’s scanner module as shown in the screenshots below.</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of obvious code similarities between Mirai and Enemybot’s scanner modules" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1781858310.img.png/1649429114521/picture2.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 2: Obvious code similarities between Mirai and Enemybot’s scanner modules</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p>Another module shared with Mirai is the bot killer module where it searches for any running processes started from certain file paths or with specific keywords in its process memory. It then terminates these processes. Enemybot enhances the original Mirai code with over sixty keywords to identify and kill off any competitors running on the same devices.</p>
+<p>While researching this botnet, FortiGuard Labs observed that Enemybot shares several similarities with Gafgyt_tor previously reported by <a href="https://blog.netlab.360.com/gafgtyt_tor-and-necro-are-on-the-move-again/">other researchers</a>, and assessed that Enemybot is likely an updated and “rebranded” variant of Gafgyt_tor.</p>
+<h2><b>Technical Details</b></h2>
+<p><i>Infects Multiple Architectures</i></p>
+<p>Like most botnets, this malware infects multiple architectures to increase its chances of infecting more devices. In addition to IoT devices, Enemybot also targets desktop/server architectures such as BSD, including Darwin (macOS), and x64.</p>
+<p>Enemybot targets the following architectures:</p>
+<ul>
+<li>arm</li>
+<li>arm5</li>
+<li>arm64</li>
+<li>arm7</li>
+<li>bsd</li>
+<li>darwin</li>
+<li>i586</li>
+<li>i686</li>
+<li>m68k</li>
+<li>mips</li>
+<li>mpsl</li>
+<li>ppc</li>
+<li>ppc-440fp</li>
+<li>sh4</li>
+<li>spc</li>
+<li>x64</li>
+<li>x86</li>
+</ul>
+<p>Enemybot’s download server was previously misconfigured and displayed a list of ELF binaries for different architectures (Figure 3). Threat actors have fixed this at the time of writing.</p>
+<p>&nbsp;</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--6 aem-GridColumn--offset--default--3">
+
+    
+        <img alt="Screenshot of open directory of Enemybot’s download server" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_955539597.img.png/1649429443386/picture3.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 3: Open directory of Enemybot’s download server</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p><i>Obfuscation</i></p>
+<ul>
+<li>Enemybot obfuscates strings in a variety of ways:<ul>
+<li>C2 domain uses XOR encoding with a multi-byte key</li>
+<li>Credentials for SSH brute-forcing and bot killer keywords use Mirai-style encoding, i.e., single byte XOR encoding with 0x22</li>
+<li>Commands are encrypted with a substitution cipher, i.e,, swapping one character for another</li>
+<li>Some strings are encoded by just adding three to the numeric value of each character</li>
+</ul>
+</li>
+</ul>
+<p>While these obfuscation techniques are simplistic, they are sufficient to hide tell-tale indicators of its presence from casual analysis and other botnets. Most IoT botnets including Enemybot are known for searching for such indicators to terminate other botnets running on the same device.<u></u></p>
+<p><i>Infecting More Devices</i></p>
+<p>In terms of spreading, Enemybot uses several methods that have also been observed in other IoT botnet campaigns.</p>
+<p>One way is using a list of hardcoded username/password combinations to login into devices configured with weak or default credentials. This is another module that was copied from Mirai’s source code.</p>
+<p>This malware also tries to run shell commands to infect misconfigured Android devices that expose Android Debug Bridge port (5555).</p>
+<p>The last method is to target devices with specific vulnerabilities as listed below:&nbsp;</p>
+<ul>
+<li><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-17456">CVE-2020-17456</a>&nbsp;is a vulnerability that targets SEOWON INTECH SLC-130 and SLR-120S routers. Malicious commands can be injected into the&nbsp;<i>pingIPAddr&nbsp;</i>parameter (Figure 4)</li>
+</ul>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of CVE-2020-17456 exploit request" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1011520000.img.png/1649429826100/picture4.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title"> Figure 4: CVE-2020-17456 exploit request</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <ul>
+<li>Another vulnerability (no CVE assigned) targets the Seowon SLC-130 router. This is similar to the previous exploit, only this time the command could be injected in the vulnerable <i>queriesCnt </i>parameter. The implementation was likely based on <a></a>publicly available exploit code.</li>
+</ul>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of another exploit targeting Seowon SLC-130 router" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1003620835.img.png/1649430022092/picture5.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 5: Another exploit targeting Seowon SLC-130 router</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <ul>
+<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2018-10823">CVE-2018-10823</a> is an older D-Link router vulnerability that allows an authenticated user to execute a malicious command into the <i>Sip</i> parameter of the <i>chkisg.htm</i> page (Figure 6).&nbsp; The following devices are affected by this vulnerability.<ul>
+<li>DWR-116 through 1.06</li>
+<li>DWR-512 through 2.02</li>
+<li>DWR-712 through 2.02</li>
+<li>DWR-912 through 2.02</li>
+<li>DWR-921 through 2.02</li>
+<li>DWR-111 through 1.01</li>
+</ul>
+</li>
+</ul>
+
+
+</div>
+<div class="cmp cmp-text aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--12 aem-GridColumn--offset--default--0">
+  <p style="margin-left: 40.0px;">D-Link provided updated firmware for some of the above-mentioned devices. It’s recommended to check and update these devices if they still have vulnerable versions.</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--7 aem-GridColumn--offset--default--2">
+
+    
+        <img alt="Screenshot of CVE-2018-10823 exploit request" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1383694457.img.png/1649430676657/picture6.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 6: CVE-2018-10823 exploit request</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <ul>
+<li><a href="https://nvd.nist.gov/vuln/detail/CVE-2022-27226">CVE-2022-27226</a> is a recent vulnerability on iRZ mobile routers that was exploited by Enemybot shortly after it was published on March 19, 2022. In fact, this is the first botnet observed by FortiGuard Labs to target devices from this vendor.</li>
+</ul>
+<p style="margin-left: 40.0px;">This vulnerability allows an attacker to execute a command by adding a crontab entry in the infected device via the <i>/api/crontab</i> (Figure 7).</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of CVE-2022-27226 exploit request" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1285041825.img.png/1649430760536/picture7.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 7: CVE-2022-27226 exploit request</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p>During the past few weeks, FortiGuard Labs researchers also observed different samples adding and removing exploits. A list of these exploits seen in use by Enemybot for propagation are as follows:</p>
+<ul>
+<li>CVE-2022-25075 to 25084: Targets TOTOLINK routers, previously exploited by the <a href="https://www.fortinet.com/blog/threat-research/totolink-vulnerabilities-beastmode-mirai-campaign">Beastmode </a>botnet</li>
+<li>CVE-2021-44228/2021-45046: Better known as Log4j, more details are available on our <a href="https://www.fortinet.com/blog/psirt-blogs/apache-log4j-vulnerability">Fortinet PSIRT blog</a></li>
+<li>CVE-2021-41773/CVE-2021-42013: Targets Apache HTTP servers</li>
+<li>CVE-2018-20062: Targets ThinkPHP CMS</li>
+<li>CVE-2017-18368: Targets Zyxel P660HN routers</li>
+<li>CVE-2016-6277: Targets NETGEAR routers</li>
+<li>CVE-2015-2051: Targets D-Link routers</li>
+<li>CVE-2014-9118: Targets Zhone routers</li>
+<li>NETGEAR DGN1000 exploit (No CVE assigned): Targets NETGEAR routers</li>
+</ul>
+<p>This mix of exploits targeting web servers and applications beyond the usual IoT devices, coupled with the wide range of supported architectures, might be a sign of Keksec testing the viability of expanding the botnet beyond low-resource IoT devices for more than just DDoS attacks. Based on their previous botnet operations, using them for cryptomining is a big possibility.</p>
+<p>After a successful exploit, a shell command is executed to download another shell script from a URL. In most cases, particularly in Mirai-based botnets, this URL is hardcoded. In the case of Enemybot however, this URL is dynamically updated by the C2 server via the command <i>LDSERVER</i>. The clear advantage of this method is that when the download server is down for whatever reason, the botnet operators can just update the bot clients with a new URL.</p>
+<p>The shell script <i>update.sh</i> then downloads the actual Enemybot binaries compiled for every architecture it targets and executes them.</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--10 aem-GridColumn--offset--default--1">
+
+    
+        <img alt="Screenshot of Code snippet from update.sh" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_853511716.img.png/1649430982670/picture8.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    <span class="cmp-image--title">Figure 8: Code snippet from update.sh</span>
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <p><i>Commands and DDoS capabilities</i></p>
+<p>Once the bot gets installed on a victim’s device, it connects to its C2 server and waits for further commands. The C2 server hides in the Tor network and&nbsp;the bot tries to access the server<a>&nbsp;</a>using a hardcoded list of SOCKS proxy IPs.</p>
+<p>This bot supports several commands listed in the following table.</p>
+
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--8 aem-GridColumn--offset--default--2">
+
+    
+        <img alt="table of commands supported by bot" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1551898366.img.png/1649745582396/screenshot-2022-04-11-233847.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    
+
+
+    
+
+</div>
+<div class="cmp cmp-image aem-GridColumn--default--none aem-GridColumn aem-GridColumn--default--8 aem-GridColumn--offset--default--2">
+
+    
+        <img alt="table of commands supported by bot" data-src-disabled="/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet/_jcr_content/root/responsivegrid/image_1799710251.img.png/1649730696228/screenshot-2022-04-11-193049.png" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" class="loading">
+    
+    
+
+
+    
+
+</div>
+<div class="cmp cmp-text aem-GridColumn aem-GridColumn--default--12">
+  <h2><b>Conclusion</b></h2>
+<p>Based on the analysis of FortiGuard Labs, Enemybot is Keksec’s latest tool for performing DDoS attacks.</p>
+<p>To protect itself, it uses simple obfuscation techniques on its strings as well as hosting its C2 server in the Tor network, taking advantage of the network’s anonymity. It uses several techniques commonly found in other DDoS botnet malware to infect other devices.</p>
+<p>Seeing how this malware has undergone changes during the research for this article, we expect that more updated versions will be distributed in the wild soon.</p>
+<p>FortiGuard Labs will keep monitoring this botnet.</p>
+<h2><b>Fortinet Protections</b></h2>
+<p>Fortinet customers are protected by the following:</p>
+<ul>
+<li>The FortiGuard Antivirus service detects and blocks this threat as ELF/Gafgyt, Linux/Gafgyt, and Linux/Mirai</li>
+<li>FortiGuard Labs provides IPS signatures against attacks exploiting the following vulnerabilities:<ul>
+<li>CVE-2022-27226 - <a href="https://www.fortiguard.com/encyclopedia/ips/51342">iRZ.Mobile.Router.API.crontab.AUTH.Remote.Code.Execution</a></li>
+<li>CVE-2021-44228/2021-45046 - <a href="https://www.fortiguard.com/encyclopedia/ips/51006">Apache.Log4j.Error.Log.Remote.Code.Execution</a></li>
+<li>CVE-2021-41773/CVE-2021-42013 - <a href="https://www.fortiguard.com/encyclopedia/ips/50825">Apache.HTTP.Server.cgi-bin.Path.Traversal</a></li>
+<li>CVE-2020-17456 - <a href="https://www.fortiguard.com/encyclopedia/ips/49451">Seowon.Intech.Routers.system_log.CGI.Command.Injection</a></li>
+<li>Seowon SLC-130<a>&nbsp;</a>Vulnerability RCE (vulnerable “queriesCnt” parameter) - &nbsp;Seowon.Intech.Routers.Unauthenticated.Remote.Code.Execution&nbsp;</li>
+<li>CVE-2018-20062 - <a href="https://www.fortiguard.com/encyclopedia/ips/47291">ThinkPHP.Controller.Parameter.Remote.Code.Execution</a></li>
+<li>CVE-2018-10823 - <a></a><a href="https://www.fortiguard.com/encyclopedia/ips/51354">D-Link.DWR.CVE-2018-10823.Remote.Code.Execution</a></li>
+<li>CVE-2017-18368 - <a href="https://www.fortiguard.com/encyclopedia/ips/43619">TrueOnline.ZyXEL.P660HN.V1.Unauthenticated.Command.Injection</a></li>
+<li>CVE-2016-6277 - <a href="https://www.fortiguard.com/encyclopedia/ips/43532">NETGEAR.WebServer.Module.Command.Injection</a></li>
+<li>CVE-2015-2051 - <a href="https://www.fortiguard.com/encyclopedia/ips/40772">D-Link.Devices.HNAP.SOAPAction-Header.Command.Execution</a></li>
+<li>Netgear DGN1000 exploit (No CVE) - <a href="https://www.fortiguard.com/encyclopedia/ips/44738">NETGEAR.DGN1000.CGI.Unauthenticated.Remote.Code.Execution</a></li>
+</ul>
+</li>
+<li>The FortiGuard Web Filtering Service blocks downloaded URLs.</li>
+</ul>
+<p><a href="https://www.fortinet.com/support/support-services/fortiguard-security-subscriptions/ipreputation-antibot">FortiGuard IP Reputation &amp; Anti-Botnet Security Service</a><span>&nbsp;proactively blocks these attacks by aggregating malicious source IP data from the Fortinet distributed network of threat sensors, CERTs, MITRE, cooperative competitors, and other global sources that collaborate to provide up-to-date threat intelligence about hostile sources.</span><br>
+</p>
+<p><a href="https://www.fortinet.com/support/support-services/fortiguard-security-subscriptions/application-control">FortiGuard Application Control Service</a> provides organizations the capability to monitor or block access to malicious, risky, or unwanted applications. Customers without specific business requirements for Tor can refer to these Fortinet Technical Tips for blocking <a href="https://community.fortinet.com/t5/FortiGate/Technical-Tip-How-to-block-traffic-coming-from-TOR-exit-nodes/ta-p/190958">inbound</a> and <a href="https://community.fortinet.com/t5/FortiGate/Technical-Tip-Blocking-and-monitoring-Tor-traffic/ta-p/196239">outbound</a> Tor traffic using the Application Control Service.</p>
+<h2><b>IOCs</b></h2>
+<p><i>Files</i></p>
+<p>5260b9a859d936c5b8e0dd81c0238de136d1159e41f0b148f86e2555cf4a4e38<br>
+Download URLsb025a17de0ba05e3821444da8f8fc3d529707d6b311102db90d9f04c11577573<br>
+bf2f2eb08489552d46b8f50fb07073433f4af94e1215865c48d45f795f96342f<br>
+adb51a8d112590a6fdd02ac8d812b837bbe0fcdd762dba6bbba0bd0b538f9aef<br>
+373b43345a7e4a6b1d5a6d568a8f6a38906760ea761eacd51a11c164393e4bad<br>
+b56655c3c9eed7cd4bce98eeebdcead8daa75a33498ad4f287c753ecc9554aca<br>
+cebd50b3a72a314c935b426c0e6b30ec08e0e0cb53e474efffb66f0907309243<br>
+73e929575afc04758a23c027ebe4f60ab5c4ba0ab7fa8756b27ed71548302009<br>
+33d282c6bccf608d4fbf3a211879759019741c1b822c6cea56c6f479be598367<br>
+80f264d7b45a52bd000165f3f3b0fdc0e405f3f128a60a9ec6f085bfba114971<br>
+9acf649b74f4aae43a2db90b8d39a7cd39bf6b82c995da7a1ffa6f23c3549b14<br>
+a7213ae906a008ad06020436db120a14568c41eae4335d6c76f2bbc33ee9fbcc<br>
+2ea62957b9dd8e95052d64a48626c0fa137f0fa9ca4fa53f7f1d8fe35aa38dc0<br>
+2ec8016e5fb8375d0cc66bc81f21c2d3f22b785eb4f8e2a02b0b5254159696f5<br>
+06f9083e8109685aecb2c35441932d757184f7749096c9e23aa7d8b7a6c080f8<br>
+fec09b614d67e8933e2c09671e042ce74b40048b5f0feed49ba81a2c18d4f473<br>
+c01156693d1d75481dc96265b41e661301102f3da4edae89338ee9c64dc57d32<br>
+820703b9a28d4b46692b7bf61431dc81186a970c243182740d623817910051d1<br>
+9790f79da34a70e7fb2e07896a5ada662978473457ca5e2701bd1d1df0b9f10f<br>
+a799be50ad82e6338c9e0b33d38612e6ad171872407d5d7de36022adf9b8bf63<br>
+4b2b4876ecc7d466eceb30ecbd79001af142b629200bbe61ebd45f4e63cd62ef<br>
+d14df997bdf1e3fd3d18edf771376a666dd791dcac550c7dd8de0323823e1037<br>
+32faf178c5929510234f2d02aea39ca67ab893e18f60c1593f0c043153625e9d<br>
+cc5a743b458bb098998693a73b6a13b9946d375c7c01ac6d37937871d6539102<br>
+980fb4731a70a472699fcbee1a16e76c78c1b36ab6430b94dbe2169f8ac21340<br>
+93706966361922b493d816fa6ee1347c90de49b6d59fc01c033abdd6549ac8b9<br>
+f805f22f668bd0414497ddc061e021c5b80b80c9702053d72fc809f19307073b<br>
+2e6305521d4ac770fc661658da6736d658eef384a9aa68bc49613d2be2d23a0d<br>
+e8c9452581830668941b3dca59896d339eb65cd8f21875b0e36261e5c093f7fe<br>
+</p>
+<p><i>Download URLs</i></p>
+<p>http://198[.]12[.]116[.]254/folder/dnsamp.txt<br>
+http://198[.]12[.]116[.]254/folder/enemybotarm<br>
+http://198[.]12[.]116[.]254/folder/enemybotarm5<br>
+http://198[.]12[.]116[.]254/folder/enemybotarm64<br>
+http://198[.]12[.]116[.]254/folder/enemybotarm7<br>
+http://198[.]12[.]116[.]254/folder/enemybotbsd<br>
+http://198[.]12[.]116[.]254/folder/enemybotdarwin<br>
+http://198[.]12[.]116[.]254/folder/enemyboti586<br>
+http://198[.]12[.]116[.]254/folder/enemyboti686<br>
+http://198[.]12[.]116[.]254/folder/enemybotm68k<br>
+http://198[.]12[.]116[.]254/folder/enemybotmips<br>
+http://198[.]12[.]116[.]254/folder/enemybotmpsl<br>
+http://198[.]12[.]116[.]254/folder/enemybotppc<br>
+http://198[.]12[.]116[.]254/folder/enemybotppc-440fp<br>
+http://198[.]12[.]116[.]254/folder/enemybotsh4<br>
+http://198[.]12[.]116[.]254/folder/enemybotspc<br>
+http://198[.]12[.]116[.]254/folder/enemybotx64<br>
+http://198[.]12[.]116[.]254/folder/enemybotx86<br>
+http://198[.]12[.]116[.]254/folder/enemybotx64<br>
+http://198[.]12[.]116[.]254/update.sh<br>
+</p>
+<p><i>C2</i></p>
+<p>xfrvkmokgfb2pajafphw3upl6gq2uurde7de7iexw4aajvslnsmev5id[.]onion (Tor network)</p>
+<p>&nbsp;</p>
+<p><i>Learn more about Fortinet’s <a href="https://www.fortinet.com/fortiguard/labs?utm_source=blog&amp;utm_campaign=fortiguard-labs">FortiGuard Labs</a> threat research and intelligence organization and the FortiGuard Security Subscriptions and Services <a href="https://www.fortinet.com/fortiguard/labs?tab=security-bundles&amp;utm_source=blog&amp;utm_campaign=security-bundles">portfolio</a>.</i></p>
+<p>&nbsp;</p>
+
+
+</div>
+<div class="raw-import aem-GridColumn aem-GridColumn--default--12">
+<div class="text-container"><div id="om-b2dxtopzidsdt3fkzfsv-holder"></div> </div>
+</div>
+
+    
+</div>
+</div>
+<div class="b16-blog-tags aem-GridColumn aem-GridColumn--default--12">
+
+
+
+  <div class="b16-blog-tags__container text-container">
+    <span class="b16-blog-tags__headline">Tags:</span>
+    <p class="b16-blog-tags__tag-links">
+      <a href="https://www.fortinet.com/blog/tags-search.html?tag=threat-research">threat research</a>, 
+    
+      <a href="https://www.fortinet.com/blog/tags-search.html?tag=botnet">botnet</a>, 
+    
+      <a href="https://www.fortinet.com/blog/tags-search.html?tag=cybersecurity-architect">Cybersecurity Architect</a>
+    </p>
+  </div>
+
+</div>
+<section class="b12-related aem-GridColumn aem-GridColumn--default--12">
+
+
+
+
+<div class="b12-related__container text-container">
+    
+
+    
+    
+    <h3>Related Posts</h3>
+    <div class="b12-related__posts">
+        
+        <a href="/blog/threat-research/quick-analysis-new-method-spreading-trickbot" class="b12-related__post b12-related__post-0">
+            <div class="b12-related__image" style="background-image:url(/content/dam/fortinet-blog/article-images/quick-analysis-trickbot/figure-five-trickbot.png.thumb.319.319.png);">
+                <img class="ratio" alt="Quick Analysis of New Method for Spreading TrickBot " aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAQAAAAe/WZNAAAADklEQVR42mNkgAJGDAYAAFEABCaLYqoAAAAASUVORK5CYII=">
+            </div>
+
+            <div class="b12-related__text">
+                <p class="b12-related__category">
+                    Threat Research
+                </p>
+                <h5 class="b12-related__title">Quick Analysis of New Method for Spreading TrickBot </h5>
+            </div>
+        </a>
+    
+    
+        
+        <a href="/blog/threat-research/unmasking-the-bonasira-cyperine-author" class="b12-related__post b12-related__post-1">
+            <div class="b12-related__image" style="background-image:url(/content/dam/fortinet-blog/article-images/individual-images/unmasking-the-bonasira-cyperine-author.png.thumb.319.319.png);">
+                <img class="ratio" alt="Unmasking the Bonasira Cyperine Author" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAQAAAAe/WZNAAAADklEQVR42mNkgAJGDAYAAFEABCaLYqoAAAAASUVORK5CYII=">
+            </div>
+
+            <div class="b12-related__text">
+                <p class="b12-related__category">
+                    Threat Research
+                </p>
+                <h5 class="b12-related__title">Unmasking the Bonasira Cyperine Author</h5>
+            </div>
+        </a>
+    
+    
+        
+        <a href="/blog/threat-research/searching-for-the-reuse-of-mirai-code--hide--n-seek-bot" class="b12-related__post b12-related__post-2">
+            <div class="b12-related__image" style="background-image:url(/content/dam/fortinet-blog/article-images/searching_mirai_code/08_searching_mirai.png.thumb.319.319.png);">
+                <img class="ratio" alt="Searching for the Reuse of Mirai Code: Hide ‘N Seek Bot" aria-hidden="true" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAQAAAAe/WZNAAAADklEQVR42mNkgAJGDAYAAFEABCaLYqoAAAAASUVORK5CYII=">
+            </div>
+
+            <div class="b12-related__text">
+                <p class="b12-related__category">
+                    Threat Research
+                </p>
+                <h5 class="b12-related__title">Searching for the Reuse of Mirai Code: Hide ‘N Seek Bot</h5>
+            </div>
+        </a>
+    
+    </div>
+</div>
+
+
+</section>
+<div class="b13-comment-section aem-GridColumn aem-GridColumn--default--12">
+
+
+<div class="b13-comment-section__container text-container">
+
+
+  <!--data-sly-test="true - got replaced with false to disable the discussion event-->
+  
+</div>
+</div>
+<div class="b6-footer aem-GridColumn aem-GridColumn--default--12">
+
+
+  
+
+  <div class="b6-footer__container text-container">
+    <div class="b6-footer__footer-info">
+      <div class="b6-footer__logo">
+        <a href="https://www.fortinet.com" target="_blank">
+          <img src="/content/dam/fortinet-blog/fortinet-logo-white.svg" alt="Fortinet">
+        </a>
+      </div>
+      <div class="b6-footer__social-footer">
+        <ul>
+          
+            <li class="social-icon facebook">
+              <a href="https://www.facebook.com/fortinet" target="_blank">
+                
+    <svg viewBox="0 0 9 18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8.934.758v3.385H7.24c-.583 0-.845.685-.845 1.27v2.114h2.54v3.385h-2.54v6.77H3.01v-6.77H.472V7.527H3.01V4.143c0-1.87 1.516-3.385 3.385-3.385h2.54z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+    </svg>
+
+              </a>
+            </li>
+          
+            <li class="social-icon twitter">
+              <a href="https://www.twitter.com/fortinet" target="_blank">
+                
+    <svg viewBox="0 0 19 15" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.17 2.296c-.652.296-1.354.49-2.082.584.745-.448 1.32-1.16 1.59-2.014-.702.423-1.48.72-2.3.89-.67-.73-1.61-1.152-2.675-1.152-1.988 0-3.613 1.625-3.613 3.63 0 .288.034.567.093.83-3.012-.153-5.694-1.6-7.48-3.792-.313.534-.49 1.16-.49 1.82 0 1.26.634 2.377 1.616 3.012-.61 0-1.16-.17-1.65-.423v.03c0 1.76 1.25 3.237 2.91 3.567-.31.084-.63.127-.96.127-.23 0-.46-.026-.68-.07.455 1.43 1.784 2.497 3.383 2.52-1.235.984-2.8 1.56-4.51 1.56-.288 0-.575-.018-.863-.05 1.61 1.03 3.52 1.632 5.57 1.632 6.667 0 10.33-5.534 10.33-10.332 0-.16 0-.313-.007-.474.71-.508 1.32-1.15 1.81-1.888z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+    </svg>
+
+              </a>
+            </li>
+          
+            <li class="social-icon youtube">
+              <a href="https://www.youtube.com/user/SecureNetworks" target="_blank">
+                
+    <svg viewBox="0 0 18 14" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.472 11.027V3.412L12.55 7.22l-5.08 3.806zM15.934.787C15.426.62 12.294.45 9.164.45c-3.13 0-6.26.16-6.77.322-1.32.44-1.69 3.4-1.69 6.447 0 3.03.37 6 1.69 6.43.51.17 3.64.33 6.77.33 3.13 0 6.262-.16 6.77-.33 1.32-.43 1.692-3.4 1.692-6.44 0-3.047-.372-6-1.692-6.43z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+    </svg>
+
+              </a>
+            </li>
+          
+            <li class="social-icon linkedin">
+              <a href="https://www.linkedin.com/company/fortinet" target="_blank">
+                
+    <svg viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15.934 15.835H12.55v-5.712c0-.897-1.008-1.64-1.905-1.64s-1.48.743-1.48 1.64v5.712H5.78V5.68h3.385v1.693c.558-.905 1.996-1.49 2.96-1.49 2.116 0 3.81 1.727 3.81 3.817v6.135zm-11.846 0H.703V5.68h3.385v10.155zM2.395.605c.935 0 1.693.757 1.693 1.69 0 .936-.758 1.694-1.693 1.694S.703 3.23.703 2.29C.703 1.36 1.46.6 2.395.6z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+    </svg>
+
+              </a>
+            </li>
+          
+            <li class="social-icon instagram">
+              <a href="https://www.instagram.com/behindthefirewall/" target="_blank">
+                
+    <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <path class="st0" d="M16,3.7c4,0,4.5,0,6.1,0.1c1.5,0.1,2.3,0.3,2.8,0.5c0.7,0.3,1.2,0.6,1.7,1.1c0.5,0.5,0.8,1,1.1,1.7
+          c0.2,0.5,0.4,1.3,0.5,2.8c0.1,1.6,0.1,2.1,0.1,6.1s0,4.5-0.1,6.1c-0.1,1.5-0.3,2.3-0.5,2.8c-0.3,0.7-0.6,1.2-1.1,1.7
+          c-0.5,0.5-1,0.8-1.7,1.1c-0.5,0.2-1.3,0.4-2.8,0.5c-1.6,0.1-2.1,0.1-6.1,0.1s-4.5,0-6.1-0.1c-1.5-0.1-2.3-0.3-2.8-0.5
+          c-0.7-0.3-1.2-0.6-1.7-1.1c-0.5-0.5-0.8-1-1.1-1.7c-0.2-0.5-0.4-1.3-0.5-2.8C3.7,20.5,3.7,20,3.7,16s0-4.5,0.1-6.1
+          c0.1-1.5,0.3-2.3,0.5-2.8C4.6,6.5,4.9,6,5.4,5.4c0.5-0.5,1-0.8,1.7-1.1c0.5-0.2,1.3-0.4,2.8-0.5C11.5,3.7,12,3.7,16,3.7 M16,1
+          c-4.1,0-4.6,0-6.2,0.1C8.2,1.2,7.1,1.4,6.2,1.8c-1,0.4-1.8,0.9-2.7,1.7C2.7,4.4,2.2,5.2,1.8,6.2c-0.4,1-0.6,2-0.7,3.6
+          C1,11.4,1,11.9,1,16c0,4.1,0,4.6,0.1,6.2c0.1,1.6,0.3,2.7,0.7,3.6c0.4,1,0.9,1.8,1.7,2.7c0.8,0.8,1.7,1.3,2.7,1.7
+          c1,0.4,2,0.6,3.6,0.7C11.4,31,11.9,31,16,31s4.6,0,6.2-0.1c1.6-0.1,2.7-0.3,3.6-0.7c1-0.4,1.8-0.9,2.7-1.7c0.8-0.8,1.3-1.7,1.7-2.7
+          c0.4-1,0.6-2,0.7-3.6C31,20.6,31,20.1,31,16s0-4.6-0.1-6.2c-0.1-1.6-0.3-2.7-0.7-3.6c-0.4-1-0.9-1.8-1.7-2.7
+          c-0.8-0.8-1.7-1.3-2.7-1.7c-1-0.4-2-0.6-3.6-0.7C20.6,1,20.1,1,16,1L16,1z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+        <path class="st0" d="M16,8.3c-4.3,0-7.7,3.4-7.7,7.7s3.4,7.7,7.7,7.7s7.7-3.4,7.7-7.7S20.3,8.3,16,8.3z M16,21c-2.8,0-5-2.2-5-5
+          s2.2-5,5-5s5,2.2,5,5S18.8,21,16,21z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+        <circle class="st0" cx="24" cy="8" r="1.8" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></circle>
+    </svg>
+
+              </a>
+            </li>
+          
+            <li class="social-icon rss">
+              <a href="https://www.fortinet.com/rss-feeds.html" target="_blank">
+                
+    <svg viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3.072 17.68c-1.27 0-2.37-1.1-2.37-2.368 0-1.27 1.1-2.37 2.37-2.37s2.37 1.1 2.37 2.37-1.016 2.37-2.37 2.37zM.702.76v2.538c7.955 0 14.386 6.43 14.386 14.385h2.538C17.626 8.336 10.05.76.703.76zm0 5.162V8.46c5.078 0 9.224 4.146 9.224 9.223h2.54c0-6.514-5.248-11.76-11.763-11.76z" fill-opacity=".8" fill="#fff" fill-rule="evenodd"></path>
+    </svg>
+
+              </a>
+            </li>
+          
+        </ul>
+      </div>
+    </div>
+    <div class="b6-footer__footer-links">
+      
+        <div class="b6-footer__footer-links-column">
+          <h4 class="b6-footer__header">News &amp; Articles</h4>
+          <ul>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/newsroom/press-releases.html" target="_self">News Releases</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/newsroom/news.html" target="_blank">News Articles</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/contact-us/fortinet-trademark-guidelines.html" target="_self">Trademarks</a>
+              </li>
+            
+          </ul>
+        </div>
+      
+        <div class="b6-footer__footer-links-column">
+          <h4 class="b6-footer__header">Security Research</h4>
+          <ul>
+            
+              <li>
+                <a href="https://www.fortinet.com/fortiguard/threat-intelligence/threat-research.html" target="_self">Threat Research</a>
+              </li>
+            
+              <li>
+                <a href="https://fortiguard.com/" target="_self">FortiGuard Labs</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/fortiguard/threat-intelligence/threat-map.html" target="_self">Threat Map</a>
+              </li>
+            
+              <li>
+                <a href="https://secure.fortinet.com/fortiguard" target="_blank">Threat Briefs</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/solutions/ransomware.html" target="_self">Ransomware</a>
+              </li>
+            
+          </ul>
+        </div>
+      
+        <div class="b6-footer__footer-links-column">
+          <h4 class="b6-footer__header">Connect With Us</h4>
+          <ul>
+            
+              <li>
+                <a href="/content/fortinet-blog/us/en" target="_self">Blog</a>
+              </li>
+            
+              <li>
+                <a href="https://fusecommunity.fortinet.com" target="_self">Fuse Community</a>
+              </li>
+            
+          </ul>
+        </div>
+      
+        <div class="b6-footer__footer-links-column">
+          <h4 class="b6-footer__header">Company</h4>
+          <ul>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/about-us.html" target="_blank">About Us</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/why-fortinet.html" target="_blank">Why Fortinet</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/security-fabric.html" target="_self">Security Fabric</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/executive-management.html" target="_self">Exec Mgmt</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/careers.html" target="_self">Careers</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/product-certifications.html" target="_self">Certifications</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/events.html" target="_self">Events</a>
+              </li>
+            
+              <li>
+                <a href="https://www.fortinet.com/corporate/about-us/industry-awards.html" target="_self">Industry Awards</a>
+              </li>
+            
+          </ul>
+        </div>
+      
+      <div class="b6-footer__contact-info">
+        <h4 class="b6-footer__header">Contact Us</h4>
+        <ul>
+          <li>(866) 868-3678</li>
+        </ul>
+      </div>
+    </div>
+    <div class="b6-footer__copyright">
+      <div class="b6-footer__copyright-info">
+        <p class="b6-footer__copyright-text">Copyright © 2022 Fortinet, Inc. All Rights Reserved</p>
+        
+          <a class="b6-footer__copyright-link" href="https://www.fortinet.com/corporate/about-us/legal.html" target="_blank">Terms of Services</a>
+        
+          <a class="b6-footer__copyright-link" href="https://www.fortinet.com/corporate/about-us/privacy.html" target="_blank">Privacy Policy</a>
+        
+        <span class="ot-ftnt-cookie-settings"> | <a href="#" onclick="Optanon.ToggleInfoDisplay()">Cookie Settings</a></span>
+      </div>
+    </div>
+  </div>
+
+<!-- Launch COnfiguration -->
+
+
+<!-- END Launch COnfiguration --></div>
+
+    
+</div>
+</div>
+
+
+
+    
+    
+
+    
+    
+<script type="text/javascript" src="/etc.clientlibs/fortinet-blog/clientlibs/clientlib-base.min.js"></script>
+
+
+
+
+
+    
+
+
+
+
+
+
+<div id="onetrust-consent-sdk"><div class="onetrust-pc-dark-filter ot-fade-in" style="z-index:2147483645"></div><div id="onetrust-pc-sdk" class="otPcTab ot-hide ot-fade-in" role="dialog" aria-modal="true" aria-labelledby="ot-pc-title" lang="en"><!-- pc header --><div class="ot-pc-header" role="presentation"><!-- Header logo --><div class="ot-pc-logo" role="img" aria-label="Company Logo" style="background-image: url(&quot;https://cdn.cookielaw.org/logos/40ea360a-b28c-4701-978f-f497ebbef386/6aad043f-c4b5-4901-86f8-0342a2158d00/939570f6-8205-4853-8d40-35fdded1378a/ftnt_logo.png&quot;);
+                    background-position: left"></div><div class="ot-title-cntr"><h2 id="ot-pc-title">Cookie Preference Center</h2><div class="ot-close-cntr"><button id="close-pc-btn-handler" class="ot-close-icon" aria-label="Close"></button></div></div></div><!-- content --><!-- Groups / Sub groups with cookies --><div id="ot-pc-content" class="ot-pc-scrollbar ot-sdk-row"><div class="ot-sdk-container ot-grps-cntr ot-sdk-column"><div class="ot-sdk-four ot-sdk-columns ot-tab-list" aria-label="Cookie Categories"><ul class="ot-cat-grp" role="tablist"><li class="ot-abt-tab" role="presentation"><!-- About Privacy container --><div class="ot-active-menu category-menu-switch-handler" role="tab" tabindex="0" aria-selected="true" aria-controls="ot-tab-desc"><h3 id="ot-pvcy-txt">Your Privacy</h3></div></li><li class="ot-cat-item ot-always-active-group" role="presentation" data-optanongroupid="C0001"><div class="category-menu-switch-handler" role="tab" tabindex="-1" aria-selected="false" aria-controls="ot-desc-id-C0001"><h3 id="ot-header-id-C0001">Strictly Necessary Cookies</h3></div></li><li class="ot-cat-item" role="presentation" data-optanongroupid="C0002"><div class="category-menu-switch-handler" role="tab" tabindex="-1" aria-selected="false" aria-controls="ot-desc-id-C0002"><h3 id="ot-header-id-C0002">Performance Cookies</h3></div></li><li class="ot-cat-item" role="presentation" data-optanongroupid="C0003"><div class="category-menu-switch-handler" role="tab" tabindex="-1" aria-selected="false" aria-controls="ot-desc-id-C0003"><h3 id="ot-header-id-C0003">Functional Cookies</h3></div></li><li class="ot-cat-item" role="presentation" data-optanongroupid="C0004"><div class="category-menu-switch-handler" role="tab" tabindex="-1" aria-selected="false" aria-controls="ot-desc-id-C0004"><h3 id="ot-header-id-C0004">Targeting Cookies</h3></div></li></ul></div><div class="ot-tab-desc ot-sdk-eight ot-sdk-columns"><div class="ot-desc-cntr" id="ot-tab-desc" tabindex="0" role="tabpanel" aria-labelledby="ot-pvcy-hdr"><h3 id="ot-pvcy-hdr">Your Privacy</h3><p id="ot-pc-desc" class="ot-grp-desc">When you visit any website, it may store or retrieve information on your browser, mostly in the form of cookies.  Because we respect your right to privacy, you can choose not to allow some types of cookies.  Click on the different category headings to find out more and change our default settings.  However, blocking certain cookies in the Functional category may impact your experience of the site and the services we are able to offer.
+                        <a href="https://www.fortinet.com/corporate/about-us/privacy" class="privacy-notice-link" target="_blank" aria-label="privacy policy, Opens in a new window">privacy policy</a></p></div><div class="ot-desc-cntr ot-hide ot-always-active-group" role="tabpanel" tabindex="0" id="ot-desc-id-C0001"><div class="ot-grp-hdr1"><h3 class="ot-cat-header">Strictly Necessary Cookies</h3><div class="ot-tgl-cntr"><div class="ot-always-active">Always Active</div></div></div><p class="ot-grp-desc ot-category-desc">These cookies are necessary for the website to function and cannot be switched off in our systems. They are usually only set in response to actions made by you which amount to a request for services, such as setting your privacy preferences, logging in or filling in forms. You can set your browser to block or alert you about these cookies, but some parts of the site will not then work.</p><div class="ot-hlst-cntr"><button class="ot-link-btn category-host-list-handler" data-parent-id="C0001">Cookies Details‎</button></div></div><div class="ot-desc-cntr ot-hide" role="tabpanel" tabindex="0" id="ot-desc-id-C0002"><div class="ot-grp-hdr1"><h3 class="ot-cat-header">Performance Cookies</h3><div class="ot-tgl"><input type="checkbox" name="ot-group-id-C0002" id="ot-group-id-C0002" aria-checked="false" role="switch" class="category-switch-handler" data-optanongroupid="C0002" aria-labelledby="ot-header-id-C0002"> <label class="ot-switch" for="ot-group-id-C0002"><span class="ot-switch-nob"></span> <span class="ot-label-txt">Performance Cookies</span></label> </div><div class="ot-tgl-cntr"></div></div><p class="ot-grp-desc ot-category-desc">These cookies allow us to count visits and traffic sources so we can measure and improve the performance of our site. They help us to know which pages are the most and least popular and see how visitors move around the site.</p><div class="ot-hlst-cntr"><button class="ot-link-btn category-host-list-handler" data-parent-id="C0002">Cookies Details‎</button></div></div><div class="ot-desc-cntr ot-hide" role="tabpanel" tabindex="0" id="ot-desc-id-C0003"><div class="ot-grp-hdr1"><h3 class="ot-cat-header">Functional Cookies</h3><div class="ot-tgl"><input type="checkbox" name="ot-group-id-C0003" id="ot-group-id-C0003" aria-checked="false" role="switch" class="category-switch-handler" data-optanongroupid="C0003" aria-labelledby="ot-header-id-C0003"> <label class="ot-switch" for="ot-group-id-C0003"><span class="ot-switch-nob"></span> <span class="ot-label-txt">Functional Cookies</span></label> </div><div class="ot-tgl-cntr"></div></div><p class="ot-grp-desc ot-category-desc">These cookies enable the website to provide enhanced functionality and personalisation. They may be set by us or by third party providers whose services we have added to our pages. If you do not allow these cookies then some or all of these services may not function properly.</p><div class="ot-hlst-cntr"><button class="ot-link-btn category-host-list-handler" data-parent-id="C0003">Cookies Details‎</button></div></div><div class="ot-desc-cntr ot-hide" role="tabpanel" tabindex="0" id="ot-desc-id-C0004"><div class="ot-grp-hdr1"><h3 class="ot-cat-header">Targeting Cookies</h3><div class="ot-tgl"><input type="checkbox" name="ot-group-id-C0004" id="ot-group-id-C0004" aria-checked="false" role="switch" class="category-switch-handler" data-optanongroupid="C0004" aria-labelledby="ot-header-id-C0004"> <label class="ot-switch" for="ot-group-id-C0004"><span class="ot-switch-nob"></span> <span class="ot-label-txt">Targeting Cookies</span></label> </div><div class="ot-tgl-cntr"></div></div><p class="ot-grp-desc ot-category-desc">These cookies may be set through our site by our advertising partners. They may be used by those companies to build a profile of your interests and show you relevant adverts on other sites. They are based on uniquely identifying your browser and internet device. If you do not allow these cookies, you will experience less targeted advertising.</p><div class="ot-hlst-cntr"><button class="ot-link-btn category-host-list-handler" data-parent-id="C0004">Cookies Details‎</button></div></div></div></div></div><!-- Vendors / Hosts --><section id="ot-pc-lst" class="ot-hide ot-enbl-chr"><div class="ot-lst-cntr ot-pc-scrollbar"><div id="ot-pc-hdr"><h3 id="ot-lst-title"><button class="ot-link-btn back-btn-handler" aria-label="Back"><svg id="ot-back-arw" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 444.531 444.531" xml:space="preserve"><title>Back Button</title><g><path fill="#656565" d="M213.13,222.409L351.88,83.653c7.05-7.043,10.567-15.657,10.567-25.841c0-10.183-3.518-18.793-10.567-25.835
+                  l-21.409-21.416C323.432,3.521,314.817,0,304.637,0s-18.791,3.521-25.841,10.561L92.649,196.425
+                  c-7.044,7.043-10.566,15.656-10.566,25.841s3.521,18.791,10.566,25.837l186.146,185.864c7.05,7.043,15.66,10.564,25.841,10.564
+                  s18.795-3.521,25.834-10.564l21.409-21.412c7.05-7.039,10.567-15.604,10.567-25.697c0-10.085-3.518-18.746-10.567-25.978
+                  L213.13,222.409z"></path></g></svg></button> <span>Back</span></h3><div class="ot-lst-subhdr"><div id="ot-search-cntr"><label for="vendor-search-handler" class="ot-scrn-rdr">Vendor Search</label> <input id="vendor-search-handler" aria-label="Vendor Search" type="text" placeholder="Search..." name="vendor-search-handler"> <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 -30 110 110"><path fill="#2e3644" d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23
+              s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92
+              c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17
+              s-17-7.626-17-17S14.61,6,23.984,6z"></path></svg></div><div id="ot-fltr-cntr"><button id="filter-btn-handler" aria-label="Filter" aria-haspopup="true"><svg role="presentation" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 402.577 402.577" style="enable-background:new 0 0 402.577 402.577;" xml:space="preserve"><title>Filter Button</title><g><path fill="#2c3643" d="M400.858,11.427c-3.241-7.421-8.85-11.132-16.854-11.136H18.564c-7.993,0-13.61,3.715-16.846,11.136
+                            c-3.234,7.801-1.903,14.467,3.999,19.985l140.757,140.753v138.755c0,4.955,1.809,9.232,5.424,12.854l73.085,73.083
+                            c3.429,3.614,7.71,5.428,12.851,5.428c2.282,0,4.66-0.479,7.135-1.43c7.426-3.238,11.14-8.851,11.14-16.845V172.166L396.861,31.413
+                            C402.765,25.895,404.093,19.231,400.858,11.427z"></path></g></svg></button></div></div></div><section id="ot-lst-cnt" class="ot-pc-scrollbar"><div class="ot-sdk-row"><div class="ot-sdk-column"><div id="ot-sel-blk"><div class="ot-sel-all"><div class="ot-sel-all-hdr"><span class="ot-consent-hdr">Consent</span> <span class="ot-li-hdr">Leg.Interest</span></div><div class="ot-sel-all-chkbox"><div class="ot-chkbox" id="ot-selall-hostcntr"><input id="select-all-hosts-groups-handler" type="checkbox" aria-checked="false"> <label for="select-all-hosts-groups-handler"><span class="ot-label-txt">checkbox label</span></label> <span class="ot-label-status">label</span></div><div class="ot-chkbox" id="ot-selall-vencntr"><input id="select-all-vendor-groups-handler" type="checkbox" aria-checked="false"> <label for="select-all-vendor-groups-handler"><span class="ot-label-txt">checkbox label</span></label> <span class="ot-label-status">label</span></div><div class="ot-chkbox" id="ot-selall-licntr"><input id="select-all-vendor-leg-handler" type="checkbox" aria-checked="false"> <label for="select-all-vendor-leg-handler"><span class="ot-label-txt">checkbox label</span></label> <span class="ot-label-status">label</span></div></div></div></div><ul id="ot-host-lst"><li class="ot-host-item"><button class="ot-host-box" aria-expanded="false" aria-label="Cookie Details"></button><section class="ot-acc-hdr"><div class="ot-tgl-cntr"><div class="ot-host-hdr"><h3 class="ot-host-name">33Across</h3><h4 class="ot-host-desc">33Across</h4></div></div><div class="ot-host-notice"><button class="ot-link-btn ot-host-expand" role="presentation" aria-hidden="true" tabindex="-1">View Third Party Cookies</button></div></section><div class="ot-acc-txt"><div class="ot-host-opts"><!-- HOST LIST VIEW UPDATE *** --><ul class="ot-host-opt"><li class="ot-host-info"><div><div>Name</div><div>cookie name</div></div></li></ul><!-- HOST LIST VIEW UPDATE END *** --></div></div></li></ul></div></div></section></div><div id="ot-anchor"></div><section id="ot-fltr-modal"><div id="ot-fltr-cnt"><button id="clear-filters-handler">Clear</button><div class="ot-fltr-scrlcnt ot-pc-scrollbar"><div class="ot-fltr-opts"><div class="ot-fltr-opt"><div class="ot-chkbox"><input id="chkbox-id" type="checkbox" aria-checked="false" class="category-filter-handler"> <label for="chkbox-id"><span class="ot-label-txt">checkbox label</span></label> <span class="ot-label-status">label</span></div></div></div><div class="ot-fltr-btns"><button id="filter-apply-handler">Apply</button> <button id="filter-cancel-handler">Cancel</button></div></div></div></section></section><!-- Footer buttons and logo --><div class="ot-pc-footer"><div class="ot-btn-container"><button class="save-preference-btn-handler onetrust-close-btn-handler">Confirm My Choices</button><div class="ot-btn-subcntr"> <button id="accept-recommended-btn-handler">Allow All</button></div></div><div class="ot-pc-footer-logo"><a href="https://onetrust.com/poweredbyonetrust" target="_blank" rel="noopener noreferrer" style="background-image: url(&quot;https://cdn.cookielaw.org/logos/static/poweredBy_ot_logo.svg&quot;)" aria-label="Powered by OneTrust Opens in a new window"></a></div></div><!-- Cookie subgroup container --><!-- Vendor list link --><!-- Cookie lost link --><!-- Toggle HTML element --><!-- Checkbox HTML --><!-- Arrow SVG element --><!-- Accordion basic element --><span class="ot-scrn-rdr" aria-atomic="true" aria-live="polite"></span><iframe class="ot-text-resize" title="onetrust-text-resize" style="position:absolute;top:-50000px;width:100em;" aria-hidden="true"></iframe></div><div id="onetrust-banner-sdk" class="otCenterRounded default" role="dialog" aria-describedby="onetrust-policy-text" aria-labelledby="onetrust-policy-title"><div class="ot-sdk-container"><div class="ot-sdk-row"><div id="onetrust-group-container" class="ot-sdk-twelve ot-sdk-columns"><div id="onetrust-policy"><div class="banner-header"><div class="banner_logo"></div><!-- Mobile Close Button --><div id="onetrust-close-btn-container"></div><!-- Mobile Close Button END--></div><h3 id="onetrust-policy-title">Cookie Settings</h3><p id="onetrust-policy-text">By clicking “Accept All”, you agree to use of cookies on your device to enhance site functionality, analyze site usage, and assist in our marketing efforts.  The Cookies Settings link has cookie-specific detail and preference options.  <a href="https://www.fortinet.com/corporate/about-us/privacy" tabindex="0">privacy policy</a></p></div></div><div id="onetrust-button-group-parent" class="ot-sdk-twelve ot-sdk-columns has-reject-all-button"><div id="onetrust-button-group"><div class="banner-actions-container"><button id="onetrust-reject-all-handler" tabindex="0">Reject All</button> <button id="onetrust-accept-btn-handler" tabindex="0">Accept All</button></div><button id="onetrust-pc-btn-handler" tabindex="0" class="cookie-setting-link">Cookies Settings</button></div></div></div></div></div></div><script>
+  window._6si = window._6si || []; 
+  window._6si.push(['enableEventTracking', true]); 
+  window._6si.push(['setToken', '5eeecf22b2d12a77a14639dce97b7a36']); 
+  window._6si.push(['setEndpoint', 'b.6sc.co']); 
+  window._6si.push(['enableCompanyDetails', true]); 
+  window._6si.push(['setEpsilonKey', '82f0c18bd0395219670f57108eb160f3273629b2']); 
+  (function() {
+    var gd = document.createElement('script'); 
+    gd.type = 'text/javascript';
+    gd.async = true;
+    gd.src = '//j.6sc.co/6si.min.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(gd, s); 
+  })();
+</script><script>_satellite["_runScript1"](function(event, target, Promise) {
+$(".ot-host-box").attr("aria-label","Cookie Details");
+});</script><style type="text/css">
+  
+  .brightedge-wrapper{
+	background: #e6e6e6 !important;
+}
+
+
+.brightedge-wrapper .be-label{
+    color : #000 !important;
+}
+
+.brightedge-wrapper .be-ix-link-block .be-related-link-container .be-list .be-list-item a {
+   color:#000 !important;
+}
+  
+</style><script>_satellite["_runScript2"](function(event, target, Promise) {
+!function(){function e(){try{var e=_satellite.getVar("mcvID"),a=_satellite.getVar("rsid"),t=_satellite.getVar("languageCode"),n=document.querySelectorAll(["form.eloquaBasic","form.eloquaGated"].join(",")),l=document.createElement("input");l.type="hidden",l.name="mid",l.value=e;var d=document.createElement("input");d.type="hidden",d.name="servertype",d.value=a;var i=document.createElement("input");i.type="hidden",i.name="languagecode",i.value=t;var r=document.createElement("input");r.type="hidden",r.name="gclid",r.id="gclid",r.value="";for(var m=0;m<n.length;m++)n[m].appendChild(l),n[m].appendChild(d),n[m].appendChild(i),n[m].appendChild(r);$('[name="mid"]').val(e),$('[name="servertype"]').val(a),$('[name="languagecode"]').val(t),$('form.ftnt-subscribe-form [name="country"]').val(_satellite.readCookie("aa_cn"))}catch(e){}}e()}();
+});</script></body></html>

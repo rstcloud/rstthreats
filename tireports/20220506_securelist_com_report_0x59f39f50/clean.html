@@ -1,0 +1,190 @@
+<div>
+<figure class="c-article__figure u-hidden@md">
+<img alt="" class="attachment-securelist-2020-thumbnail size-securelist-2020-thumbnail wp-post-image" height="450" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05141330/sl-abstract-mobile-billing-payment-800x450.jpg" style="max-width:800px;height:auto;width:auto;" width="800"/> </figure>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/malware-descriptions/">Malware descriptions</a>
+</p>
+<h1 class="c-article__title">Mobile subscription Trojans and their little tricks</h1>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/malware-descriptions/">Malware descriptions</a>
+</p>
+<p>06 May 2022</p>
+<p>
+ 8 minute read								</p>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories.svg" style="max-width:80%;height:auto;width:auto;"/>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories--invert.svg" style="max-width:80%;height:auto;width:auto;"/>
+<p>Table of Contents</p>
+<ul class="c-list-links"><li><a href="#jocker-text-message-thief-in-google-play">Jocker: Text message thief in Google Play</a><ul><li><a href="#jocker-functions">Jocker functions</a></li><li><a href="#geography-of-jocker-attacks">Geography of Jocker attacks</a></li></ul></li><li><a href="#mobok-skirts-captcha">MobOk skirts CAPTCHA</a><ul><li><a href="#geography-of-mobok-attacks">Geography of MobOk attacks</a></li></ul></li><li><a href="#vesub-beware-of-fake-apps">Vesub — beware of fake apps</a><ul><li><a href="#geography-of-vesub-attacks">Geography of Vesub attacks</a></li></ul></li><li><a href="#grifthorse-l-read-the-small-text">GriftHorse.l: read the small text</a><ul><li><a href="#geography-of-grifthorse-l-attacks">Geography of GriftHorse.l attacks</a></li></ul></li><li><a href="#grifthorse-ae-dont-give-out-your-number">GriftHorse.ae: don’t give out your number!</a><ul><li><a href="#geography-of-grifthorse-ae-attacks">Geography of GriftHorse.ae attacks</a></li></ul></li><li><a href="#general-statistics-on-trojan-subscribers">General statistics on Trojan subscribers</a><ul><li><a href="#geography-of-subscription-trojan-attacks">Geography of subscription Trojan attacks</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li><li><a href="#indicators-of-compromise-md5">Indicators of compromise (MD5)</a></li></ul>
+<figure class="c-article__figure u-hidden u-block@md">
+<img alt="" class="attachment-securelist-2020-thumbnail-large size-securelist-2020-thumbnail-large wp-post-image" height="600" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05141330/sl-abstract-mobile-billing-payment-1200x600.jpg" style="max-width:800px;height:auto;width:auto;" width="1200"/> </figure>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/igorgolovin/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_3.png" style="max-width:80%;height:auto;width:auto;"/>
+Igor Golovin</a>
+</li>
+</ul>
+<p>Billing fraud is one of the most common sources of income for cybercriminals. There are currently a number of known mobile Trojans specializing in secretly subscribing users to paid services. They usually pay for legitimate services in a user’s name and scammers take a cut from the money billed. These types of subscription fees tend to be fleeced from the phone balance.</p>
+<p>A user who is genuinely interested in subscribing to a service normally needs to visit the content provider’s website and click “subscribe.” As Trojan apps are capable of simulating a click on this icon, service providers sometimes require a confirmation code sent in a text message to complete subscription. In other cases, marketplaces try to make it harder to automate subscription by using a CAPTCHA, while others analyze traffic and block subscription scams using anti-fraud solutions. Yet there are some types of malware which can bypass at least some of these protections.</p>
+<h2 id="jocker-text-message-thief-in-google-play">Jocker: Text message thief in Google Play</h2>
+<p>Trojans from the Trojan.AndroidOS.Jocker family can intercept codes sent in text messages and bypass anti-fraud solutions. They’re usually spread on Google Play, where scammers download legitimate apps from the store, add malicious code to them and re-upload them to the store under a different name. The trojanized apps fulfill their original purposes in most cases, and the user won’t suspect they are a source of threats.</p>
+<p>To bypass vetting on Google Play, the Trojan monitors whether it’s gone live. The malicious payload will remain dormant while the app is stalled at the vetting stage.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130411/Trojan_subscribers_-01.png"><img alt="Checking availability on Google Play" class="aligncenter size-full wp-image-106429" height="256" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130411/Trojan_subscribers_-01.png" style="max-width:800px;height:auto;width:auto;" width="701"/></a></p>
+<p>Checking availability on Google Play</p>
+<p>While trojanized apps are removed from the store on a daily basis, it’s constantly flooded by new ones to take their place. The screenshots below show examples of apps for messaging, monitoring blood pressure, and document scanning using your phone’s camera, all of which were still available on Google Play at the end of February.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130456/Trojan_subscribers_-02.png"><img alt="From left to right: messaging app, blood pressure app, and document scanning app " class="aligncenter size-large wp-image-106430" height="729" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130456/Trojan_subscribers_-02-1024x729.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a></p>
+<p>From left to right: messaging app (<a href="https://opentip.kaspersky.com/d3d8dbb9a4dffc1e7007b771e09b5b38/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">d3d8dbb9a4dffc1e7007b771e09b5b38</a>), blood pressure app (<a href="https://opentip.kaspersky.com/ab168c7fbfa2f436d7deb90eb5649273/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">ab168c7fbfa2f436d7deb90eb5649273</a>), and document scanning app (<a href="https://opentip.kaspersky.com/77a6c1c2f782c699d1e73a940f36a527/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">77a6c1c2f782c699d1e73a940f36a527</a>)</p>
+<h3 id="jocker-functions">Jocker functions</h3>
+<p>Once the infected app is installed on your device, it requests access to text messages if its legitimate functionality requires it — for example, if it poses itself as a messaging app. Otherwise, it requests access to notifications. Pop-up notifications about messages received also contain the text of these messages, so access to notifications allows the malware to intercept the confirmation codes to complete subscription.</p>
+<p>Once launched, the malware downloads and launches a new file which inherits permissions from the infected app. The <a href="https://securelist.com/mobile-malware-evolution-2019/96280/" rel="noopener" target="_blank">earliest versions</a> of the Trojan downloaded the subscription app straight away. But presently Jocker is a staged downloader.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130621/Trojan_subscribers_-03.png"><img alt="Downloading of Jocker's stage 1 payload. The scammers call their software SDK" class="aligncenter size-full wp-image-106431" height="216" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130621/Trojan_subscribers_-03.png" width="607"/></a></p>
+<p>Downloading of Jocker’s stage 1 payload. The scammers call their software SDK</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130713/Trojan_subscribers_-04.png"><img alt="Launch of the first stage" class="aligncenter size-full wp-image-106432" height="280" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130713/Trojan_subscribers_-04.png" style="max-width:800px;height:auto;width:auto;" width="1004"/></a></p>
+<p>Launch of the first stage</p>
+<p>The scammers avoid detection by using different options for the initial payload download and launch. The entire process can involve a staged download of four files to deliver the final payload to the infected device, where only the last file is responsible for the main aim of subscribing the user.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130807/Trojan_subscribers_-05.png"><img alt="Launch of stage 2 payload (SDK)" class="aligncenter size-full wp-image-106433" height="586" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130807/Trojan_subscribers_-05.png" style="max-width:800px;height:auto;width:auto;" width="737"/></a></p>
+<p>Launch of stage 2 payload (SDK)</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130901/Trojan_subscribers_-06.png"><img alt="Launch of the main payload (SDK) for subscription" class="aligncenter size-full wp-image-106434" height="265" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130901/Trojan_subscribers_-06.png" style="max-width:800px;height:auto;width:auto;" width="902"/></a></p>
+<p>Launch of the main payload (SDK) for subscription</p>
+<p>The main payload basically follows a standard scheme: it receives a URL of the subscription page from the C&amp;C server and opens it in an invisible window. Once the page is loaded, the Trojan injects it with scripts which request a subscription and confirm it using an intercepted code from the text message.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130937/Trojan_subscribers_-07.png"><img alt="Code of Jocker's main payload" class="aligncenter size-full wp-image-106435" height="235" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05130937/Trojan_subscribers_-07.png" width="541"/></a></p>
+<p>Code of Jocker’s main payload</p>
+<p>Main “SDK” also has code for bypassing anti-fraud systems. For example, the malware can modify the X-Requested-With header in an HTTP request, which can be used to identify the particular app requesting a subscription. Jocker can also block or substitute anti-fraud scripts.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131030/Trojan_subscribers_-08.png"><img alt="Substitution of anti-fraud script" class="aligncenter size-large wp-image-106436" height="243" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131030/Trojan_subscribers_-08-1024x243.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a></p>
+<p>Substitution of anti-fraud script</p>
+<h3 id="geography-of-jocker-attacks">Geography of Jocker attacks</h3>
+<p>From January 2021 to March 2022, Jocker most frequently attacked users in Saudi Arabia (21.20%). Poland came second (8.98%) with Germany in third place (6.01%).</p>
+<p>Geographical distribution of Kaspersky users attacked by the Jocker family, January 2021 — March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05115747/01-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<p>The other countries in the TOP 10 where most users encountering Jocker were located were Malaysia (5.71%), the United Arab Emirates (5.50%), Switzerland (5.10%), South Africa (4.12%), Austria (3.96%), Russia (3.53%), and China (2.91%).</p>
+<h2 id="mobok-skirts-captcha">MobOk skirts CAPTCHA</h2>
+<p>Another subscription Trojan identified as Trojan.AndroidOS.MobOk was also first detected in <a href="https://securelist.com/mobile-subscriptions/91211/" rel="noopener" target="_blank">an infected app on Google Play</a>. However, this malware is now mainly spread as the payload of another Trojan called Triada, <a href="https://securelist.com/pig-in-a-poke-smartphone-adware/97607/" rel="noopener" target="_blank">which is present in preinstalled apps</a> (usually system apps) on certain smartphone models. It’s also built into popular apps, such as <a href="https://securelist.com/apkpure-android-app-store-infected/101845/" rel="noopener" target="_blank">the APKPure app store</a> and <a href="https://securelist.com/triada-trojan-in-whatsapp-mod/103679/" rel="noopener" target="_blank">a widely used modification of WhatsApp Messenger</a>.</p>
+<p>Trojan.AndroidOS.MobOk works on a principle similar to the malware described in the previous section. A subscription page is opened in an invisible window and a confirmation code stolen from a text message is stealthily entered there. If the malware is downloaded by Triada, it inherits Triada’s access to text messages, but if MobOk is spread by itself, it will request access to notifications, similarly to Jocker.</p>
+<p>MobOk differs from Jocker in its additional capability of bypassing CAPTCHA. The Trojan deciphers the code shown on the image by sending it to a special service.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131135/Trojan_subscribers_-09.png"><img alt="Sending an image to a recognition service and receiving the recognized code" class="aligncenter size-full wp-image-106437" height="544" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131135/Trojan_subscribers_-09.png" style="max-width:800px;height:auto;width:auto;" width="910"/></a></p>
+<p>Sending an image to a recognition service and receiving the recognized code</p>
+<h3 id="geography-of-mobok-attacks">Geography of MobOk attacks</h3>
+<p>The country where users encountered MobOk Trojans most frequently from January 2021 to March 2022 was Russia (31.01%). Second place is occupied by India (11.17%), closely followed by Indonesia (11.02%).</p>
+<p>Geographical distribution of users attacked by MobOk family, January 2021 — March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05115906/02-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<p>Fourth and fifth place were taken by Ukraine (8.31%) and Algeria (5.28%). The other countries in the TOP 10 where the Trojan was most active were Mexico (2.62%), Brazil (1.98%), Germany (1.63%), Turkey (1.43%), and Malaysia (1.27%).</p>
+<h2 id="vesub-beware-of-fake-apps">Vesub — beware of fake apps</h2>
+<p>A malware called Trojan.AndroidOS.Vesub is spread through unofficial sources and imitates popular games and apps like GameBeyond, Tubemate, Minecraft, GTA5 and Vidmate.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131311/Trojan_subscribers_-10.png"><img alt="Examples of fake apps" class="aligncenter size-large wp-image-106438" height="578" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131311/Trojan_subscribers_-10-1024x578.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a></p>
+<p>Examples of fake apps</p>
+<p>Most of the apps completely lack any legitimate functionality. They begin subscribing straight after they’re launched, while the user sees a loading window. However, there are some examples such as a fake GameBeyond app where the detected malware was accompanied by a random set of working games.</p>
+<p>The subscription process used by Vesub is similar to the previous examples: the malware opens an invisible window, requests a subscription, and enters a code received in a text message.</p>
+<h3 id="geography-of-vesub-attacks">Geography of Vesub attacks</h3>
+<p>Two out of every five users who encountered Vesub were in Egypt (40.27%). The family was also active in Thailand (25.88%) and Malaysia (15.85%).</p>
+<p>Geographical distribution of users attacked by the Vesub family, January 2021 — March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05120002/03-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<h2 id="grifthorse-l-read-the-small-text">GriftHorse.l: read the small text</h2>
+<p>All of the apps described above subscribe users to legitimate third-party services, even if the user doesn’t need them. However, there are other forms of malware which subscribe users to the app authors’ own “service.”</p>
+<p>You can end up subscribing to one of these services by simply not reading the user agreement carefully enough. For example, apps which have recently been spread intensively on Google Play offer to tailor personal weight-loss plans for a token fee.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131417/Trojan_subscribers_-11.png"><img alt="" class="aligncenter size-full wp-image-106439" height="691" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131417/Trojan_subscribers_-11.png" width="611"/></a></p>
+<p>Once launched, the app asks you to fill out a questionnaire.</p>
+<table border="0">
+<tbody>
+<tr>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131521/Trojan_subscribers_-12.png"><img alt="" class="aligncenter size-large wp-image-106440" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131521/Trojan_subscribers_-12-511x1024.png" width="511"/></a></td>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131546/Trojan_subscribers_-13.png"><img alt="" class="aligncenter size-large wp-image-106441" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131546/Trojan_subscribers_-13-511x1024.png" width="511"/></a></td>
+</tr>
+</tbody>
+</table>
+<p>A page then opens to inform the user that a personal plan is being generated.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131713/Trojan_subscribers_-14.png"><img alt="" class="aligncenter size-large wp-image-106442" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131713/Trojan_subscribers_-14-511x1024.png" width="511"/></a></p>
+<p>Then all you need to do is pay for the service and receive your weight-loss plan, which the scammers promise to send to your email address.</p>
+<table border="0">
+<tbody>
+<tr>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131850/Trojan_subscribers_-15.png"><img alt="" class="aligncenter size-large wp-image-106443" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131850/Trojan_subscribers_-15-512x1024.png" width="512"/></a></td>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131904/Trojan_subscribers_-16.png"><img alt="" class="aligncenter size-large wp-image-106444" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131904/Trojan_subscribers_-16-512x1024.png" width="512"/></a></td>
+</tr>
+</tbody>
+</table>
+<p>If you scroll down to the bottom of the page, you’ll see that the “service” charges a subscription fee with automatic billing. This means money will be deducted from the user’s bank account on a regular basis, needing no repeat confirmation from the user.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131922/Trojan_subscribers_-17.png"><img alt="" class="aligncenter size-large wp-image-106445" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05131922/Trojan_subscribers_-17-783x1024.png" style="max-width:800px;height:auto;width:auto;" width="783"/></a></p>
+<p>The fact that the app subscribes users to automatic billing is confirmed in the reviews section on Google Play. Moreover, many users complain they were unable to cancel the subscription directly through the actual app, while others mention they never received a weight-loss plan after paying the subscription fee.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05132001/Trojan_subscribers_-18.png"><img alt="" class="aligncenter size-full wp-image-106446" height="866" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05132001/Trojan_subscribers_-18.png" style="max-width:800px;height:auto;width:auto;" width="679"/></a></p>
+<p>Kaspersky solutions detect these apps as Trojan.AndroidOS.GriftHorse.l. Our researchers also detected <a href="https://www.kaspersky.ru/blog/not-a-scam-with-recurring-payments/32414/" rel="noopener" target="_blank">websites</a> that deploy a similar subscription scheme (article in Russian). These websites offered access to a wider pool of materials, such as training courses on office suites or online marketplace trading.</p>
+<h3 id="geography-of-grifthorse-l-attacks">Geography of GriftHorse.l attacks</h3>
+<p>We observed the activity of Trojan GriftHorse.l from 25 January 2022. Kaspersky solutions detected most instances of the Trojan on devices owned by users in Russia (81.37%). The country which came in second for the most users affected was Saudi Arabia (6.07%), with Egypt (1.91%) in third place.</p>
+<p>Geographical distribution of users attacked by GriftHorse.l Trojan, 25 January 2022 — 31 March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05120038/04-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<h2 id="grifthorse-ae-dont-give-out-your-number">GriftHorse.ae: don’t give out your number!</h2>
+<p>The Trojan detected as Trojan.AndroidOS.GriftHorse.ae may belong to the same family as GriftHorse.l, but it behaves in a completely different way. The malware poses as apps for recovering deleted files, editing photos and videos, blinking the flash for incoming calls, navigation, document scanning, translation, and so on. Yet all these apps can do in practice is request a phone number under the pretense of a login, although clicking “login” will actually subscribe the user. This is the simplest form of subscription — it bills the cell phone account and all it needs to complete the process is the victim’s phone number. It remains unclear what exactly does the GriftHorse.ae Trojan subscribe the user to.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05132036/Trojan_subscribers_-19.png"><img alt="Fake login screen in an app" class="aligncenter size-large wp-image-106447" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05132036/Trojan_subscribers_-19-512x1024.png" width="512"/></a></p>
+<p>Fake login screen in an app</p>
+<p>Like its relative, GriftHorse.ae is also spread through Google Play. Scammers upload a great number of similar apps to the marketplace in the hope that at least some of them will be available to users for a certain amount of time.</p>
+<h3 id="geography-of-grifthorse-ae-attacks">Geography of GriftHorse.ae attacks</h3>
+<p>Our radars picked up the GriftHorse.ae Trojan for the first time on 10 March 2022. Among the users who fell victim to attacks in less than a month, 43.57% were located in Russia, 22.95% in Saudi Arabia, and 6.14% in Oman.</p>
+<p>Geographical distribution of users attacked by GriftHorse.ae Trojan, 10 March 2022 — 31 March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05120126/05-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<p>Forth and fifth place were taken by users in Poland (4.39%) and Belarus (3.22%).</p>
+<h2 id="general-statistics-on-trojan-subscribers">General statistics on Trojan subscribers</h2>
+<p>From January 2021 to March 2022, the most active of the subscription Trojans covered in this article was MobOk. It was encountered by 74.09% of the Kaspersky mobile solution users who were attacked by the malware mentioned in this piece. Joker Trojans were blocked on 17.16% of user devices, while the least active Trojans were from the families Vesub (3.57%) and GriftHorse (3.53% of users encountered GriftHorse.l and 2.09% encountered GriftHorse.ae). It’s still worth noting that GriftHorse is a new family and it’s only beginning to pick up momentum.</p>
+<p>Share of users who encountered Trojans from specific families out of all users attacked by the subscription Trojans described in this article, January 2021— March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05120154/06-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<h3 id="geography-of-subscription-trojan-attacks">Geography of subscription Trojan attacks</h3>
+<p>The majority of users who encountered subscription Trojans were located in Russia (27.32%), India (8.43%), Indonesia (8.18%), Ukraine (6.25%), and Saudi Arabia (5.01%).</p>
+<p>Geographical distribution of users attacked by subscription Trojans, January 2021 — March 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/05/05120221/07-en-trojan-subscribers.png" rel="noopener" target="_blank">download</a>)</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Subscription Trojans can bypass bot detection on websites for paid services, and sometimes they subscribe users to scammers’ own non-existent services.</p>
+<p>To avoid unwanted subscriptions, avoid installing apps from unofficial sources, which is the most frequent source of malware. You shouldn’t let your guard down when installing apps from Google Play either: read the reviews, read up on the developer, the terms of use and payment. For messaging choose a well-known app with positive reviews.</p>
+<p>Even if you trust an app, you should avoid granting it too many permissions. Only allow access to notifications for apps that need it to perform their intended purposes — for example, to transfer notifications to wearable devices. Apps for something like themed wallpapers or photo editing don’t need access to your notifications.</p>
+<h2 id="indicators-of-compromise-md5">Indicators of compromise (MD5)</h2>
+<p>Trojan.AndroidOS.Joker</p>
+<p><a href="https://opentip.kaspersky.com/d3d8dbb9a4dffc1e7007b771e09b5b38/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">d3d8dbb9a4dffc1e7007b771e09b5b38</a>
+<a href="https://opentip.kaspersky.com/ab168c7fbfa2f436d7deb90eb5649273/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">ab168c7fbfa2f436d7deb90eb5649273</a>
+<a href="https://opentip.kaspersky.com/77a6c1c2f782c699d1e73a940f36a527/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">77a6c1c2f782c699d1e73a940f36a527</a>
+<a href="https://opentip.kaspersky.com/34c60a3034635cc19c110a14dcfd2436/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">34c60a3034635cc19c110a14dcfd2436</a>
+<a href="https://opentip.kaspersky.com/8cccfb60aeeb726916f4937c0a702e6a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">8cccfb60aeeb726916f4937c0a702e6a</a></p>
+<p>Trojan.AndroidOS.MobOk</p>
+<p><a href="https://opentip.kaspersky.com/b73d2205a2062a51727e22e25a168cef/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">b73d2205a2062a51727e22e25a168cef</a></p>
+<p>Trojan.AndroidOS.Vesub</p>
+<p><a href="https://opentip.kaspersky.com/1b833cc7880d5f1986d53692b8a05e3c/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1b833cc7880d5f1986d53692b8a05e3c</a>
+<a href="https://opentip.kaspersky.com/2cfbbc61a71d38fc83c50dc18d569b77/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">2cfbbc61a71d38fc83c50dc18d569b77</a>
+<a href="https://opentip.kaspersky.com/6e07381626d69f4710d7979dff7bff2a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6e07381626d69f4710d7979dff7bff2a</a>
+<a href="https://opentip.kaspersky.com/3395101b243993f4969c347e5feb8f65/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">3395101b243993f4969c347e5feb8f65</a>
+<a href="https://opentip.kaspersky.com/aebe1da0134b40fdcfc3adea18a50b8a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">aebe1da0134b40fdcfc3adea18a50b8a</a></p>
+<p>Trojan.AndroidOS.GriftHorse.l</p>
+<p><a href="https://opentip.kaspersky.com/07d6d7a15b94a6697db66364f1e79a85/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">07d6d7a15b94a6697db66364f1e79a85</a>
+<a href="https://opentip.kaspersky.com/11a1446bd6265b66e13f097ecfd195d8/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">11a1446bd6265b66e13f097ecfd195d8</a></p>
+<p>Trojan.AndroidOS.GriftHorse.ae</p>
+<p><a href="https://opentip.kaspersky.com/1b987b970d1274e44a66769c4a453462/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1b987b970d1274e44a66769c4a453462</a>
+<a href="https://opentip.kaspersky.com/1cefe439d7c533cf8ed689dd41ab35c4/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1cefe439d7c533cf8ed689dd41ab35c4</a>
+<a href="https://opentip.kaspersky.com/1d264d1eff33cff04dd04680db13a7d0/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1d264d1eff33cff04dd04680db13a7d0</a>
+<a href="https://opentip.kaspersky.com/1eb9c7af96fcefb9e6070ee8c1720aa3/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1eb9c7af96fcefb9e6070ee8c1720aa3</a>
+<a href="https://opentip.kaspersky.com/1f3baf400abaafd99fd3c0d630ad75ea/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">1f3baf400abaafd99fd3c0d630ad75ea</a>
+<a href="https://opentip.kaspersky.com/3a9829a5a62dda630f6b1e2d3371f9ae/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">3a9829a5a62dda630f6b1e2d3371f9ae</a>
+<a href="https://opentip.kaspersky.com/3cece1bcf65ec7befd5eef8aa2fc70cb/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">3cece1bcf65ec7befd5eef8aa2fc70cb</a>
+<a href="https://opentip.kaspersky.com/3ed41d81c15f6479ec0e0bca69c5c55f/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">3ed41d81c15f6479ec0e0bca69c5c55f</a>
+<a href="https://opentip.kaspersky.com/4bd04b372cf9eb00230d761eafb02218/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">4bd04b372cf9eb00230d761eafb02218 </a>
+<a href="https://opentip.kaspersky.com/5a6b67fa0d911f4858b0f00dc46c58fd/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">5a6b67fa0d911f4858b0f00dc46c58fd</a>
+<a href="https://opentip.kaspersky.com/5a7ab3c12c01e7c9c0a58ef7be536ca9/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">5a7ab3c12c01e7c9c0a58ef7be536ca9</a>
+<a href="https://opentip.kaspersky.com/5b5427b6310480a23e64cebfb757fffe/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">5b5427b6310480a23e64cebfb757fffe</a>
+<a href="https://opentip.kaspersky.com/5d9c9d7725ea4e47fc319384b2f88dad/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">5d9c9d7725ea4e47fc319384b2f88dad</a>
+<a href="https://opentip.kaspersky.com/5ddd4d0321a29a5e8699b703b4165df8/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">5ddd4d0321a29a5e8699b703b4165df8</a>
+<a href="https://opentip.kaspersky.com/6b336d8e9b459d937046475945d0c976/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6b336d8e9b459d937046475945d0c976</a>
+<a href="https://opentip.kaspersky.com/06d5eea04cfaa637e6b78f2ff22b7e7a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">06d5eea04cfaa637e6b78f2ff22b7e7a</a>
+<a href="https://opentip.kaspersky.com/6dba0f2972d412f768f1c332777753f9/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6dba0f2972d412f768f1c332777753f9</a>
+<a href="https://opentip.kaspersky.com/6e76a7b223754a27197c73cb815505d6/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6e76a7b223754a27197c73cb815505d6</a>
+<a href="https://opentip.kaspersky.com/6ede369b56d7f405849e0e2263fc5d95/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6ede369b56d7f405849e0e2263fc5d95</a>
+<a href="https://opentip.kaspersky.com/6f6391157fe40d78be21a145cb8fdc0a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">6f6391157fe40d78be21a145cb8fdc0a</a>
+<a href="https://opentip.kaspersky.com/7ad06772f92688d331e994febe77d56f/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">7ad06772f92688d331e994febe77d56f</a>
+<a href="https://opentip.kaspersky.com/7d068d99bab6873750fc81444980d084/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">7d068d99bab6873750fc81444980d084</a>
+<a href="https://opentip.kaspersky.com/7def5fccad7d3f9ef0c6f54140f63cf9/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">7def5fccad7d3f9ef0c6f54140f63cf9</a>
+<a href="https://opentip.kaspersky.com/7eccd4b190bac4f9470afa975cdab5e2/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">7eccd4b190bac4f9470afa975cdab5e2</a></p>
+<ul class="c-list-tags">
+<li><a class="c-link-tag" href="https://securelist.com/tag/google-android/">Google Android</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware/">Malware</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware-descriptions/">Malware Descriptions</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware-statistics/">Malware Statistics</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware-technologies/">Malware Technologies</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/mobile-malware/">Mobile Malware</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/trojan/">Trojan</a></li>
+</ul>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/igorgolovin/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_3.png" style="max-width:80%;height:auto;width:auto;"/>
+Igor Golovin</a>
+</li>
+</ul>
+</div>

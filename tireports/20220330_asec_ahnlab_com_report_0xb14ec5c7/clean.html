@@ -1,0 +1,73 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/33186/" rel="bookmark" title="9:13 am">March 30, 2022</a>
+<h1 class="title">Malicious Word File Targeting Corporate Users Being Distributed</h1>
+<p>The ASEC analysis team discovered a Word file that seems to target corporate users. The file contains an image that prompts users to enable macros like other malicious files. To trick users into thinking that this is an innocuous file, it shows information related to improving Google account security when the macro is run. Ultimately, it downloads additional malware files and leaks user information.</p>
+<p>When the file is run, it shows a warning image that mentions ‘file created in public institution form HWP’ in Korean, prompting users to run the VBA macro existing within the file. It also has memos on the right side to make it look as if the file is created by Microsoft. The author on the document properties is displayed as Microsoft as well.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/word.png?resize=1024%2C715&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/word.png?resize=1024%2C715&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 1. Word file</figcaption></figure>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%86%8D%EC%84%B1.png?resize=400%2C621&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%86%8D%EC%84%B1.png?resize=400%2C621&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 2. Document properties</figcaption></figure>
+<p>When users press the Enable Content button, the information about improving the Google account security is displayed as shown below.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/word2.png?resize=1024%2C633&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/word2.png?resize=1024%2C633&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 3. Content shown when macro is enabled</figcaption></figure>
+<p>To make it difficult to check the macro code included in the document, VBA Project has a password set for the document.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/vba-%EC%9E%A0%EA%B8%88.png?resize=1024%2C520&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/vba-%EC%9E%A0%EA%B8%88.png?resize=1024%2C520&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 4. VBA Project set with a password</figcaption></figure>
+<p>The confirmed macro code is automatically run through the AutoOpen function and performs malicious activities through the RunFE() function.</p>
+<code class="language-js">Sub AutoOpen()
+ Call CTD
+ Dim rfRes As Long
+ rfRes = RunFE()
+ 
+ If rfRes = 1 Then
+ Call HideInlineShapes
+ Call ShowShapes
+ Call CommnetDelete
+ End If
+ 
+' Call ShowInlineShapes
+' Call HideShapes
+End Sub</code>
+<p>The RunFE() function has the download URL encoded with Base64 and certain Hex values.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/vba%EC%BD%94%EB%93%9C-1.png?w=938&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/vba%EC%BD%94%EB%93%9C-1.png?w=938&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 5. Part of macro code</figcaption></figure>
+<p>The macro code has two download URLs. This is likely done to download the malware that fits the user’s PC environment. The decoding result of the encoded URL is as follows:</p>
+<ul><li>x86 environment – hxxp://4w9H8PS9.naveicoipc[.]tech/ACMS/7qsRn3sZ/7qsRn3sZ32.acm</li><li>x64 environment – hxxp://4w9H8PS9.naveicoipc[.]tech/ACMS/7qsRn3sZ/7qsRn3sZ64.acm</li></ul>
+<p>When the connection fails, a message box telling user to open the document after connecting to the Internet appears.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/msgbox-1.png?resize=1024%2C638&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/msgbox-1.png?resize=1024%2C638&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 6. Created message box</figcaption></figure>
+<p>If the code can access the download URL, the encoded PE data existing in the address is downloaded. The downloaded PE data is run after it is decoded and injected into the Word process.</p>
+<p>Inside the injected code is a code that checks if AhnLab products’ process exists within the current processes.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/code.jpg?resize=768%2C166&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/code.jpg?resize=768%2C166&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 7. Code for checking AhnLab products’ processes</figcaption></figure>
+<p>If there is a process named v3l4sp.exe (V3Lite), the code will not perform additional malicious behaviors and terminate itself. As such, the code does not perform additional malicious behavior for individual users using V3Lite. The case is different for company users, however.</p>
+<p>It drops IntelRST.exe to the %ProgramData%\Intel folder after checking the process and uses the following registry to make IntelRST.exe run continuously.</p>
+<ul><li>HKCU\Software\Microsoft\Windows\CurrentVersion\Run\IntelCUI
+Data: “C:\ProgramData\Intel\IntelRST.exe”</li></ul>
+<p>It also runs IntelRST.exe with the privilege escalated via UAC Bypass using winver.exe and ComputerDefaults.exe. IntelRST.exe is registered as an exclusion for Windows Defender through the following command.</p>
+<ul><li>cmd.exe /c powershell -Command Add-MpPreference -ExclusionPath “C:\ProgramData\Intel\IntelRST.exe”</li></ul>
+<p>The figure below shows the process tree that is run.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%ED%8A%B8%EB%A6%AC-1.png?w=754&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%ED%94%84%EB%A1%9C%EC%84%B8%EC%8A%A4-%ED%8A%B8%EB%A6%AC-1.png?w=754&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 8. Process tree</figcaption></figure>
+<p>The code then sends the user PC information to hxxp://naveicoipc[.]tech/post.php and attempts to access hxxp://naveicoipc[.]tech/7qsRn3sZ/7qsRn3sZ_[user name]_/fecommand.acm. Since the URL cannot be accessed, the team could not find out what the code does after.</p>
+<p>The team also found another word file (file name: Case Mediation Statement_BA6Q318N.doc) but could not check its content as it was protected with a password. The download URLs checked from the VBA macro included in the document are as follows:</p>
+<ul><li>x86 – hxxp://MOmls4ii.naveicoipa[.]tech/ACMS/BA6Q318N/BA6Q318N32.acm</li><li>x64 – hxxp://MOmls4ii.naveicoipa[.]tech/ACMS/BA6Q318N/BA6Q318N64.acm</li></ul>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%82%AC%EA%B1%B4.png?resize=1024%2C682&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%82%AC%EA%B1%B4.png?resize=1024%2C682&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 9. Additionally found malicious Word file 1</figcaption></figure>
+<p>As seen from the figure, among the documents distributed with the malicious macro of this type, there are files protected with passwords. The figure below shows another Word file (file name: Binance_Guide (1).doc) that the team found.</p>
+<ul><li>x86 environment – hxxp://uzzmuqwv.naveicoipc[.]tech/ACMS/1uFnvppj/1uFnvppj32.acm</li><li>x64 environment – hxxp://uzzmuqwv.naveicoipc[.]tech/ACMS/1uFnvppj/1uFnvppj64.acm</li></ul>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EA%B7%B8%EB%A6%BC1.png?resize=1024%2C345&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EA%B7%B8%EB%A6%BC1.png?resize=1024%2C345&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 10. Additionally found malicious Word file 2</figcaption></figure>
+<p>As malicious Word files targeting Korean users have been continually discovered, users should take extreme caution. They must configure appropriate security settings to prevent malicious macros from being automatically enabled and refrain from running files with unknown sources.</p>
+<p>[File Detection]
+Downloader/DOC.Generic
+Trojan/Win.Generic.C5025270</p>
+<p>[IOC]
+c156572dd81c3b0072f62484e90e47a0
+c9e8b9540671052cb4c8f7154f04855f
+809fff6e5b2aa66aa84582dfc55e7420
+37505b6ff02a679e70885ccd60c13f3b
+hxxp://4w9H8PS9.naveicoipc[.]tech/ACMS/7qsRn3sZ/7qsRn3sZ64.acm
+hxxp://4w9H8PS9.naveicoipc[.]tech/ACMS/7qsRn3sZ/7qsRn3sZ32.acm
+hxxp://naveicoipc[.]tech/post.php
+hxxp://MOmls4ii.naveicoipa[.]tech/ACMS/BA6Q318N/BA6Q318N32.acm
+hxxp://MOmls4ii.naveicoipa[.]tech/ACMS/BA6Q318N/BA6Q318N64.acm
+hxxp://uzzmuqwv.naveicoipc[.]tech/ACMS/1uFnvppj/1uFnvppj32.acm
+hxxp://uzzmuqwv.naveicoipc[.]tech/ACMS/1uFnvppj/1uFnvppj64.acm</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<figure class="aligncenter size-large"><a href="https://atip.ahnlab.com/main"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?w=800&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?w=800&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/></a></figure>
+<p><a href="https://atip.ahnlab.com/main" rel="noreferrer noopener" target="_blank"></a></p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/tag/vba-macro/" rel="tag">VBA Macro</a>, <a href="https://asec.ahnlab.com/en/tag/word-en/" rel="tag">Word</a></p>
+</div>

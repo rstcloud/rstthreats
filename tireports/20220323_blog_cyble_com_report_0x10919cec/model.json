@@ -1,0 +1,701 @@
+{
+    "id": "<report_0x10919cec>",
+    "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens",
+    "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+    "meta": [
+        {
+            "id": "<chapter_0x2c9a891e>",
+            "title": "Android Malware Targeting Banking Users Across Europe",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdf124f58>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc07f2df9>": "https://twitter.com/ThreatFabric/status/1505933195103162370"
+                    },
+                    "text": "During our routine Open-Source Intelligence (OSINT) research, Cyble Research Labs came across a Twitter post wherein researchers mention an Android bankbot named GodFather with the name apkversion1.1.5.43 and an icon similar to the default Settings app.",
+                    "html": "<p>During our routine Open-Source Intelligence (OSINT) research, Cyble Research Labs came across a <a href=\"https://twitter.com/ThreatFabric/status/1505933195103162370\">Twitter post</a> wherein researchers mention an Android bankbot named GodFather with the name apkversion1.1.5.43 and an icon similar to the default Settings app.</p>"
+                },
+                {
+                    "id": "<sentence_0x93f5d60e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We found notable similarities with Cereberus and Medusa banking trojans upon analyzing the malware sample. GodFather malware acts on the commands from Threat Actors (TAs) Command & Control (C&C) server to steal sensitive information from the victims device.",
+                    "html": "<p>We found notable similarities with Cereberus and Medusa banking trojans upon analyzing the malware sample. GodFather malware acts on the commands from Threat Actor\u2019s (TA\u2019s) Command &amp; Control (C&amp;C) server to steal sensitive information from the victim\u2019s device.</p>"
+                },
+                {
+                    "id": "<sentence_0x4c1684cd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Upon successful execution, the malware can perform malicious activities such as transferring money, getting device information such as phone number, installed app list, battery info, etc.",
+                    "html": "<p>Upon successful execution, the malware can perform malicious activities such as transferring money, getting device information such as phone number, installed app list, battery info, etc.</p>"
+                },
+                {
+                    "id": "<sentence_0x8b0a36d5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By further abusing the permissions on the affected device, the malware can also steal SMSs, control device screen using VNC, forward calls, and open URLs without the users knowledge.",
+                    "html": "<p>By further abusing the permissions on the affected device, the malware can also steal SMSs, control device screen using VNC, forward calls, and open URLs without the user\u2019s knowledge.</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xde26985b>",
+            "title": "GodFather Malware Under the Lens",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xdf489ffc>",
+            "title": "Technical Analysis",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xf2743b6a>",
+            "title": "APK Metadata Information",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6749fa9e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "App Name: apkversion1.1.5.43<crlf>Package Name: com.rduzmauwns.jieliysagr<crlf>SHA256 Hash: 0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8",
+                    "html": "<ul><li>App Name: apkversion1.1.5.43</li><li>Package Name: com.rduzmauwns.jieliysagr</li><li>SHA256 Hash: 0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x7be58488>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1 shows the metadata information of an application.",
+                    "html": "<p>Figure 1 shows the metadata information of an application.</p>"
+                },
+                {
+                    "id": "<sentence_0xfa4b7d4f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf7f73001>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-App-Metadata-Information.png"
+                    },
+                    "text": "Figure 1 App Metadata Information",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10179 jetpack-lazy-image\" height=\"88\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-App-Metadata-Information.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10179\" height=\"88\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-App-Metadata-Information.png\" width=\"752\"/><figcaption>Figure 1 \u2013 App Metadata Information</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x9c09cdaf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The figure below shows the application icon and name displayed on the Android device.",
+                    "html": "<p>The figure below shows the application icon and name displayed on the Android device.</p>"
+                },
+                {
+                    "id": "<sentence_0x3a170d85>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd5f7cc15>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-App-Icon-and-Name.png"
+                    },
+                    "text": "Figure 2 App Icon and Name",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10180 jetpack-lazy-image\" height=\"630\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-App-Icon-and-Name.png\" width=\"387\"/><img alt=\"\" class=\"wp-image-10180\" height=\"630\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-App-Icon-and-Name.png\" width=\"387\"/><figcaption>Figure 2 \u2013 App Icon and Name</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xfeb11252>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd002c146>",
+            "title": "Manifest Description",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfc53af11>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware requests users for 23 different permissions, out of which it abuses 11. These dangerous permissions are listed below.",
+                    "html": "<p>The malware requests users for 23 different permissions, out of which it abuses 11. These dangerous permissions are listed below.</p>"
+                },
+                {
+                    "id": "<sentence_0x76dca747>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xd087b3ee>": {
+                            "0": {
+                                "0": "Permissions",
+                                "1": "Read_SMS",
+                                "2": "RECEIVE_SMS",
+                                "3": "READ_CONTACTS",
+                                "4": "READ_PHONE_STATE",
+                                "5": "RECORD_AUDIO",
+                                "6": "SEND_SMS",
+                                "7": "CALL_PHONE",
+                                "8": "WRITE_EXTERNAL_STORAGE",
+                                "9": "WRITE_SMS",
+                                "10": "DISABLE_KEYGUARD",
+                                "11": "BIND_ACCESSIBILITY_SERVICE"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "Access SMSs from the victim\u2019s device.",
+                                "2": "Intercept SMSs received on the victim\u2019s device",
+                                "3": "Access phone contacts",
+                                "4": "Allows access to phone state, including the current cellular network information, the phone number and the serial number of the phone, the status of any ongoing calls, and a list of any Phone Accounts registered on the device.",
+                                "5": "Allows the app to record audio with the microphone, which attackers can potentially misuse.",
+                                "6": "Allows an application to send SMS messages.",
+                                "7": "Allows an application to initiate a phone call without going through the dialer user interface for the user to confirm the call.",
+                                "8": "Allows the app to write or delete files in the device\u2019s external storage",
+                                "9": "Allows the app to modify or delete SMSs",
+                                "10": "Allows the app to disable the keylock and any associated password security",
+                                "11": "Used for Accessibility Service"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Permissions</td><td>Description</td></tr><tr><td>Read_SMS</td><td>Access SMSs from the victim\u2019s device.</td></tr><tr><td>RECEIVE_SMS</td><td>Intercept SMSs received on the victim\u2019s device</td></tr><tr><td>READ_CONTACTS</td><td>Access phone contacts</td></tr><tr><td>READ_PHONE_STATE</td><td>Allows access to phone state, including the current cellular network information, the phone number and the serial number of the phone, the status of any ongoing calls, and a list of any Phone Accounts registered on the device.</td></tr><tr><td>RECORD_AUDIO</td><td>Allows the app to record audio with the microphone, which attackers can potentially misuse.</td></tr><tr><td>SEND_SMS</td><td>Allows an application to send SMS messages.</td></tr><tr><td>CALL_PHONE</td><td>Allows an application to initiate a phone call without going through the dialer user interface for the user to confirm the call.</td></tr><tr><td>WRITE_EXTERNAL_STORAGE</td><td>Allows the app to write or delete files in the device\u2019s external storage</td></tr><tr><td>WRITE_SMS</td><td>Allows the app to modify or delete SMSs</td></tr><tr><td>DISABLE_KEYGUARD</td><td>Allows the app to disable the keylock and any associated password security</td></tr><tr><td>BIND_ACCESSIBILITY_SERVICE</td><td>Used for Accessibility Service</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0xd61cbb4a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We observed a defined launcher activity in the malicious apps manifest file, which loads the applications first screen, as shown below.",
+                    "html": "<p>We observed a defined launcher activity in the malicious app\u2019s manifest file, which loads the application\u2019s first screen, as shown below.</p>"
+                },
+                {
+                    "id": "<sentence_0xd9c4e472>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2428ac7b>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Launcher-Activity.png"
+                    },
+                    "text": "Figure 3 Launcher Activity",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10182 jetpack-lazy-image\" height=\"105\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Launcher-Activity.png\" width=\"548\"/><img alt=\"\" class=\"wp-image-10182\" height=\"105\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Launcher-Activity.png\" width=\"548\"/><figcaption>Figure 3 Launcher Activity</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x58955956>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8f9987cb>",
+            "title": "Source Code Review",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb20ff1b9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During our analysis, we observed that the malware initially requests the victims to enable Accessibility, and then it hides its icon from the Android devices screen.",
+                    "html": "<p>During our analysis, we observed that the malware initially requests the victims to enable Accessibility, and then it hides its icon from the Android device\u2019s screen.</p>"
+                },
+                {
+                    "id": "<sentence_0x4c674382>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware uses the code snippet shown in the below image to hide its icon from the device screen.",
+                    "html": "<p>The malware uses the code snippet shown in the below image to hide its icon from the device screen.</p>"
+                },
+                {
+                    "id": "<sentence_0x526bb678>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xde7e2e49>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Code-to-Hide-Icon.png"
+                    },
+                    "text": "Figure 4 Code to Hide Icon",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10183 jetpack-lazy-image\" height=\"97\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Code-to-Hide-Icon.png\" width=\"625\"/><img alt=\"\" class=\"wp-image-10183\" height=\"97\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Code-to-Hide-Icon.png\" width=\"625\"/><figcaption>Figure 4 \u2013 Code to Hide Icon</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x815c53c7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware calls the SendNewUser() method to get the victims device details and post them to the TAs C&C server, as shown in Figure 5.",
+                    "html": "<p>The malware calls the SendNewUser() method to get the victim\u2019s device details and post them to the TA\u2019s C&amp;C server, as shown in Figure 5.</p>"
+                },
+                {
+                    "id": "<sentence_0x23a13258>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd0221d59>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Code-to-Get-New-Victims-Info.png"
+                    },
+                    "text": "Figure 5 Code to Get New Victims Info",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10184 jetpack-lazy-image\" height=\"431\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Code-to-Get-New-Victims-Info.png\" width=\"663\"/><img alt=\"\" class=\"wp-image-10184\" height=\"431\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Code-to-Get-New-Victims-Info.png\" width=\"663\"/><figcaption>Figure 5 \u2013 Code to Get New Victim\u2019s Info</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xa39daa0f>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x7571061b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware can perform money transfers by making USSD (Unstructured Supplementary Service Data) calls without using the dialer user interface, as shown in the below code snippet.",
+                    "html": "<p>The malware can perform money transfers by making USSD (Unstructured Supplementary Service Data) calls without using the dialer user interface, as shown in the below code snippet.</p>"
+                },
+                {
+                    "id": "<sentence_0xb327586d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe6944778>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Code-to-Transfer-Money-through-USSD.png"
+                    },
+                    "text": "Figure 6 Code to Transfer Money through USSD",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10185 jetpack-lazy-image\" height=\"124\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Code-to-Transfer-Money-through-USSD.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10185\" height=\"124\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Code-to-Transfer-Money-through-USSD.png\" width=\"752\"/><figcaption>Figure 6 \u2013 Code to Transfer Money through USSD</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xa1455bfa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware also uses the method SmsSender() to send multi-part text-based SMSs, as shown below. This is done to bypass character limitations while sending SMSs.",
+                    "html": "<p>The malware also uses the method SmsSender() to send multi-part text-based SMSs, as shown below. This is done to bypass character limitations while sending SMSs.</p>"
+                },
+                {
+                    "id": "<sentence_0xa79d50b8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb9afe98f>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Code-to-Send-SMS.png"
+                    },
+                    "text": "Figure 7 Code to Send SMS",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10186 jetpack-lazy-image\" height=\"229\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Code-to-Send-SMS.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10186\" height=\"229\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Code-to-Send-SMS.png\" width=\"752\"/><figcaption>Figure 7 \u2013 Code to Send SMS</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x93ffe7ab>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x900753db>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The below code snippet represents the malwares ability to steal SMSs present in the victims device.",
+                    "html": "<p>The below code snippet represents the malware\u2019s ability to steal SMSs present in the victim\u2019s device.</p>"
+                },
+                {
+                    "id": "<sentence_0x3a5aec2a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x379ad809>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Code-to-Steal-Text-SMSs.png"
+                    },
+                    "text": "Figure 8 Code to Steal Text SMSs",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10187 jetpack-lazy-image\" height=\"368\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Code-to-Steal-Text-SMSs.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10187\" height=\"368\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Code-to-Steal-Text-SMSs.png\" width=\"752\"/><figcaption>Figure 8 \u2013 Code to Steal Text SMSs</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xb3beca0b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware uses the method callForward() which forwards the victims incoming calls to a number provided by TAs C&C server, as shown in the below figure.",
+                    "html": "<p>The malware uses the method callForward() \u2013 which forwards the victim\u2019s incoming calls to a number provided by TAs C&amp;C server, as shown in the below figure.</p>"
+                },
+                {
+                    "id": "<sentence_0x7890e88d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1798a39a>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-9-Code-to-Forwarding-Calls.png"
+                    },
+                    "text": "Figure 9 Code to Forwarding Calls",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10189 jetpack-lazy-image\" height=\"250\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-9-Code-to-Forwarding-Calls.png\" width=\"611\"/><img alt=\"\" class=\"wp-image-10189\" height=\"250\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-9-Code-to-Forwarding-Calls.png\" width=\"611\"/><figcaption>Figure 9 \u2013 Code to Forwarding Calls</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x76b1620c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The method linkopen() provides the feature to the malware to open URLs in the device browser without the users intervention, as shown in Figure 10.",
+                    "html": "<p>The method linkopen() provides the feature to the malware to open URLs in the device browser without the user\u2019s intervention, as shown in Figure 10.</p>"
+                },
+                {
+                    "id": "<sentence_0x6828497b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8edbf022>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-10-%E2%80%93-Code-to-Open-URL-in-Browser.png"
+                    },
+                    "text": "Figure 10 Code to Open URL in Browser",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10190 jetpack-lazy-image\" height=\"162\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-10-%E2%80%93-Code-to-Open-URL-in-Browser.png\" width=\"728\"/><img alt=\"\" class=\"wp-image-10190\" height=\"162\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-10-%E2%80%93-Code-to-Open-URL-in-Browser.png\" width=\"728\"/><figcaption>Figure 10 \u2013 Code to Open URL in Browser</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x59492350>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x618a2661>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 11 demonstrates the code that illustrates the malwares ability to steal application key logs.",
+                    "html": "<p>Figure 11 demonstrates the code that illustrates the malware\u2019s ability to steal application key logs.</p>"
+                },
+                {
+                    "id": "<sentence_0x797aba50>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2772e440>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-11-Code-to-Steal-Application-Keylogs.png"
+                    },
+                    "text": "Figure 11 Code to Steal Application Keylogs",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10191 jetpack-lazy-image\" height=\"145\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-11-Code-to-Steal-Application-Keylogs.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10191\" height=\"145\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-11-Code-to-Steal-Application-Keylogs.png\" width=\"752\"/><figcaption>Figure 11 \u2013 Code to Steal Application Keylogs</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x68fb59d2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware also uses VNC Viewer to remotely view/control the screens of an infected device, as shown below.",
+                    "html": "<p>The malware also uses VNC Viewer to remotely view/control the screens of an infected device, as shown below.</p>"
+                },
+                {
+                    "id": "<sentence_0x758ceb4d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9c881a02>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-12-Uses-VNC-Viewer-to-Control-Device-Screen-1.png"
+                    },
+                    "text": "Figure 12 Uses VNC Viewer to Control Device Screen",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10192 jetpack-lazy-image\" height=\"55\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-12-Uses-VNC-Viewer-to-Control-Device-Screen-1.png\" width=\"743\"/><img alt=\"\" class=\"wp-image-10192\" height=\"55\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-12-Uses-VNC-Viewer-to-Control-Device-Screen-1.png\" width=\"743\"/><figcaption>Figure 12 \u2013 Uses VNC Viewer to Control Device Screen</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x20da1692>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x7ee02795>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware fetches the C&C URL from the Telegram channel hxxps://t[.]me/dobrynyanikitichsobre, which will send the sensitive data from the victims device as shown in Figure 13. While analysing the sample, we could not observe any C&C communication activity as the malware failed to get the C&C URL from the Telegram channel.",
+                    "html": "<p>The malware fetches the C&amp;C URL from the Telegram channel hxxps://t[.]me/dobrynyanikitichsobre, which will send the sensitive data from the victim\u2019s device as shown in Figure 13. While analysing the sample, we could not observe any C&amp;C communication activity as the malware failed to get the C&amp;C URL from the Telegram channel.</p>"
+                },
+                {
+                    "id": "<sentence_0x96ee1426>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2ea9c2c9>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-13-Gets-CC-URL-from-Telegram-Channel.png"
+                    },
+                    "text": "Figure 13 Gets C&C URL from Telegram Channel",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10194 jetpack-lazy-image\" height=\"47\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-13-Gets-CC-URL-from-Telegram-Channel.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10194\" height=\"47\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-13-Gets-CC-URL-from-Telegram-Channel.png\" width=\"752\"/><figcaption>Figure 13 \u2013 Gets C&amp;C URL from Telegram Channel</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x4fc4fc00>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware can also terminate itself whenever it gets the corresponding commands from the C&C server.",
+                    "html": "<p>The malware can also terminate itself whenever it gets the corresponding commands from the C&amp;C server.</p>"
+                },
+                {
+                    "id": "<sentence_0x4208d63f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf7483a99>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-14-Code-to-Self-Terminate.png"
+                    },
+                    "text": "Figure 14 Code to Self-Terminate",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10195 jetpack-lazy-image\" height=\"67\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-14-Code-to-Self-Terminate.png\" width=\"752\"/><img alt=\"\" class=\"wp-image-10195\" height=\"67\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-14-Code-to-Self-Terminate.png\" width=\"752\"/><figcaption>Figure 14 \u2013 Code to Self-Terminate</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6ff1cd45>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below, we have listed the commands used by the TAs to control infected devices:",
+                    "html": "<p>Below, we have listed the commands used by the TAs to control infected devices:</p>"
+                },
+                {
+                    "id": "<sentence_0xd41ab34f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xb46bf65e>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "startUSSD",
+                                "2": "sentSMS",
+                                "3": "startApp",
+                                "4": "getSMS",
+                                "5": "startforward",
+                                "6": "linkopen",
+                                "7": "killbot"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "To Transfer money using USSD",
+                                "2": "To Send SMS to a particular number",
+                                "3": "To Launch the Application Activity",
+                                "4": "To Get SMSs Present in the Device",
+                                "5": "To forwarding Calls",
+                                "6": "To Open URL in Browser",
+                                "7": "To Kill Itself"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Command</td><td>Description</td></tr><tr><td>startUSSD</td><td>To Transfer money using USSD</td></tr><tr><td>sentSMS</td><td>To Send SMS to a particular number</td></tr><tr><td>startApp</td><td>To Launch the Application Activity</td></tr><tr><td>getSMS</td><td>To Get SMSs Present in the Device</td></tr><tr><td>startforward</td><td>To forwarding Calls</td></tr><tr><td>linkopen</td><td>To Open URL in Browser</td></tr><tr><td>killbot</td><td>To Kill Itself</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc681375e>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe4648c07>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Banking threats are increasing with every passing day and growing in sophistication. The GodFather malware variant is one such example. The malicious code present in the malware gives it the capability to steal sensitive information from the compromised device.",
+                    "html": "<p>Banking threats are increasing with every passing day and growing in sophistication. The GodFather malware variant is one such example. The malicious code present in the malware gives it the capability to steal sensitive information from the compromised device.</p>"
+                },
+                {
+                    "id": "<sentence_0x655422d1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "There is also the additional threat of TAs using this sensitive data to commit financial fraud and further propagate the malware to other devices.",
+                    "html": "<p>There is also the additional threat of TAs using this sensitive data to commit financial fraud and further propagate the malware to other devices.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5d8022b2>",
+            "title": "Our Recommendations",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8e159f7a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We have listed some essential cybersecurity best practices that create the first line of control against attackers. We recommend that our readers follow the best practices given below:",
+                    "html": "<p>We have listed some essential cybersecurity best practices that create the first line of control against attackers. We recommend that our readers follow the best practices given below: </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb31205a2>",
+            "title": "How to prevent malware infection?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x53cc67df>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Download and install software only from official app stores like Google Play Store or the iOS App Store.<crlf>Use a reputed anti-virus and internet security software package on your connected devices, such as PCs, laptops, and mobile devices.<crlf>Use strong passwords and enforce multi-factor authentication wherever possible.<crlf>Enable biometric security features such as fingerprint or facial recognition for unlocking the mobile device where possible.<crlf>Be wary of opening any links received via SMS or emails delivered to your phone.<crlf>Ensure that Google Play Protect is enabled on Android devices.<crlf>Be careful while enabling any permissions.<crlf>Keep your devices, operating systems, and applications updated.",
+                    "html": "<ul><li>Download and install software only from official app stores like Google Play Store or the iOS App Store.</li><li>Use a reputed anti-virus and internet security software package on your connected devices, such as PCs, laptops, and mobile devices.</li><li>Use strong passwords and enforce multi-factor authentication wherever possible.</li><li>Enable biometric security features such as fingerprint or facial recognition for unlocking the mobile device where possible.</li><li>Be wary of opening any links received via SMS or emails delivered to your phone.</li><li>Ensure that Google Play Protect is enabled on Android devices.</li><li>Be careful while enabling any permissions.</li><li>Keep your devices, operating systems, and applications updated.</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5e2c9196>",
+            "title": "How to identify whether you are infected?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7d0a9ebc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Regularly check the Mobile/Wi-Fi data usage of applications installed in mobile devices.<crlf>Keep an eye on the alerts provided by Anti-viruses and Android OS and take necessary actions accordingly.",
+                    "html": "<ul><li>Regularly check the Mobile/Wi-Fi data usage of applications installed in mobile devices.</li><li>Keep an eye on the alerts provided by Anti-viruses and Android OS and take necessary actions accordingly.</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x12223c15>",
+            "title": "What to do when you are infected?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5d0457f6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Disable Wi-Fi/Mobile data and remove SIM card as in some cases, the malware can re-enable the Mobile Data.<crlf>Perform a factory reset.<crlf>Remove the application in case a factory reset is not possible.<crlf>Take a backup of personal media Files (excluding mobile applications) and perform a device reset.",
+                    "html": "<ul><li>Disable Wi-Fi/Mobile data and remove SIM card \u2013 as in some cases, the malware can re-enable the Mobile Data.</li><li>Perform a factory reset.</li><li>Remove the application in case a factory reset is not possible.</li><li>Take a backup of personal media Files (excluding mobile applications) and perform a device reset.</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4d1acefc>",
+            "title": "What to do in case of any fraudulent transaction?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf67e681f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In case of a fraudulent transaction, immediately report it to the concerned bank.",
+                    "html": "<ul><li>In case of a fraudulent transaction, immediately report it to the concerned bank.</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd578392f>",
+            "title": "What should banks do to protect their customers?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4dc30ad>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Banks and other financial entities should educate customers on safeguarding themselves from malware attacks via telephone, SMSs, or emails.",
+                    "html": "<ul><li>Banks and other financial entities should educate customers on safeguarding themselves from malware attacks via telephone, SMSs, or emails. </li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7c6df102>",
+            "title": "MITRE ATT&CK Techniques",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1e2a3acf>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdea570e6>": "https://attack.mitre.org/versions/v7/techniques/T1476/",
+                        "<a_0x5e0b3f75>": "https://attack.mitre.org/versions/v7/techniques/T1444",
+                        "<a_0x4d0d1774>": "https://attack.mitre.org/versions/v7/techniques/T1575/",
+                        "<a_0x723c37ac>": "https://attack.mitre.org/techniques/T1412",
+                        "<a_0x70c88d32>": "https://attack.mitre.org/techniques/T1436",
+                        "<table_0x8bedf945>": {
+                            "0": {
+                                "0": "Tactic",
+                                "1": "Initial Access",
+                                "2": "Initial Access",
+                                "3": "Execution",
+                                "4": "Collection",
+                                "5": "Command and Control"
+                            },
+                            "1": {
+                                "0": "Technique ID",
+                                "1": "T1476",
+                                "2": "T1444",
+                                "3": "T1575",
+                                "4": "T1412",
+                                "5": "T1436"
+                            },
+                            "2": {
+                                "0": "Technique Name",
+                                "1": "Deliver Malicious App via Other Mean.",
+                                "2": "Masquerade as Legitimate Application",
+                                "3": "Native Code",
+                                "4": "Capture SMS Messages",
+                                "5": "Commonly Used Por"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Tactic</td><td>Technique ID</td><td>Technique Name</td></tr><tr><td>Initial Access</td><td><a href=\"https://attack.mitre.org/versions/v7/techniques/T1476/\">T1476</a></td><td>Deliver Malicious App via Other Mean.</td></tr><tr><td>Initial Access</td><td><a href=\"https://attack.mitre.org/versions/v7/techniques/T1444\">T1444</a></td><td>Masquerade as Legitimate Application</td></tr><tr><td>Execution</td><td><a href=\"https://attack.mitre.org/versions/v7/techniques/T1575/\">T1575</a></td><td>Native Code</td></tr><tr><td>Collection</td><td><a href=\"https://attack.mitre.org/techniques/T1412\">T1412</a></td><td>Capture SMS Messages</td></tr><tr><td>Command and Control</td><td><a href=\"https://attack.mitre.org/techniques/T1436\">T1436</a></td><td>Commonly Used Por</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8a9e3e59>",
+            "title": "Indicators of Compromise (IOCs)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf62c35bd>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x3b865eee>": {
+                            "0": {
+                                "0": "Indicators",
+                                "1": "0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8",
+                                "2": "3fa48a36d22d848ad111b246ca94fa58088dbb7a",
+                                "3": "ec9f857999b4fc3dd007fdb786b7a8d1",
+                                "4": "c79857015dbf220111e7c5f47cf20a656741a9380cc0faecd486b517648eb199",
+                                "5": "2b3b78d3a62952dd88fc4da4688928ec6013af71",
+                                "6": "d7118d3d6bf476d046305be1e1f9b388",
+                                "7": "hxxps://t[.]me/dobrynyanikitichsobre"
+                            },
+                            "1": {
+                                "0": "Indicator Type",
+                                "1": "SHA256",
+                                "2": "SHA1",
+                                "3": "MD5",
+                                "4": "SHA256",
+                                "5": "SHA1",
+                                "6": "MD5",
+                                "7": "URL"
+                            },
+                            "2": {
+                                "0": "Description",
+                                "1": "GodFather APK",
+                                "2": "GodFather APK",
+                                "3": "GodFather APK",
+                                "4": "GodFather APK",
+                                "5": "GodFather APK",
+                                "6": "GodFather APK",
+                                "7": "Telegram Channel Used to Fetch URL"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Indicators</td><td>Indicator Type</td><td>Description</td></tr><tr><td>0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8</td><td>SHA256</td><td>GodFather APK</td></tr><tr><td>3fa48a36d22d848ad111b246ca94fa58088dbb7a</td><td>SHA1</td><td>GodFather APK</td></tr><tr><td>ec9f857999b4fc3dd007fdb786b7a8d1</td><td>MD5</td><td>GodFather APK</td></tr><tr><td>c79857015dbf220111e7c5f47cf20a656741a9380cc0faecd486b517648eb199</td><td>SHA256</td><td>GodFather APK</td></tr><tr><td>2b3b78d3a62952dd88fc4da4688928ec6013af71</td><td>SHA1</td><td>GodFather APK</td></tr><tr><td>d7118d3d6bf476d046305be1e1f9b388</td><td>MD5</td><td>GodFather APK</td></tr><tr><td>hxxps://t[.]me/dobrynyanikitichsobre</td><td>URL</td><td>Telegram Channel Used to Fetch URL</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0xf542b4e2>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        }
+    ]
+}

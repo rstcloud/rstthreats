@@ -1,0 +1,342 @@
+[
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x130426bd",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "text": "Share\nESET researchers discover multiple vulnerabilities in various Lenovo laptop models that allow an attacker with admin privileges to expose the user to firmware-level malware\nESET researchers have discovered and analyzed three vulnerabilities affecting various Lenovo consumer laptop models. The first two of these vulnerabilities CVE-2021-3971, CVE-2021-3972 affect UEFI firmware drivers originally meant to be used only during the manufacturing process of Lenovo consumer notebooks. Unfortunately, they were mistakenly included also in the production BIOS images without being properly deactivated. These affected firmware drivers can be activated by attacker to directly disable SPI flash protections (BIOS Control Register bits and Protected Range registers) or the UEFI Secure Boot feature from a privileged user-mode process during OS runtime. It means that exploitation of these vulnerabilities would allow attackers to deploy and successfully execute SPI flash or ESP implants, like LoJax or our latest UEFI malware discovery ESPecter, on the affected devices.\nTo understand how we were able to find these vulnerabilities, consider the firmware drivers affected by CVE2021-3971. These drivers immediately caught our attention by their very unfortunate (but surprisingly honest) names: SecureBackDoor and SecureBackDoorPeim. After some initial analysis, we discovered other Lenovo drivers sharing a few common characteristics with the SecureBackDoor* drivers: ChgBootDxeHook and ChgBootSmm. As it turned out, their functionality was even more interesting and could be abused to disable UEFI Secure Boot (CVE-2021-3972).\nIn addition, while investigating above mentioned vulnerable drivers, we discovered the third vulnerability: SMM memory corruption inside the SW SMI handler function (CVE-2021-3970). This vulnerability allows arbitrary read/write from/into SMRAM, which can lead to the execution of malicious code with SMM privileges and potentially lead to the deployment of an SPI flash implant.\nWe reported all discovered vulnerabilities to Lenovo on October 11th, 2021. Altogether, the list of affected devices contains more than one hundred different consumer laptop models with millions of users worldwide, from affordable models like Ideapad-3 to more advanced ones like Legion 5 Pro-16ACH6 H or Yoga Slim 9-14ITL05. The full list of affected models with active development support is published in the Lenovo Advisory.\nIn addition to the models listed in the advisory, several other devices we reported to Lenovo are also affected, but wont be fixed due to them reaching End Of Development Support (EODS). This includes devices where we spotted reported vulnerabilities for the first time: Ideapad 330-15IGM and Ideapad 110-15IGR. The list of such EODS devices that we have been able to identify will be available in ESETs vulnerability disclosures repository.\nLenovo confirmed the vulnerabilities on November 17th, 2021, and assigned them the following CVEs:\nCVE-2021-3970 LenovoVariableSmm SMM arbitrary read/write\nCVE-2021-3971 SecureBackDoor disable SPI flash protections\nCVE-2021-3972 ChgBootDxeHook disable UEFI Secure Boot\nVulnerability disclosure timeline:\n2021-10-11: Vulnerabilities reported to Lenovo\n2021-10-12: Lenovo responded and confirmed it was investigating the issues\n2021-11-17: Lenovo confirmed the vulnerabilities and informed us of the planned advisory publication date February 8th, 2022\n2022-01-20: Lenovo asked to postpone public disclosure to the new date April 18th due to encountering development issues\n2022-04-18: Lenovo security advisory published\n2022-04-19: ESET Research blogpost published"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xc759c5fd",
+            "title": "UEFI firmware theoretical basics",
+            "text": "Before we start with the analysis of the reported vulnerabilities, we would like to provide an introduction to the basic theory of UEFI protocols, System Management Mode, UEFI NVRAM variables, UEFI Secure Boot, and basic SPI flash write protection.\nNote that our aim is to explain only the necessary minimum required for an understanding of the analysis of the vulnerabilities reported here. For those who are already familiar with these topics, we suggest jumping directly to the Technical analysis section. For those who consider this introduction insufficient, we highly recommend looking into the series of blogposts written by researchers from SentinelOne and the UEFI Specification."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xa4c3854e",
+            "title": "UEFI services and protocols",
+            "text": "UEFI defines two types of services to be used by UEFI drivers and applications Boot (EFI_BOOT_SERVICES) and Runtime (EFI_RUNTIME_SERVICES) services. Both are passed to the drivers or applications entry point via the EFI_SYSTEM_TABLE argument.\nThey provide the basic functions and data structures necessary for the drivers and applications to do their job, such as installing protocols, locating existing protocols, memory allocation, UEFI variable manipulation, etc.\nUEFI boot drivers and applications use protocols extensively. In the context of UEFI, protocols are simply groups of functions identified by a GUID. These protocols, once installed, reside in memory and can be used by other drivers or applications, until EFI_BOOT_SERVICES.ExitBootServices is called. The UEFI specification defines many such protocols to cover the most common firmware use-case scenarios, but firmware developers are still able to define their own protocols to extend this basic functionality."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x4e0c563c",
+            "title": "UEFI variables",
+            "text": "UEFI variables are a special firmware storage mechanism used by UEFI modules to store various configuration data, including boot configuration, UEFI Secure Boot settings, certificates, and similar data. These variables are always identified by a variable name and a namespace (GUID).\nWhen creating a UEFI variable, attributes are used to indicate how the variable should be stored and maintained by the system this way one can make variables persistent (surviving power cycles), temporary, or even authenticated. Authenticated in the context of the NVRAM variables means that the variable content can be changed only if the new variable data is correctly signed by the authorized private key read access to the variable is allowed to anyone.\nExamples of some of these attributes follow; here we list only the most important ones:\nVARIABLE_ATTRIBUTE_NON_VOLATILE (NV)(0x00000001) Variables using this attribute persist across the power cycles and are stored in fixed hardware storage (NVRAM) with limited capacity (typically around 64MB).\nVARIABLE_ATTRIBUTE_BOOTSERVICE_ACCESS (BS)(0x00000002) If the BS attribute is set, variables without the RT attribute set will not be visible to the GetVariable function after the execution of EFI_BOOT_SERVICES.ExitBootServices.\nVARIABLE_ATTRIBUTE_RUNTIME_ACCESS (RT)0x00000004) To access a variable via the GetVariable function after the execution of EFI_BOOT_SERVICES.ExitBootServices, the RT attribute must be set.\nVARIABLE_ATTRIBUTE_AUTHENTICATED_WRITE_ACCESS (AW)(0x00000010)\nVARIABLE_ATTRIBUTE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS (AWT)(0x00000020)\nA full list of attributes and their usage rules can be found in the UEFI specification.\nIts important to note that since Windows 8 an API allows access to UEFI variables from a privileged userland process (administrator with SE_SYSTEM_ENVIRONMENT_NAME privilege).These API functions are:\nSetFirmwareEnvironmentVariable write/delete variable\nGetFirmwareEnvironmentVariable read variable"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x65bbb1d5",
+            "title": "System Management Mode (SMM)",
+            "text": "SMM is a highly privileged execution mode of x86 processors, often referred to as ring 2.\nSMM code is written within the context of the system firmware and is usually used for various tasks including advanced power management, execution of OEM proprietary code, and secure firmware updates. It provides an independent execution environment completely invisible to the running operating system, and the code and data used in SMM are stored in hardware-protected memory accessible only from SMM called SMRAM.\nTo enter SMM, a special processor interrupt called SMI (System Management Interrupt) needs to be triggered. SMIs can be triggered via software means or by the platform hardware. For the purposes of this blogpost, its sufficient to understand that one of the ways to generate an SMI (specifically a software SMI SW SMI) and enter SMM on Intel architecture systems is to write to I/O port 0xB2 (using the OUT instruction). This is often used by software to invoke firmware services during system runtime."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xd57eb90a",
+            "title": "Defining SW SMI handlers in the UEFI firmware",
+            "text": "To understand what happens under the hood when we use the above-mentioned method of triggering an SW SMI, we need to look into volume 4 of the UEFI Platform Initialization Specification, Version 1.4 (ZIP archive), and find the definition of the EFI_SMM_SW_DISPATCH2_PROTOCOL (shown in Figure 1).\nFigure 1. EFI_SMM_SW_DISPATCH2_PROTOCOL definition\nAs written in the specification, this protocol can be used by SMM modules to install handler functions that will respond to specific software interrupts.\nTo install such a handler function, the EFI_SMM_SW_DISPATCH2_PROTOCOL.Register service function is used; the function type definition is shown in Figure 2.\nFigure 2. EFI_SMM_SW_DISPATCH2_PROTOCOL.Register function definition\nThis service installs a DispatchFunction function that will be called when the software SMI source specified by RegisterContext>SwSmiInputValue is detected. In other words, this DispatchFunction will be called when we generate an SW SMI interrupt by writing the same SwSmiInputValue as was specified in the RegisterContext>SwSmiInputValue during handler installation, to the I/O port 0xB2.\nFor the SW SMI interrupts, parameters are most often passed to the SMI handler using CPU registers. When the SW SMI interrupt is triggered, the context for all of the CPUs at the time of triggering the interrupt is saved to the SMRAM. The invoked SMI handler can easily read and modify this context using the EFI_SMM_CPU_PROTOCOL functions ReadSaveState and WriteSaveState, respectively."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xc02404ba",
+            "title": "Primary SPI flash protection mechanisms",
+            "text": "UEFI firmware usually resides in the embedded flash memory chip located on the computers motherboard (SPI flash chip). Its non-volatile memory and it is connected to the processor via the Serial Peripheral Interface (SPI).\nThis memory is not affected by operating system reinstallation and therefore presents a tempting target for threat actors deploying their implants as was the case of LoJax, MosaicRegressor, and MoonBounce.\nSeveral security mechanisms are available for the prevention of unwanted modifications of the SPI flash and the primary line of defense is provided by the special memory-mapped configuration registers exposed by the chipset itself the BIOS Control Register and five Protected Range registers."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xe4e3f2b0",
+            "title": "BIOS Control Register",
+            "text": "In this register, three specific bits are used for SPI flash access control. Note that although they may be named differently on other chipsets, the principle is the same.\nBIOSWE (bit 0)\nWhen set, access to the BIOS space is enabled for both read and write cycles, otherwise access is read only.\nBLE (bit 1)\nWhen set, BIOSWE could be set from 0 to 1 only by SMM code. Any attempt to set BIOSWE from non-SMM code will trigger SMI. This provides an opportunity for the OEM to implement an SMI handler to protect the BIOSWE bit by setting it back to 0.\nSMM_BWP (bit 5)\nWhen set, the BIOS region is not writable unless all processors are in SMM and BIOSWE is 1. Setting this bit resolves the Speed Racer race condition vulnerability (an exploit for this vulnerability was present in the ReWriter_binary tool, which was used by the Sednit group to deploy LoJax)."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xc2be0f67",
+            "title": "Protected Range registers (PR0-PR4)",
+            "text": "Each register specifies independent read/write permissions for a specific range of SPI Flash BIOS region memory. They can be set only if the Flash Configuration Lock-Down (FLOCKDN) bit in Hardware Sequencing Flash Status (HSFS) register is not set.\nThis FLOCKDN bit should be set by the platform firmware during platform initialization right after setting the Protected Range (PR) registers. Once FLOCKDN is set, it is cleared only after the next hardware reset. It means that memory ranges protected by Protected Range registers cant be modified by any runtime code (including SMM code) after they are locked. Even legitimate firmware updates must be performed before PR registers are locked."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x73b69afc",
+            "title": "Solutions available on current systems",
+            "text": "Modern systems nowadays usually come with solutions providing hardware-based boot integrity (such as Intel Boot Guard) which, if configured properly and without additional vulnerabilities, protects from booting untrusted firmware code even if the above-mentioned chipset-provided protections fail to protect the SPI flash due to misconfiguration or vulnerability."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xb24d4199",
+            "title": "How to access PCI/PCIe configuration space",
+            "text": "The BIOS Control Register, Protection Range registers, and many other configuration registers can be read or written by accessing the PCI(e) configuration space. The location (or address) of the PCI(e) configuration space for the specific PCI-compatible devices (e.g., SPI flash) is specified by the three values:\nBus\nDevice\nFunction\nConfigurations related to this device are located at the offsets within this configuration space. There are two common ways to access the PCI(e) configuration space:\nUsing port I/O\nIn this case, machine I/O instructions IN and OUT in combination with 0xCF8 (CONFIG_ADDRESS) and 0xCFC (CONFIG_DATA) I/O ports are used to access specific configuration data in PCI configuration space. As it is not necessary for the purpose of our blogpost, we will not be diving into the details here.\nUsing Memory Mapped I/O (MMIO)\nWhen using Memory-Mapped I/O, the PCI configuration space is mapped directly to main memory address space; therefore, the configuration data can be accessed almost the same way as any other data. All that needs to be known is the PCI address of the desired data, so where can we find this address? We can construct it on our own if we know:\nthe MMIO base address (can be found inside MCFG ACPI table)\nBus, Device, Function, and Offset (also referred to as Register) values identifying the data that we want to access (you can find them in a chipsets datasheet).\nAn example of the macro encoding these values into PCI address can be found in EDK2s PciLib.h header file. Alternatively, a Python implementation of the functions translating MMIO PCI address to individual identifiers and vice versa is shown in Figure 3.\nFigure 3. PCI address encoding/decoding in Python",
+            "table": "0;1\n12345678910;\"# returns address relative to the PciExpressBaseAddressdef pci_encode_to_addr(bus,device,function,register,mmio_base=0xE0000000): return mmio_base|(((register) & 0xFFF) | (((function) & 0x07) << 12) | (((device) & 0x1F) << 15) | (((bus) & 0xFF) << 20)) def pci_decode_from_addr(addr): bus = (addr >> 20) & 0xFF device = (addr >> 15) & 0x1F function = (addr >> 12) & 0x7 offset = addr & 0xFFF print(f\"\"Bus: 0x{bus:X} Device: 0x{device:X} Function: 0x{function:X} Offset: 0x{offset:X}\"\")\"\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x4876b5e7",
+            "title": "UEFI Secure Boot",
+            "text": "UEFI Secure Boot is defined in the UEFI specification, and its main purpose is to verify the integrity of the boot components to ensure that only components trusted by the platform are allowed to be executed. What components will be included in this verification process depends on the UEFI Secure Boot policy implementation in the specific platform in most cases, only third-party UEFI drivers, applications and OPROMs are being verified, and the drivers on the SPI flash are implicitly considered trusted.\nTo decide what is trusted and what is not, UEFI Secure Boot uses special databases stored in the authenticated NVRAM variables, namely db and dbx.\nThe db database contains a list of trusted public key certificates that are authorized to authenticate boot component signatures or, in addition to the certificates, it can also contain a list of hashes of the components that are allowed to be executed whether or not they are signed.\nThe dbx database contains public key certificates or hashes of UEFI executables that are not allowed to be executed to prevent execution of signed executables with known vulnerabilities, revoked certificates, etc."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x8e509ad0",
+            "title": "Technical analysis",
+            "text": "We start with our analysis of the Lenovo drivers affected by CVE-2021-3971 and CVE-2021-3972, and then continue with the SMM vulnerability CVE-2021-3970.\nAt the beginning of our blogpost, we mentioned that the SecureBackDoor* and ChgBoot* drivers share some common characteristics, so what is the connection between them? Both use the UEFI variables within the 6ACCE65D-DA35-4B39-B64B-5ED927A7DC7E namespace as a control mechanism for deciding whether to activate their functionality (we will refer to this GUID as LENOVO_BACKDOOR_NAMESPACE_GUID)."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xfa494b33",
+            "title": "CVE-2021-3971 SecureBackDoor driver disable SPI flash protections",
+            "text": "We will start with the analysis of the CVE-2021-3971 vulnerability, which allows an attacker to disable SPI flash write-protections mechanisms by simply creating the NVRAM variable. When platform firmware detects this NVRAM variable during bootup, it skips execution of the code responsible for the setting up BIOS Control Register and Protected Range register-based SPI flash protections.\nAs a result, the exploited system will allow modification of the SPI flash even when done from non-SMM code and thus allow an attacker to deploy malicious code directly to the firmware storage.\nThis Disable SPI flash protections feature is implemented by the following drivers in the firmware of affected laptops:\nSecureBackDoorPeim (16F41157-1DE8-484E-B316-DDB77CB4080C)\nSecureBackDoor (32F16D8C-C094-4102-BD6C-1E533F8810F4)\nTo disable or deactivate the above-mentioned SPI flash protections by exploiting this vulnerability, the user only needs to create an NVRAM variable with:\nName: cE!\nNamespace GUID: LENOVO_BACKDOOR_NAMESPACE_GUID\nAttributes: NV + BS + RT (0x00000007)\nValue: Any non-null byte\nand then restart the affected device.\nTo understand how easy this is, Windows users can disable these protections by exploiting the CVE-2021-3971 vulnerability directly from the privileged userland process (administrator with SE_SYSTEM_ENVIRONMENT_NAME privilege) using the Windows API function SetFirmwareEnvironmentVariable.\nIn our analysis, we will work with the firmware image (version 1GCN25WW) of the Lenovo 110-15IBR, which is one of the devices affected by the CVE-2021-3971 vulnerability."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x442a1824",
+            "title": "SecureBackDoorPeim analysis",
+            "text": "To return to a bit of theory, the UEFI boot sequence consists of various phases and one of the earliest is called the Pre-EFI Initialization (PEI) phase. During this phase, Pre-EFI Initialization Modules (PEIMs) are executed to perform various tasks including initialization of permanent memory and invocation of the next boot phase Driver Execution Environment (DXE). To pass information from the PEI phase to the DXE phase, special data structures called Hand-Off Blocks (HOBs) are used.\nSecureBackDoorPeim is a PEI module responsible for both reading the content of the UEFI variable cE!, which belongs to the namespace LENOVO_BACKDOOR_NAMESPACE_GUID, and preparing the correct HOB data structure to pass its value to the SecureBackDoor DXE phase driver.\nIt does so in three simple steps, as shown in Figure 4.\nFigure 4. Hex-Rays-decompiled code of SecureBackDoorPeim module\nUse EFI_PEI_READ_ONLY_VARIABLE2_PPI.GetVariable function with the VariableName and VariableGuid parameters set to values cE! and LENOVO_BACKDOOR_NAMESPACE_GUID respectively.\nTo pass this information to the SecureBackDoor DXE driver, create a HOB data structure identified by the following GUID AD7934E7-D800-4305-BF6F-49ED9918E1AB. To make things simpler, lets name this HOB data structure GUID SECURE_BACKDOOR_HOB_GUID.\nFinally, it saves the value retrieved from the cE! variable to offset 0x18 of the newly created HOB."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xcddceacb",
+            "title": "SecureBackDoor analysis",
+            "text": "SecureBackDoor is a DXE driver responsible for deactivating SPI flash protections if it finds a HOB identified by SECURE_BACKDOOR_HOB_GUID in the HOB list. In Figure 5 we can see that to find this HOB, it walks through the list of HOBs, and looks for the one created previously by the SecureBackDoorPeim module by matching it with the SECURE_BACKDOOR_HOB_GUID.\nFigure 5. Hex-Rays-decompiled SecureBackDoor code responsible for finding HOB created by SecureBackdoorPeim\nIf this HOB is found, the driver gets the byte value at offset 0x18 which is the value previously retrieved from the cE! UEFI variable by SecureBackDoorPeim and if this value is different from 0x00, it registers the DXE_PCH_PLATFORM_POLICY_PROTOCOL protocol notify function that zeroes the BiosLock bit inside the DXE_PCH_PLATFORM_POLICY_PROTOCOL.LockDownConfig bitmask (for related type definitions, see TianoCores PchPlatformPolicy.h header file at GitHub).\nTo understand how it actually disables SPI flash protections, we need to look into two different firmware drivers:\nPchBiosWriteProtect (B8B8B609-0B6C-4B8C-A731-DE03A6C3F3DC)\nBiosRegionLock (77892615-7C7A-4AEF-A320-2A0C15C44B95)"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xb8881044",
+            "title": "PchBiosWriteProtect analysis",
+            "text": "PchBiosWriteProtect is a SMM module. In Figure 6 we can see that it checks whether the BiosLock bit inside DXE_PCH_PLATFORM_POLICY_PROTOCOL.LockDownConfig (type PCH_LOCK_DOWN_CONFIG) is set, by performing a bitwise AND operation with value 0x08 (which is 0b1000 in binary representation).\nFigure 6. Hex-Rays-decompiled code from PchBiosWriteProtect responsible for initialization of BIOS Control Register related SPI flash protections\nIf its not set, it skips a few lines of code that are responsible for:\nPerforming MMIO read operation (line 15 in Figure 6) by reading a 32-bit value from the address 0xE00F8054. If we pass this address as an argument to the Python function pci_decode_from_addr, which we introduced in the Figure 3: that function will print the address, decoded as Bus: 0, Device: 0x1F, Function: 0, Offset: 0x54. Based on these values and knowing that the affected laptop (in our case Lenovo 110-15IBR) uses the N-series Intel System-on-a-Chip (SoC), we can find in its datasheet (section 33.14.13, page 2258) that its accessing the SPI Base address (SBASE), 32-bit PCI configuration register containing the address of the SPI configuration space (we will call it SPIBAR), and saves it into the global variable.\nRegistering the SW SMI handler function DispatchFunction (line 22 in Figure 6) This registered SW SMI handler DispatchFunction is invoked during platform initialization and if we look into the code of this function in Figure 7 below, we see that its responsible for setting bit 5 inside the register located at SPIBAR offset 0xFC. If we look into the documentation (section 10.48 BCR), we can see that this corresponds to SMM_BWP (or EISS for our chipset) bit of the BIOS Control Register.\nFigure 7. Hex-Rays-decompiled code of DispatchFunction from PchBiosWriteProtect\nIn the end, DispatchFunction is also responsible for registering SMI handler function (ClearBIOSWE in Figure 7) handling the SMI interrupt, which is triggered when someone tries to set the BIOSWE bit inside the BIOS Control Register from non-SMM code while the BIOS Control Register BLE bit is set. In that case, the installed handler will set BIOSWE (or WPD for our chipset) bit back to 0.\nAs a result, skipping this code will result in misconfiguration of the BIOS Control Registers, exposing the system to the risk of SPI flash modification."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x28045f2",
+            "title": "BiosRegionLock analysis",
+            "text": "The second driver, BiosRegionLock, is responsible for setting up Protected Range registers PR0-PR4. Similar to the PchBiosWriteProtect described above, it uses the BiosLock bit inside DXE_PCH_PLATFORM_POLICY_PROTOCOL.LockDownConfig (type PCH_LOCK_DOWN_CONFIG) to decide whether or not to set SPI flash protections in this case Protected Range registers.\nAs shown in Figure 8, if it finds out that the BiosLock bit is not set, it will simply skip code responsible for setting these registers and thus leave SPI flash unprotected.\nFigure 8. Hex-Rays-decompiled code responsible for setting the Protected Range registers"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x5f4b0db1",
+            "title": "CVE-2021-3972 ChgBootDxeHook driver disable UEFI Secure Boot",
+            "text": "The next vulnerability we will take a look at is the CVE-2021-3972. This vulnerability allows an attacker with elevated privileges to change various UEFI firmware settings, including the UEFI Secure Boot state, or for example restoring the UEFI firmware factory settings, all by simply creating one UEFI variable.\nNeedless to say, such an action would have serious impact on system security. Disabling UEFI Secure Boot would mean that the firmware wont enforce integrity verification of the UEFI drivers and applications during the boot process and will thus allow loading of any untrusted or malicious ones. On the other hand, restoring factory settings would not directly disable UEFI Secure Boot, but could expose a system to the risk of deploying some UEFI applications, such as bootloaders, with known vulnerabilities (e.g. see BootHole), thus allowing a bypass of UEFI Secure Boot.\nIn our analysis, we will work with the firmware image (version 7XCN41WW) of the Lenovo 330-15IGM, which is affected by the CVE-2021-3972 vulnerability.\nAs an example, to disable UEFI Secure Boot on Lenovo 330-15IGM, the user need only create a UEFI variable with:\nName: ChgBootSecureBootDisable or ChgBootChangeLegacy\nNamespace GUID: LENOVO_BACKDOOR_NAMESPACE_GUID\nAttributes: NV + BS + RT (0x00000007)\nValue: Any non-null byte\nand restart the laptop.\nTo illustrate how easy it is, Windows users can create these variables from the privileged userland process (administrator with SE_SYSTEM_ENVIRONMENT_NAME privilege) using the Windows API function SetFirmwareEnvironmentVariable.\nThis backdoor feature is implemented by the following two drivers in the firmware of affected devices:\nChgBootSmm (4CA0062A-66FE-4BE7-ACE6-FDE992C1C5EC)\nChgBootDxeHook (C9C3D147-9A92-4D00-B3AE-970E58B5C3AC)"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x93fdd956",
+            "title": "ChgBootSmm analysis",
+            "text": "ChgBootSmm is an SMM module responsible for registration of the SW SMI handler function. As shown in Figure 9, it registers this SMI handler using the EFI_SMM_SW_DISPATCH2_PROTOCOL.Register function and sets the SwSmiInputValue to 0xCA. This means that one can trigger execution of this function by writing the value 0xCA to I/O port 0xB2.\nFigure 9. Hex-Rays-decompiled code ChgBootSmm registers SW SMI handler number 0xCA\nBy looking into this installed SMI handler in Figure 10, we can see that it uses EFI_SMM_VARIABLE_PROTOCOL functions SmmGetVariable and SmmSetVariable to read from and write into various UEFI variables and the decision of what variable will be created or modified is made based on the value from RBX register saved state.\nFigure 10. Hex-Rays-decompiled code of SW SMI handler installed by the ChgBootSmm driver\nMoreover, each written variable has the same attributes bitmask 0x00000007 (NV|BS|RT) meaning that all of the variables created will be stored in non-volatile storage and thus survive a power cycle.\nThe full list of the variables that can be accessed using this SW SMI handler are:\nNamespace: LENOVO_BACKDOOR_NAMESPACE_GUID ChgBootSecureBootDisable ChgBootSetPxeToFirst ChgBootSetEfiPxeOneTime ChgBootRestoreFactory ChgBootFullRese ChgBootSecureBootEnable ChgBootBootOrderSetDefault ChgBootChangeLegacy ChgBootLegacyLoadDefault ChgBootUefiLoadDefault @Rm OneTimeDisableFastBoot\nChgBootSecureBootDisable\nChgBootSetPxeToFirst\nChgBootSetEfiPxeOneTime\nChgBootRestoreFactory\nChgBootFullRese\nChgBootSecureBootEnable\nChgBootBootOrderSetDefault\nChgBootChangeLegacy\nChgBootLegacyLoadDefault\nChgBootUefiLoadDefault\n@Rm\nOneTimeDisableFastBoot\nNamespace: A04A27F4-DF00-4D42-B552-39511302113D BootType Setup\nBootType\nSetup\nNotice the variables starting with the ChgBoot string: these variables are used as commands for the ChgBootDxeHook DXE driver, indicating whether to perform some action or not. In most cases their names are quite self-explanatory and from the security point of view, the following are the most interesting:\nChgBootSecureBootDisable and ChgBootChangeLegacy If created (any of them), ChgBootDxeHook disables the UEFI Secure Boot feature during the next boot.\nChgBootRestoreFactory If created, ChgBootDxeHook restores factory default values for UEFI Secure Boot variables PK, KEK, db, and dbx during the next boot. This might cause several problems, from corrupting the custom Secure Boot keys used by the victim and thus preventing booting the system, to loading the dbx, which might not contain the latest revocation information. The latter could expose the system to the risk of deploying some UEFI applications, such as bootloaders, with known vulnerabilities (e.g. BootHole) and thus allowing an attacker to bypass UEFI Secure Boot verification too.\nAll of the above-mentioned ChgBoot* UEFI variables can be created even without the help of this SW SMI handler for example using Windows APIs because they are not protected against runtime access. This means that attackers can disable crucial security mechanisms from a user-mode process with administrator privileges.\nBut still, if there are some readers interested in how it can be done by invoking the SW SMI handler, here is the CHIPSEC command that can be used to create the ChgBootSecureBootDisable variable:\nchipsec_util.py smi send 0 0xCA 0x53 0x53CA 0x1D 0 0xB2"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x30127933",
+            "title": "ChgBootDxeHook analysis",
+            "text": "So far, we know that attackers would need to create the appropriate ChgBoot* UEFI variable to disable UEFI Secure Boot or restore factory UEFI Secure Boot keys during the boot. So how does it work under the hood? This functionality is handled by the ChgBootDxeHook DXE Driver and all of the ChgBoot* UEFI variables are being checked in its sub_3370 function shown in Figure 11.\nFigure 11. Hex-Rays-decompiled function from ChgBootDxeHook checking ChgBoot variables.\nTo see how the UEFI Secure Boot is being disabled, we can look inside the ChgBootSecureBootDisableCheck function (exactly the same also happens in the ChgBootChangeLegacyCheck function, just with a different variable being checked).\nAs we can see in Figure 12, the function checks for the existence of the ChgBootSecureBootDisable UEFI variable using runtime services GetVariable function and in case it exists whatever its value executes a function we named DisableSecureBoot.\nFigure 12. Hex-Rays-decompiled function from ChgBootDxeHook checking the existence of ChgBootSecureBootDisable NVRAM variable\nHere is where the magic happens as you can see in Figure 13 , this function does two things:\nSets byte value of the Setup UEFI variable at offset 0x4D9 to zero; this byte seems to be an indicator of the UEFI Secure Boot status inside the BIOS Setup utility.\nInvokes protocol function (protocol GUID C706D63F-6CCE-48AD-A2B4-72A5EF9E220C or LENOVO_SECURE_BOOT_SERVICES_PROTOCOL_GUID in Figure 13) installed by the SecureBootService DXE driver with a parameter identifying an operation to be performed, in this case the operation identified by the value 0x02 which means the disabling of UEFI Secure Boot.\nFigure 13. Hex-Rays-decompiled code from ChgBootDxeHook responsible for disabling UEFI Secure Boot\nAnd how does this function from LENOVO_SECURE_BOOT_SERVICES_PROTOCOL disable UEFI Secure Boot? It does so by invoking the SW SMI handler 0xEC registered by VariableRuntimeDxe combined SMM/DXE driver, which in turn sets the authenticated UEFI variable named SecureBootEnforce (namespace EFI_GENERIC_VARIABLE_GUID) to 0x00.\nHowever, on some affected models (for instance on the Lenovo V14-IIL), its not that simple and just creating a ChgBootSecureBootDisable UEFI variable wont disable UEFI Secure Boot. So, whats the catch?\nAs we can see in Figure 14, after the ChgBootSecureBootDisable variable check, another condition is present it disables UEFI Secure Boot only if the value retrieved from the special LenovoVariable persistent storage, accessed using a protocol identified by the GUID C20E5755-1169-4C56-A48A-9824AB430D00 (LENOVO_VARIABLE_PROTOCOL_GUID in Figure 14), contains value Y (0x59).\nFigure 14. Hex-Rays-decompiled code Disable UEFI Secure Boot with additional LenovoVariable check\nFor models including this check, higher privileges are required to disable secure boot from the OS, but its still possible by invoking the SW SMI handler registered by the LenovoVariableSmm SMM module.\nA description of this LenovoVariable persistent storage is offered in the next section."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x7cf263dd",
+            "title": "CVE-2021-3970 Arbitrary SMM read/write",
+            "text": "In this last section, we are going to look at the analysis of the CVE-2021-3970 vulnerability caused by an improper input validation in the SW SMI handler function, which can lead to the arbitrary read/write from/to the SMRAM and subsequent arbitrary code execution in SMM execution mode.\nThis vulnerability can be exploited from a privileged kernel-mode process by triggering the software SMI interrupt and passing a physical address of a specially crafted buffer as a parameter to the vulnerable SW SMI handler.\nIn this analysis, we will work with the firmware image (version 7XCN41WW) of the Lenovo 330-15IGM, which is affected by the CVE-2021-3970 vulnerability."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x5bf52e2f",
+            "title": "Lenovo variable storage and a vulnerable SW SMI handler",
+            "text": "The firmware on certain Lenovo consumer laptop models implements a special LenovoVariable persistent storage, allowing data storage of up to 4KB in SPI flash.\nIts used by the platform firmware to store various information, including the Lenovo product name, motherboard model name and version, OEM OS license, or as mentioned in the section above, in some cases it can be used to activate the ChgBootDxeHook driver in order to disable UEFI Secure Boot feature.\nIn the firmware we analyzed, the SMM version of the Lenovo variables functionality is provided to other drivers by the protocol BFD02359-8DFE-459A-8B69-A73A6BAFADC0 (lets name it LENOVO_VARIABLE_PROTOCOL_GUID) and it is installed by the LenovoVariableSmm SMM module.\nThis LENOVO_VARIABLE_PROTOCOLs interface provides four functions:\nRead Read data from a Lenovo variable\nWrite Write data into a Lenovo variable\nLock Lock a Lenovo variable for write\nUnlock Unlock a Lenovo variable for write\nIt is important to note that LenovoVariableSmm not only installs this protocol to be accessible by other SMM modules, but it also registers the SW SMI handler function that allows accessing this storage from the OS by invoking SW SMI. The worst part is that it doesnt properly validate parameters passed to the SW SMI handler, which can result in arbitrary read/write from/to the SMRAM.\nFigure 15. Hex-Rays-decompiled code of SW SMI handler function registered by the LenovoVariableSmm module\nLooking closely at the SW SMI handler function in Figure 15, we see that it begins with reading the user parameters from the CPU saved state registers which are registers saved at the moment of SMI invocation.\nThese two arguments are being read:\n64-bit physical address built from the values stored in the ECX and EDI registers.\nThe command, indicating the action to be executed (read, write, delete, etc.), from the BX register.\nThis physical address passed as an argument to the SMI handler should contain data identifying the Lenovo variable to be read or written; the structure of this buffer is shown in Figure 16.\nFigure 16. Structure of the buffer passed to the LenovoVariableSmm SW SMI handler\nThe buffer starts with the 0x20-byte header (LENV_HDR), containing the unique GUID that identifies the Lenovo variable and a 32-bit value specifying the length of the data to be retrieved from the variable or written to it. The memory space located immediately after the header is used as a source or destination location for LENOVO_VARIABLE_PROTOCOLs Read and Write functions.\nThe problem is, the physical address provided by the caller is not validated or checked in any way and its directly passed as an argument to the LENOVO_VARIABLE_PROTOCOL functions (see line 41 in Figure 15). This allows an attacker to pass any physical address including an address from the SMRAM range.\nBut how could this be used by an attacker to read/write from/into the SMRAM? To read the SMRAM content, the following steps are required:\nFind the SMRAM physical address.\nCopy the LENV_HDR header to the physical address 32 bytes before the SMRAM the header should contain a variable identifier (it can be a random GUID) and the length of the data one would like to read from SMRAM (the maximum is something below 4KB).\nInvoke SW SMI registered by the LenovoVariableSmm (SwSmiNumber 0x80), specifying the command with ID 0x02 in the BX register (meaning that you want to write into the Lenovo variable) and the address of previously created header in the ECX and EDI registers (to tell the SW SMI handler what you want to write into that variable).\nNow, that variable contains a specified amount of SMRAM data so we only need to read it. We allocate a new buffer (equal to the size of the header plus the size of data to retrieve) and copy the same header into it, as used in step 2.\nInvoke the SW SMI handler again, specifying the command with ID 0x01 in BX register (meaning that you want to read from the Lenovo variable) and the address of our newly allocated buffer from step 4 in the ECX and EDI registers (to tell the SW SMI handler where we want to copy the content of the Lenovo variable which at this moment contains data from the SMRAM).\nAn example of the above-described steps using the CHIPSEC framework is shown in Figure 17; the output of the script containing the first 0x100 bytes of the SMRAM is shown in Figure 18.\nFigure 17. CHIPSEC example read 0x100 bytes from SMRAM by exploiting CVE-2021-3972\nFigure 18. CHIPSEC script output dumping the first 0x100 bytes of SMRAM\nTo be able to write into SMRAM, the principle is almost the same first, the attackers need to write their own data into the Lenovo variable, and then read the data from the variable directly to the SMRAM.\nWe have provided an example of how to read only the first 0x100 bytes of the SMRAM; however, with additional modifications, its possible to read/write the whole SMRAM range. This could allow threat actors to execute their own malicious code in SMM or even worse considering the LenovoVariable SW SMI handlers ability to modify the SPI flash write the attackers own malicious firmware implant directly to the SPI flash.",
+            "table": "0;1\n12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758;\"import binasciiimport structimport chipsec.chipsetfrom chipsec.hal.interrupts import Interruptsfrom hexdump import hexdump cs = chipsec.chipset.cs()cs.init(None, None, True, True)intr = Interrupts(cs)mem_read = cs.helper.read_physical_memmem_write = cs.helper.write_physical_memmem_alloc = cs.helper.alloc_physical_mem # 1. get SMRAM physical addresssmram_addr = cs.cpu.get_SMRAM()[0]HDR_SZ = 0x20VAR_SIZE = 0x100VAR_GUID = binascii.unhexlify(\"\"55 57 0e C2 69 11 56 4c a4 8a 98 24 ab 43 05 00\"\".replace(\"\" \"\", \"\"\"\"))SMI_NUM = 0x80 # 2. write header to the physical memory just before the SMRAMphys_buff = smram_addr-HDR_SZhdr = b\"\"\\x00\\x00\"\" + VAR_GUID + 10*b\"\"\\x00\"\" + struct.pack(\"\"<I\"\", VAR_SIZE)mem_write(phys_buff, HDR_SZ, hdr) # 3. invoke Lenovo variable SW SMI handler to write first VAR_SIZE SMRAM # bytes into VAR_GUID Lenovo variable high = (phys_buff >> 32) & 0xFFFFFFFFlow = phys_buff & 0xFFFFFFFF_rcx = low_rbx = 2 #WRITE LENOVO VARIABLE_rdx = 0xB2_rax = 0x5380_rdi = highintr.send_SW_SMI(0, SMI_NUM, 0x53, _rax, _rbx, _rcx, _rdx, 0, _rdi) # 4. allocate memory for the data read from variable# write header to the beginning of the allocated memory# zeroe the rest of the buffersz_to_alloc = VAR_SIZE + HDR_SZ_va, out_buff = mem_alloc(sz_to_alloc, 0xFFFFFFFF)mem_write(out_buff, HDR_SZ, hdr)mem_write(out_buff+HDR_SZ, VAR_SIZE, VAR_SIZE*b\"\"\\x00\"\") # 5. invoke Lenovo variable SW SMI handler to read previously created# variable directly into our bufferhigh = (out_buff >> 32) & 0xFFFFFFFFFFFFFFFFlow = out_buff & 0xFFFFFFFF_rcx = low_rbx = 1 #READ LENOVO VARIABLE_rdx = 0xB2_rax = 0x5380_rdi = highresult = intr.send_SW_SMI(0, SMI_NUM, 0x53, _rax, _rbx, _rcx, _rdx, 0, _rdi) # print first VAR_SIZE bytes from SMRAMsmram_data = mem_read(out_buff+HDR_SZ, VAR_SIZE)hexdump(smram_data)\"\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x91a74976",
+            "title": "Conclusion",
+            "text": "UEFI threats can be extremely stealthy and dangerous. They are executed early in the boot process, before transferring control to the operating system, which means that they can bypass almost all security measures and mitigations higher in the stack that could prevent their OS payloads from being executed. So, how do UEFI threats overcome all the security protections that have been created to prevent deployment or execution of UEFI threats themselves?\nAll of the real-world UEFI threats discovered in recent years (LoJax, MosaicRegressor, MoonBounce, ESPecter, FinSpy) needed to bypass or disable the security mechanisms in some way in order to be deployed and executed. However, only in the case of LoJax, the first in-the-wild UEFI rootkit (discovered by ESET Research in 2018), do we have a clue how it was done by using the ReWriter_binary capable of exploiting the Speed Racer vulnerability.\nEven though vulnerabilities arent the only option for turning off or bypassing firmware security mitigations, there are many such vulnerabilities and due to the number of different firmware implementations and their complexity, many more are likely just waiting to be discovered.\nOnly in the last year, we have seen numerous high-impact UEFI firmware vulnerabilities being publicly disclosed. Most notable are those by the researchers from Binarly, in their An In-Depth Look At The 23 High-Impact Vulnerabilities and 16 High Impact Vulnerabilities Discovered In HP Devices blogposts, and by researchers from SentinelOne in their Another Brick in the Wall: Uncovering SMM Vulnerabilities in HP Firmware blogpost.\nOur discovery, together with the above-mentioned ones, demonstrates that in some cases, deployment of UEFI threats might not be as difficult as expected, and the larger number of real-world UEFI threats discovered in the last years suggests that adversaries are aware of this.\nRegarding the vulnerabilities described in this blogpost, we strongly advise all owners of Lenovo laptops to go through the list of affected devices and update their firmware, ideally by following the manufacturers instructions.\nFor those using End Of Development Support (EODS) devices affected by the CVE-2021-3972, without any fixes available: one thing that can help you protect against unwanted modification of the UEFI Secure Boot state is using a TPM-aware full-disk encryption solution capable of making disk data inaccessible if the UEFI Secure Boot configuration changes.\nMartin Smolr\n19 Apr 2022 - 11:30AM"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0xe25c3d29",
+            "title": "Sign up to receive an email update whenever a new article is published in our Ukraine Crisis Digital Security Resource Center",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x217b40b7",
+            "date": "20220420",
+            "title": "When secure isnt secure at all: Highimpact UEFI vulnerabilities discovered in Lenovo consumer laptops",
+            "url": "https://www.welivesecurity.com/2022/04/19/when-secure-isnt-secure-uefi-vulnerabilities-lenovo-consumer-laptops"
+        },
+        "chapter": {
+            "id": "chapter_0x69091b85",
+            "title": "Newsletter",
+            "text": ""
+        }
+    }
+]

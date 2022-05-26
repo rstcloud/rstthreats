@@ -1,0 +1,210 @@
+[
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xdbffa203",
+            "title": "A Beautiful Factory for Malicious Packages",
+            "text": "Home A Beautiful Factory for Malicious Packages"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xe27cce10",
+            "title": "Motivation",
+            "text": "As mentioned above, threat actor RED-LILI is experimenting and testing new techniques that might help them to avoid detection and reach bigger distribution.\nWe cannot, of course, be sure of this attacker's intentions, but a possible motivation for this new experiment is to prolong the time the published packages are alive on the NPM registry before they are detected and taken down.\nCustomarily, an attacker would open an anonymous NPM account and publish all or most of their packages under this user account. One of the downsides of this is the fact that once one of the malicious packages is detected it is likely that all of the other packages under this user account will be detected as part of an investigation and will be taken down as well. This new technique (user account per package) goes into some effort to avoid a situation where the package is taken down for as long as possible."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xc461ce7a",
+            "title": "The Server Behind the Scenes",
+            "text": "The first breadcrumb in the first wave of the attack is the domain rt11[.]ml. It is pointing to the primary server of the attacker and this domain appears in the email address of the dummy users created in order to publish the packages. In addition, this domain is used as the target server address to which the data is being sent to.\nLater down the road, a new domain was registered 33mail[.]ga and took the place of the former domain rt11[.]ml. It is likely that both domains were acquired free of charge by Freenom service.\nLooking closer at this server reveals that it appears to be hosted in a U.S. hosting company Multacom which is based in California. We disclosed these findings to their NOC team as we believe this is one of their clients activities and that Multacom has no relationship to this other than leasing the server to the attacker.\nLooking more deeply, this server has interesting ports open:\nAn nmap scan result of the attackers server\nSince the server is listening to http/https, we checked what is being returned when browsing into this webserver. The result you are seeing is the root page of the server version of Interactsh tool, hinting to us this is a self-hosted version of the popular open-source tool:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x39c5c9b3",
+            "title": "Interactsh",
+            "text": "Interactsh is an open-source tool for out-of-band Data Extraction, and is a tool originally designed to detect bugs that cause external interactions. The usage is quite simple, running Interactsh gives the operator a unique URL, which whenever interacted with it, audits the full details to the operator for later inspection. Interactsh supports multiple network protocols, including HTTP, SMTP, DNS, and more.\nInteractsh can be used as-is. Zero configuration is needed for inexperienced users via the web application app.interactsh.com. And for the more advanced users, Interactsh is built to run self-hosted on a dedicated server which its operator has the option to customize advanced settings including supporting a custom domain"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x19645a3d",
+            "title": "Package Name Picking",
+            "text": "At first, the attackers name picking puzzled our research team. But after giving it another look, they were able to identify a pattern. The attack actor specifically targeted the @azure NPM scope under and as it appears, the attacker extracted the package names and altered their names, erasing the scope part (@azure/ in this instance) or replacing it with a similar string (such as azure-) and doing their best effort in publishing non-taken packages under scopeless, similar package names."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xcf073061",
+            "title": "Server",
+            "text": "The initial building block is setting up a Virtual Private Server (VPS). This server will run on an AWS EC2 machine. So, we launched one and wrote down its assigned IP and domain address to use in the next DNS configuration."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x8e54c9aa",
+            "title": "Custom Domain",
+            "text": "The next ingredient is our own domain. We purchased the malpkg.site domain which we used as the primary domain pointed at our dedicated server.\nSetting up the domains DNS records was quite straight forward as documents in Interactsh official documentation. In addition to the regular A record, we also configured the NS record to support the DNS tunneling functionality for data exfiltration."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x100bedb",
+            "title": "Interactsh Server",
+            "text": "As mentioned above, Interactsh is an open-source project written in Go. It has a client application and a server application. The former can be installed from its source code using go install command or by downloading a matching precompiled version from the projects releases page.\nThe configuration of Interactsh server is straight forward. Since our server is hosted on AWS, and is assigned with a private IP address, we had to configure it with the public IP -ip. The domain flag -domain was also needed to instruct the server what name needed to issue an SSL certificate for. In addition, we wanted to add a token-based authentication between the client and the server, so we defined a token string as we ran the server. While experimenting the connectivity with the client, we saw the default client id was quite long, so changing the -cidl and -cidn flags made it possible to shorten the client id. Note that this needs to match in both server and client, otherwise the data will not be synchronized properly.\nOnce we got all the configurations in order, we had our own interactsh server linked to our new domain."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x572739c7",
+            "title": "Interactsh Client",
+            "text": "The next building block was to configure the Interactsh client with proper communication to the server to conclude the infrastructure phase. But before we go on to that, there is one more interesting detail that lies in this server-client connection.\nIf not specified when running Interactsh server, it will allow connections from clients with no validation. This means that if our attacker ran their server in that manner, we would be able to connect to it and possibly gain access to interesting information. This hope had quickly faded since the attacker seems to use the -a or -t flags in the server run command, which means that access to it will be granted only to the client providing the correct authentication token.\nSetting up the client and its connection to the server is fairly simple. The following command is what weve used to connect to our server:\nAnd that is it! Our infrastructure is up and running. Next building block: Automation script."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x32ce1b0b",
+            "title": "The Main Tool",
+            "text": "The real magic is harnessing Interactsh as a building block with automation. I have written an internal tool in Python for research purposes, simulating the steps done the attack group. Partial code snippets from this tool are referenced below.\nGetting started with the development, the following major building blocks came to mind:\nCreating NPM accounts\nEmail OTP Challenges\nPublishing NPM packages\nFinding candidate package names under the targeted scope"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xe4d1eb05",
+            "title": "Finding candidate package names under the targeted scope",
+            "text": "As seen performed by the attacker, Ive added a functionality to list per given scope name, all packages under it, while manipulating and permutating the packages name to the best-effort. The function iterates over a search API call to https://registry.npmjs.com/-/v1/search :"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0xdb0d32ee",
+            "title": "Creating NPM Accounts",
+            "text": "The building block has no intentions to be exposed as API. Think about it why would NPM encourage the creation of users automatically?\nHere, I had to use some of my browser-based automation hacks, equipped with tools like Selenium and some custom Python code. I was on my way to wrap the signup form, interact with input fields and some buttons, all to simulate user actions in the flow of NPMs user creation.\nHere is the information required in the form to create an NPM user account:\nUnique Username used Interactshs client id\nEmail Address - <client id>@<client id>.<my domain>\nStrong password 12 characters random generated"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x56133169",
+            "title": "One Time Password (OTP) Challenges",
+            "text": "To deal with bots and verify the validity of the email address, NPM added a challenge to the user with an OTP sent to the email address as the last step of the registration process.\nThe challenge to extract the OTP from the email sent by NPM to the users email <client id>@<client id>.<my domain> was quite interesting.\nWrapping Interactsh-client executable was quite fun. I chose to tap into the stdout stream as the executable has the option to write JSON structures line-by-line, which can be easily parsed\nTo help with this task, Ive created a class called InteractshClient, responsible to wrap the functionality of the executable in a neat way.\nOnce a session is started, the server generates a client id and from it the username and email address are constructed under our domain malpkg.site. Next is initiate the sign-up process by calling _create_npm_user() function.\nDuring this function, a hidden browser is launched using Selenium and the matching ChromeDriver. After interacting with the form fields, NPM servers sends the OTP email via SMTP protocol to the users email address, resulting in the users email address being sent to my Interactsh server (e.g. c90ehc8ngyaer@c90ehc8ngyaer.malpkg.site). This data can be queried using the wrapped InteractshClient mentioned above like so:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x3bb7d1ea",
+            "title": "Publishing NPM Packages",
+            "text": "Now that we have our brand-new user account on NPM, we can continue to create and publish our malicious package, all automatically of course. Adhering to what the attacker seems to do.\nFirst step is to sign-in with the NPM account, using the npm login command, which creates a global token in the .npmrc file. This token is used when the following command npm publish is being executed.\nThe flow is quite simple, and interacted with the command stdout-stdin streams. The main concept is to answer 4 questions asked:\nUsername\nPassword\nEmail address\nOTP challenge\nAs you may guess, all building blocks already setup and can be re-used. Since the same OTP email is sent, we can use the same function that parses the OTP from interactsh-server incoming email. The function looks like so:\nLast step is to create a temporary directory, and drop 2 files there:\npackage.json - simple declaration of the package and instruction to run the main.js file upon installation\nindex.js - will contain the JavaScript payload provided by the operator, will execute automatically upon package installation\nThis is accomplished using the following code:\nThats it! Now we have an automated process of publishing NPM packages, end-to-end, fully automated from NPM accounts generated on the fly."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x5d271602",
+            "title": "Access Tokens to Bypass 2FA",
+            "text": "It is worth mentioning that once the NPM user account was created, it is possible to configure it in a way that does not require an email OTP challenge in order to publish a package. This could be done by generating an Access Token in the settings page having the 2FA requirement disabled.\nNPM's settings page have an option to bypass OTP challenge choice of authentication levels\nWe presume that this is the way attackers who publish bursts of malicious packages were able to automate their process without setting up the described mechanism."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x70f7afc0",
+            "date": "20220329",
+            "title": "RED-LILIs Profile. Picking The Attackers Breadcrumbs. A Beautiful Factory for Malicious Packages. Full list of Packages. Conclusion. IOCs. The Complete Picture. Intro",
+            "url": "https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages"
+        },
+        "chapter": {
+            "id": "chapter_0x24d65f6d",
+            "title": "Timeline",
+            "text": "Feb 23 package cspell-version-pin was uploaded and unpublished a day later (probably by the author).Uploaded from the username \"the_ghost-1\" with the email address the_ghost-1@wearehackerone.comExfiltrating information to domain first seen rt11.ml\nUploaded from the username \"the_ghost-1\" with the email address the_ghost-1@wearehackerone.com\nExfiltrating information to domain first seen rt11.ml\nFeb 23 A certificate was issued by Lets Encrypt to rt11.ml domain\nMarch 1 NPM package glints-sdk was publishedContains obfuscated malicious codepublished under the username babylon7Exfiltrating information to domain rt11.ml\nContains obfuscated malicious code\npublished under the username babylon7\nExfiltrating information to domain rt11.ml\nMarch 6 - 5 NPM packages and one PyPi package published. A detailed account regarding those packages can be found in our blog. This phase of experiments included code obfuscation and obviously an attempt to act on PyPi as well.\nMarch 10, 11, and 14 - The attacker used several usernames with the prefix the_ghost- to publish a bulk of packages. In addition to that they used the username chandannaidu400 to publish dozens of empty packages.\nMarch 15 NPM packages kusto-language-service and lorawan-devices published from two sperate usernames kusto-lang and lorawandevices respectively.\nMarch 20 A burst of ~600 NPM packages were published, fully-automated as described above\nMarch 27 A certificate was issued by Lets Encrypt to 33mail.ga domain and the Interactsh-server app was re-configured from the domain rt11.ml to 33mail.ga\nMarch 27 ~90 new versions 99.10.13 to existing NPM packages, The main change was updating the new data exfiltration endpoint (425a2[.]33mail[.]ga)\nAcross the timeline continuous disclosure to NPM, PyPi, Multacom\nInspection of the SSL certificates used by the attacker"
+        }
+    }
+]

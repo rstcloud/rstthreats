@@ -1,0 +1,170 @@
+<div>
+Sample:
+e850f3849ea82980cf23844ad3caadf73856b2d5b0c4179847d82ce4016e80ee (<a href="https://bazaar.abuse.ch/sample/e850f3849ea82980cf23844ad3caadf73856b2d5b0c4179847d82ce4016e80ee/">Bazaar</a>, <a href="https://www.virustotal.com/gui/file/e850f3849ea82980cf23844ad3caadf73856b2d5b0c4179847d82ce4016e80ee">VT</a>)
+Infection chain:
+Excel stylesheet -&gt; Office equation -&gt; Shellcode (downloader) -&gt; NSIS installer -&gt; Shellcode (stage 1) -&gt; Shellcode (stage 2) -&gt; Lokibot
+Tools used:
+<a href="https://malcat.fr">Malcat</a>, <a href="https://github.com/mandiant/speakeasy">Speakeasy emulator</a>
+Difficulty:
+Easy
+<h1 id="the-excel-document">The Excel document</h1>
+<p>The sample we are about to dissect today is an OpenXML Excel document which came as email attachment. The malicious document is very similar to the one we did analyze in our <a href="https://malcat.fr/blog/exploit-steganography-and-delphi-unpacking-dbatloader/">previous blog post</a>: an encrypted OpenXML Excel document embedding an Equation object exploiting CVE-2018-0798. The same author is most likely behind this document as well, they just updated the bait picture:</p>
+<figure id="format1"><img alt="Excel sheet baiting the user to deactivate safe mode" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/excel_decoy.jpg" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 1: Excel sheet baiting the user to deactivate safe mode</figcaption></figure>
+<p>We won't go through the exploit shellcode extraction and decryption process again since the procedure is exactly the same (see <a href="https://malcat.fr/blog/exploit-steganography-and-delphi-unpacking-dbatloader/#exploiting-cve-2018-0798">here</a>, shellcode offset is also <code>0x50</code>). The exploit is again a downloader, downloading from the following url:</p>
+<ul>
+<li><code>hxxp://103.153.79.104/windows10/csrss.exe</code></li>
+</ul>
+<p>At the time of the analysis, the file is still online. But this time, we don't get a DBatLoader instance, but a NSIS installer instead. So let us fetch the file and have a look at the installer.</p>
+<h1 id="nsis-installer">NSIS installer</h1>
+<p>The file <code>csrss.exe</code> is a 418KB PE file of sha256 <code>291df8186e62df74b8fcf2c361c6913b9b73e3e864dde58eb63d5c3159a4c32d</code> (<a href="https://bazaar.abuse.ch/sample/291df8186e62df74b8fcf2c361c6913b9b73e3e864dde58eb63d5c3159a4c32d/">Bazaar</a>, <a href="https://www.virustotal.com/gui/file/291df8186e62df74b8fcf2c361c6913b9b73e3e864dde58eb63d5c3159a4c32d">VT</a>). A NSIS installer is nothing more than a NSIS archive appended to the NSIS PE installer. The file format of the archive, while not very documented, is relatively simple as we will see.</p>
+<h2 id="nsis-archive">NSIS archive</h2>
+<p>A NSIS archive is composed of a small NSIS header followed by the archive content. The header does not contain a lot of information:</p>
+<code>FirstHeader: 
+ Flags: // some installation flags
+ Signature: 0xdeadbeef // NSIS archive start magic
+ Magic: "NullsoftInst" // also magic
+ InstallerSize: 0x6244 // unpacked size of the setup script
+ ArchiveSize: 0x5e12e // size of the archive
+</code>
+<p>Like you can see, it does not tell us a lot. Directly following the headers come the "files". I say "files" because they don't really have names, it is more like a list of data bytes or buffers. The files are compressed, and can be stored using two modes:</p>
+<ul>
+<li>the solid mode: archive content is a single compressed stream. The unpacked stream is a sequence of N buffers, where each buffer is prefixed by a DWORD telling the size of the buffer.</li>
+<li>the non-solid mode: archive content is a sequence of N compressed streams, one for each file. Each compressed stream is prefixed by a DWORD telling the size of the stream.</li>
+</ul>
+<p>There is sadly no flag in the header telling us which mode is used, this information is hardcoded inside the NSIS installer executable. The only solution there is trial and error: if the start of the archive starts with a DWORD which could be a size, then it's most likely the non-solid mode. If it looks like a compression header, then it's most likely the solid mode. And regarding compression, NSIS supports three compression algorithms:</p>
+<ul>
+<li>LZMA (without headers)</li>
+<li>Zlib</li>
+<li>A custom bzip2 compression algorithm</li>
+</ul>
+<p>Malcat supports NSIS files using both solid and non-solid mode for the Zlib and LZMA compression methods, but lacks support for bzip2, since the compression algorithm is custom. But since it's also the least used one, it's not really a big deal. The NSIS archive we are looking at is a solid LZMA archive, so unpacking it is no issue. Like for most archive formats, Malcat lists found files in the upper left corner of the screen, under the Virtual File System tree. Double-clicking on a file opens it inside Malcat.</p>
+<figure id="format2"><img alt="Content of the archive" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/vfs.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 2: Content of the archive</figcaption></figure>
+<p>The first file is always the installer setup script, followed by user-provided files and/or installer plugins. As you can see, Malcat did give name to some of the files (all but the last one) which somehow contradicts what I said before. But these names have been recovered by reversing the SETUP script, and there is no guarantee that it is the real name for these files. Even worse, a buffer in the archive can be extracted under different names on the local filesystem, so don't trust these names 100%.</p>
+<h2 id="the-setup-script">The SETUP script</h2>
+<p>The first thing to look at when reversing a NSIS installer is the setup script. NSIS scripts are a bunch of sections and assembly code written for the NSIS virtual machine. The NSIS VM architecture is relatively simple:</p>
+<ul>
+<li>Every instruction is encoded on 7 DWORDs: first DWORD is for the opcode (about 70 different opcodes) and the other 6 DWORD encode arguments</li>
+<li>Depending on the opcode, arguments can be either: <ul>
+<li>a register (up to 31 registers): <code>$0</code> .. <code>$9</code>, <code>$R0</code> .. <code>$R9</code> or one of 11 specific registers like <code>$EXEPATH</code> or <code>$CMDLINE</code> (some are read-only, so more like constants)</li>
+<li>a global variable: <code>$var0</code> .. <code>$varN</code></li>
+<li>an integer, signed or unsigned. It can also be an offset into the code section for jump-like opcodes</li>
+<li>a string, more precisely an index into the <code>Strings</code> section of the setup script</li>
+</ul>
+</li>
+<li>Strings themselves can be somewhat complex to parse/interpret:<ul>
+<li>there are 3 NSIS versions: ansi, park (a mix between ansi and unicode) and unicode. Each version encodes strings differently. There is sadly no flag telling you which version is used.</li>
+<li>strings can contains any of 4 special opcodes: <code>skip</code>, <code>shell</code>, <code>var</code> or <code>lang</code></li>
+<li>strings can include reference to system paths, variables or other strings, e.g. <code>"open {$INSTDIR}\rampage\goodie\noticeably.tif"</code></li>
+</ul>
+</li>
+</ul>
+<p>Luckily for us, the full edition of Malcat features a NSIS disassembler / decompiler, so let us jump directly to the entry point of the script (Ctrl+E) and have a look at the <code>OnInit</code> method:</p>
+<figure id="format3"><img alt="NSIS setup script entry point" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/oninit.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 3: NSIS setup script entry point</figcaption></figure>
+<p>We can see that the script does the following:</p>
+<ul>
+<li>extract the first buffer (offset <code>header+0</code> in archive) to a file named <code>d54hdan9c9ebsx</code></li>
+<li>extract the second buffer (offset <code>header+0x34f0f</code> in archive) to a file named <code>lognp</code></li>
+<li>extract the third buffer (offset <code>header+0x36390</code> in archive) to <code>${PLUGINDIR}\dwksh.dll</code>, wherever that could be</li>
+<li>call dwksh.dll's exported method <code>sdvffryp</code> without any argument</li>
+</ul>
+<p>The rest of the method seems like junk code, judging by the strings which are either random letters or picked out of dictionary. Quickly inspecting the first two files tells us that both are encrypted and/or compressed, so no quick-win there. We have to dig into the dll.</p>
+<h1 id="stage-1-dwkshdll">Stage 1: dwksh.dll</h1>
+<p>dwksh.dll is a 294KB 32-bits DLL of sha256 <code>be00a655cdf4e4706bf1bbf3659d698f967cad66acdf7cda0d12f16dc0cfda3e</code> (<a href="https://www.virustotal.com/gui/file/be00a655cdf4e4706bf1bbf3659d698f967cad66acdf7cda0d12f16dc0cfda3e/detection">VT</a>). It contains several obfuscated methods. But we reversed the setup script and know what to look for: the method <code>sdvffryp</code>. This methods starts by reading a local file named <code>lognp</code>:</p>
+<figure id="format4"><img alt="lognp file is accessed" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/lognp.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 4: lognp file is accessed</figcaption></figure>
+<p>It then seems to decrypt it in memory into an executable buffer before jumping at the beginning of the buffer (see the <code>call eax</code> below?). The file <code>lognp</code> is relatively small (5KB), it definitely looks like a shellcode.</p>
+<figure id="format5"><img alt="decryption loop in method sdvffryp" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/decrypt.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 5: decryption loop in method sdvffryp</figcaption></figure>
+<p>The decryption is pretty straightforward according to the sleigh decompiler. Every byte seem to be decrypted using the following formula:</p>
+<code> byte[i] = ((((byte[i] - 3) ^ 0xf2) + 0x11) ^ 0x28) - 1
+</code>
+<p>Decrypting the <code>lognp</code> file should be a piece of cake. Just open the file inside Malcat, select every byte (Ctrl+A) and open the transform dialog (Ctrl+T). There you can chose the <code>custom</code> arithmetic transform which allows you to transform sequence of bytes/words/dwords using a custom python expression. Just paste the equation above, replacing <code>byte[i]</code> by <code>value</code> and voila, you've just decrypted the second stage.</p>
+<figure id="format6"><img alt="decrypting the shellcode" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/transform.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 6: decrypting the shellcode</figcaption></figure>
+<p>For the lazy readers, you can download the decrypted <code>lognp</code> file <a href="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/shellcode.zip">here</a> (password: infected).</p>
+<h1 id="stage2-obfuscated-shellcode">Stage2: obfuscated shellcode</h1>
+<h2 id="analyzing-the-shellcode">Analyzing the shellcode</h2>
+<p>The <code>lognp</code> file, once decrypted, does not appear to be in any known file format. But the first byte is <code>E9</code>, which is a jump in the x86 architecture and is very typical for shellcode prologs. So before starting the analysis, we will have to tell Malcat two things:</p>
+<ul>
+<li>the architecture used: x86 in our case. This can be set using the dropdown menu in the status bar</li>
+<li>the entry point of the shellcode, which is at address 0 in our case. We just have to define a new function start at this address using the context menu in disassembly mode (F3)</li>
+</ul>
+<p>After this, Malcat is smart enough to recover most of the shellcode's CFG using its usual set of analyses. Following the control flow, we quickly arrive in the function <code>sub_7dd</code> which contains interesting patterns:</p>
+<ul>
+<li>the string <code>d54hdan9c9ebsx</code> (one of the NSIS archive's file names) is pushed on the stack at address <code>0x8eb</code></li>
+<li>something like a <code>CreateFileA</code> API call is performed at address <code>0x989</code> (the constant <code>0x80000000</code> is most likely for <code>GENERIC_READ</code>). If we wanted to be sure, we would have to emulate the API lookup function at address <code>0x776</code>, but it looks like safe assumption.</li>
+<li>soon after, the function <code>sub_a01</code> gets called. Decompiling this functions reveals something similar to a decryption loop</li>
+</ul>
+<p>The whole process can be retraced in the animated GIF below:</p>
+<figure id="format7"><img alt="locating the decryption function inside the shellcode" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/sc_start.gif" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 7: locating the decryption function inside the shellcode</figcaption></figure>
+<p>The code of the decryption function is given below. It is obviously obfuscated, and sadly it would not be immediate to reimplement it in python in Malcat. So we will have to find an alternative. Since the decryption function prototype is very simple (it just needs a pointer to the buffer and the buffer size) and is without side effects, why not give emulation a go?</p>
+<code>BYTE* sub_a01(BYTE* buffer, uint4 size) {
+ uint1 uVar1;
+ char cVar2;
+ uint1 uVar3;
+ uint4 i;
+ i = sub_0;
+ while (i &lt; size) {
+ uVar3 = i;
+ uVar1 = -uVar3 - ((*(buffer + i) &gt;&gt; 1 | buffer[i] &lt;&lt; 7) - 0x40 ^ 0xf2);
+ uVar1 = -uVar3 - (uVar1 &gt;&gt; 7 | uVar1 * '\x02');
+ uVar1 = -uVar3 - (((uVar1 &gt;&gt; 3 | uVar1 * ' ') ^ uVar3) - uVar3 ^ 0x9c) ^ 0xd6;
+ cVar2 = ~((uVar1 &gt;&gt; 7 | uVar1 &lt;&lt; 1) + 0x34 ^ 0x87) - 0x10;
+ uVar1 = ~(((-cVar2 &gt;&gt; sub_5 | cVar2 * -8) ^ 0x1d) + 0xac) ^ 0x5e;
+ uVar1 = ~-(((0x99 - ((uVar1 &gt;&gt; 2 | uVar1 &lt;&lt; 6) + 0x49) ^ 0xa0) + 0x30 ^ 0x34) + uVar3);
+ uVar1 = (-uVar1 &gt;&gt; 6 | uVar1 * -4) - uVar3 ^ uVar3;
+ uVar1 = (-uVar1 &gt;&gt; 2 | uVar1 * -0x40) + 0x93;
+ uVar1 = (-((((uVar1 &gt;&gt; sub_5 | uVar1 * '\b') - 0x2e ^ 7) + 0xd ^ 0x96) + 0x31) ^ 0x73) + uVar3;
+ uVar1 = -uVar3 - ((uVar1 &gt;&gt; 2 | uVar1 * '@') + 0x61) ^ uVar3;
+ uVar1 = ~((uVar1 &gt;&gt; 3 | uVar1 &lt;&lt; sub_5) ^ uVar3);
+ uVar1 = (uVar1 &gt;&gt; 7 | uVar1 &lt;&lt; 1) + uVar3 ^ 0x2e;
+ uVar1 = ~(~((uVar3 - (~(~(-(0xbc - ((uVar1 &gt;&gt; 6 | uVar1 &lt;&lt; 2) - uVar3) ^ 0x1e) ^ 0xc5) ^ 0x46) ^ 0xc1) ^ 0x4c) +
+ uVar3) ^ 0x4d) + 0x4c ^ uVar3;
+ uVar3 = 0x2d - (-((uVar1 &gt;&gt; 3 | uVar1 &lt;&lt; sub_5) + uVar3) ^ 0x43);
+ buffer[i] = (uVar3 &gt;&gt; 7 | uVar3 * '\x02') + 0x15;
+ i = i + 1;
+ }
+ return buffer;
+}
+</code>
+<h2 id="emulating-the-decryption-function">Emulating the decryption function</h2>
+<p>To emulate shellcodes, Malcat comes bundled with a script named <code>speakeay_shellcode.py</code> which emulates shellcodes using the <a href="https://github.com/mandiant/speakeasy">Speakeasy emulator</a>. Note that Speakeasy is not bundled with Malcat, you will have to install the python package yourself (and if you are running Malcat under Windows, be sure to check <code>Use system python interpreter</code> in the options).</p>
+<h3 id="patching-lognp">Patching lognp</h3>
+<p>Before emulating anything, we need to solve a problem: the data to decrypt (<code>d54hdan9c9ebsx</code>) is not embedded in the <code>lognp</code> shellcode, it is read from the filesystem using <code>CreateFileA</code>. So emulation is likely to fail. How are we going to solve this issue? </p>
+<p>There is the clean way: we could hook the CreateFileA/ReadFile APIs in speakeasy and intercept the call to give back the content of the file <code>d54hdan9c9ebsx</code>.</p>
+<p>But there is also the dirty way: we could patch the decrypted <code>lognp</code> shellcode in order to embed the content of <code>d54hdan9c9ebsx</code> in the shellcode space and patch the shellcode entry point to perform a call to the decryption function with the right parameters. Of course we will chose the dirty way. It is not only way faster, it is also more fun. </p>
+<p>Here is how to proceed:</p>
+<ol>
+<li>First open a copy of the decrypted <code>lognp</code> shellcode in Malcat with extra space at the end of the file (File &gt; Open Copy of File). The file <code>d54hdan9c9ebsx</code> is 216843 bytes big, we'll append 300KB just to be sure.</li>
+<li>Copy the content of the file <code>d54hdan9c9ebsx</code> in the clipboard: in a second Malcat instance, open <code>d54hdan9c9ebsx</code> and then hit Ctrl+A followed by Ctrl+C</li>
+<li>Paste the copied data after the shellcode in the first Malcat instance, let's say at address <code>0x2000</code> to make it easy to remember</li>
+<li>Enter disassembly view (F3) and go to the shellcode's entry point at address 0</li>
+</ol>
+<p>Malcat does not (yet) support assembling your own instruction, so we will need to manually edit the machine code. Click on any hexa byte in disasm mode and enter edit mode (Insert key). We need to assemble the following code:</p>
+<ol>
+<li>Push the second parameter which is the size of the buffer to decrypt (216843 = 0x34F0B). <code>push uint32</code> is assembled using <code>0x68</code> + <code>LSB-encoded uint32</code> in x86: <code>68 0B 4F 03 00</code></li>
+<li>Push the first parameter which is the address of the buffer to decrypt (<code>0x2000</code>): <code>68 00 20 00 00</code> </li>
+<li>Call to the decryption function. The call opcode is <code>0xE8</code> + signed displacement starting from the end of the call opcode. The end of our call opcode is at address <code>0x000F</code>, we want to jump to <code>0x0A01</code>, so <code>0x0A01</code> - <code>0x000F</code> = <code>0x09f2</code>. We need to assemble <code>E8 F2 09 00 00</code>.</li>
+</ol>
+<p>You can use Malcat's calculator to perform quick computation while analysing a binary, just hit Shift+Ctrl+C. Internally, it uses the python interpreter, so use python syntax.</p>
+<p>At the end, the patched shellcode should look like in the picture below. For the lazy readers, you can download the patched <code>lognp</code> file <a href="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/shellcode.patched.zip">here</a> (password: infected).</p>
+<figure id="format8"><img alt="patching the shellcode" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/patch.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 8: patching the shellcode</figcaption></figure>
+<h3 id="running-speakeasy">Running speakeasy</h3>
+<p>Now the only thing we have to do is to let speakeasy do its magic: </p>
+<ul>
+<li>let us define the entry point: right-click at address 0 and chose Force function start in the context menu</li>
+<li>run the script <code>speakeasy_shellcode.py</code> (Ctrl+U to run user scripts)</li>
+</ul>
+<p>... and voila, Malcat should open the result in a new file. A PE file has been detected by Malcat's file format parser at address 0x2000, perfect! Just double-click the PE file under "Carved Files" to open it.</p>
+<figure id="format9"><img alt="decrypted d54hdan9c9ebsx" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/pe.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 9: decrypted d54hdan9c9ebsx</figcaption></figure>
+<h1 id="stage-3-lokibot-and-config-extraction">Stage 3: Lokibot and config extraction</h1>
+<p>The last (and final) stage we get is a PE file of sha <code>02dee91a81652e5234414e452622307fd61e7988e82bec43665f699f805c3151</code> (<a href="https://www.virustotal.com/gui/file/02dee91a81652e5234414e452622307fd61e7988e82bec43665f699f805c3151">VT</a>). Judging by the low entropy and the visible strings, the file does not seem to be obfuscated, good news.
+So which kind of malware do we face? Malcat's Yara rules already spotted one of main malware intent: stealing credentials, as we can see in the screenshot below:</p>
+<figure id="format10"><img alt="file summary, displaying matching Yara rules" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/loki.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 10: file summary, displaying matching Yara rules</figcaption></figure>
+<p>If we want to be more precise, we can use Malcat's online intelligence view (Ctrl+I, only for paid versions). Normally I would avoid using Virustotal to identify a malware family (because of packer reuse among threat actors). But here we are dealing with the plain text final malware, so we should get at least some valid labels. In our case, it seems to be Lokibot, a simple password stealer:</p>
+<figure id="format11"><img alt="querying online intelligence" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/loki2.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 11: querying online intelligence</figcaption></figure>
+<p>Can we go further? The last section of the PE file is weirdly named <code>".x"</code>. It contains a single method at address <code>0x4a0000</code> and a few bytes of referenced data at address <code>0x4a0074</code>. Looking at the function, it seems to decode the data using a <code>XOR</code> opcode, with the key <code>0xDDDDFFFF</code>. But actually, only the first byte of the key is used (<code>0xFF</code>), so it is strictly equivalent to performing a simple <code>NOT</code> on the data. Great, let us decrypt these few bytes using Malcat's transform:</p>
+<figure id="format12"><img alt="decrypting the data buffer in the .x section" class="photo" src="https://malcat.fr/blog/reversing-a-nsis-dropper-using-quick-and-dirty-shellcode-emulation/cc.png" style="max-width:80%;height:auto;width:auto;"/> <figcaption>Figure 12: decrypting the data buffer in the .x section</figcaption></figure>
+<p>Great, we got the address of the command and control server for this sample. This was a pretty easy catch ^^</p>
+<h1 id="conclusion">Conclusion</h1>
+<p>NSIS installers have been abused by malware authors for some years now. While the NSIS VM instruction set is relatively limited, DLL plugins allow malicious actors to extend installer capabilities and obfuscate malware. In this example, two layers of shellcodes were used by the NSIS installer in order to deliver its final payload: a LokiBot password stealer.</p>
+<p>Instead of running everything in a VM, we made great use of Malcat's NSIS disassembler, Malcat's transforms and speakeasy emulator in order to quickly unpack these two layers statically.</p>
+<p>We hope you enjoyed this new quick-and-dirty malware unpacking sessions. Future blog posts will be more focused toward beginners as we will introduce a few of Malcat's features as in-depth tutorials.</p>
+</div>

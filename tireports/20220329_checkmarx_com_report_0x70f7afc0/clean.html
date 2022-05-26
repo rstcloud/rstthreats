@@ -1,0 +1,160 @@
+<div>
+<p><a href="https://checkmarx.com/">Home</a> » A Beautiful Factory for Malicious Packages</p>
+<h1 class="elementor-heading-title elementor-size-default">A Beautiful Factory for Malicious Packages</h1>
+<ul class="elementor-inline-items elementor-icon-list-items elementor-post-info">
+<li class="elementor-icon-list-item elementor-repeater-item-ca6b85f elementor-inline-item">
+<a href="https://checkmarx.com/author/jossefharush/">
+ 
+										Jossef Harush					
+</a>
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-54ddca2 elementor-inline-item">
+ 
+										Co-authors Aviad Gershon and Tal Folkman					
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-e9bbb12 elementor-inline-item">
+<a href="https://checkmarx.com/2022/03/28/">
+ 
+										March 28, 2022					
+</a>
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-4abea3a elementor-inline-item">
+ 
+										Reading Time: 11 minutes					
+</li>
+</ul>
+<p>Never miss an update. Subscribe today!</p>Email*Lifecycle StageMarketing AssetUTM CampaignUTM ContentUTM KeywordUTM MediumUTM SourceGCLIDAll UTMs<p> </p><ul class="inputs-list"><li class="hs-form-booleancheckbox"><p>I would like to receive communications from Checkmarx and its affiliates regarding software security, Checkmarx products and services. </p></li></ul><p>By submitting my information to Checkmarx, I hereby consent to the terms and conditions found in the Checkmarx <a href="https://www.checkmarx.com/privacy-policy/" target="_blank">Privacy Policy</a> and to the processing of my personal data as described therein. </p><p>By clicking submit below, you consent to allow Checkmarx to store and process the personal information submitted above to provide you the content requested.</p>
+<img alt="" class="attachment-large size-large" height="437" src="https://checkmarx.com/wp-content/uploads/2021/06/4-circles-yellow-vert.png" width="87"/>
+<img alt="" class="attachment-large size-large" height="512" src="https://checkmarx.com/wp-content/uploads/2022/03/thumbnail-1.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<p>Checkmarx Supply Chain Security (SCS) team has uncovered hundreds of malicious packages attempting to use a dependency confusion attack. Customarily, attackers use an anonymous disposable NPM account from which they launch their attacks. As it seems this time, the attacker has fully-automated the process of NPM account creation and has open dedicated accounts, one per package, making his new malicious packages batch harder to spot.</p>
+<p>At the time of writing, the threat actors RED-LILI is still active at the time of writing and continues to publish malicious packages. So far, the packages listed in this report were detected by Checkmarx’s internal systems and disclosed to NPM.</p>
+<h1>Intro</h1>
+<p>About 3 weeks ago <a href="https://checkmarx.com/blog/webhook-party-malicious-packages-caught-exfiltrating-data-via-legit-webhook-services/" rel="noreferrer noopener" target="_blank">we reported</a> in Checkmarx blogpost of an attacker experimenting in several techniques while attempting dependency confusion attacks. In the past week, research teams from <a href="https://jfrog.com/blog/large-scale-npm-attack-targets-azure-developers-with-malicious-packages/" rel="noreferrer noopener" target="_blank">JFrog</a> and <a href="https://blog.sonatype.com/this-week-in-malware-400-npm-packages-target-azure-uber-airbnb-developers" rel="noreferrer noopener" target="_blank">Sonatype</a> have also published blog posts informing the community about hundreds of malicious packages. The 3 reports are all related to the same threat actor.</p>
+<p>The same attack actor appears in all reports, tracked as RED-LILI by Checkmarx SCS research team, has recently automated the process of creating NPM users along with package publication.</p>
+<p>Checkmarx SCS research team was tracking RED-LILI’s activity since it was first discovered internally on 2022-02-23 by its automated software supply chain attack detection systems. During this time, and until today, the team studied this attack actor’s capabilities and techniques, while continuously disclosing the findings to NPM security team.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74696" height="570" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-10-1024x570.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>Multiple disclosure emails sent to NPM security team, informing them about RED-LILI’s activity</p>
+<p>Throughout the attacker’s experiments iterations, the packages’ functionality itself remained mostly unchanged. Specifics about the code, its likely origin, and other interesting details can be found in our <a href="https://checkmarx.com/blog/webhook-party-malicious-packages-caught-exfiltrating-data-via-legit-webhook-services/" rel="noreferrer noopener" target="_blank">previous blog</a>.</p>
+<p>Today, we want to shed some additional light on this new and intriguing technique. We looked at the attacks, put the pieces and clues together, and tried to assemble a likely outline of the attacker’s automation. In addition, we can report that this threat actor has published ~800 packages via a fully automated system, responsible for creating NPM user accounts, and publishing packages while passing OTP (One Time Passwords) verification requests.</p>
+<h2>Motivation</h2>
+<p>As mentioned above, threat actor RED-LILI is experimenting and testing new techniques that might help them to avoid detection and reach bigger distribution.</p>
+<p>We cannot, of course, be sure of this attacker's intentions, but a possible motivation for this new experiment is to prolong the time the published packages are “alive” on the NPM registry before they are detected and taken down.</p>
+<p>Customarily, an attacker would open an anonymous NPM account and publish all or most of their packages under this user account. One of the downsides of this is the fact that once one of the malicious packages is detected it is likely that all of the other packages under this user account will be detected as part of an investigation and will be taken down as well. This new technique (user account per package) goes into some effort to avoid a situation where the package is taken down for as long as possible.</p>
+<h1>Picking The Attacker’s Breadcrumbs</h1>
+<p>The initial curiosity toward this cluster of malicious packages was in light of the scale and frequency of the attacks. The attacker published ~800 packages, most of them having a unique user account per package, in bursts over the span of roughly a week. While the packages names were methodically picked, the names of the users publishing them were randomly generated strings such as “5t7crz72” and “d4ugwerp”. This is uncommon for the automated attacks we see. Usually, attackers create a single user and burst their attacks over it. From this behavior, we can conclude that the attacker built an automation process from end to end, including registering users and passing the OTP challenges.</p>
+<h2>The Server Behind the Scenes</h2>
+<p>The first breadcrumb in the first wave of the attack is the domain “rt11[.]ml”. It is pointing to the primary server of the attacker and this domain appears in the email address of the dummy users created in order to publish the packages. In addition, this domain is used as the target server address to which the data is being sent to.</p>
+<p>Later down the road, a new domain was registered “33mail[.]ga” and took the place of the former domain “rt11[.]ml”. It is likely that both domains were acquired free of charge by <a href="https://www.freenom.com/" rel="noreferrer noopener" target="_blank">Freenom</a> service.</p>
+<p>Looking closer at this server reveals that it appears to be hosted in a U.S. hosting company <a href="https://multacom.com" rel="noreferrer noopener" target="_blank">Multacom</a> which is based in California. We disclosed these findings to their NOC team as we believe this is one of their clients’ activities and that Multacom has no relationship to this other than leasing the server to the attacker.</p>
+<p>Looking more deeply, this server has interesting ports open:</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74701" height="396" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-12-2-1024x396.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>An nmap scan result of the attacker’s server</p>
+<p>Since the server is listening to http/https, we checked what is being returned when browsing into this webserver. The result you are seeing is the root page of the server version of Interactsh tool, hinting to us this is a self-hosted version of the popular open-source tool:</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74703" height="670" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-16-1024x670.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<h2>Interactsh</h2>
+<p>Interactsh is an open-source tool for out-of-band “Data Extraction”, and is a tool originally designed to detect bugs that cause external interactions. The usage is quite simple, running Interactsh gives the operator a unique URL, which whenever interacted with it, audits the full details to the operator for later inspection. Interactsh supports multiple network protocols, including HTTP, SMTP, DNS, and more.</p>
+<p>Interactsh can be used as-is. Zero configuration is needed for inexperienced users via the web application app.interactsh.com. And for the more advanced users, Interactsh is built to run self-hosted on a dedicated server which its operator has the option to customize advanced settings including supporting a custom domain</p>
+<h2>Package Name Picking</h2>
+<p>At first, the attacker’s name picking puzzled our research team. But after giving it another look, they were able to identify a pattern. The attack actor specifically targeted the <a href="https://www.npmjs.com/search?q=%40azure" rel="noreferrer noopener" target="_blank">@azure NPM scope</a> under and as it appears, the attacker extracted the package names and altered their names, erasing the scope part (‘@azure/’ in this instance) or replacing it with a similar string (such as “azure-“) and doing their best effort in publishing non-taken packages under scopeless, similar package names.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74704" height="1024" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-17-969x1024.png" style="max-width:800px;height:auto;width:auto;" width="969"/></figure>
+<h1>The Complete Picture</h1>
+<p>Now that we have a deeper understanding of the technology stack and tools used in this attack, we rolled up our sleeves and start reproducing it by ourselves. This exercise was done solely for the purpose of learning the attacker’s challenges in implementing their system.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74705" height="361" src="https://checkmarx.com/wp-content/uploads/2022/03/Picture1-1.png" width="480"/></figure>
+<h2>Server</h2>
+<p>The initial building block is setting up a Virtual Private Server (VPS). This server will run on an AWS EC2 machine. So, we launched one and wrote down its assigned IP and domain address to use in the next DNS configuration.</p>
+<h2>Custom Domain</h2>
+<p>The next ingredient is our own domain. We purchased the “malpkg.site” domain which we used as the primary domain pointed at our dedicated server.</p>
+<p>Setting up the domain’s DNS records was quite straight forward as documents in <a href="https://github.com/projectdiscovery/interactsh#interactsh-server" rel="noreferrer noopener" target="_blank">Interactsh official documentation</a>. In addition to the regular A record, we also configured the NS record to support the DNS tunneling functionality for data exfiltration.</p>
+<h2>Interactsh Server</h2>
+<p>As mentioned above, <a href="https://github.com/projectdiscovery/interactsh" rel="noreferrer noopener" target="_blank">Interactsh</a> is an open-source project written in Go. It has a client application and a server application. The former can be installed from its source code using “go install” command or by downloading a matching precompiled version from the <a href="https://github.com/projectdiscovery/interactsh/releases" rel="noreferrer noopener" target="_blank">project’s releases page.</a></p>
+<p>The configuration of Interactsh server is straight forward. Since our server is hosted on AWS, and is assigned with a private IP address, we had to configure it with the public IP “-ip”. The domain flag “-domain” was also needed to instruct the server what name needed to issue an SSL certificate for. In addition, we wanted to add a token-based authentication between the client and the server, so we defined a token string as we ran the server. While experimenting the connectivity with the client, we saw the default client id was quite long, so changing the “-cidl” and “-cidn” flags made it possible to shorten the client id. Note that this needs to match in both server and client, otherwise the data will not be synchronized properly.</p>
+<code>sudo ./interactsh-server -domain &lt;domain&gt; -ip &lt;ip address&gt; -e 1 -t &lt;authentication token&gt; -debug -cidl 9 -cidn 4</code>
+<p>Once we got all the configurations in order, we had our own interactsh server linked to our new domain.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74706" height="508" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-18-1024x508.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<h2>Interactsh Client</h2>
+<p>The next building block was to configure the Interactsh client with proper communication to the server to conclude the infrastructure phase. But before we go on to that, there is one more interesting detail that lies in this server-client connection.</p>
+<p>If not specified when running Interactsh server, it will allow connections from clients with no validation. This means that if our attacker ran their server in that manner, we would be able to connect to it and possibly gain access to interesting information. This hope had quickly faded since the attacker seems to use the “-a” or “-t” flags in the server run command, which means that access to it will be granted only to the client providing the correct authentication token.</p>
+<p>Setting up the client and its connection to the server is <a href="https://github.com/projectdiscovery/interactsh#usage" rel="noreferrer noopener" target="_blank">fairly simple.</a> The following command is what we’ve used to connect to our server:</p>
+<code>interactsh-client -s &lt;domain&gt; -v -t &lt;authentication token&gt; -cidl 9 -cidn 4</code>
+<p>And that is it! Our infrastructure is up and running. Next building block: Automation script.</p>
+<h2>The Main Tool</h2>
+<p>The real magic is harnessing Interactsh as a building block with automation. I have written an internal tool in Python for research purposes, simulating the steps done the attack group. Partial code snippets from this tool are referenced below.</p>
+<p>Getting started with the development, the following major building blocks came to mind:</p>
+<ul><li>Creating NPM accounts</li><li>Email OTP Challenges</li><li>Publishing NPM packages</li><li>Finding candidate package names under the targeted scope</li></ul>
+<h2>Finding candidate package names under the targeted scope</h2>
+<p>As seen performed by the attacker, I’ve added a functionality to list per given scope name, all packages under it, while manipulating and permutating the package’s name to the best-effort. The function iterates over a search API call to <a href="https://registry.npmjs.com/-/v1/search">https://registry.npmjs.com/-/v1/search</a> :</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74707" height="703" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-20.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<h2>Creating NPM Accounts</h2>
+<p>The building block has no intentions to be exposed as API. Think about it – why would NPM encourage the creation of users automatically?</p>
+<p>Here, I had to use some of my browser-based automation hacks, equipped with tools like <a href="https://www.selenium.dev/" rel="noreferrer noopener" target="_blank">Selenium</a> and some custom Python code. I was on my way to wrap the signup form, interact with input fields and some buttons, all to simulate user actions in the flow of NPM’s user creation.</p>
+<p>Here is the information required in the form to create an NPM user account:</p>
+<ul><li>Unique Username – used Interactsh’s client id</li><li>Email Address - &lt;client id&gt;@&lt;client id&gt;.&lt;my domain&gt;</li><li>Strong password – 12 characters random generated</li></ul>
+<h2>One Time Password (OTP) Challenges</h2>
+<p>To deal with bots and verify the validity of the email address, NPM added a challenge to the user with an OTP sent to the email address as the last step of the registration process.</p>
+<p>The challenge to extract the OTP from the email sent by NPM to the user’s email “&lt;client id&gt;@&lt;client id&gt;.&lt;my domain&gt;” was quite interesting.</p>
+<p>Wrapping Interactsh-client executable was quite fun. I chose to tap into the stdout stream as the executable has the option to write JSON structures line-by-line, which can be easily parsed</p>
+<p>To help with this task, I’ve created a class called InteractshClient, responsible to wrap the functionality of the executable in a neat way.</p>
+<p>Once a session is started, the server generates a client id and from it the username and email address are constructed under our domain “malpkg.site”. Next is initiate the sign-up process by calling _create_npm_user() function.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74708" height="480" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-21.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>During this function, a hidden browser is launched using Selenium and the matching ChromeDriver. After interacting with the form fields, NPM servers sends the OTP email via SMTP protocol to the user’s email address, resulting in the user’s email address being sent to my Interactsh server (e.g. c90ehc8ngyaer@c90ehc8ngyaer.malpkg.site). This data can be queried using the wrapped InteractshClient mentioned above like so:</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74709" height="480" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-212.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74710" height="656" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-23.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<h2>Publishing NPM Packages</h2>
+<p>Now that we have our brand-new user account on NPM, we can continue to create and publish our malicious package, all automatically of course. Adhering to what the attacker seems to do.</p>
+<p>First step is to sign-in with the NPM account, using the “npm login” command, which creates a global token in the .npmrc file. This token is used when the following command “npm publish” is being executed.</p>
+<p>The flow is quite simple, and interacted with the command stdout-stdin streams. The main concept is to answer 4 questions asked:</p>
+<ul><li>Username</li><li>Password</li><li>Email address</li><li>OTP challenge</li></ul>
+<p>As you may guess, all building blocks already setup and can be re-used. Since the same OTP email is sent, we can use the same function that parses the OTP from interactsh-server incoming email. The function looks like so:</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74711" height="656" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-19.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>Last step is to create a temporary directory, and drop 2 files there:</p>
+<ul><li>package.json - simple declaration of the package and instruction to run the main.js file upon installation</li><li>index.js - will contain the JavaScript payload provided by the operator, will execute automatically upon package installation</li></ul>
+<p>This is accomplished using the following code:</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74723" height="787" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-2221.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>That’s it! Now we have an automated process of publishing NPM packages, end-to-end, fully automated from NPM accounts generated on the fly.</p>
+<h2>Access Tokens to Bypass 2FA</h2>
+<p>It is worth mentioning that once the NPM user account was created, it is possible to configure it in a way that does not require an email OTP challenge in order to publish a package. This could be done by generating an Access Token in the settings page having the 2FA requirement disabled.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74713" height="1024" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-2281-969x1024.png" style="max-width:800px;height:auto;width:auto;" width="969"/></figure>
+<p>NPM's settings page – have an option to bypass OTP challenge choice of authentication levels</p>
+<p>We presume that this is the way attackers who publish bursts of malicious packages were able to automate their process without setting up the described mechanism.</p>
+<h2>Timeline</h2>
+<ul><li>Feb 23 – package “cspell-version-pin” was uploaded and unpublished a day later (probably by the author).<ul><li>Uploaded from the username "<a href="https://www.npmjs.com/~the_ghost-1" rel="noreferrer noopener" target="_blank">the_ghost-1</a>" with the email address <a href="mailto:the_ghost-1@wearehackerone.com" rel="noreferrer noopener" target="_blank">the_ghost-1@wearehackerone.com</a></li></ul><ul><li>Exfiltrating information to domain first seen “rt11.ml”</li></ul></li><li>Feb 23 – A certificate was issued by Let’s Encrypt to ”rt11.ml” domain</li><li>March 1 – NPM package “glints-sdk” was published<ul><li>Contains obfuscated malicious code</li></ul><ul><li>published under the username ‘babylon7’</li></ul><ul><li>Exfiltrating information to domain “rt11.ml”</li></ul></li><li>March 6 - 5 NPM packages and one PyPi package published. A detailed account regarding those packages can be found in <a href="https://checkmarx.com/blog/webhook-party-malicious-packages-caught-exfiltrating-data-via-legit-webhook-services/" rel="noreferrer noopener" target="_blank">our blog</a>. This phase of experiments included code obfuscation and obviously an attempt to act on PyPi as well.</li><li>March 10, 11, and 14 - The attacker used several usernames with the prefix “the_ghost-“ to publish a bulk of packages. In addition to that they used the username ‘<a href="https://www.npmjs.com/~chandannaidu400" rel="noreferrer noopener" target="_blank">chandannaidu400</a>’ to publish dozens of empty packages.</li><li>March 15 – NPM packages “kusto-language-service” and “lorawan-devices” published from two sperate usernames “kusto-lang” and “lorawandevices” respectively.</li><li>March 20 – A burst of ~600 NPM packages were published, fully-automated as described above</li><li>March 27 – A certificate was issued by Let’s Encrypt to “33mail.ga” domain and the Interactsh-server app was re-configured from the domain rt11.ml to <a>33mail.ga</a></li><li>March 27 – ~90 new versions “99.10.13” to existing NPM packages, The main change was updating the new data exfiltration endpoint (425a2[.]33mail[.]ga)</li><li>Across the timeline – continuous disclosure to NPM, PyPi, Multacom</li></ul>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74714" height="715" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-25-1024x715.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>Inspection of the SSL certificates used by the attacker</p>
+<h1>RED-LILI’s Profile</h1>
+<p>Examining the packages’ code deeply, reveals that there are some obvious unique identifiers to the attacker’s lab that helps distinguish RED-LILI’s packages from others. As it seems, these are the results of checks that are done to avoid running the malicious payload on the attacker’s lab machines, Among these indicators, we found:</p>
+<ul><li>DESKTOP-4E1IS0K (windows computer name)</li><li>lili-pc (hostname)</li><li>aws-7grara913oid5jsexgkq (aws hostname)</li><li>D:\\TRANSFER\\ (path, windows format)</li><li>/root/node_modules/ (path, linux format)</li><li>/home/node (linux username “node”)</li><li>daasadmin (username)</li><li>box (hostname)</li><li>instance (hostname)</li></ul>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-74715" height="787" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-224.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>Screenshot of the malicious payload, with the “do not run” identifiers</p>
+<h1>IOC’s</h1>
+<ul><li><a href="mailto:the_ghost-1@wearehackerone.com">the_ghost-1@wearehackerone.com</a></li><li>rt11.ml</li><li>rt11.33mail.com</li><li>33mail.ga</li><li>216.127.184.168</li></ul>
+<h1>Conclusion</h1>
+<p>In total, Checkmarx SCS team has detected ~800 malicious packages published by RED-LILI. The packages were all disclosed to the NPM and PyPi security teams as well as to the service provider hosting the attacker infrastructure Multacom.</p>
+<p>Until this incident, we’ve witnessed that most attack actors publishing malicious payloads at scale doing things semi-automatically. This one is doing it on FULL-AUTO.</p>
+<p>As supply chain attackers improve their skills and make life harder for their defenders, this attack marks another milestone in their progress. By distributing the packages across multiple usernames, the attacker makes it harder for defenders to correlate take them all down with "one stroke." By that, of course, making the chances of infection higher. </p>
+<p>IMHO package managers need to set up more security measures such as integrating Captcha to the user creation forms to deal with bots implementing such automation systems.</p>
+<h1>Full list of Packages</h1>
+<p>Sharing a <a href="https://gist.github.com/Aviadg/3e640afe6dcbc651958c270ff9e57c8d" rel="noreferrer noopener" target="_blank">full list of the related packages</a>, with almost 800 packages.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-74716" height="582" src="https://checkmarx.com/wp-content/uploads/2022/03/Group-226-1024x582.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>Never miss an update. Subscribe today!</p>Email*Lifecycle StageMarketing AssetUTM CampaignUTM ContentUTM KeywordUTM MediumUTM SourceGCLIDAll UTMs<p> </p><ul class="inputs-list"><li class="hs-form-booleancheckbox"><p>I would like to receive communications from Checkmarx and its affiliates regarding software security, Checkmarx products and services. </p></li></ul><p>By submitting my information to Checkmarx, I hereby consent to the terms and conditions found in the Checkmarx <a href="https://www.checkmarx.com/privacy-policy/" target="_blank">Privacy Policy</a> and to the processing of my personal data as described therein. </p><p>By clicking submit below, you consent to allow Checkmarx to store and process the personal information submitted above to provide you the content requested.</p>
+<h2 class="elementor-heading-title elementor-size-default">More Resources to Consider</h2>
+<img alt="" class="attachment-full size-full" height="512" src="https://checkmarx.com/wp-content/uploads/2022/03/thumbnail-1.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages/" target="_self"></a>
+<a href="https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages/" target="_self">
+				A Beautiful Factory for Malicious Packages			</a>
+March 28, 2022
+<img alt="" class="attachment-full size-full" height="512" src="https://checkmarx.com/wp-content/uploads/2022/03/MicrosoftTeams-image-11.jpg" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/the-open-source-supply-chain-under-assault-new-defenses-are-required/" target="_self"></a>
+<a href="https://checkmarx.com/blog/the-open-source-supply-chain-under-assault-new-defenses-are-required/" target="_self">
+				The Open Source Supply Chain Under Assault – New Defenses Are Required			</a>
+March 22, 2022
+<img alt="" class="attachment-full size-full" height="512" src="https://checkmarx.com/wp-content/uploads/2022/03/thumbnail.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/protestware-politics-and-open-source-software/" target="_self"></a>
+<a href="https://checkmarx.com/blog/protestware-politics-and-open-source-software/" target="_self">
+				Protestware, Politics, and Open Source Software			</a>
+March 17, 2022
+<img alt="" class="attachment-full size-full" height="600" src="https://checkmarx.com/wp-content/uploads/2022/03/blog-npm-packages-depconf.png" style="max-width:800px;height:auto;width:auto;" width="1200"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/webhook-party-malicious-packages-caught-exfiltrating-data-via-legit-webhook-services/" target="_self"></a>
+<a href="https://checkmarx.com/blog/webhook-party-malicious-packages-caught-exfiltrating-data-via-legit-webhook-services/" target="_self">
+				Webhook Party – Malicious packages caught exfiltrating data via legit webhook services			</a>
+March 7, 2022
+</div>

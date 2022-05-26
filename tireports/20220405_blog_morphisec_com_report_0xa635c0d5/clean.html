@@ -1,0 +1,70 @@
+<div>
+<h1>New Analysis: The CaddyWiper Malware Attacking Ukraine</h1>
+Posted by
+<a class="author-link" href="https://blog.morphisec.com/author/michael-dereviashkin">Michael Dereviashkin</a> on April 5, 2022
+<ul class="hs-blog-social-share-list">
+<li class="hs-blog-social-share-item hs-blog-social-share-item-twitter">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-linkedin">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-facebook">
+</li>
+</ul>
+<h2><img alt="CaddyWiper Malware Attacking Ukraine" src="https://blog.morphisec.com/hs-fs/hubfs/CaddyWiper%20Malware%20Attacking%20Ukraine.png?width=684&amp;name=CaddyWiper%20Malware%20Attacking%20Ukraine.png" style="max-width:800px;height:auto;width:auto;" width="684"/></h2>
+<p>As Russia’s invasion of Ukraine continues, new wiper malware has surfaced attacking Ukrainian infrastructure. Caddywiper was <a href="https://www.welivesecurity.com/2022/03/15/caddywiper-new-wiper-malware-discovered-ukraine/">first detected</a> on March 14, 2022. It destroys user data, partitions information from attached drives, and has been spotted on several dozen systems in a limited number of organizations. CaddyWiper has been deployed via GPO, suggesting the attackers had initially compromised the target's Active Directory server. Morphisec Labs’ CaddyWiper analysis follows.</p>
+<p>CaddyWiper is the fourth wiper observed attacking Ukrainian targets. WhisperGate was the first wiper. It was used in attacks on Ukrainian government agencies ahead of the invasion. WhisperGate was soon followed by HermeticWiper and IsaacWiper, with CaddyWiper the third wiper deployed in as many weeks.</p>
+<p></p>
+<h2>CaddyWiper Chart</h2>
+<p>This chart details the CaddyWiper execution flow:</p>
+<p><img alt="Caddywiper Execution Flow" src="https://blog.morphisec.com/hs-fs/hubfs/Caddywiper%20Execution%20Flow.png?width=631&amp;name=Caddywiper%20Execution%20Flow.png" width="631"/></p>
+<h2>Technical Analysis</h2>
+<h3>Main Functionality</h3>
+<p>If the computer that CaddyWiper was executed on is not a domain controller (DC), the machine won’t be harmed. If it is a PDC, Caddy starts wiping at “C:\\Users” in order not to break the operating system before the wiping process completes. It then deletes every drive letter from “D:\\” drive to “Z:\\”. If Caddy was run with administrator privileges, it also deletes the partition of the physical hard drives to absolutely wreck the operating system.</p>
+<p>The below text describes this flow:</p>
+<p><img alt="Caddywiper - Admin privileges" src="https://blog.morphisec.com/hs-fs/hubfs/Caddywiper%20-%20Admin%20privileges.png?width=618&amp;name=Caddywiper%20-%20Admin%20privileges.png" width="618"/></p>
+<h3>Dynamic API Loading</h3>
+<p>Caddy uses the process environment block (PEB) to resolve the required Windows application programming interface (API). This is to evade static and dynamic scanners. As part of reputation scoring, scanners validate for an executable import directory, and dynamic monitoring is based on imported API hooking. Caddy officially declares only on the DsRoleGetPrimaryDomainInformation API as part of its import address table (IAT) while the rest is resolved dynamically via the PEB.</p>
+<p>The image below displays the API resolution process through the PEB:<img alt="API Resolution" src="https://blog.morphisec.com/hs-fs/hubfs/API%20Resolution.png?width=833&amp;name=API%20Resolution.png" style="max-width:800px;height:auto;width:auto;" width="833"/>Pseudocode is available <a href="https://pastebin.com/VPWGkZW9">here</a> (Password: morphisec)</p>
+<h3>File Wiping </h3>
+<p>The function wipepath is responsible for the actual wiping process of a file. This function can handle hidden and system files while additionally acquiring discretionary access control to the file in path. This is to ensure as many files as possible are wiped. It wipes a maximum of a 10MB chunk from the beginning of the file as part of performance optimization.</p>
+<p>See below the wipepath function:</p>
+<p><img alt="wipepath - File wiping" src="https://blog.morphisec.com/hs-fs/hubfs/wipepath%20-%20File%20wiping.png?width=841&amp;name=wipepath%20-%20File%20wiping.png" style="max-width:800px;height:auto;width:auto;" width="841"/></p>
+<h3>Discretionary Access Control</h3>
+<p>The wiper changes the DACL of a file object by taking ownership of that object. This only succeeds if whoever starts the Caddy process has WRITE_DAC access to the object or is the owner of the object. If the initial attempt to change the DACL fails, the code enables the privilege of ‘SeTakeOwnershipPrivilege.’ It then makes the local system's administrators group the owner of the object. The code used in Caddy is similar to the example that <a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/taking-object-ownership-in-c--">MSDN</a> provides.</p>
+<p><img alt="DACL - Caddywiper" src="https://blog.morphisec.com/hs-fs/hubfs/DACL%20-%20Caddywiper.png?width=807&amp;name=DACL%20-%20Caddywiper.png" style="max-width:800px;height:auto;width:auto;" width="807"/></p>
+<p><img alt="DACL (2)" src="https://blog.morphisec.com/hs-fs/hubfs/DACL%20(2).png?width=775&amp;name=DACL%20(2).png" style="max-width:800px;height:auto;width:auto;" width="775"/></p>
+<h3>Partition Wiping </h3>
+<p>The IOCTL (‘IOCTL_DISK_SET_DRIVE_LAYOUT_EX ‘) passed in DeviceIoControl is generally used for disk repartition according to the specified drive layout and partition information data. However, in our case, it just wipes 0x780 bytes from the physical drive while it iterates from “\\\\.\\PHYSICALDRIVE9” and goes until “\\\\.\\PHYSICALDRIVE0”. However, it can only be done if Caddy is executed with administrator privileges.</p>
+<p><img alt="Partition Wiping" src="https://blog.morphisec.com/hs-fs/hubfs/Partition%20Wiping.png?width=751&amp;name=Partition%20Wiping.png" style="max-width:800px;height:auto;width:auto;" width="751"/></p>
+<h3>The Impact</h3>
+<p>CaddyWiper can be executed with or without administrator privilege. In both cases it causes lethal damage to the target machine. CaddyWiper execution without administrator privileges makes files worthless, as seen below:</p>
+<p><img alt="executed with or without administrator privilege" src="https://blog.morphisec.com/hs-fs/hubfs/executed%20with%20or%20without%20administrator%20privilege.png?width=1116&amp;name=executed%20with%20or%20without%20administrator%20privilege.png" style="max-width:800px;height:auto;width:auto;" width="1116"/></p>
+<p>And when CaddyWiper starts with administrator privileges, it makes the operating system useless as well:</p>
+<p><img alt="Operating System useless" src="https://blog.morphisec.com/hs-fs/hubfs/Operating%20System%20useless.png?width=640&amp;name=Operating%20System%20useless.png" width="640"/></p>
+<h2>CaddyWiper Analysis</h2>
+<p>Caddy is a sophisticated wiper that can transform any machine it’s deployed against into a very expensive door stopper. Unfortunately, traditional endpoint security solutions have a hard time preventing sophisticated attacks such as CaddyWiper. Due to its evasive, polymorphic nature, CaddyWiper hides its functionality from runtime monitoring and pattern matching. Though the impact is visible, response time is irrelevant when it gets to wipers or ransomware. </p>
+<p>Reactive and static antivirus (AV) and endpoint detection and response (EDR) solutions need augmentation to prevent APTs and lower the risk of breaches, lawsuits, fines, and brand damage. Morphisec provides this additional defense layer and virtual patching with Moving Target Defense (MTD) technology. MTD creates a dynamic attack surface threat actors can’t penetrate, causing them to abort attacks. To learn more about Moving Target Defense, read the white paper: <a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy">Zero Trust + Moving Target Defense: Stopping Ransomware, Zero-Day, and Other Advanced Threats Where NGAV and EDR Are Failing</a>.</p>
+<h2>Indicators of Compromise (IOCs)</h2>
+<table>
+<tbody>
+<tr>
+<td>
+<p>a294620543334a721a2ae8eaaf9680a0786f4b9a216d75b55cfd28f39e9430ea</p>
+<p>1e87e9b5ee7597bdce796490f3ee09211df48ba1d11f6e2f5b255f05cc0ba176</p>
+<p>ea6a416b320f32261da8dafcf2faf088924f99a3a84f7b43b964637ea87aef72</p>
+<p>F1e8844dbfc812d39f369e7670545a29efef6764d673038b1c3edd11561d6902</p>
+<p>B66b179eac03afafdc69f62c207819eceecfbf994c9efa464fda0d2ba44fe2d7</p>
+<p>9d83817f7cae01554f77680ed7e6698966bcf020915c0dc411e5d57f6eea6ed4</p>
+<p>5cc51f29c6074d9741d6e68bcf9ce8363d623437ea11506a36791b4763cefdc7</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy-download" rel="noopener"><img alt="The Ultimate Ransomware Strategy - Zero Trust &amp; Moving Target Defense" src="https://blog.morphisec.com/hs-fs/hubfs/image-Mar-09-2022-06-20-00-29-PM.png?width=640&amp;name=image-Mar-09-2022-06-20-00-29-PM.png" width="640"/></a></p>
+<p> </p>
+<h3>Subscribe to our blog</h3>
+<p>Stay in the loop with industry insight, cyber security trends, and cyber attack information and company updates.</p>
+<a class="cta_button" href="https://blog.morphisec.com/cs/c/?cta_guid=262dcaf9-2354-46c6-b31c-babe01409164&amp;signature=AAH58kEei8C6YPLtyz1S_-Rx8kqgBinz3g&amp;pageId=70296582245&amp;placement_guid=91ae0282-4842-46a2-a64f-055310ee09b0&amp;click=207090c4-640d-4292-8a19-d4643eb1991c&amp;hsutk=6876cc02438ddd7843b3a48f0f0f2e7c&amp;canon=https%3A%2F%2Fblog.morphisec.com%2Fcaddywiper-analysis-new-malware-attacking-ukraine&amp;portal_id=1534169&amp;redirect_url=APefjpGJM0ttQBr-l8f_gE2jmE0X66Kp3IffEq7-7E1QSNE55du9CfAwuYge3TE0U79y1VSCrXqaslEQm-GA4oklnlfbRrunhVWOEBiaT09-vcteK54e6oAdX6POuDOC6hkpWyJBCU-TUSFWuut-EKL2gHSuss6fJJlOXJ8lGid4BFFiZ-0kzWjn65SnVNIKjPe911BgVnyictRQKaHpTlfBQ7WFAJnAIqNyJqh2oyOLPAwg20Xf65lcugu1UTMPbZ_0wVxx5LhuTpEY7G913LfTMkyyjx01Zg&amp;__hstc=182053752.6876cc02438ddd7843b3a48f0f0f2e7c.1649177866505.1649177866505.1649177866505.1&amp;__hssc=182053752.1.1649177866506&amp;__hsfp=98101046&amp;contentType=blog-post" id="cta_button_1534169_262dcaf9-2354-46c6-b31c-babe01409164"><img alt="New call-to-action" class="hs-cta-img" id="hs-cta-img-91ae0282-4842-46a2-a64f-055310ee09b0" src="https://1534169.fs1.hubspotusercontent-na1.net/hubfs/1534169/hub_generated/resized/75f3c3f3-55b1-4dd5-9095-cc0ea27a21e0.png" style="max-width:80%;height:auto;width:auto;"/></a><img height="1" id="pixel-91ae0282-4842-46a2-a64f-055310ee09b0-262dcaf9-2354-46c6-b31c-babe01409164" src="https://track.hubspot.com/__ptq.gif?k=12&amp;aij=%5B%2291ae0282-4842-46a2-a64f-055310ee09b0%22%2C%22262dcaf9-2354-46c6-b31c-babe01409164%22%5D&amp;rfc=8&amp;sd=1900x1080&amp;cd=24-bit&amp;cs=UTF-8&amp;ln=en-us&amp;bfp=98101046&amp;v=1.1&amp;a=1534169&amp;pi=70296582245&amp;ct=blog-post&amp;ccu=https%3A%2F%2Fblog.morphisec.com%2Fcaddywiper-analysis-new-malware-attacking-ukraine&amp;cpi=70296582245&amp;cgi=3742504875&amp;lpi=70296582245&amp;lvi=70296582245&amp;lvc=en-us&amp;pu=https%3A%2F%2Fblog.morphisec.com%2Fcaddywiper-analysis-new-malware-attacking-ukraine&amp;t=CaddyWiper+Analysis%3A+New+Malware+Attacking+Ukraine&amp;cts=1649177866520&amp;vi=6876cc02438ddd7843b3a48f0f0f2e7c&amp;nc=true&amp;ce=false&amp;cc=0" width="1"/>
+<h3>Search Our Site</h3>
+<ul class="hs-search-field__suggestions"></ul>
+</div>

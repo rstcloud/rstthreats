@@ -1,0 +1,80 @@
+[
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0xe6a5fb46",
+            "title": "Threat Advisory: DoubleZero",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0xef638dce",
+            "title": "Overview",
+            "text": "The Computer Emergency Response Team of Ukraine released an\nadvisory\non March 22, 2022 disclosing another wiper dubbed \"DoubleZero\" targeting Ukrainian enterprises during Russia's invasion of the country. This wiper was detected as early as March 17, 2022. DoubleZero is yet another wiper discovered in addition to previously disclosed attacks we've seen in Ukraine over the past two months, such as \"\nCaddyWiper\n\" \"\nHermeticWiper\n\" and \"\nWhisperGate\n.\"\nDoubleZero is a .NET-based implant that destroys files, registry keys and trees on the infected endpoint.\nCisco Talos is actively conducting analysis to confirm the details included in these reports."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0x39f6efd4",
+            "title": "Wiper analysis",
+            "text": "The malware first checks if the current endpoint is one of the domain's controllers. If the endpoint's name is found, the wiper simply stops executing.\nThe wiper begins by obtaining the following privileges on the endpoint:\nSeTakeOwnershipPrivilege\nSeRestorePrivilege\nSeBackupPrivilege\nSeShutdownPrivilege\nIt aims to overwrite all files in all drives by destroying all files in all drives except for a specific list of the locations hardcoded in the wiper. The malware intends to destroy non-system files first, then system-related files. Destroying system related files while the overwriting of other files is pending can create instability and may lead to bricking the system before the complete destruction of the user's files is completed. In such cases, it may be possible to recover the files from the disk that haven't been overwritten yet.\nThe system folders reserved for destruction *after* all other files have been destroyed:\n<Root_drive>\\Windows\\Microsoft.NET\n<Root_drive>\\Windows\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\Local Settings.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Application Data.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\Start Menu.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\Application Data.*\n<Root_drive>\\\\ProgramData\\\\\\\\Microsoft.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Microsoft.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Roaming\\\\\\\\Microsoft.*\n<Root_drive>\\Documents and Settings\n<Root_drive>\\ProgramData\\Application Data\n<Root_drive>\\Users\\All Users\n<Root_drive>\\Users\\Default User\n<Root_drive>\\system\\drivers\n<Root_drive>\\Windows\\NTDS\nThe wiper will enumerate all file paths and decide if the file is \"safe\" to destroy immediately i.e., not a system file.\nFor each file that is deemed \"safe\" to destroy (i.e., not in the exclusions listed above), the wiper will:\nChange the access control of files by giving the Local System Account (WellKnownSidType.LocalSystemSid) full control of the file.\nUse one of the two wiper functions to destroy the files."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0x8a16c41c",
+            "title": "Wiper function No. 1",
+            "text": "This routine will use APIs such as NtfsControlFile with a control code of\nFSCTL_SET_ZERO_DATA\n(0x980C8) to fill up the file with all zero bytes.\nNtfsControlFile used against a file to zero it out."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0x8782fc26",
+            "title": "Wiper function No. 2",
+            "text": "The second routine used to overwrite the files is relatively simpler. It opens the target file as a FileStream and simply overwrites it with an array containing all zeros.\nFile being overwritten by an array containing all zeros.\nThen the wiper moves on to the destruction of system files which is also carried out by the two wiper functions illustrated above. The order of destruction of the system files is:\nFirst:\n<Root_drive>\\system\\drivers\nSecond:\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\Local Settings.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Application Data.*\n<Root_drive>\\Windows\\NTDS\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Microsoft.*\n<Root_drive>\\\\Users\\\\\\\\.*?\\\\\\\\AppData\\\\\\\\Roaming\\\\\\\\Microsoft.*\nThird:\n<Root_drive>\\Windows\nThe wiper then proceeds to destroy entries in the registry hives:\nHKLM\nHKCU\nHKU\nIt will first kill all processes on the system named \"lsass\". Then, it will set the current user as the owner of the registry keys under these hives, change the access rights to get full control of the reg keys and then overwrite the values. The wiper will also delete subkey trees recursively.\nWiper creating a rule to obtain full access to registry keys\nWiper deleting subkey trees in registry.\nOnce all the destructive activity has been completed, the wiper will then shutdown the system using the\nExitWindowsEx\nAPI call."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xd3feb068",
+            "date": "20220326",
+            "title": "Threat Advisory: DoubleZero",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-doublezero.html"
+        },
+        "chapter": {
+            "id": "chapter_0x90bd8d84",
+            "title": "IOCs",
+            "text": "d897f07ae6f42de8f35e2b05f5ef5733d7ec599d5e786d3225e66ca605a48f53\n8dd8b9bd94de1e72f0c400c5f32dcefc114cc0a5bf14b74ba6edc19fd4aeb2a5\n3b2e708eaa4744c76a633391cf2c983f4a098b46436525619e5ea44e105355fe\n30b3cbe8817ed75d8221059e4be35d5624bd6b5dc921d4991a7adc4c3eb5de4a\nPosted by\nAsheer Malhotra\nat\n12:57 PM\nLabels:\nMalware\n,\nSecureX\n,\nUkraine\n,\nwiper\nShare This Post"
+        }
+    }
+]

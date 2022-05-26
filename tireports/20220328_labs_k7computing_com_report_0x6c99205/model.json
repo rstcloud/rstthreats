@@ -1,0 +1,368 @@
+{
+    "id": "<report_0x6c99205>",
+    "url": "https://labs.k7computing.com/index.php/dissecting-the-kazy-crypter",
+    "title": "Dissecting the Kazy Crypter",
+    "meta": [
+        {
+            "id": "<chapter_0x60033d5f>",
+            "title": "Dissecting the Kazy Crypter",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x60eb0110>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By Lokesh JMarch 28, 2022",
+                    "html": "\nBy Lokesh JMarch 28, 2022\n \n"
+                },
+                {
+                    "id": "<sentence_0x91328039>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0xf6fd7b55>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc1fa9ee7>": "https://www.virustotal.com/gui/file/b2460e7d227ee80cee742afb2bf6919bdf7ee524db65b42a71114149d83f7a01/detection"
+                    },
+                    "text": "Kazy Crypter has been sold in many underground forums and markets since 2014. The cost of this crypter averages between 13 USD to 30 USD depending on the number of days it will be used and it is advertised as fully compatible with most of the well-known RATs available in the market such as LuminosityLink, NanoCore, etc. Nowadays, though its not used very often, there was a submission of the Kazy Loader module to VT during the 1st week of March along with the source code of Kazy Crypter. This blog gives you the complete analysis of Kazy Crypter and its loader functionalities.",
+                    "html": "<p>Kazy Crypter has been sold in many underground forums and markets since 2014. The cost of this crypter averages between 13 USD to 30 USD depending on the number of days it will be used and it is advertised as fully compatible with most of the well-known RATs available in the market such as LuminosityLink, NanoCore, etc. Nowadays, though it\u2019s not used very often, there was a submission of the Kazy Loader module to <a href=\"https://www.virustotal.com/gui/file/b2460e7d227ee80cee742afb2bf6919bdf7ee524db65b42a71114149d83f7a01/detection\" rel=\"noopener\" target=\"_blank\">VT</a> during the 1st week of March along with the source code of Kazy Crypter. This blog gives you the complete analysis of Kazy Crypter and its loader functionalities. </p>"
+                },
+                {
+                    "id": "<sentence_0xdb288bd0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Crypter was last seen on Hack Forums in 2018 with the price of 13 USD and by 2019 there was also a thread stating that the author doesnt reply to his email and the crypter hosting site is down.",
+                    "html": "<p>The Crypter was last seen on Hack Forums in 2018 with the price of 13 USD and by 2019 there was also a thread stating that the author doesn\u2019t reply to his email and the crypter hosting site is down.</p>"
+                },
+                {
+                    "id": "<sentence_0xed4c7525>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xde1d55bd>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-1.png"
+                    },
+                    "text": "Figure 1: Activities on Hack Forums",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23686\"><img alt=\"\" class=\"wp-image-23686 size-full\" height=\"510\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-1.png\" width=\"1128\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23686\">Figure 1: Activities on Hack Forums</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xb4e82d0b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In 2021, the cracked version of the Crypter was seen being promoted in one of the underground forums as depicted in Figure 2.",
+                    "html": "<p>In 2021, the cracked version of the Crypter was seen being promoted in one of the underground forums as depicted in Figure 2.</p>"
+                },
+                {
+                    "id": "<sentence_0x4aa39a7d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc3d7cf91>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-2.png"
+                    },
+                    "text": "Figure 2: Cracked version of the Crypter",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23689\"><img alt=\"\" class=\"wp-image-23689 size-full\" height=\"281\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-2.png\" width=\"1236\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23689\">Figure 2: Cracked version of the Crypter</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x931d84da>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xae42e115>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The GUI of the Crypter is quite straightforward and very simple to use. The 1st tab in the GUI has the option to input the file to be compiled with options such as whether to obfuscate, compress the file or use Anti-VM, Anti-Sandbox and Anti-Emulator functionalities as depicted in Figure 3.",
+                    "html": "<p>The GUI of the Crypter is quite straightforward and very simple to use. The 1st tab in the GUI has the option to input the file to be compiled with options such as whether to obfuscate, compress the file or use Anti-VM, Anti-Sandbox and Anti-Emulator functionalities as depicted in Figure 3.</p>"
+                },
+                {
+                    "id": "<sentence_0x94252c4f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xaa4a63d1>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-3.png"
+                    },
+                    "text": "Figure 3: GUI of the Crypter",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23692\"><img alt=\"\" class=\"wp-image-23692 size-full\" height=\"251\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-3.png\" width=\"507\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23692\">Figure 3: GUI of the Crypter</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xaac7d422>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Apart from this, it also has a host of other functionalities for process persistence, registry persistence, BSOD on process termination, hiding files, delayed execution, file size pumping with random junk data, start-up location and self-copy to location like %Appdata%, %temp%, Program files etc., as depicted in Figure 4.",
+                    "html": "<p>Apart from this, it also has a host of other functionalities for process persistence, registry persistence, BSOD on process termination, hiding files, delayed execution, file size pumping with random junk data, start-up location and self-copy to location like %Appdata%, %temp%, Program files etc., as depicted in Figure 4.</p>"
+                },
+                {
+                    "id": "<sentence_0xe563a81f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x176f353>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-4.png"
+                    },
+                    "text": "Figure 4: Other functionalities provided by the Crypter",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23693\"><img alt=\"\" class=\"wp-image-23693 size-full\" height=\"543\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-4.png\" width=\"516\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23693\">Figure 4: Other functionalities provided by the Crypter</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x865a81c5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Once the file is built and compiled, we receive a file which is a minimum of 70KB size and varies depending on the functions you select. The 1st task of the binary upon execution is to decrypt the PE loaders DLL file name Kazyloader.dll stored in an array as depicted in Figure 5.",
+                    "html": "<p>Once the file is built and compiled, we receive a file which is a minimum of 70KB size and varies depending on the functions you select. The 1st task of the binary upon execution is to decrypt the PE loader\u2019s DLL file name Kazyloader.dll stored in an array as depicted in Figure 5.</p>"
+                },
+                {
+                    "id": "<sentence_0xc62cb92f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x567e876>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-5.png"
+                    },
+                    "text": "Figure 5: Decryption of Kazyloader.dll",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23694\"><img alt=\"\" class=\"wp-image-23694 size-full\" height=\"463\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-5.png\" width=\"835\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23694\">Figure 5: Decryption of Kazyloader.dll</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x7b65df9c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then creates a Delegate for the function which dynamically invokes and calls the Start function of the decrypted file Kazyloader.dll as depicted in Figure 6. Delegates are similar to pointers in C and C++ functions. It is a reference type variable that holds reference to a method and that reference can be changed at runtime. Programmers often tend to use delegates when they need to pass a method as a parameter of another method.",
+                    "html": "<p>It then creates a Delegate for the function which dynamically invokes and calls the Start function of the decrypted file Kazyloader.dll as depicted in Figure 6. Delegates are similar to pointers in C and C++ functions. It is a reference type variable that holds reference to a method and that reference can be changed at runtime. Programmers often tend to use delegates when they need to pass a method as a parameter of another method.</p>"
+                },
+                {
+                    "id": "<sentence_0xa467d331>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6cce6da4>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-6.png"
+                    },
+                    "text": "Figure 6: Creating delegate to execute the decrypted file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23696\"><img alt=\"\" class=\"wp-image-23696 size-full\" height=\"266\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-6.png\" width=\"749\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23696\">Figure 6: Creating delegate to execute the decrypted file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x19a1ce23>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The argument passed to the Start function are",
+                    "html": "<p>The argument passed to the Start function are </p>"
+                },
+                {
+                    "id": "<sentence_0xdd564c94>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "resname resource name where encrypted content is present as a PNG file",
+                    "html": "<p>resname \u2013 resource name where encrypted content is present as a PNG file</p>"
+                },
+                {
+                    "id": "<sentence_0xcbb4395d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "key decryption key",
+                    "html": "<p>key \u2013 decryption key</p>"
+                },
+                {
+                    "id": "<sentence_0xc53ccf3e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Args string array to store the decrypted content",
+                    "html": "<p>Args \u2013 string array to store the decrypted content</p>"
+                },
+                {
+                    "id": "<sentence_0xe51cea9e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then it loads the PNG data in the resource and retrieves the required byte from the image and stores it in an array as depicted in Figure 8.",
+                    "html": "<p>Then it loads the PNG data in the resource and retrieves the required byte from the image and stores it in an array as depicted in Figure 8.</p>"
+                },
+                {
+                    "id": "<sentence_0xe6e1fb0e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe9d64898>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-7.png"
+                    },
+                    "text": "Figure 7: Decryption key and resource name passed as parameters",
+                    "html": "<figure class=\"wp-caption alignnone\" id=\"attachment_23697\"><img alt=\"\" class=\"wp-image-23697 size-full\" height=\"538\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-7.png\" width=\"721\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23697\">Figure 7: Decryption key and resource name passed as parameters</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x87595673>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x4b0f025a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x52f62f08>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-8.png"
+                    },
+                    "text": "Figure 8: Get bytes from image",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23698\"><img alt=\"\" class=\"wp-image-23698 size-full\" height=\"518\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-8.png\" width=\"753\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23698\">Figure 8: Get bytes from image</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xa1923c35>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then it proceeds to decrypt the payload that was compiled using the Kazy Crypter and stores it in an array as depicted in Figure 9. Once the decryption is complete, it then invokes and calls the entry point of the payload to execute the same.",
+                    "html": "<p>Then it proceeds to decrypt the payload that was compiled using the Kazy Crypter and stores it in an array as depicted in Figure 9. Once the decryption is complete, it then invokes and calls the entry point of the payload to execute the same. </p>"
+                },
+                {
+                    "id": "<sentence_0x13d11fcf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdd3d81c7>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-9.png"
+                    },
+                    "text": "Figure 9: Payload decryption",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23699\"><img alt=\"\" class=\"wp-image-23699 size-full\" height=\"476\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Figure-9.png\" width=\"573\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23699\">Figure 9: Payload decryption</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x8be74606>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Considering the time when the Kazy Crypter showed up, we can glean that it is pretty old and almost all the AV vendors have behaviour detections. But the fact that it was submitted to VT only recently with the latest compilation time means someone is again working on it or at least evaluating it. K7 Labs continuously monitors such kinds of malware, tools and campaigns to provide effective protection against all of them.",
+                    "html": "<p>Considering the time when the Kazy Crypter showed up, we can glean that it is pretty old and almost all the AV vendors have behaviour detections. But the fact that it was submitted to VT only recently with the latest compilation time means someone is again working on it or at least evaluating it. K7 Labs continuously monitors such kinds of malware, tools and campaigns to provide effective protection against all of them. </p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x3ca35c5>",
+            "title": "Dissecting the Kazy Crypter",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3640cb9d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdf798a6e>": "https://labs.k7computing.com/wp-content/uploads/2022/03/Dissecting-the-Kazy-Crypter.jpg"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" class=\"hidden-social-img\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/03/Dissecting-the-Kazy-Crypter.jpg\"/>"
+                },
+                {
+                    "id": "<sentence_0x26758d00>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdfa61a24>": "https://labs.k7computing.com/index.php/category/malware-crypters/"
+                    },
+                    "text": "Malware Crypters",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/malware-crypters/\">Malware Crypters</a>"
+                },
+                {
+                    "id": "<sentence_0xff337fbc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf907ea61>": "https://labs.k7computing.com/index.php/category/remote-access-trojan/"
+                    },
+                    "text": "Remote Access Trojan",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/remote-access-trojan/\">Remote Access Trojan</a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8ff9d541>",
+            "title": "Indicators of Compromise (IOCs)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc2de38c3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A1F567E926F1E7E86F1B5176B291368B Trojan ( 0058f62d1 ) Kazyloader.dll",
+                    "html": "<p>A1F567E926F1E7E86F1B5176B291368B \u2013 Trojan ( 0058f62d1 ) \u2013 Kazyloader.dll</p>"
+                },
+                {
+                    "id": "<sentence_0x729acb8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C48772ABD1903CDC23258190E9F88730 Trojan ( 0058f62d1 ) Kazyloader.dll",
+                    "html": "<p>C48772ABD1903CDC23258190E9F88730 \u2013 Trojan ( 0058f62d1 ) \u2013 Kazyloader.dll</p>"
+                },
+                {
+                    "id": "<sentence_0x4df2af8e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x39844e20>",
+            "title": "Like what you're reading? Subscribe to our top stories.",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb392c7cb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If you want to subscribe to our monthly newsletter, please submit the form below.",
+                    "html": "<p class=\"sendgrid_widget_text\">If you want to subscribe to our monthly newsletter, please submit the form below.</p>"
+                },
+                {
+                    "id": "<sentence_0x4c7b3e05>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Email* :",
+                    "html": " Email* : \n"
+                },
+                {
+                    "id": "<sentence_0xf67fbf60>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb8146cb5>": "https://labs.k7computing.com/index.php/the-secrets-of-trident/"
+                    },
+                    "text": "Previous Post The Secrets of Trident<crlf>Next Post",
+                    "html": "<ul class=\"controls\">\n<li class=\"previous-post mouse-leaving\">\n<h3>Previous Post\u00ab <a href=\"https://labs.k7computing.com/index.php/the-secrets-of-trident/\" rel=\"prev\">The Secrets of Trident</a>\n</h3>\n</li>\n<li class=\"next-post mouse-leaving\">\n<h3>Next Post\n</h3>\n</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5457c4f5>",
+            "title": "More Posts",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfd9949cb>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ul class=\"commentlist\">\n</ul>"
+                }
+            ]
+        }
+    ]
+}

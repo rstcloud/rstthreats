@@ -1,0 +1,130 @@
+<div>
+<img alt="BAZARLOADER: Unpacking an ISO File Infection" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" style="max-width:80%;height:auto;width:auto;"/>
+<ul class="entry-meta">
+<li>
+<a href="https://www.0ffset.net/author/chuong-dong/">
+												Chuong Dong											</a>
+</li>
+<li>
+											19th April 2022										</li>
+<li>
+ 
+											No Comments										</li>
+</ul>
+<p>BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During an infection, the final loader payload typically downloads and executes a Cobalt Strike beacon to provide remote access for the threat actors, which, in a lot of cases, leads to ransomware being deployed to the victim’s machine.</p>
+<p>In this initial post, we will unpack the different stages of a BAZARLOADER infection that comes in the form of an optical disk image (ISO) file. We will also dive into the obfuscation methods used by the main BAZARLOADER payload.</p>
+<p>To follow along, you can grab the sample as well as the PCAP files for it on <a href="https://www.malware-traffic-analysis.net/2022/02/07/index.html" rel="noreferrer noopener" target="_blank">Malware-Traffic-Analysis.net</a>.</p>
+<p>SHA256: 0900b4eb02bdcaefd21df169d21794c8c70bfbc68b2f0612861fcabc82f28149</p>
+<h1>Step 1: Mounting ISO File &amp; Extracting Stage 1 Executable</h1>
+<p>Recent BAZARLOADER samples arrive in emails containing OneDrive links to download an ISO file to avoid detection since most AVs tend to ignore this particular file type. With Windows 7 and above integrating the mounting functionality into Windows Explorer, we can mount any ISO file as a virtual drive by double-clicking on it.</p>
+<p>When we mount the malicious ISO file, we see that a drive is mounted on the system that contains a shortcut file named “Attachments.lnk” and a hidden file named “documents.log”.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5759" height="203" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01.png" style="max-width:800px;height:auto;width:auto;" width="833"/></figure>
+<p>The shortcut file has to be run by the victim to begin the chain of infection. We can quickly extract the actual command being executed by this shortcut from its Properties window.</p>
+<code>C:\Windows\System32\rundll32.exe documents.log,vspa</code>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5761" height="507" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_02.png" width="362"/></figure>
+<p>Once the victim double-clicks on the shortcut file, the command executes the Windows rundll32.exe program to launch the “documents.log” file. This lets us know that the file being launched is a DLL file, and the entry point is its export function vspa.</p>
+<h1>Step 2: Extracting Second Stage Shellcode</h1>
+<p>Taking a quick look in IDA, we can somewhat tell that the extracted DLL is packed since it has only a few functions and a really suspicious looking buffer of ASCII characters in its custom .odata section.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-5764" height="623" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-1024x623.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>With that in mind, we will just perform some quick static analysis to determine where we can dump the next stage.</p>
+<p>In the first function of the vspa export, we see sub_1800045D6 takes a DWORD in as the parameter. This function returns a variable that contains an address to a function that is later called in the code.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5765" height="340" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04.png" style="max-width:800px;height:auto;width:auto;" width="902"/></figure>
+<p>At this point, we can safely guess that sub_1800045D6 is an API resolving function, and the parameter it takes is the hash of the API’s name. Because this is still the unpacking phase, we won’t dive too deep into analyzing this function.</p>
+<p>Instead, I’ll just use OALabs’s <a href="https://github.com/OALabs/hashdb-ida" rel="noreferrer noopener" target="_blank">HashDB</a> IDA plugin to quickly reverse-lookup the hashing algorithm used from the hash. The result shows that the hash corresponds to an API name hashed with <a href="https://github.com/OALabs/hashdb/blob/b3cc544fad41c749d04616663ac13f02bf1aaf37/algorithms/metasploit.py" rel="noreferrer noopener" target="_blank">Metasploit’s hashing algorithm ROR13</a>.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5766" height="307" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_05.png" style="max-width:800px;height:auto;width:auto;" width="663"/></figure>
+<p>After determining the hashing algorithm, we can use HashDB to quickly look up the APIs being resolved by this function. It becomes clear that this function resolves the RtlAllocateHeap API, calls that to allocate a heap buffer and writes the encoded ASCII data to it.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5772" height="444" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1.png" style="max-width:800px;height:auto;width:auto;" width="923"/></figure>
+<p>From this point onward, we can guess that the packer will decode this buffer and launch it somewhere later in the code. If we skip toward the end of the vspa export, we see a call instruction on a variable that is not returned from the API resolving function, so it can potentially be our tail jump.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5773" height="302" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07.png" style="max-width:800px;height:auto;width:auto;" width="885"/></figure>
+<p>The last function to modify that v19 variable is sub_180003FE6, so we can quickly take a look at that.</p>
+<p>It turns out the sub_180003FE6 function just resolves and calls NtMapViewOfSection to map a view of a section into the virtual address space and writes the base address of the view into the v19 variable. Then, it just executes qmemcpy to copy the data in the second variable to the returned virtual base address.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5774" height="570" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08.png" style="max-width:800px;height:auto;width:auto;" width="885"/></figure>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5775" height="193" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_09.png" width="617"/></figure>
+<p>This tells us two things. First, our guess that the v19 variable will contain the address to executable code is correct. Second, we know that the executable code is shellcode since the data is mapped and executed directly at offset 0 from where it is written.</p>
+<p>From here, we can set up x64dbg, execute the DLL file at the vspa export, and break at the call instruction. After stepping into the function, we will be at the head of the shellcode.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-5777" height="520" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-1024x520.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>We can now dump this virtual memory buffer to retrieve the second stage shellcode for the next unpacking step.</p>
+<h1>Step 3: Extracting The Final BAZARLOADER Payload</h1>
+<p>When we examine the shellcode in IDA, we can quickly use the same trick with HashDB above to see that the shellcode also performs API hashing with Metasploit’s ROR13.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5780" height="489" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11.png" style="max-width:800px;height:auto;width:auto;" width="794"/></figure>
+<p>At the entry point above, the shellcode resolves a set of functions that it will call, most notably VirtualAlloc and VirtualProtect. These two functions are typically used by packers to allocate virtual memory to decode and write the next stage executable in before launching it.</p>
+<p>With this in mind, our next step should be debugging the shellcode and setting breakpoints at these two API calls. We can pick up where we are after dumping in x64dbg during Step 2, or we can launch the shellcode directly in our debugger using OALabs’s <a href="https://github.com/OALabs/BlobRunner">BlobRunner</a> or similar shellcode launcher.</p>
+<p>Our first hit with VirtualAlloc is a call to allocate a virtual memory buffer at virtual address 0x204140000 with the size of 0x2A000 bytes.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-5784" height="452" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-1024x452.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>We can run until VirtualAlloc returns and start monitoring the memory at address 0x204140000. After running until the next VirtualProtect call, we see that a valid PE executable has been written to this memory region.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5785" height="377" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13.png" style="max-width:800px;height:auto;width:auto;" width="860"/></figure>
+<p>Finally, we can dump this memory region into a file to extract the BAZARLOADER payload.</p>
+<h1>Step 4: BAZARLOADER’s String Obfuscation</h1>
+<p>As we begin performing static analysis on BAZARLOADER, it is crucial that we identify obfuscation methods that the malware uses.</p>
+<p>One of those methods is string obfuscation, where the malware uses encoded stack strings to hide them from static analysis.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5787" height="219" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_14.png" style="max-width:800px;height:auto;width:auto;" width="730"/></figure>
+<p>As shown, a typical encoded string is pushed on the stack and decoded dynamically using some multiplication, subtraction, and modulus operations.</p>
+<p>There are different ways to resolve these stack strings, such as writing IDAPython scripts, <a href="https://github.com/mandiant/flare-emu" rel="noreferrer noopener" target="_blank">emulation</a>, or just running the program in a debugger and dumping the stack strings when they are resolved.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5789" height="540" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15.png" style="max-width:800px;height:auto;width:auto;" width="935"/></figure>
+<h1>Step 5: BAZARLOADER’s API Obfuscation</h1>
+<p>BAZARLOADER obfuscates most of its API calls through a few structures that it constructs in the DllEntryPoint function.</p>
+<p>First, the malware populates the following structure that contains a handle to Kernel32.dll and addresses to API required to load libraries and get their API addresses.</p>
+<code>struct API_IMPORT_STRUCT {
+ HANDLE kernel32_handle;
+ FARPROC mw_GetProcAddress;
+ FARPROC mw_LoadLibraryW;
+ FARPROC mw_LoadLibraryA;
+ FARPROC mw_LoadLibraryA2;
+ FARPROC mw_FreeLibrary;
+ FARPROC mw_GetModuleHandleW;
+ FARPROC mw_GetModuleHandleA;
+};
+</code>
+<p>It calls GetModuleHandle to retrieve the handle to Kernel32.dll, calls GetProcAddress to retrieve the address of the GetProcAddress API, and writes those in the structure.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5791" height="613" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" style="max-width:800px;height:auto;width:auto;" width="933"/></figure>
+<p>Using the structure’s GetProcAddress API field, BAZARLOADER retrieves the rest of the required APIs to populate other fields in the structure. This API_IMPORT_STRUCT structure will later be used to import other libraries’ APIs.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5794" height="362" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17.png" style="max-width:800px;height:auto;width:auto;" width="947"/></figure>
+<p>Next, for each library to be imported, BAZARLOADER populates the following LIBRARY_STRUCT structure that contains a set of functions to interact with the library and the library handle.</p>
+<code>struct LIB_FUNCS
+{
+ FARPROC free_lib;
+ FARPROC w_free_lib;
+ __int64 (__fastcall *get_API_addr)(API_IMPORT_STRUCT*, HANDLE, char*);
+};
+struct LIBRARY_STRUCT
+{
+ LIB_FUNCS *lib_funcs;
+ HANDLE lib_handle;
+};
+</code>
+<p>The first 2 functions in the LIB_FUNCS structure just call the FreeLibrary API from the global API_IMPORT_STRUCT to free the library module.</p>
+<p>The third function calls the GetProcAddress from the API_IMPORT_STRUCT’s field to retrieve the address of an API exported from that specific library.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5795" height="256" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_18.png" style="max-width:800px;height:auto;width:auto;" width="656"/></figure>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-5797" height="81" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-1024x81.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>To begin populating each LIBRARY_STRUCT structure, BAZARLOADER decodes the library name from a stack string and populates it with the corresponding set of functions and the library handle retrieved from calling LoadLibraryA.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5798" height="398" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20.png" style="max-width:800px;height:auto;width:auto;" width="774"/></figure>
+<p>Below is the list of all libraries used by the malware.</p>
+<code>kernel32.dll, wininet.dll, advapi32.dll, ole32.dll, rpcrt4.dll, shell32.dll, bcrypt.dll, crypt32.dll, dnsapi.dll, netapi32.dll, shlwapi.dll, user32.dll, ktmw32.dll</code>
+<p>The LIBRARY_STRUCT structures corresponding to these are pushed into a global list in the order below.</p>
+<code>struct LIBRARY_STRUCT_LIST
+{
+ LIBRARY_STRUCT *lib_struct_kernel32;
+ LIBRARY_STRUCT *lib_struct_wininet;
+ LIBRARY_STRUCT *lib_struct_advapi32;
+ LIBRARY_STRUCT *lib_struct_ole32;
+ LIBRARY_STRUCT *lib_struct_rpcrt4;
+ LIBRARY_STRUCT *lib_struct_shell32;
+ LIBRARY_STRUCT *lib_struct_bcrypt;
+ LIBRARY_STRUCT *lib_struct_crypt32;
+ LIBRARY_STRUCT *lib_struct_dnsapi;
+ LIBRARY_STRUCT *lib_struct_netapi32;
+ LIBRARY_STRUCT *lib_struct_shlwapi;
+ LIBRARY_STRUCT *lib_struct_user32;
+ LIBRARY_STRUCT *lib_struct_ktmw32;
+};
+</code>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5800" height="673" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_21.png" style="max-width:800px;height:auto;width:auto;" width="767"/></figure>
+<p>After this global list of LIBRARY_STRUCT is populated, an API can be called from a function taking in its corresponding library’s LIBRARY_STRUCT structure and its parameters. </p>
+<p>This function resolves the API name from a stack string, retrieves the API’s address using the get_API_addr function from the library structure, and calls the API with its parameters.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5802" height="259" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22.png" style="max-width:800px;height:auto;width:auto;" width="847"/></figure>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-5803" height="220" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_23.png" width="570"/></figure>
+<p>The way the wrapper function is setup to call the actual API is really intuitive, making the code simple to understand through static analysis. However, it’s a bit more difficult to automate the process since there is no API hashing involved.</p>
+<p>For my analysis, I just manually decode the stack strings in my debugger and rename the wrapper function accordingly.</p>
+<p>At this point, we have fully unpacked BAZARLOADER and understood how the malware obfuscates its strings and APIs to make analysis harder.</p>
+<p>In the next blog post, we will fully analyze how the loader downloads and launches a Cobalt Strike beacon from its C2 servers!</p>
+</div>

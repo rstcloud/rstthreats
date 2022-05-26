@@ -1,0 +1,681 @@
+{
+    "title": "How to Write YARA Rules That Minimize False Positives",
+    "url": "https://www.intezer.com/blog/threat-hunting/yara-rules-minimize-false-positives",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x8bd5383c>",
+                    "type": "Threat",
+                    "value": "emotet"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet"
+                    ],
+                    "titles": [
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xf09f944a>",
+                    "type": "Threat",
+                    "value": "wannacry"
+                },
+                "references": {
+                    "sentences": [
+                        "WannaCry"
+                    ],
+                    "titles": [
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch.",
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat.",
+                        "Create a free Intezer account here start analyzing files to generate custom YARA rules or download YARA rules for public malware samples in Intezer now.",
+                        "Almost every software or malware today contains previously written code. Developers of trusted applications will employ code reuse to make their work more efficient and to bring tools to market faster. The same approach applies for malware authors. As attackers write more malware they will establish code patterns. For defenders, this provides an opportunity for attribution and identifying threat actor capabilities.",
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": [
+                        "Defining Code Reuse",
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x151cee5c>",
+                    "type": "Category",
+                    "value": "trojan"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": [
+                        "Defining Code Reuse"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": [
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": [
+                        "Defining Code Reuse"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<INDUSTRY_0x6ba3d0a8>",
+                    "type": "Industry",
+                    "value": "government"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": [
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            }
+        ],
+        "Geo": [
+            {
+                "token": {
+                    "id": "<GEO_0x52d263f3>",
+                    "type": "Geo",
+                    "value": "israeli"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": [
+                        "Key Takeaways for Writing Effective Rules"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {},
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x19faa01f>",
+                    "type": "UnknownWord",
+                    "value": "minimize"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "How to Write YARA Rules That Minimize False Positives"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x77ae46fb>",
+                    "type": "UnknownWord",
+                    "value": "applies"
+                },
+                "references": {
+                    "sentences": [
+                        "Almost every software or malware today contains previously written code. Developers of trusted applications will employ code reuse to make their work more efficient and to bring tools to market faster. The same approach applies for malware authors. As attackers write more malware they will establish code patterns. For defenders, this provides an opportunity for attribution and identifying threat actor capabilities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x31d512e0>",
+                    "type": "UnknownWord",
+                    "value": "genetic"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch.",
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7bead0dc>",
+                    "type": "UnknownWord",
+                    "value": "tiny"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1e125891>",
+                    "type": "UnknownWord",
+                    "value": "genes"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9fb3368a>",
+                    "type": "UnknownWord",
+                    "value": "intent"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5234cde9>",
+                    "type": "UnknownWord",
+                    "value": "classifying"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf9610ebc>",
+                    "type": "UnknownWord",
+                    "value": "nation-state"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbba2a2d3>",
+                    "type": "UnknownWord",
+                    "value": "shape"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf4ff52e>",
+                    "type": "UnknownWord",
+                    "value": "studying"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ccb6e98>",
+                    "type": "UnknownWord",
+                    "value": "never-before-seen"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa4dbf397>",
+                    "type": "UnknownWord",
+                    "value": "scratch"
+                },
+                "references": {
+                    "sentences": [
+                        "Genetic analysis of threats breaks down a given file into thousands of tiny fragments of code, or genes. Identifying code that was used in previous attacks can provide critical insights for security teams, including:<crlf>Accurately determining the intent of the software. For example, is the file trusted or malicious?<crlf>Classifying a malicious file to its relevant malware family.<crlf>Uncovering the level of sophistication and potential risk of the threat. For example, are you<crlf>dealing with a common banking trojan, a sophisticated APT or a nation-state sponsored<crlf>attack? The answer will shape your response.<crlf>Making attribution to the threat actor responsible for creating the malware.<crlf>Not only can studying patterns in code reuse identify the origin of any given file, it can highlight unique, never-before-seen code, which can detect new threats that have been written from scratch."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8171a14d>",
+                    "type": "UnknownWord",
+                    "value": "accelerate"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x30eef2dd>",
+                    "type": "UnknownWord",
+                    "value": "classify"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x196d3057>",
+                    "type": "UnknownWord",
+                    "value": "empower"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b37af2b>",
+                    "type": "UnknownWord",
+                    "value": "respect"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8296b7a1>",
+                    "type": "UnknownWord",
+                    "value": "textual"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5f8fa4dd>",
+                    "type": "UnknownWord",
+                    "value": "code-based"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2e0933e3>",
+                    "type": "UnknownWord",
+                    "value": "tolerant"
+                },
+                "references": {
+                    "sentences": [
+                        "Incorporating YARA into daily security operations can accelerate incident response time, classify malware, empower threat intelligence and improve detection capabilities by creating custom signatures.<crlf>Traditional methods for writing effective YARA signatures have their challenges, including being too specific or generic with respect to a files textual or binary patterns.<crlf>In todays YARA landscape many signatures are based on string reuse. The challenge is to identify the unique strings, however even if this is achieved, these signatures are much less effective because strings can be easily manipulated, replaced or encrypted by the adversary to avoid detection.<crlf>Identifying malicious code seen in previous threats can be used to generate more accurate YARA signatures for detecting future variants or new malware.<crlf>The Intezer Analyze platform enables users to automatically generate YARA rules based on binary code, rather than simple strings. Code-based YARA rules are the most effective since they are tolerant to modifications and are more equipped to detect variants of the same threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd69670ee>",
+                    "type": "UnknownWord",
+                    "value": "ari eitan"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari Eitan"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xca858988>",
+                    "type": "UnknownWord",
+                    "value": "ari"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb0a195d>",
+                    "type": "UnknownWord",
+                    "value": "genome"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x187a2849>",
+                    "type": "UnknownWord",
+                    "value": "eitan"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbca5eaaa>",
+                    "type": "UnknownWord",
+                    "value": "publishing"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x35841148>",
+                    "type": "UnknownWord",
+                    "value": "idf"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb741e5de>",
+                    "type": "UnknownWord",
+                    "value": "became"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbfc384ff>",
+                    "type": "UnknownWord",
+                    "value": "idfs"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcfb5c755>",
+                    "type": "UnknownWord",
+                    "value": "honing"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd9664b33>",
+                    "type": "UnknownWord",
+                    "value": "expertise"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb845e631>",
+                    "type": "UnknownWord",
+                    "value": "bsidestlv"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a619127>",
+                    "type": "UnknownWord",
+                    "value": "avar"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7060e18a>",
+                    "type": "UnknownWord",
+                    "value": "cybertech"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8073f7e1>",
+                    "type": "UnknownWord",
+                    "value": "hacktivity"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeec58eaf>",
+                    "type": "UnknownWord",
+                    "value": "expo"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x19faa01f>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x19faa01f>",
+                    "type": "UnknownWord",
+                    "value": "minimize"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "How to Write YARA Rules That Minimize False Positives"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0x187a2849>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x187a2849>",
+                    "type": "UnknownWord",
+                    "value": "eitan"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x7060e18a>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7060e18a>",
+                    "type": "UnknownWord",
+                    "value": "cybertech"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8073f7e1>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8073f7e1>",
+                    "type": "UnknownWord",
+                    "value": "hacktivity"
+                },
+                "references": {
+                    "sentences": [
+                        "Ari manages the team responsible for the genetic algorithm behind Intezers code genome database. In his role as VP of Research, Eitan leads the companys malware hunting and investigation operations, analyzing threats and publishing information about new APTs. Eitan began his career as a security researcher for the Israeli Defense Force (IDF). He quickly became Head of the IDFs cyber incident response team (IDF CERT), honing his expertise in incident response, malware analysis, and reverse engineering. Eitan has presented his research at several government and information security events, including AVAR, BSidesTLV, CyberTech, Hack.lu, Hacktivity, Infosec, IP EXPO, Kaspersky SAS, and the Forum of Incident Response and Security Teams (FIRST)."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": true
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [],
+        "attributed": [
+            "For defenders, this provides an opportunity for attribution and identifying threat actor capabilities",
+            "Making attribution to the threat actor responsible for creating the malware"
+        ]
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://analyze.intezer.com/create-account",
+                "https://twitter.com/arieitan",
+                "https://www.linkedin.com/in/ari-eitan-04b47b70/",
+                "https://www.intezer.com/tag/code-reuse/",
+                "https://www.intezer.com/tag/detection-rules/",
+                "https://www.intezer.com/tag/emotet/",
+                "https://www.intezer.com/tag/false-positives/",
+                "https://www.intezer.com/tag/threat-detection/",
+                "https://www.intezer.com/tag/wannacry/",
+                "https://www.intezer.com/tag/yara-rules/"
+            ]
+        },
+        "images": [
+            "https://149520725.v2.pressablecdn.com/wp-content/uploads/2017/10/Ari-60x60.jpg"
+        ]
+    }
+}

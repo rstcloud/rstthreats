@@ -1,0 +1,108 @@
+[
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x87779875",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xcf62749e",
+            "title": "Technical Analysis",
+            "text": "The malware (SHA 256: 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b) is packed using the UPX packer. After unpacking, the payload is compiled using Visual C++. The file has encrypted strings and several jumps and calls that can make debugging difficult, as shown below.\nFigure 3: Code flow of Pandora Ransomware\nThe malware runs a decryption loop that decrypts the strings present in the file, as shown in Figure 4.\nFigure 4: Decryption Loop\nInitially, the malware creates a mutex named ThisIsMutexa using CreateMutexA() API to ensure that only one instance of the malware is running in the system.\nFigure 5: Creates Mutex\nThe malware then loads ntdll.dll and calls the NtSetInformationProcess () API, which changes the privilege level and sets the malware file as a critical process. The malware then disables the Event Tracing for Windows (ETW) by patching the EtwEventWrite() function and further bypasses Antimalware Scan Interface (AMSI) to evade detection by Anti-Virus products.\nThe AMSI allows the integration of applications and processes with the anti-malware solution present on a system. AMSI scans files that are executed through PowerShell, Jscript, VBA, VBScript, etc.\nThe malware also calls SetProcessShutdownParameters() to reduce the processs priority, i.e., set it to zero. This means that malware will be terminated last before the system shutdown so that the malware gets the maximum amount of time possible to execute in the compromised machine.\nAfter altering the priority, the malware calls SHEmptyRecycleBinA() API to empty the recycle bin to ensure no deleted files are restored after encryption.\nLike other ransomware, the malware deletes shadow copies using vssadmin using ShellExecuteW() API, as shown in Figure 6.\nFigure 6: Deletes shadow copies\nBefore encrypting the machine, the malware gets the Volume details by calling the APIs such as:\nGetDriveTypeW()\nFindFirstVolumeW()\nFindNextVolumeW()\nGetVolumePathNamesForVolumeNameW()\nGetLogicalDrives()\nBefore initiating encryption, the ransomware checks and excludes specific folders from encryption such as AppData, Boot, Windows, Windows.old, Tor Browser, Internet Explorer, Google, Opera, Opera Software, Mozilla, Mozilla Firefox, ProgramData, Program Files, Program Files (x86).\nThe Ransomware also excludes certain files from encryption such as autorun.inf, boot.ini, bootfont.bin, bootsect.bak, bootmgr, bootmgr.efi, bootmgfw.efi, desktop.ini, iconcache.db, ntldr, ntuser.dat.\nAdditionally, specific extensions are also exempted from encryption such as .pandora, .hta, .exe, .dll, .cpl, .ini, .cab, .cur, .drv, .hlp, .icl, .icns, .ico, .idx, .sys, .spl, .ocx.\nFinally, the ransomware searches for files using FindFirstFileW() and FindNextFileW () APIs and then proceeds to encrypt them.\nThe malware uses multithreading approach for faster encryption. It calls CreateThread(), SetThreadAffinityMask(), ResumeThread(), CreteIOCompletionPort() and GetQueuedCompletionStatus() APIs for multithreading.\nFinally, the ransom note is displayed, as shown in Figure 7.\nFigure 7: Ransom note"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xdf3e3362",
+            "title": "Possible ROOK ransomware re-brand:",
+            "text": "During our analysis, we found that the Tactic Technique and Procedures (TTPs) of the Pandora and ROOK ransomware shared a lot of similarities.\nIn Dec 2021, ROOK ransomware posted on their leak site claiming to have attacked one of the worlds largest automotive suppliers of technology and components. Following this, their leak site went down around the end of Jan 2022.\nPandora ransomware in March 2022 posted the same victim on their leak site. Due to this incident and the similarities in how they operate, it is suspected that Pandora might be a re-brand of ROOK ransomware.\nFigure 8: Pandora ransomware leak site"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xafff379c",
+            "title": "Conclusion",
+            "text": "Theres a good chance that Pandora ransomware is a re-brand of ROOK ransomware. We had observed similar behavior in the past when ransomware groups were coming up with new aliases when they were under scrutiny.\nPandora ransomware gang is suspected of leveraging the double extortion method where the TAs exfiltrate the victims data followed by data encryption. Then, they threaten to leak the exfiltrated data on their leak site or on cybercrime forums.\nOrganizations can mitigate such attacks by monitoring the darkweb and acting upon early warning indicators such as compromised credentials, data breaches, and identifying vulnerabilities traded on cybercrime forums."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xed4a49f5",
+            "title": "Our Recommendations:",
+            "text": "Enforce password change policies for the network and critical business applications or consider implementing multi-factor authentication for all remote network access points.\nReduce the attack surface by ensuring that sensitive ports are not exposed on the Internet.\nConduct cybersecurity awareness programs for employees and contractors.\nImplement a risk-based vulnerability management process for IT infrastructure to ensure that critical vulnerabilities and security misconfigurations are identified and prioritized for remediation.\nInstruct users to refrain from opening untrusted links and email attachments without verifying their authenticity.\nDeploy reputed anti-virus and internet security software package on your company-managed devices, including PCs, laptops, and mobile devices.\nTurn on the automatic software update features on computers, mobiles, and other connected devices wherever possible and pragmatic.\nDefine and implement a backup process and secure those backup copies by keeping them offline or on a separate network"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x421fc722",
+            "title": "MITRE ATT&CK Techniques",
+            "text": "",
+            "table": "0;1;2\nTactic;Technique ID;Technique Name\nExecution;T1059;Command and Scripting Interpreter\nPrivilege Escalation;T1548 T1134;Abuse Elevation Control Mechanism Access Token Manipulation\nDefense Evasion;T1112 T1027 T1562.001;Modify Registry  Obfuscated Files or Information Impair Defenses: Disable or Modify Tools\nDiscovery;T1082 T1083;System Information Discovery File and Directory Discovery\nImpact;T1490 T1489 T1486;Inhibit System Recovery Service Stop Data Encrypted for Impact\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x2087e68a",
+            "title": "Indicators of Compromise (IoCs):",
+            "text": "",
+            "table": "0;1;2\nIndicators;Indicator type;Description\n0c4a84b66832a08dccc42b478d9d5e1b 160320b920a5ef22ac17b48146152ffbef60461f 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b;Md5 SHA-1 SHA-256;Executable binary\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x23c9f4a1",
+            "date": "20220320",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xd8853340",
+            "title": "About Us",
+            "text": "Cybleis a global threat intelligence SaaS provider that helps enterprises protect themselves from cybercrimes and exposure in theDarkweb. Its prime focus is to provide organizations with real-time visibility to their digital risk footprint. Backed by Y Combinator as part of the 2021 winter cohort,Cyblehas also been recognized by Forbes as one of the top 20 Best Cybersecurity Start-upsToWatch In 2020. Headquartered in Alpharetta, Georgia,and with offices in Australia, Singapore, and India,Cyblehas a global presence. To learn more aboutCyble, visitwww.cyble.com."
+        }
+    }
+]

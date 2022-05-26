@@ -1,0 +1,1662 @@
+{
+    "id": "<report_0xba85a2c2>",
+    "url": "https://www.microsoft.com/security/blog/2022/05/19/rise-in-xorddos-a-deeper-look-at-the-stealthy-ddos-malware-targeting-linux-devices",
+    "title": "Rise in XorDdos: A deeper look at the stealthy DDoS malware targeting Linux devices",
+    "meta": [
+        {
+            "id": "<chapter_0xbac129d8>",
+            "title": "Rise in XorDdos: A deeper look at the stealthy DDoS malware targeting Linux devices",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfff3c1f2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft 365 Defender Research Team",
+                    "html": "<ul class=\"authors\">\n<li class=\"author-item\">\nMicrosoft 365 Defender Research Team\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x346cd298>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Initial access",
+                    "html": "<p id=\"Initial_access\">Initial access</p>"
+                },
+                {
+                    "id": "<sentence_0xc963be46>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos payload analysis",
+                    "html": "<p id=\"XorDdos_payload\">XorDdos payload analysis</p>"
+                },
+                {
+                    "id": "<sentence_0xa0d7285>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection evasion capabilities",
+                    "html": "<p id=\"Detection_evasion\">Detection evasion capabilities</p>"
+                },
+                {
+                    "id": "<sentence_0xec0a80e6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Persistence mechanisms",
+                    "html": "<p id=\"Persistence_mechanisms\">Persistence mechanisms</p>"
+                },
+                {
+                    "id": "<sentence_0xcdab05c0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Argument-based code-flow",
+                    "html": "<p id=\"Argument-based_code-flow\">Argument-based code-flow</p>"
+                },
+                {
+                    "id": "<sentence_0x5e7fb15d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Malicious activity threads",
+                    "html": "<p id=\"Malicious_activity\">Malicious activity threads</p>"
+                },
+                {
+                    "id": "<sentence_0xa41537e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DDoS attack thread pool",
+                    "html": "<p id=\"DDoS_attack\">DDoS attack thread pool</p>"
+                },
+                {
+                    "id": "<sentence_0x373c0454>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Defending against Linux platform threats",
+                    "html": "<p id=\"Defending_against\">Defending against Linux platform threats</p>"
+                },
+                {
+                    "id": "<sentence_0x7ac49cc5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection details",
+                    "html": "<p id=\"Detection_details\">Detection details</p>"
+                },
+                {
+                    "id": "<sentence_0x6fae591e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hunting queries",
+                    "html": "<p id=\"Hunting_queries\">Hunting queries</p>"
+                },
+                {
+                    "id": "<sentence_0xeebe0dc6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Indicators",
+                    "html": "<p id=\"Indicators\">Indicators</p>"
+                },
+                {
+                    "id": "<sentence_0xae7fe3e6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "File information",
+                    "html": "<p>File information</p>"
+                },
+                {
+                    "id": "<sentence_0x7c218c0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Dropped files",
+                    "html": "<p>Dropped files</p>"
+                },
+                {
+                    "id": "<sentence_0x1cd00382>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Download URLs",
+                    "html": "<p>Download URLs</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xc7f9b256>",
+            "title": "Rise in XorDdos: A deeper look at the stealthy DDoS malware targeting Linux devices",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb8ad3c0e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the last six months, we observed a 254% increase in activity from a Linux trojan called XorDdos. First discovered in 2014 by the research group MalwareMustDie, XorDdos was named after its denial-of-service-related activities on Linux endpoints and servers as well as its usage of XOR-based encryption for its communications.",
+                    "html": "<p>In the last six months, we observed a 254% increase in activity from a Linux trojan called XorDdos. First discovered in 2014 by the research group MalwareMustDie, XorDdos was named after its denial-of-service-related activities on Linux endpoints and servers as well as its usage of XOR-based encryption for its communications.</p>"
+                },
+                {
+                    "id": "<sentence_0xc16c3391>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x21d5ed06>": "https://azure.microsoft.com/blog/business-as-usual-for-azure-customers-despite-24-tbps-ddos-attack/?ranMID=24542&ranEAID=TnL5HPStwNw&ranSiteID=TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA&epi=TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA&irgwc=1&OCID=AID2200057_aff_7593_1243925&tduid=%28ir__f1adpj9cvckf62kijydwmqedqu2xtltt90ejoqbv00%29%287593%29%281243925%29%28TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA%29%28%29&irclickid=_f1adpj9cvckf62kijydwmqedqu2xtltt90ejoqbv00"
+                    },
+                    "text": "XorDdos depicts the trend of malware increasingly targeting Linux-based operating systems, which are commonly deployed on cloud infrastructures and Internet of Things (IoT) devices. By compromising IoT and other internet-connected devices, XorDdos amasses botnets that can be used to carry out distributed denial-of-service (DDoS) attacks. Using a botnet to perform DDoS attacks can potentially create significant disruptions, such as the 2.4 Tbps DDoS attack Microsoft mitigated in August 2021. DDoS attacks in and of themselves can be highly problematic for numerous reasons, but such attacks can also be used as cover to hide further malicious activities, like deploying malware and infiltrating target systems.",
+                    "html": "<p>XorDdos depicts the trend of malware increasingly targeting Linux-based operating systems, which are commonly deployed on cloud infrastructures and Internet of Things (IoT) devices. By compromising IoT and other internet-connected devices, XorDdos amasses botnets that can be used to carry out distributed denial-of-service (DDoS) attacks. Using a botnet to perform DDoS attacks can potentially create significant disruptions, such as the <a href=\"https://azure.microsoft.com/blog/business-as-usual-for-azure-customers-despite-24-tbps-ddos-attack/?ranMID=24542&amp;ranEAID=TnL5HPStwNw&amp;ranSiteID=TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA&amp;epi=TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA&amp;irgwc=1&amp;OCID=AID2200057_aff_7593_1243925&amp;tduid=%28ir__f1adpj9cvckf62kijydwmqedqu2xtltt90ejoqbv00%29%287593%29%281243925%29%28TnL5HPStwNw-QrFhTcj5NHbS49DwTEAxiA%29%28%29&amp;irclickid=_f1adpj9cvckf62kijydwmqedqu2xtltt90ejoqbv00\">2.4 Tbps DDoS attack Microsoft mitigated</a> in August 2021. DDoS attacks in and of themselves can be highly problematic for numerous reasons, but such attacks can also be used as cover to hide further malicious activities, like deploying malware and infiltrating target systems.</p>"
+                },
+                {
+                    "id": "<sentence_0xb90bc796>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Botnets can also be used to compromise other devices, and XorDdos is known for using Secure Shell (SSH) brute force attacks to gain remote control on target devices. SSH is one of the most common protocols in IT infrastructures and enables encrypted communications over insecure networks for remote system administration purposes, making it an attractive vector for attackers. Once XorDdos identifies valid SSH credentials, it uses root privileges to run a script that downloads and installs XorDdos on the target device.",
+                    "html": "<p>Botnets can also be used to compromise other devices, and XorDdos is known for using Secure Shell (SSH) brute force attacks to gain remote control on target devices. SSH is one of the most common protocols in IT infrastructures and enables encrypted communications over insecure networks for remote system administration purposes, making it an attractive vector for attackers. Once XorDdos identifies valid SSH credentials, it uses root privileges to run a script that downloads and installs XorDdos on the target device.</p>"
+                },
+                {
+                    "id": "<sentence_0x6f6d53d6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos uses evasion and persistence mechanisms that allow its operations to remain robust and stealthy. Its evasion capabilities include obfuscating the malwares activities, evading rule-based detection mechanisms and hash-based malicious file lookup, as well as using anti-forensic techniques to break process tree-based analysis. We observed in recent campaigns that XorDdos hides malicious activities from analysis by overwriting sensitive files with a null byte. It also includes various persistence mechanisms to support different Linux distributions.",
+                    "html": "<p>XorDdos uses evasion and persistence mechanisms that allow its operations to remain robust and stealthy. Its evasion capabilities include obfuscating the malware\u2019s activities, evading rule-based detection mechanisms and hash-based malicious file lookup, as well as using anti-forensic techniques to break process tree-based analysis. We observed in recent campaigns that XorDdos hides malicious activities from analysis by overwriting sensitive files with a null byte. It also includes various persistence mechanisms to support different Linux distributions. </p>"
+                },
+                {
+                    "id": "<sentence_0x6fe2f6cc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5ee89e63>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-1.-Typical-attack-vector-for-XorDdos-malware_ccexpress-1024x747.png"
+                    },
+                    "text": "Figure 1. A typical attack vector for XorDdos malware",
+                    "html": "<figure class=\"wp-block-image size-large\"><img alt=\"Figure 1 displays a diagram depicting a typical attack flow for XorDdos malware. The attacker communicates with a bot to SSH brute force a target device and download XorDdos. The malware then performs several techniques for evasion and persistence before connecting with the attacker's C2 server to send data and receive commands.\" class=\"wp-image-114540\" height=\"747\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-1.-Typical-attack-vector-for-XorDdos-malware_ccexpress-1024x747.png\" width=\"1024\"/><figcaption>Figure 1. A typical attack vector for XorDdos malware</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x1c855df7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos may further illustrate another trend observed in various platforms, in which malware is used to deliver other dangerous threats. We found that devices first infected with XorDdos were later infected with additional malware such as the Tsunami backdoor, which further deploys the XMRig coin miner. While we did not observe XorDdos directly installing and distributing secondary payloads like Tsunami, its possible that the trojan is leveraged as a vector for follow-on activities.",
+                    "html": "<p>XorDdos may further illustrate another trend observed in various platforms, in which malware is used to deliver other dangerous threats. We found that devices first infected with XorDdos were later infected with additional malware such as the Tsunami backdoor, which further deploys the XMRig coin miner. While we did not observe XorDdos directly installing and distributing secondary payloads like Tsunami, it\u2019s possible that the trojan is leveraged as a vector for follow-on activities.</p>"
+                },
+                {
+                    "id": "<sentence_0x3406e582>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x317d0352>": "https://www.microsoft.com/security/business/threat-protection/endpoint-defender?rtc=1"
+                    },
+                    "text": "Microsoft Defender for Endpoint protects against XorDdos by detecting and remediating the trojans multi-stage, modular attacks throughout its entire attack chain and any potential follow-on activities on endpoints. In this blog post, we detail our in-depth analysis of XorDdos to help defenders understand its techniques and protect their networks from this stealthy malware.",
+                    "html": "<p><a href=\"https://www.microsoft.com/security/business/threat-protection/endpoint-defender?rtc=1\">Microsoft Defender for Endpoint</a> protects against XorDdos by detecting and remediating the trojan\u2019s multi-stage, modular attacks throughout its entire attack chain and any potential follow-on activities on endpoints. In this blog post, we detail our in-depth analysis of XorDdos to help defenders understand its techniques and protect their networks from this stealthy malware.</p>"
+                },
+                {
+                    "id": "<sentence_0xb4a3d250>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This blog post covers the following topics:",
+                    "html": "<p>This blog post covers the following topics:</p>"
+                },
+                {
+                    "id": "<sentence_0xd9bf7693>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ul><li><a href=\"#Initial_access\">Initial access</a></li><li><a href=\"#XorDdos_payload\">XorDdos payload analysis</a><ul><li><a href=\"#Detection_evasion\">Detection evasion capabilities</a></li></ul><ul><li><a href=\"#Persistence_mechanisms\">Persistence mechanisms</a></li></ul><ul><li><a href=\"#Argument-based_code-flow\">Argument-based code-flow</a></li></ul><ul><li><a href=\"#Malicious_activity\">Malicious activity threads</a></li></ul><ul><li><a href=\"#DDoS_attack\">DDoS attack thread pool</a></li></ul></li><li><a href=\"#Defending_against\">Defending against Linux platform threats</a></li><li><a href=\"#Detection_details\">Detection details</a></li><li><a href=\"#Hunting_queries\">Hunting queries</a></li><li><a href=\"#Indicators\">Indicators</a></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd6840569>",
+            "title": "Initial access",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe489cdcc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos propagates primarily via SSH brute force. It uses a malicious shell script to try various root credential combinations across thousands of servers until finding a match on a target Linux device. As a result, we see many failed sign-in attempts on devices successfully infected by the malware:",
+                    "html": "<p>XorDdos propagates primarily via SSH brute force. It uses a malicious shell script to try various root credential combinations across thousands of servers until finding a match on a target Linux device. As a result, we see many failed sign-in attempts on devices successfully infected by the malware:</p>"
+                },
+                {
+                    "id": "<sentence_0x861c18f3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x50f4a5cf>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-2.-Failed-sign-in-attempts-on-a-device-affected-by-XorDdos.png"
+                    },
+                    "text": "Figure 2. Failed sign-in attempts on a device affected by XorDdos",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 2's line chart depicts the increasing amount of failed sign-in attempts by a device infected by XorDdos. \" class=\"wp-image-114375\" height=\"196\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-2.-Failed-sign-in-attempts-on-a-device-affected-by-XorDdos.png\" width=\"800\"/><figcaption>Figure 2. Failed sign-in attempts on a device affected by XorDdos</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2c0d5379>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Our analysis determined two of XorDdos methods for initial access. The first method involves copying a malicious ELF file to temporary file storage /dev/shm and then running it. Files written at /dev/shm are deleted during system restart, thus concealing the source of infection during forensic analysis.",
+                    "html": "<p>Our analysis determined two of XorDdos\u2019 methods for initial access. The first method involves copying a malicious ELF file to temporary file storage /dev/shm and then running it. Files written at /dev/shm are deleted during system restart, thus concealing the source of infection during forensic analysis.</p>"
+                },
+                {
+                    "id": "<sentence_0x42dcab09>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The second method involves running a bash script that performs the following activities via the command line:",
+                    "html": "<p>The second method involves running a bash script that performs the following activities via the command line:</p>"
+                },
+                {
+                    "id": "<sentence_0x26cff578>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Iterates the following folders to find a writable directory:/bin /home /root /tmp /usr /etc<crlf>If a writable directory is found, changes the working directory to the discovered writable directory.<crlf>Uses the curl command to download the ELF file payload from the remote location hxxp://Ipv4PII_777789ffaa5b68638cdaea8ecfa10b24b326ed7d/1[.]txt and saves the file as ygljglkjgfg0.<crlf>Changes the file mode to executable.<crlf>Runs the ELF file payload.<crlf>Moves and renames the Wget binary to evade rule-based detections triggered by malicious usage of the Wget binary. In this case, it renames the Wget binary to good and moves the file to the following locations:mv /usr/bin/wget /usr/bin/good mv /bin/wget /bin/good<crlf>Attempts to download the ELF file payload for a second time, now only using the file good and not the Wget binary.<crlf>After running the ELF file, uses an anti-forensic technique that hides its past activity by overwriting the content of the following sensitive files with a newline character:",
+                    "html": "<ol type=\"1\"><li>Iterates the following folders to find a writable directory:<ul><li>/bin</li><li>/home</li><li>/root</li><li>/tmp</li><li>/usr</li><li>/etc</li></ul></li><li>If a writable directory is found, changes the working directory to the discovered writable directory.</li><li>Uses the curl command to download the ELF file payload from the remote location hxxp://Ipv4PII_777789ffaa5b68638cdaea8ecfa10b24b326ed7d/1[.]txt and saves the file as ygljglkjgfg0.</li><li>Changes the file mode to \u201cexecutable\u201d.</li><li>Runs the ELF file payload.</li><li>Moves and renames the Wget binary to evade rule-based detections triggered by malicious usage of the Wget binary. In this case, it renames the Wget binary to good and moves the file to the following locations:<ul><li>mv /usr/bin/wget /usr/bin/good</li><li>mv /bin/wget /bin/good</li></ul></li><li>Attempts to download the ELF file payload for a second time, now only using the file good and not the Wget binary.</li><li>After running the ELF file, uses an anti-forensic technique that hides its past activity by overwriting the content of the following sensitive files with a newline character:</li></ol>"
+                },
+                {
+                    "id": "<sentence_0x766738c4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xcf3a83d>": {
+                            "0": {
+                                "0": "Sensitive File",
+                                "1": "/root/.bash_history",
+                                "2": "/var/log/wtmp",
+                                "3": "/var/log/btmp",
+                                "4": "/var/log/lastlog",
+                                "5": "/var/log/secure",
+                                "6": "/var/log/boot.log",
+                                "7": "/var/log/cron",
+                                "8": "/var/log/dmesg",
+                                "9": "/var/log/firewalld",
+                                "10": "/var/log/maillog",
+                                "11": "/var/log/messages",
+                                "12": "/var/log/spooler",
+                                "13": "/var/log/syslog",
+                                "14": "/var/log/yum.log"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "Contains the commands that were run earlier",
+                                "2": "Contains login related record for users",
+                                "3": "Contains record of failed login attempt",
+                                "4": "Contains the recent login information for users",
+                                "5": "Contains information related to security such as logs for authentication failure, sudo logins, and authorization privileges",
+                                "6": "Contains information related to system boot and message logged via system startup processes",
+                                "7": "Contains information related to cron job launch, success and failure error logs",
+                                "8": "Contains information related to kernel ring buffer messages, hardware devices, drivers, etc.",
+                                "9": "Contains logs related to firewall activities",
+                                "10": "Contains information related to a mail server running on the system",
+                                "11": "Contains generic system activity messages",
+                                "12": "Contains messages from usenet",
+                                "13": "Contains generic system activity messages",
+                                "14": "Contains the package logs related to installation\\remove\\update activities done via yum utility"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Sensitive File</td><td>Description</td></tr><tr><td>/root/.bash_history</td><td>Contains the commands that were run earlier</td></tr><tr><td>/var/log/wtmp</td><td>Contains login related record for users</td></tr><tr><td>/var/log/btmp</td><td>Contains record of failed login attempt</td></tr><tr><td>/var/log/lastlog</td><td>Contains the recent login information for users</td></tr><tr><td>/var/log/secure</td><td>Contains information related to security such as logs for authentication failure, sudo logins, and authorization privileges</td></tr><tr><td>/var/log/boot.log</td><td>Contains information related to system boot and message logged via system startup processes</td></tr><tr><td>/var/log/cron</td><td>Contains information related to cron job launch, success and failure error logs</td></tr><tr><td>/var/log/dmesg</td><td>Contains information related to kernel ring buffer messages, hardware devices, drivers, etc.</td></tr><tr><td>/var/log/firewalld</td><td>Contains logs related to firewall activities</td></tr><tr><td>/var/log/maillog</td><td>Contains information related to a mail server running on the system</td></tr><tr><td>/var/log/messages</td><td>Contains generic system activity messages</td></tr><tr><td>/var/log/spooler</td><td>Contains messages from usenet</td></tr><tr><td>/var/log/syslog</td><td>Contains generic system activity messages</td></tr><tr><td>/var/log/yum.log</td><td>Contains the package logs related to installation\\remove\\update activities done via yum utility</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0xfa4057dd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6bc164c6>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-3.-Remote-bash-script-command-used-for-initial-access.png"
+                    },
+                    "text": "Figure 3. Remote bash script command used for initial access",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 3 displays the remote bash script command used for initial access\" class=\"wp-image-114501\" height=\"844\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-3.-Remote-bash-script-command-used-for-initial-access.png\" width=\"800\"/><figcaption>Figure 3. Remote bash script command used for initial access</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xb2d51535>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Whichever initial access method is used, the result is the same: the running of a malicious ELF file, which is the XorDdos malware. In the next section, we do a deep dive into the XorDdos payload.",
+                    "html": "<p>Whichever initial access method is used, the result is the same: the running of a malicious ELF file, which is the XorDdos malware. In the next section, we do a deep dive into the XorDdos payload.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x369ed11a>",
+            "title": "XorDdos payload analysis",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xae418483>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The XorDdos payload we analyzed for this research is a 32-bit ELF file that was not stripped, meaning it contained debug symbols that detailed the malwares dedicated code for each of its activities. The inclusion of debug symbols makes it easier to debug and reverse engineer non-stripped binaries, as compared to stripped binaries that discard these symbols. In this case, the non-stripped binary includes the following source-code file names associated with the symbol table entries as part of the .strtab section in the ELF file:",
+                    "html": "<p>The XorDdos payload we analyzed for this research is a 32-bit ELF file that was not stripped, meaning it contained debug symbols that detailed the malware\u2019s dedicated code for each of its activities. The inclusion of debug symbols makes it easier to debug and reverse engineer non-stripped binaries, as compared to stripped binaries that discard these symbols. In this case, the non-stripped binary includes the following source-code file names associated with the symbol table entries as part of the .strtab section in the ELF file:</p>"
+                },
+                {
+                    "id": "<sentence_0x11ecf5cd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "crtstuff.c<crlf>autorun.c<crlf>crc32.c<crlf>encrypt.c<crlf>execpacket.c<crlf>buildnet.c<crlf>hide.c<crlf>http.c<crlf>kill.c<crlf>main.c<crlf>proc.c<crlf>socket.c<crlf>tcp.c<crlf>thread.c<crlf>findip.c<crlf>dns.c",
+                    "html": "<ul><li>crtstuff.c</li><li>autorun.c</li><li>crc32.c</li><li>encrypt.c</li><li>execpacket.c</li><li>buildnet.c</li><li>hide.c</li><li>http.c</li><li>kill.c</li><li>main.c</li><li>proc.c</li><li>socket.c</li><li>tcp.c</li><li>thread.c</li><li>findip.c</li><li>dns.c</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x1afa0f9b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The above list of source-code file names indicate that the binary is programmed in C/C++ and that its code is modular.",
+                    "html": "<p>The above list of source-code file names indicate that the binary is programmed in C/C++ and that its code is modular.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x75d07474>",
+            "title": "Detection evasion capabilities",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe6dc4506>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos contains modules with specific functionalities to evade detection, as detailed below.",
+                    "html": "<p>XorDdos contains modules with specific functionalities to evade detection, as detailed below. </p>"
+                },
+                {
+                    "id": "<sentence_0xf20d061>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Daemon processes",
+                    "html": "<p>Daemon processes</p>"
+                },
+                {
+                    "id": "<sentence_0x2f49bd8a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A daemon process is a process that runs in the background rather than under the control of users and detaches itself from the controlling terminal, terminating only when the system is shut down. Similar to some Linux malware families, the XorDdos trojan uses daemon processes, as detailed below, to break process tree-based analysis:",
+                    "html": "<p>A daemon process is a process that runs in the background rather than under the control of users and detaches itself from the controlling terminal, terminating only when the system is shut down. Similar to some Linux malware families, the XorDdos trojan uses daemon processes, as detailed below, to break process tree-based analysis:</p>"
+                },
+                {
+                    "id": "<sentence_0xc20cac91>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware calls the subroutine daemon(__nochdir, __noclose) to set itself as a background daemon process, which internally calls fork() and setsid(). The fork() API creates a new child process with the same process group-id as the calling process.<crlf>After the successful call to the fork() API, the parent stops itself by returning EXIT_SUCCESS (0). The purpose is to ensure that the child process is not a group process leader, which is a prerequisite for the setsid() API call to be successful. It then calls setsid() to detach itself from the controlling terminal.<crlf>The daemon subroutine also has a provision to change the directory to the root directory (/) if the first parameter __nochdir is called with a value equal to 0. One reason for the daemon process to change the directory to the root partition (/)is because running the process from the mounted file system prevents unmounting unless the process is stopped.<crlf>It passes the second parameter __noclose as 0 to redirect standard input, standard output, and standard error to /dev/null. It does this by calling dup2 on the file descriptor for /dev/null.<crlf>The malware calls multiple signal APIs to ignore a possible signal from the controlling terminal and detach the current process from the standard stream and HangUp signals (SIGHUP) when the terminal session is disconnected. Performing this evasive signal suppression helps stop the effects of standard libraries trying to write to standard output or standard error, or trying to read from standard input, which could stop the malwares child process. The API signal() sets the disposition of the signal signum to the handler, which is either SIG_IGN, SIG_DFL, or the address of a programmer-defined signal handler. In this case, the second parameter is set to SIG_IGN=1, which ignores the signal corresponding to signum.",
+                    "html": "<ol type=\"1\"><li>The malware calls the subroutine daemon(__nochdir, __noclose) to set itself as a background daemon process, which internally calls fork() and setsid(). The fork() API creates a new child process with the same process group-id as the calling process.</li><li>After the successful call to the fork() API, the parent stops itself by returning \u201cEXIT_SUCCESS (0)\u201d. The purpose is to ensure that the child process is not a group process leader, which is a prerequisite for the setsid() API call to be successful. It then calls setsid() to detach itself from the controlling terminal.</li><li>The daemon subroutine also has a provision to change the directory to the root directory (\u201c/\u201c) if the first parameter __nochdir is called with a value equal to \u201c0\u201d. One reason for the daemon process to change the directory to the root partition (\u201c/\u201c)is because running the process from the mounted file system prevents unmounting unless the process is stopped. </li><li>It passes the second parameter __noclose as \u201c0\u201d to redirect standard input, standard output, and standard error to /dev/null. It does this by calling dup2 on the file descriptor for /dev/null.</li><li>The malware calls multiple signal APIs to ignore a possible signal from the controlling terminal and detach the current process from the standard stream and HangUp signals (SIGHUP) when the terminal session is disconnected. Performing this evasive signal suppression helps stop the effects of standard libraries trying to write to standard output or standard error, or trying to read from standard input, which could stop the malware\u2019s child process. The API signal() sets the disposition of the signal signum to the handler, which is either SIG_IGN, SIG_DFL, or the address of a programmer-defined signal handler. In this case, the second parameter is set to \u201cSIG_IGN=1\u201d, which ignores the signal corresponding to signum.</li></ol>"
+                },
+                {
+                    "id": "<sentence_0xe8fac1a9>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4dab1f23>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-4.-Ignore-signals-associated-with-the-terminal-related-operations.png"
+                    },
+                    "text": "Figure 4. Ignore signals associated with the terminal-related operations",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 4 displays how signals associated with terminal-related operations are ignored.\" class=\"wp-image-114504\" height=\"242\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-4.-Ignore-signals-associated-with-the-terminal-related-operations.png\" width=\"800\"/><figcaption>Figure 4. Ignore signals associated with the terminal-related operations</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x377c5a06>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XOR-based encryption",
+                    "html": "<p>XOR-based encryption</p>"
+                },
+                {
+                    "id": "<sentence_0x7aec58fb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As its name suggests, XorDdos uses XOR-based encryption to obfuscate data. It calls the dec_conf function to decode encoded strings using the XOR key BB2FA36AAA9541F0. The table below shows the decoded values of the obfuscated data used across the malwares various modules to conduct its activities.",
+                    "html": "<p>As its name suggests, XorDdos uses XOR-based encryption to obfuscate data. It calls the dec_conf function to decode encoded strings using the XOR key \u201cBB2FA36AAA9541F0\u201d. The table below shows the decoded values of the obfuscated data used across the malware\u2019s various modules to conduct its activities.</p>"
+                },
+                {
+                    "id": "<sentence_0x8c78be26>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xb8af0219>": {
+                            "0": {
+                                "0": "Encrypted strings",
+                                "1": "m7A4nQ_/nA",
+                                "2": "m [(n3",
+                                "3": "m6_6n3",
+                                "4": "m4S4nAC/n&ZV\\x1aA/TB",
+                                "5": "m.[$n__#4%\\C\\x1aB]0",
+                                "6": "m.[$n3",
+                                "7": "m4S4nAC/nA",
+                                "8": "!#Ff3VE.-7\\x17V[_",
+                                "9": "<Encrypted_Remote_URL>"
+                            },
+                            "1": {
+                                "0": "Decoded value",
+                                "1": "/usr/bin/",
+                                "2": "/bin/",
+                                "3": "/tmp/",
+                                "4": "/var/run/gcc.pid",
+                                "5": "/lib/libudev.so",
+                                "6": "/lib/",
+                                "7": "/var/run/",
+                                "8": "cat resolv.conf",
+                                "9": "hxxp://aa.hostasa[.]org/config.rar"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Encrypted strings</td><td>Decoded value</td></tr><tr><td>m7A4nQ_/nA</td><td>/usr/bin/</td></tr><tr><td>m [(n3</td><td>/bin/</td></tr><tr><td>m6_6n3</td><td>/tmp/</td></tr><tr><td>m4S4nAC/n&amp;ZV\\x1aA/TB</td><td>/var/run/gcc.pid</td></tr><tr><td>m.[$n__#4%\\C\\x1aB]0</td><td>/lib/libudev.so</td></tr><tr><td>m.[$n3</td><td>/lib/</td></tr><tr><td>m4S4nAC/nA</td><td>/var/run/</td></tr><tr><td>!#Ff3VE.-7\\x17V[_</td><td>cat resolv.conf</td></tr><tr><td>&lt;Encrypted_Remote_URL&gt;</td><td>hxxp://aa.hostasa[.]org/config.rar</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0xa979ac6e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Process name spoofing",
+                    "html": "<p>Process name spoofing</p>"
+                },
+                {
+                    "id": "<sentence_0x68da969a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When a process is launched, arguments are provided to its main function as null-terminated strings, where the first argument is always the process image path. To spoof its process name, XorDdos zeroes out all argument buffers while running and overrides its first argument buffer containing the image path with a fake command line, such as cat resolv.conf.",
+                    "html": "<p>When a process is launched, arguments are provided to its main function as null-terminated strings, where the first argument is always the process image path. To spoof its process name, XorDdos zeroes out all argument buffers while running and overrides its first argument buffer containing the image path with a fake command line, such as cat resolv.conf.</p>"
+                },
+                {
+                    "id": "<sentence_0x122cc49f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x38867e3a>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/5-test_ccexpress.png"
+                    },
+                    "text": "Figure 5. Process name spoofing achieved by modifying memory associated with argument vectors.",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 5 displays how process name spoofing is achieved by modifying memory associated with argument vectors.\" class=\"wp-image-114519\" height=\"577\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/5-test_ccexpress.png\" width=\"800\"/><figcaption>Figure 5. Process name spoofing achieved by modifying memory associated with argument vectors.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x8a4c3181>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x52a1c39a>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-6.-Output-of-the-%E2%80%98ps-aef-contains-an-entry-for-cat-resolv.conf_.png"
+                    },
+                    "text": "Figure 6. Output of the ps -aef contains an entry for cat resolv.conf",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 6 displays the output of the 'ps -aef' containing an entry for &quot;cat resolv.conf&quot;. \" class=\"wp-image-114387\" height=\"129\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-6.-Output-of-the-%E2%80%98ps-aef-contains-an-entry-for-cat-resolv.conf_.png\" width=\"800\"/><figcaption>Figure 6. Output of the \u2018ps -aef\u2019 contains an entry for \u201ccat resolv.conf\u201d</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x9d3b6456>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Kernel rootkit",
+                    "html": "<p>Kernel rootkit</p>"
+                },
+                {
+                    "id": "<sentence_0xd4141c68>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Some XorDdos samples install a kernel rootkit. A rootkit is a kernel module that hides the presence of malicious code by modifying operating systems data structures. The XorDdos kernel rootkit generally has following capabilities:",
+                    "html": "<p>Some XorDdos samples install a kernel rootkit. A rootkit is a kernel module that hides the presence of malicious code by modifying operating systems data structures. The XorDdos kernel rootkit generally has following capabilities:</p>"
+                },
+                {
+                    "id": "<sentence_0x9e18f3b4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Provide root access<crlf>Hide the kernel module<crlf>Hide the malwares processes<crlf>Hide the malwares network connections and ports",
+                    "html": "<ul><li>Provide root access</li><li>Hide the kernel module</li><li>Hide the malware\u2019s processes</li><li>Hide the malware\u2019s network connections and ports</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x695e32b0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb99228fa>": "https://github.com/jermeyyy/rooty"
+                    },
+                    "text": "Based on the debug symbols found in the rootkit, its likely that XorDdos rootkit code was inspired by an open-source project called rooty. The following table describes the symbols found in the rootkit and their corresponding functionalities:",
+                    "html": "<p>Based on the debug symbols found in the rootkit, it\u2019s likely that XorDdos\u2019 rootkit code was inspired by an open-source project called <a href=\"https://github.com/jermeyyy/rooty\">rooty</a>. The following table describes the symbols found in the rootkit and their corresponding functionalities:</p>"
+                },
+                {
+                    "id": "<sentence_0x30f640da>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x7736ebeb>": {
+                            "0": {
+                                "0": "Function name",
+                                "1": "give_root",
+                                "2": "module_hide",
+                                "3": "module_show",
+                                "4": "get_udp_seq_show",
+                                "5": "get_tcp_seq_show",
+                                "6": "hide_udp4_port",
+                                "7": "unhide_udp4_port",
+                                "8": "hide_udp6_port",
+                                "9": "unhide_udp6_port",
+                                "10": "hide_tcp4_port",
+                                "11": "unhide_tcp4_port",
+                                "12": "hide_tcp6_port",
+                                "13": "unhide_tcp6_port",
+                                "14": "unhide_allz"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "Provides a root privilege by setting a new set of credentials and assigning its UID, GID to \u201c0\u201d",
+                                "2": "Hides the rootkit kernel module",
+                                "3": "Unhides the rootkit kernel module",
+                                "4": "Hides the UDP4 connection by hooking /proc/net/udpHides the UDP6 connection by hooking /proc/net/udp6",
+                                "5": "Hides the TCP4 connection by hooking /proc/net/tcpHides the TCP6 connection by hooking /proc/net/tcp6",
+                                "6": "Adds a provided port to a list of hidden UDP4 ports",
+                                "7": "Deletes a provided port from a list of hidden UDP4 ports",
+                                "8": "Adds a provided port to a list of hidden UDP6 ports",
+                                "9": "Deletes a provided port from a list of hidden UDP6 ports",
+                                "10": "Adds a provided port to a list of hidden TCP4 ports",
+                                "11": "Deletes a provided port from a list of hidden TCP4 ports",
+                                "12": "Adds a provided port to a list of hidden TCP6 ports",
+                                "13": "Deletes a provided port from a list of hidden TCP6 ports",
+                                "14": "Iterates list of all hidden ports and deletes all entries"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Function name </td><td>Description </td></tr><tr><td>give_root </td><td>Provides a root privilege by setting a new set of credentials and assigning its UID, GID to \u201c0\u201d</td></tr><tr><td>module_hide</td><td>Hides the rootkit kernel module</td></tr><tr><td>module_show</td><td>Unhides the rootkit kernel module</td></tr><tr><td>get_udp_seq_show</td><td>Hides the UDP4 connection by hooking /proc/net/udpHides the UDP6 connection by hooking /proc/net/udp6</td></tr><tr><td>get_tcp_seq_show</td><td>Hides the TCP4 connection by hooking /proc/net/tcpHides the TCP6 connection by hooking /proc/net/tcp6</td></tr><tr><td>hide_udp4_port</td><td>Adds a provided port to a list of hidden UDP4 ports</td></tr><tr><td>unhide_udp4_port</td><td>Deletes a provided port from a list of hidden UDP4 ports</td></tr><tr><td>hide_udp6_port</td><td>Adds a provided port to a list of hidden UDP6 ports</td></tr><tr><td>unhide_udp6_port</td><td>Deletes a provided port from a list of hidden UDP6 ports</td></tr><tr><td>hide_tcp4_port</td><td>Adds a provided port to a list of hidden TCP4 ports</td></tr><tr><td>unhide_tcp4_port</td><td>Deletes a provided port from a list of hidden TCP4 ports</td></tr><tr><td>hide_tcp6_port</td><td>Adds a provided port to a list of hidden TCP6 ports</td></tr><tr><td>unhide_tcp6_port</td><td>Deletes a provided port from a list of hidden TCP6 ports</td></tr><tr><td>unhide_allz</td><td>Iterates list of all hidden ports and deletes all entries</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x6e6cd04d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Process and port hiding",
+                    "html": "<p>Process and port hiding</p>"
+                },
+                {
+                    "id": "<sentence_0xe68f31d0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware tries to hide its processes and ports using its kernel rootkit component. Hiding a process assists the malware in evading rule-based detections.",
+                    "html": "<p>The malware tries to hide its processes and ports using its kernel rootkit component. Hiding a process assists the malware in evading rule-based detections.</p>"
+                },
+                {
+                    "id": "<sentence_0xa44b0c9f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The /proc filesystem contains information related to all running processes. A user-mode process can get any process specific information by reading the /proc directory that contains the subdirectory for each running process on the system, such as:",
+                    "html": "<p>The /proc filesystem contains information related to all running processes. A user-mode process can get any process specific information by reading the /proc directory that contains the subdirectory for each running process on the system, such as:</p>"
+                },
+                {
+                    "id": "<sentence_0x49066bd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "/proc/7728 Contains process-id (PID) 7728-related information<crlf>/proc/698 Contains PID 698-related information",
+                    "html": "<ul><li>/proc/7728 \u2013 Contains process-id (PID) 7728-related information</li><li>/proc/698 \u2013 Contains PID 698-related information</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xe2fa6512>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Running the strace -e open ps command checks the traces of the open call on /proc/$pid to fetch information on running processes as part of the ps command.",
+                    "html": "<p>Running the strace -e open ps command checks the traces of the open call on /proc/$pid to fetch information on running processes as part of the ps command.</p>"
+                },
+                {
+                    "id": "<sentence_0x4525f984>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "> strace -e open ps<crlf>open(/proc/3922/status, O_RDONLY) = 6<crlf>open(/proc/4324/stat, O_RDONLY) = 6<crlf>open(/proc/4324/status, O_RDONLY) = 6<crlf>open(/proc/5559/stat, O_RDONLY) = 6<crlf>open(/proc/5559/status, O_RDONLY) = 6<crlf>open(/proc/5960/stat, O_RDONLY) = 6<crlf>open(/proc/5960/status, O_RDONLY) = 6<crlf>open(/proc/5978/stat, O_RDONLY) = 6<crlf>open(/proc/5978/status, O_RDONLY) = 6",
+                    "html": "\n> strace -e open ps\nopen(\u201c/proc/3922/status\u201d, O_RDONLY) = 6\nopen(\u201c/proc/4324/stat\u201d, O_RDONLY) = 6\nopen(\u201c/proc/4324/status\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5559/stat\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5559/status\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5960/stat\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5960/status\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5978/stat\u201d, O_RDONLY) = 6\nopen(\u201c/proc/5978/status\u201d, O_RDONLY) = 6\n"
+                },
+                {
+                    "id": "<sentence_0x69ade337>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the malware hides the $pid specific directory, it can conceal fetching the corresponding process from a user mode.",
+                    "html": "<p>If the malware hides the $pid specific directory, it can conceal fetching the corresponding process from a user mode.</p>"
+                },
+                {
+                    "id": "<sentence_0x8a6848d7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this case, the malware has a provision for communicating with its rootkit component /proc/rs_dev by sending input and output control (IOCTL) calls with additional information to take appropriate action. IOCTL is one way to communicate between the user-mode service and kernel device driver. The malware uses the number 0x9748712 to uniquely identify its IOCTL calls from other IOCTL calls in the system.",
+                    "html": "<p>In this case, the malware has a provision for communicating with its rootkit component /proc/rs_dev by sending input and output control (IOCTL) calls with additional information to take appropriate action. IOCTL is one way to communicate between the user-mode service and kernel device driver. The malware uses the number \u201c0x9748712\u201d to uniquely identify its IOCTL calls from other IOCTL calls in the system.</p>"
+                },
+                {
+                    "id": "<sentence_0x88dbf89f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Along with this number, it also passes an integer array. The first entry in the array corresponds to the command, and the second entry stores the value to act on, such as $pid.",
+                    "html": "<p>Along with this number, it also passes an integer array. The first entry in the array corresponds to the command, and the second entry stores the value to act on, such as $pid.</p>"
+                },
+                {
+                    "id": "<sentence_0xaac031d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xd5e74b33>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "0",
+                                "2": "1, 2",
+                                "3": "3"
+                            },
+                            "1": {
+                                "0": "Usage",
+                                "1": "Check if its rootkit driver is present",
+                                "2": "Hide or unhide <PID>",
+                                "3": "Hide <port>"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Command</td><td>Usage</td></tr><tr><td>0</td><td>Check if its rootkit driver is present</td></tr><tr><td>1, 2</td><td>Hide or unhide &lt;PID&gt;</td></tr><tr><td>3</td><td>Hide &lt;port&gt;</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9086bc62>",
+            "title": "Persistence mechanisms",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb90bc3e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos uses various persistence mechanisms to support different Linux distributions when automatically launching upon system startup, as detailed below.",
+                    "html": "<p>XorDdos uses various persistence mechanisms to support different Linux distributions when automatically launching upon system startup, as detailed below.</p>"
+                },
+                {
+                    "id": "<sentence_0x21800a74>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Init script",
+                    "html": "<p>Init script</p>"
+                },
+                {
+                    "id": "<sentence_0x5afea468>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware drops an init script at the location /etc/init.d. Init scripts are startup scripts used to run any program when the system starts up. They follow the Linux Standard Base (LSB)-style header section to include default runlevels, descriptions, and dependencies.",
+                    "html": "<p>The malware drops an init script at the location /etc/init.d. Init scripts are startup scripts used to run any program when the system starts up. They follow the Linux Standard Base (LSB)-style header section to include default runlevels, descriptions, and dependencies.</p>"
+                },
+                {
+                    "id": "<sentence_0x3893712e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdf70527e>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-7.-Content-of-the-init-script-dropped-at-the-location-etc-init.d-HFLgGwYfSC.elf_.png"
+                    },
+                    "text": "Figure 7. Content of the init script dropped at the location /etc/init.d/HFLgGwYfSC.elf",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 7 displays the content of the init script dropped at the location /etc/init.d/HFLgGwYfSC.elf. \" class=\"wp-image-114390\" height=\"490\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-7.-Content-of-the-init-script-dropped-at-the-location-etc-init.d-HFLgGwYfSC.elf_.png\" width=\"800\"/><figcaption>Figure 7. Content of the init script dropped at the location /etc/init.d/HFLgGwYfSC.elf</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x42510a52>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cron script",
+                    "html": "<p>Cron script</p>"
+                },
+                {
+                    "id": "<sentence_0x9889f92b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware creates a cron script at the location /etc/cron.hourly/gcc.sh.The cron script passes parameters with the following content:",
+                    "html": "<p>The malware creates a cron script at the location /etc/cron.hourly/gcc.sh.The cron script passes parameters with the following content:</p>"
+                },
+                {
+                    "id": "<sentence_0x8c6366a3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf2258579>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-8.-Content-of-the-gcc.sh-script.png"
+                    },
+                    "text": "Figure 8. Content of the gcc.sh script",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 8 displays the contents of the gcc.sh script. \" class=\"wp-image-114393\" height=\"114\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-8.-Content-of-the-gcc.sh-script.png\" width=\"800\"/><figcaption>Figure 8. Content of the gcc.sh script</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xda541464>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then creates a /etc/crontab file to run /etc/cron.hourly/gcc.sh every three minutes:",
+                    "html": "<p>It then creates a /etc/crontab file to run /etc/cron.hourly/gcc.sh every three minutes:</p>"
+                },
+                {
+                    "id": "<sentence_0x89d7c25d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfa943c97>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-9.-System-command-to-delete-the-etc-cron.hourly-gcc.sh-entry-from-the-etc-crontab-file-and-add-a-new-entry.png"
+                    },
+                    "text": "Figure 9. System command to delete the /etc/cron.hourly/gcc.sh entry from the /etc/crontab file and add a new entry",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 9 displays the system command to delete the /etc/cron.hourly/gcc.sh entry from /etc/crontab file and add a new entry. It reads &quot;system(&quot;sed -i \\'/\\\\/etc\\\\/cron.hourly\\\\/gcc.sh/d\\' /etc/crontab &amp;&amp; echo \\'*/3 * * * * root /etc/cron.hourly/gcc.sh\\' &gt;&gt; /etc/crontab&quot;);\" class=\"wp-image-114396\" height=\"69\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-9.-System-command-to-delete-the-etc-cron.hourly-gcc.sh-entry-from-the-etc-crontab-file-and-add-a-new-entry.png\" width=\"800\"/><figcaption>Figure 9. System command to delete the /etc/cron.hourly/gcc.sh entry from the /etc/crontab file and add a new entry</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2f855272>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb3bd1600>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-10.-The-content-of-the-file-etc-crontab.png"
+                    },
+                    "text": "Figure 10. The content of the file /etc/crontab",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt='Figure 10 reads :*/3 * * * * root /etc/cron.hourly/gcc.sh\"' class=\"wp-image-114399\" height=\"43\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-10.-The-content-of-the-file-etc-crontab.png\" width=\"800\"/><figcaption>Figure 10. The content of the file /etc/crontab</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x1845983b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "System V runlevel",
+                    "html": "<p>System V runlevel</p>"
+                },
+                {
+                    "id": "<sentence_0x32017499>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A runlevel is a mode of init and the system that specifies what system services are operating for Unix System V-Style operating systems. Runlevels contain a value, typically numbered zero through six, which each designate a different system configuration and allows access to a different combination of processes. Some system administrators set a systems default runlevel according to their needs or use runlevels to identify which subsystems are working, such as whether the network is operational. The /etc/rc<run_level> directory contains symbolic links (symlinks), which are soft links that point to the original file. These symlinks point to the scripts that should run at the specified runlevel.",
+                    "html": "<p>A runlevel is a mode of init and the system that specifies what system services are operating for Unix System V-Style operating systems. Runlevels contain a value, typically numbered zero through six, which each designate a different system configuration and allows access to a different combination of processes. Some system administrators set a system\u2019s default runlevel according to their needs or use runlevels to identify which subsystems are working, such as whether the network is operational. The /etc/rc&lt;run_level&gt; directory contains symbolic links (symlinks), which are soft links that point to the original file. These symlinks point to the scripts that should run at the specified runlevel.</p>"
+                },
+                {
+                    "id": "<sentence_0x1ef0b761>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware creates a symlink for the init script dropped at the location /etc/init.d/<base_file_name> with the directories associated with runlevels 1 through 5 at /etc/rc<run_level>.d/S90<base_file_name> and /etc/rc.d/rc<run_level>.d/S90<base_file_name>.",
+                    "html": "<p>The malware creates a symlink for the init script dropped at the location /etc/init.d/&lt;base_file_name&gt; with the directories associated with runlevels 1 through 5 at /etc/rc&lt;run_level&gt;.d/S90&lt;base_file_name&gt; and /etc/rc.d/rc&lt;run_level&gt;.d/S90&lt;base_file_name&gt;.</p>"
+                },
+                {
+                    "id": "<sentence_0x633367f4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe387c10>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-11.-Installation-of-rc.d-directorys-symlink-scripts-with-etc-init.d-base_file_name.png"
+                    },
+                    "text": "Figure 11. Installation of rc.d directorys symlink scripts with /etc/init.d/<base_file_name>",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 11 displays the installation of rc.d directory's symlink scripts with /etc/init.d/&lt;base_file_name&gt;.\" class=\"wp-image-114402\" height=\"326\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-11.-Installation-of-rc.d-directorys-symlink-scripts-with-etc-init.d-base_file_name.png\" width=\"800\"/><figcaption>Figure 11. Installation of rc.d directory\u2019s symlink scripts with /etc/init.d/&lt;base_file_name&gt;</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xcf5e915f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Auto-start services",
+                    "html": "<p>Auto-start services</p>"
+                },
+                {
+                    "id": "<sentence_0x7de77301>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware runs a command to install startup services that automatically run XorDdos at boot. The malwares LinuxExec_Argv2 subroutine runs the system API with the provided arguments.",
+                    "html": "<p>The malware runs a command to install startup services that automatically run XorDdos at boot. The malware\u2019s LinuxExec_Argv2 subroutine runs the system API with the provided arguments.</p>"
+                },
+                {
+                    "id": "<sentence_0xc9323f2e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The commands chkconfig add <service_name> and update-rc.d then add a service that starts the daemon process at boot.",
+                    "html": "<p>The commands chkconfig \u2013add &lt;service_name&gt; and update-rc.d then add a service that starts the daemon process at boot.</p>"
+                },
+                {
+                    "id": "<sentence_0x7594087>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7edfab72>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-12.-chkconfig-and-update-rc.d-commands-install-the-startup-service.png"
+                    },
+                    "text": "Figure 12. chkconfig and update-rc.d commands install the startup service",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 12 displays chkconfig and update-rc.d commands installing the startup service\" class=\"wp-image-114405\" height=\"102\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-12.-chkconfig-and-update-rc.d-commands-install-the-startup-service.png\" width=\"800\"/><figcaption>Figure 12. chkconfig and update-rc.d commands install the startup service</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x349c800c>",
+            "title": "Argument-based code-flow",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x59193cf4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos has specific code paths corresponding to the number of arguments provided to the program. This flexibility makes its operation more robust and stealthy. The malware first runs without any argument and then later runs another instance with different arguments, such as PIDs and fake commands, to perform capabilities like clean-up, spoofing, and persistence.",
+                    "html": "<p>XorDdos has specific code paths corresponding to the number of arguments provided to the program. This flexibility makes its operation more robust and stealthy. The malware first runs without any argument and then later runs another instance with different arguments, such as PIDs and fake commands, to perform capabilities like clean-up, spoofing, and persistence.</p>"
+                },
+                {
+                    "id": "<sentence_0x35e8bc24>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before handling the argument-based control, it calls the readlink API with the first parameter as /proc/self/exe to fetch its full process path. The full path is used later to create auto-start service entries and read the files content.",
+                    "html": "<p>Before handling the argument-based control, it calls the readlink API with the first parameter as /proc/self/exe to fetch its full process path. The full path is used later to create auto-start service entries and read the file\u2019s content.</p>"
+                },
+                {
+                    "id": "<sentence_0xed6899ac>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this section, we will cover the main tasks carried out as part of the different arguments provided:",
+                    "html": "<p>In this section, we will cover the main tasks carried out as part of the different arguments provided:</p>"
+                },
+                {
+                    "id": "<sentence_0x3535de59>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "1: Standard code path without any provided arguments",
+                    "html": "<p>1: Standard code path without any provided arguments</p>"
+                },
+                {
+                    "id": "<sentence_0xd150808c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This code path depicts the malwares standard workflow, which is also the typical workflow where XorDdos runs as part of the entries created in system start-up locations.",
+                    "html": "<p>This code path depicts the malware\u2019s standard workflow, which is also the typical workflow where XorDdos runs as part of the entries created in system start-up locations.</p>"
+                },
+                {
+                    "id": "<sentence_0x2762a877>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware first checks whether its running from the locations /usr/bin/, /bin/, or /tmp/. If its not running from these locations, then it creates and copies itself using a 10-character string name on those locations, as well as /lib/ and /var/run/.",
+                    "html": "<p>The malware first checks whether it\u2019s running from the locations /usr/bin/, /bin/, or /tmp/. If it\u2019s not running from these locations, then it creates and copies itself using a 10-character string name on those locations, as well as /lib/ and /var/run/.</p>"
+                },
+                {
+                    "id": "<sentence_0x698f51d4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It also creates a copy of itself at the location /lib/libudev.so. To evade hash-based malicious file lookup, it performs the following steps, which modify the file hash to make every file unique:",
+                    "html": "<p>It also creates a copy of itself at the location /lib/libudev.so. To evade hash-based malicious file lookup, it performs the following steps, which modify the file hash to make every file unique:</p>"
+                },
+                {
+                    "id": "<sentence_0xa57c0187>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Opens the file for writing only<crlf>Calls lseek (fd, 0, SEEK_END) to point at the last position in the file<crlf>Creates a random 10-character string<crlf>Writes the string at the end of the file with an additional null byte",
+                    "html": "<ul><li>Opens the file for writing only</li><li>Calls lseek (fd, 0, SEEK_END) to point at the last position in the file</li><li>Creates a random 10-character string</li><li>Writes the string at the end of the file with an additional null byte</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x83776ff9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After modifying the file, it runs the binary, performs a double fork(), and deletes its file from the disk.",
+                    "html": "<p>After modifying the file, it runs the binary, performs a double fork(), and deletes its file from the disk.</p>"
+                },
+                {
+                    "id": "<sentence_0x9d591bd8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xaa08bc5>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-13.-The-end-of-the-malware-file-contains-two-random-strings-wieegnexuk-and-yybrdajydg-indicating-that-the-original-malware-binary-was-modified-twice.png"
+                    },
+                    "text": "Figure 13. The end of the malware file contains two random strings, wieegnexuk and yybrdajydg, indicating that the original malware binary was modified twice",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 13 displays the end of the malware file containing two random strings, \u2018wieegnexuk\u2019 and \u2018yybrdajydg,\u2019 indicating that the original malware binary was modified twice\" class=\"wp-image-114462\" height=\"163\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-13.-The-end-of-the-malware-file-contains-two-random-strings-wieegnexuk-and-yybrdajydg-indicating-that-the-original-malware-binary-was-modified-twice.png\" width=\"800\"/><figcaption>Figure 13. The end of the malware file contains two random strings, \u2018wieegnexuk\u2019 and \u2018yybrdajydg,\u2019 indicating that the original malware binary was modified twice</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x93a9d6af>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "2: Clean-up code path",
+                    "html": "<p>2: Clean-up code path</p>"
+                },
+                {
+                    "id": "<sentence_0xe741da27>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this code path, the malware runs with another argument provided as the PID, for example:",
+                    "html": "<p>In this code path, the malware runs with another argument provided as the PID, for example:</p>"
+                },
+                {
+                    "id": "<sentence_0xc0ebf074>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "/usr/bin/jwvwvxoupv 4849",
+                    "html": "<ul><li>/usr/bin/jwvwvxoupv 4849</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x66917739>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using the above example, the malware shares the 64-byte size memory segment with the IPC key 0xDA718716 to check for another malware process provided as an argument. If not found, it runs its own binary without any argument and calls the fork() API twice to make sure the grandchild process has no parent. This results in the grandchild process being adopted by the init process, which disconnects it from the process tree and acts as an anti-forensic technique.",
+                    "html": "<p>Using the above example, the malware shares the 64-byte size memory segment with the IPC key \u201c0xDA718716\u201d to check for another malware process provided as an argument. If not found, it runs its own binary without any argument and calls the fork() API twice to make sure the grandchild process has no parent. This results in the grandchild process being adopted by the init process, which disconnects it from the process tree and acts as an anti-forensic technique.</p>"
+                },
+                {
+                    "id": "<sentence_0x97f88db>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Additionally, it performs the following tasks on a provided $pid:",
+                    "html": "<p>Additionally, it performs the following tasks on a provided $pid:</p>"
+                },
+                {
+                    "id": "<sentence_0xb0be99bc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fetches the process file name corresponding to the provided $pidDeletes the file for the provided $pidDeletes the installed init services:Ends the process that was provided as an argument.Deletes /etc/init.d/<file_name><crlf>For runlevels 1-5, unlinks and deletes /etc/rc<runlevel>.d/S90<file_name><crlf>Performs the command chkconfig del <file_name><crlf>Performs the command update-rc.d <file_name> remove",
+                    "html": "<ul><li>Fetches the process file name corresponding to the provided $pid</li><li>Deletes the file for the provided $pid</li><li>Deletes the installed init services:<ul><li>Deletes /etc/init.d/&lt;file_name&gt;</li></ul><ul><li>For runlevels 1-5, unlinks and deletes /etc/rc&lt;runlevel&gt;.d/S90&lt;file_name&gt;</li></ul><ul><li>Performs the command chkconfig \u2013del &lt;file_name&gt;</li></ul><ul><li>Performs the command update-rc.d &lt;file_name&gt; remove</li></ul></li><li>Ends the process that was provided as an argument.</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x28cecfb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "3: Process name spoofing code path",
+                    "html": "<p>3: Process name spoofing code path</p>"
+                },
+                {
+                    "id": "<sentence_0xe5d601d2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware spawns new dropped binaries with two additional arguments: a fake command line and its PIDs, for example:",
+                    "html": "<p>The malware spawns new dropped binaries with two additional arguments: a fake command line and its PIDs, for example:</p>"
+                },
+                {
+                    "id": "<sentence_0x24257502>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "/usr/bin/jwvwvxoupv cat resolv.conf 4849<crlf>/usr/bin/jwvwvxoupv gnome-terminal 4849<crlf>/usr/bin/jwvwvxoupv top 4849<crlf>/usr/bin/jwvwvxoupv pwd 4849<crlf>/usr/bin/kagbjahdic id 4849",
+                    "html": "<ul><li>/usr/bin/jwvwvxoupv \u201ccat resolv.conf\u201d 4849</li><li>/usr/bin/jwvwvxoupv gnome-terminal 4849</li><li>/usr/bin/jwvwvxoupv top 4849</li><li>/usr/bin/jwvwvxoupv pwd 4849</li><li>/usr/bin/kagbjahdic id 4849</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x7d00e2bb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The fake commands can include:",
+                    "html": "<p>The fake commands can include:</p>"
+                },
+                {
+                    "id": "<sentence_0xe867f874>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "cat resolv.conf<crlf>netstat -an<crlf>bash<crlf>whoami<crlf>id<crlf>cd /etc<crlf>ifconfig eth0<crlf>ifconfig<crlf>echo find<crlf>uptime<crlf>sh<crlf>top<crlf>gnome-terminal<crlf>su<crlf>netstat -antop<crlf>grep A<crlf>who<crlf>ls -la<crlf>pwd<crlf>route -n<crlf>ps -ef<crlf>ls<crlf>sleep 1",
+                    "html": "<ul><li>cat resolv.conf</li><li>netstat -an</li><li>bash</li><li>whoami</li><li>id</li><li>cd /etc</li><li>ifconfig eth0</li><li>ifconfig</li><li>echo \u201cfind\u201d</li><li>uptime</li><li>sh</li><li>top</li><li>gnome-terminal</li><li>su</li><li>netstat -antop</li><li>grep \u201cA\u201d</li><li>who</li><li>ls -la</li><li>pwd</li><li>route -n</li><li>ps -ef</li><li>ls</li><li>sleep 1</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x9cf13df3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this code path, the malware uses process name spoofing to hide from the process tree by modifying its fake command line at runtime. It then hides its process by calling HidePidPort with command 1 and reads the content of the file on disk related to the current process.",
+                    "html": "<p>In this code path, the malware uses process name spoofing to hide from the process tree by modifying its fake command line at runtime. It then hides its process by calling HidePidPort with command \u201c1\u201d and reads the content of the file on disk related to the current process.</p>"
+                },
+                {
+                    "id": "<sentence_0x513bfb45>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then enters a five-second loop to perform the following checks:",
+                    "html": "<p>It then enters a five-second loop to perform the following checks:</p>"
+                },
+                {
+                    "id": "<sentence_0x31705506>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fetches the file name specific to the $pid provided as part of the third argument by calling the readlink API on /proc/$pid/exe.If the readlink call fails, that likely indicates that the file on disk doesnt exist. In this case, it:Calls the stat API for the file /lib/libudev.so. If the stat API returns a non-zero value, then it attempts to copy the content of the current processs image-file fetched earlier to the following locations with a random name:If the readlink call is successful and returns the count of bytes copied, sleeps for one second and then loops for the remaining time out of five seconds.Unhides the current process and the $pid that was provided as part of the third argument.Deletes the on-disk file for the current process.Intends to delete all service-related entries for the $pid but fails. This appears to be due to a code flaw that allows a zeroed-out buffer to be passed as a service name when the buffer is supposed to be filled from a successful readlink API call.<crlf>Creates directories similar to the standard code path scenario.<crlf>/usr/bin/<crlf>/bin/<crlf>/tmp/<crlf>Copies the /lib/libudev.so file to the same three directories listed above if the stat API call is successful on /lib/libudev.so.<crlf>Changes the hash of the written or copied file and then runs it without passing any parameters.",
+                    "html": "<ul><li>Fetches the file name specific to the $pid provided as part of the third argument by calling the readlink API on /proc/$pid/exe.</li><li>If the readlink call fails, that likely indicates that the file on disk doesn\u2019t exist. In this case, it:<ul><li>Intends to delete all service-related entries for the $pid but fails. This appears to be due to a code flaw that allows a zeroed-out buffer to be passed as a service name when the buffer is supposed to be filled from a successful readlink API call.</li></ul><ul><li>Creates directories similar to the standard code path scenario.</li></ul><ul><li>Calls the stat API for the file /lib/libudev.so. If the stat API returns a non-zero value, then it attempts to copy the content of the current process\u2019s image-file fetched earlier to the following locations with a random name:<ul><li>/usr/bin/</li></ul><ul><li>/bin/</li></ul><ul><li>/tmp/ </li></ul></li></ul><ul><li>Copies the /lib/libudev.so file to the same three directories listed above if the stat API call is successful on /lib/libudev.so.</li></ul><ul><li>Changes the hash of the written or copied file and then runs it without passing any parameters.</li></ul></li><li>If the readlink call is successful and returns the count of bytes copied, sleeps for one second and then loops for the remaining time out of five seconds.</li><li>Unhides the current process and the $pid that was provided as part of the third argument.</li><li>Deletes the on-disk file for the current process.</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xe379b368>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "4: Known locations code path without any provided arguments",
+                    "html": "<p>4: Known locations code path without any provided arguments</p>"
+                },
+                {
+                    "id": "<sentence_0x4724160b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This code path is similar to the standard code path, with the main difference being that the malware runs from one of the following locations:",
+                    "html": "<p>This code path is similar to the standard code path, with the main difference being that the malware runs from one of the following locations:</p>"
+                },
+                {
+                    "id": "<sentence_0xf1d948c1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "/usr/bin/<crlf>/bin/<crlf>/tmp/",
+                    "html": "<ul><li>/usr/bin/</li><li>/bin/</li><li>/tmp/</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x44b441a8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Once it runs from one of these locations, the malware calls the following functions to perform various tasks:",
+                    "html": "<p>Once it runs from one of these locations, the malware calls the following functions to perform various tasks:</p>"
+                },
+                {
+                    "id": "<sentence_0xb89eeafe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "InstallSYS The name suggests that this function is a wrapper that should deploy a rootkit driver, but it only zeroes-out two local arrays.",
+                    "html": "<ol type=\"1\"><li>InstallSYS \u2013 The name suggests that this function is a wrapper that should deploy a rootkit driver, but it only zeroes-out two local arrays.</li></ol>"
+                },
+                {
+                    "id": "<sentence_0xc4162d3b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe72f02b0>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-14.-Dummy-InstallSYS-routine.png"
+                    },
+                    "text": "Figure 14. Dummy InstallSYS routine",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 14 displays a dummy InstallSYS routine that only zeros-out two local arrays. \" class=\"wp-image-114411\" height=\"194\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-14.-Dummy-InstallSYS-routine.png\" width=\"800\"/><figcaption>Figure 14. Dummy InstallSYS routine</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xe33d7d73>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "AddService Creates the persistent auto-start entries previously mentioned so that the malware runs when the system starts.<crlf>HidePidPort Hides the malwares ports and processes.<crlf>CheckLKM Checks whether the rootkit device is active or not. It uses a similar IOCTL call with the number 0x9748712 and command 0 to find if the rootkit is active. If the rootkit is active, it uses the owner value 0xAD1473B8 and group value 0xAD1473B8 to change the ownership of dropped files with the function lchown(<filename>, 0xAD1473B8, 0xAD1473B8).<crlf>decrypt_remotestr Decodes remote URLs using the same XOR key, BB2FA36AAA9541F0, to decode config.rar and the other directories. After decoding the URLs, it adds them into a remote list, which is later used to communicate and fetch commands from the command and control (C2) server:www[.]enoan2107[.]com:3306www[.]gzcfr5axf6[.]com:3306",
+                    "html": "<ol start=\"2\"><li>AddService \u2013 Creates the persistent auto-start entries previously mentioned so that the malware runs when the system starts.</li><li>HidePidPort \u2013 Hides the malware\u2019s ports and processes.</li><li>CheckLKM \u2013 Checks whether the rootkit device is active or not. It uses a similar IOCTL call with the number \u201c0x9748712\u201d and command \u201c0\u201d to find if the rootkit is active. If the rootkit is active, it uses the owner value \u201c0xAD1473B8\u201d and group value \u201c0xAD1473B8\u201d to change the ownership of dropped files with the function lchown(&lt;filename&gt;, 0xAD1473B8, 0xAD1473B8).</li><li>decrypt_remotestr \u2013 Decodes remote URLs using the same XOR key, \u201cBB2FA36AAA9541F0\u201d, to decode config.rar and the other directories. After decoding the URLs, it adds them into a remote list, which is later used to communicate and fetch commands from the command and control (C2) server:<ul><li>www[.]enoan2107[.]com:3306</li></ul><ul><li>www[.]gzcfr5axf6[.]com:3306</li></ul></li></ol>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xbb0a3993>",
+            "title": "Malicious activity threads",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc61e3dfc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After creating persistent entries, deleting evidence of its activities, and decoding config.rar, the malware initializes a cyclic redundancy check (CRC) table followed by an unnamed semaphore using the sem_init API. This semaphore is initialized with apshared value set to 0, making the resultant semaphore shared between all the threads. The semaphore is used to maintain concurrency between threads accessing a shared object, such as kill_cfg data.",
+                    "html": "<p>After creating persistent entries, deleting evidence of its activities, and decoding config.rar, the malware initializes a cyclic redundancy check (CRC) table followed by an unnamed semaphore using the sem_init API. This semaphore is initialized with apshared value set to \u201c0\u201d, making the resultant semaphore shared between all the threads. The semaphore is used to maintain concurrency between threads accessing a shared object, such as kill_cfg data.</p>"
+                },
+                {
+                    "id": "<sentence_0xedeb7ba9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware then initializes three threads to perform malicious activities, such as stopping a process, creating a TCP connection, and retrieving kill_cfg data.",
+                    "html": "<p>The malware then initializes three threads to perform malicious activities, such as stopping a process, creating a TCP connection, and retrieving kill_cfg data.</p>"
+                },
+                {
+                    "id": "<sentence_0xc1610094>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x158ac09c>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-15.-Semaphore-and-malicious-thread-initialization.png"
+                    },
+                    "text": "Figure 15. Semaphore and malicious thread initialization",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 15 displays the semaphore and malicious thread initialization\" class=\"wp-image-114414\" height=\"221\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-15.-Semaphore-and-malicious-thread-initialization.png\" width=\"800\"/><figcaption>Figure 15. Semaphore and malicious thread initialization</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x817b58b5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "kill_process",
+                    "html": "<p> kill_process</p>"
+                },
+                {
+                    "id": "<sentence_0x85f2f2ef>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The kill_process thread performs the following tasks:",
+                    "html": "<p>The kill_process thread performs the following tasks:</p>"
+                },
+                {
+                    "id": "<sentence_0x5778b426>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Decodes encrypted stringsFetches file stats for /var/run/gcc.pid or, if none exist, then creates the fileFetches file stats for /lib/libudev.so or, if none exist, then creates the directory /lib and creates a copy of itself at the location /lib/libudev.soFetches the on disk file information associated with the current process; if it fails, then exits the loop and stops the current processReads the content from kill_cfg and performs the corresponding actions, like stopping the process or deleting files, based on the matching specified keys in the configuration file, such as:md5=<crlf>filename=<crlf>rmfile=<crlf>denyip=",
+                    "html": "<ul><li>Decodes encrypted strings</li><li>Fetches file stats for /var/run/gcc.pid or, if none exist, then creates the file</li><li>Fetches file stats for /lib/libudev.so or, if none exist, then creates the directory /lib and creates a copy of itself at the location /lib/libudev.so</li><li>Fetches the on disk file information associated with the current process; if it fails, then exits the loop and stops the current process</li><li>Reads the content from kill_cfg and performs the corresponding actions, like stopping the process or deleting files, based on the matching specified keys in the configuration file, such as:<ul><li>md5=</li></ul><ul><li>filename=</li></ul><ul><li>rmfile=</li></ul><ul><li>denyip=</li></ul></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x4d8f911d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "tcp_thread",
+                    "html": "<p>tcp_thread</p>"
+                },
+                {
+                    "id": "<sentence_0x4a43df39>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The tcp_thread triggers the connection with the C2 server decoded earlier using decrypt_remotestr(). It performs the following tasks:",
+                    "html": "<p>The tcp_thread triggers the connection with the C2 server decoded earlier using decrypt_remotestr(). It performs the following tasks:</p>"
+                },
+                {
+                    "id": "<sentence_0xbf1dd5b6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Reads the content of the file /var/run/gcc.pid to get a unique 32-byte magic string that identifies the device while connecting with the C2 server; if the file doesnt exist, then it creates the file and updates it with a random 32-byte string.<crlf>Calculates the CRC header, including details of the device such as the magic string, OS release version, malware version, rootkit presence, memory stats, CPU information, and LAN speed.<crlf>Encrypts the data and sends it to the C2 server.<crlf>Waits to receive any of the following commands from the C2 server and then acts on the command using the exec_packet subroutine.",
+                    "html": "<ul><li>Reads the content of the file /var/run/gcc.pid to get a unique 32-byte magic string that identifies the device while connecting with the C2 server; if the file doesn\u2019t exist, then it creates the file and updates it with a random 32-byte string.</li><li>Calculates the CRC header, including details of the device such as the magic string, OS release version, malware version, rootkit presence, memory stats, CPU information, and LAN speed.</li><li>Encrypts the data and sends it to the C2 server.</li><li>Waits to receive any of the following commands from the C2 server and then acts on the command using the exec_packet subroutine.</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x86f6ea3b>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xd4d5b5d8>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "2",
+                                "2": "3",
+                                "3": "6",
+                                "4": "7",
+                                "5": "8",
+                                "6": "9"
+                            },
+                            "1": {
+                                "0": "Job",
+                                "1": "Stop",
+                                "2": "Create a thread pool for launching DDoS attacks",
+                                "3": "Download file",
+                                "4": "Update file",
+                                "5": "Send system information to the C2 server",
+                                "6": "Get configuration file to stop processes"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Command</td><td>Job</td></tr><tr><td>2</td><td>Stop</td></tr><tr><td>3</td><td>Create a thread pool for launching DDoS attacks</td></tr><tr><td>6</td><td>Download file</td></tr><tr><td>7</td><td>Update file</td></tr><tr><td>8</td><td>Send system information to the C2 server</td></tr><tr><td>9</td><td>Get configuration file to stop processes</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x3de0f976>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x70c7f18b>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-16.-Collection-of-system-information.png"
+                    },
+                    "text": "Figure 16. Collection of system information",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 16 displays code for the collection of system information.\" class=\"wp-image-114417\" height=\"346\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-16.-Collection-of-system-information.png\" width=\"800\"/><figcaption>Figure 16. Collection of system information</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x5a51f764>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "daemon_get_killed_process",
+                    "html": "<p>daemon_get_killed_process</p>"
+                },
+                {
+                    "id": "<sentence_0xcbef529>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The daemon_get_killed_processthread downloads the kill_cfg data from the remote URL decoded earlier (hxxp://aa[.]hostasa[.]org/config[.]rar) and decrypts it using the same XOR key previously mentioned. It then sleeps for 30 minutes.",
+                    "html": "<p>The daemon_get_killed_processthread downloads the kill_cfg data from the remote URL decoded earlier (hxxp://aa[.]hostasa[.]org/config[.]rar) and decrypts it using the same XOR key previously mentioned. It then sleeps for 30 minutes.</p>"
+                },
+                {
+                    "id": "<sentence_0x5685e5b4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7ad47cd>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-17.-daemon_get_killed_process-thread-function-fetches-and-decodes-the-kill_cfg-data-from-remote-URL.png"
+                    },
+                    "text": "Figure 17. daemon_get_killed_process thread function fetches and decodes the kill_cfg data from the remote URL",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Figure 17 displays code for the daemon_get_killed_process thread function fetching and decoding the kill_cfg data from remote URL.\" class=\"wp-image-114420\" height=\"343\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-17.-daemon_get_killed_process-thread-function-fetches-and-decodes-the-kill_cfg-data-from-remote-URL.png\" width=\"800\"/><figcaption>Figure 17. daemon_get_killed_process thread function fetches and decodes the kill_cfg data from the remote URL</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7fac571>",
+            "title": "DDoS attack thread pool",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5877c3db>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware calls sysconf(_SC_NPROCESSORS_CONF) to fetch the number of processors in the device. It then creates threads with twice the number of processors found on the device.",
+                    "html": "<p>The malware calls sysconf(_SC_NPROCESSORS_CONF) to fetch the number of processors in the device. It then creates threads with twice the number of processors found on the device.</p>"
+                },
+                {
+                    "id": "<sentence_0xc38cd31c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Invoking each thread internally calls the thread routine threadwork. Using the global variable g_stop and commands received from the C2 server, threadwork then sends crafted packets 65,535 times to perform a DDoS attack.",
+                    "html": "<p>Invoking each thread internally calls the thread routine threadwork. Using the global variable \u201cg_stop\u201d and commands received from the C2 server, threadwork then sends crafted packets 65,535 times to perform a DDoS attack.</p>"
+                },
+                {
+                    "id": "<sentence_0xdcc46b95>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xddc9de62>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "0x4",
+                                "2": "0x5",
+                                "3": "0xA"
+                            },
+                            "1": {
+                                "0": "Function",
+                                "1": "fix_syn",
+                                "2": "fix_dns",
+                                "3": "fix_ack"
+                            },
+                            "2": {
+                                "0": "Job",
+                                "1": "SYN flood attack",
+                                "2": "DNS attack",
+                                "3": "ACK flood attack"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Command</td><td>Function</td><td>Job</td></tr><tr><td>0x4</td><td>fix_syn </td><td>SYN flood attack</td></tr><tr><td>0x5</td><td>fix_dns </td><td>DNS attack</td></tr><tr><td>0xA</td><td>fix_ack </td><td>ACK flood attack</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb67dde15>",
+            "title": "Defending against Linux platform threats",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x441c5455>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "XorDdos modular nature provides attackers with a versatile trojan capable of infecting a variety of Linux system architectures. Its SSH brute force attacks are a relatively simple yet effective technique for gaining root access over a number of potential targets.",
+                    "html": "<p>XorDdos\u2019 modular nature provides attackers with a versatile trojan capable of infecting a variety of Linux system architectures. Its SSH brute force attacks are a relatively simple yet effective technique for gaining root access over a number of potential targets.</p>"
+                },
+                {
+                    "id": "<sentence_0xc3d2fe05>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Adept at stealing sensitive data, installing a rootkit device, using various evasion and persistence mechanisms, and performing DDoS attacks, XorDdos enables adversaries to create potentially significant disruptions on target systems. Moreover, XorDdos may be used to bring in other dangerous threats or to provide a vector for follow-on activities.",
+                    "html": "<p>Adept at stealing sensitive data, installing a rootkit device, using various evasion and persistence mechanisms, and performing DDoS attacks, XorDdos enables adversaries to create potentially significant disruptions on target systems. Moreover, XorDdos may be used to bring in other dangerous threats or to provide a vector for follow-on activities.</p>"
+                },
+                {
+                    "id": "<sentence_0xa66e2ffc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x317d0352>": "https://www.microsoft.com/security/business/threat-protection/endpoint-defender?rtc=1",
+                        "<a_0x6dea2be9>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/next-generation-protection?view=o365-worldwide",
+                        "<a_0x1e09c6e6>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/overview-endpoint-detection-response?view=o365-worldwide"
+                    },
+                    "text": "XorDdos and other threats targeting Linux devices emphasize how crucial it is to have security solutions with comprehensive capabilities and complete visibility spanning numerous distributions of Linux operating systems. Microsoft Defender for Endpoint offers such visibility and protection to catch these emerging threats with its next-generation antimalware and endpoint detection and response (EDR) capabilities. Leveraging threat intelligence from integrated threat data, including client and cloud heuristics, machine learning models, memory scanning, and behavioral monitoring, Microsoft Defender for Endpoint can detect and remediate XorDdos and its multi-stage, modular attacks. This includes detecting and protecting against its use of a malicious shell script for initial access, its drop-and-execution of binaries from a world-writable location, and any potential follow-on activities on endpoints.",
+                    "html": "<p>XorDdos and other threats targeting Linux devices emphasize how crucial it is to have security solutions with comprehensive capabilities and complete visibility spanning numerous distributions of Linux operating systems. <a href=\"https://www.microsoft.com/security/business/threat-protection/endpoint-defender?rtc=1\">Microsoft Defender for Endpoint</a> offers such visibility and protection to catch these emerging threats with its <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/next-generation-protection?view=o365-worldwide\">next-generation antimalware</a> and <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/overview-endpoint-detection-response?view=o365-worldwide\">endpoint detection and response (EDR)</a> capabilities. Leveraging threat intelligence from integrated threat data, including client and cloud heuristics, machine learning models, memory scanning, and behavioral monitoring, Microsoft Defender for Endpoint can detect and remediate XorDdos and its multi-stage, modular attacks. This includes detecting and protecting against its use of a malicious shell script for initial access, its drop-and-execution of binaries from a world-writable location, and any potential follow-on activities on endpoints.</p>"
+                },
+                {
+                    "id": "<sentence_0x1c25a82b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Defenders can apply the following mitigations to reduce the impact of this threat:",
+                    "html": "<p>Defenders can apply the following mitigations to reduce the impact of this threat:</p>"
+                },
+                {
+                    "id": "<sentence_0x8edb3cdc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x73151b58>": "https://www.microsoft.com/edge",
+                        "<a_0x693d5f6f>": "https://docs.microsoft.com/deployedge/microsoft-edge-security-smartscreen",
+                        "<a_0x3263cd5c>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/device-discovery?view=o365-worldwide",
+                        "<a_0xaece49ec>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/configure-block-at-first-sight-microsoft-defender-antivirus?view=o365-worldwide",
+                        "<a_0xf518eaa3>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/edr-in-block-mode?view=o365-worldwide",
+                        "<a_0xd6da9b72>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/enable-network-protection?view=o365-worldwide",
+                        "<a_0x51878926>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/automated-investigations?view=o365-worldwide"
+                    },
+                    "text": "Encourage the use of Microsoft Edgeavailable on Linux and various platformsor other web browsers that support Microsoft Defender SmartScreen, which identifies and blocks malicious websites, including phishing sites, scam sites, and sites that contain exploits and host malware.<crlf>Use device discovery to find unmanaged Linux devices on your network and onboard them to Microsoft Defender for Endpoint.<crlf>Turn on cloud-delivered protection in Microsoft Defender Antivirus or the equivalent for your antivirus product to use cloud-based machine learning protections that can block a huge majority of new and unknown variants.<crlf>Run EDR in block mode so that Microsoft Defender for Endpoint can block malicious artifacts, even when your non-Microsoft antivirus doesnt detect the threat or when Microsoft Defender Antivirus is running in passive mode.<crlf>Enable network protection to prevent applications or users from accessing malicious domains and other malicious content on the internet.<crlf>Enable investigation and remediation in full automated mode to allow Microsoft Defender for Endpoint to take immediate action on alerts to resolve breaches, significantly reducing alert volume.",
+                    "html": "<ul><li>Encourage the use of <a href=\"https://www.microsoft.com/edge\">Microsoft Edge</a>\u2014available on Linux and various platforms\u2014or other web browsers that support <a href=\"https://docs.microsoft.com/deployedge/microsoft-edge-security-smartscreen\">Microsoft Defender SmartScreen</a>, which identifies and blocks malicious websites, including phishing sites, scam sites, and sites that contain exploits and host malware.</li><li>Use <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/device-discovery?view=o365-worldwide\">device discovery</a> to find unmanaged Linux devices on your network and onboard them to Microsoft Defender for Endpoint. </li><li>Turn on <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/configure-block-at-first-sight-microsoft-defender-antivirus?view=o365-worldwide\" rel=\"noreferrer noopener\" target=\"_blank\">cloud-delivered protection</a> in Microsoft Defender Antivirus or the equivalent for your antivirus product to use cloud-based machine learning protections that can block a huge majority of new and unknown variants. </li><li>Run <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/edr-in-block-mode?view=o365-worldwide\" rel=\"noreferrer noopener\" target=\"_blank\">EDR in block mode</a> so that Microsoft Defender for Endpoint can block malicious artifacts, even when your non-Microsoft antivirus doesn\u2019t detect the threat or when Microsoft Defender Antivirus is running in passive mode.</li><li>Enable <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/enable-network-protection?view=o365-worldwide\" rel=\"noreferrer noopener\" target=\"_blank\">network protection</a> to prevent applications or users from accessing malicious domains and other malicious content on the internet. </li><li>Enable <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/automated-investigations?view=o365-worldwide\">investigation and remediation</a> in full automated mode to allow Microsoft Defender for Endpoint to take immediate action on alerts to resolve breaches, significantly reducing alert volume. </li></ul>"
+                },
+                {
+                    "id": "<sentence_0xa5368be1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As threats across all platforms continue to grow in number and sophistication, security solutions must be capable of providing advanced protection on a wide range of devices, regardless of the operating system in use. Organizations will continue to face threats from a variety of entry points across devices, so Microsoft continues to heavily invest in protecting all the major platforms and providing extensive capabilities that organizations needed to protect their networks and systems.",
+                    "html": "<p>As threats across all platforms continue to grow in number and sophistication, security solutions must be capable of providing advanced protection on a wide range of devices, regardless of the operating system in use. Organizations will continue to face threats from a variety of entry points across devices, so Microsoft continues to heavily invest in protecting all the major platforms and providing extensive capabilities that organizations needed to protect their networks and systems. <a></a><a></a><a></a><a></a></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5e2fffa5>",
+            "title": "Detection details",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb4d124da>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft Defender for Endpoint detects and blocks XorDdos components and behavior as the following malware:",
+                    "html": "<p>Microsoft Defender for Endpoint detects and blocks XorDdos components and behavior as the following malware:</p>"
+                },
+                {
+                    "id": "<sentence_0xac60c9a2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DoS:Linux/Xorddos.A<crlf>DoS:Linux/Xorddos!rfn<crlf>Trojan:Linux/Xorddos<crlf>Trojan:Linux/Xorddos.AA<crlf>Trojan:Linux/Xorddos!rfn<crlf>Behavior:Linux/Xorddos.A",
+                    "html": "<ul><li>DoS:Linux/Xorddos.A</li><li>DoS:Linux/Xorddos!rfn</li><li>Trojan:Linux/Xorddos</li><li>Trojan:Linux/Xorddos.AA</li><li>Trojan:Linux/Xorddos!rfn</li><li>Behavior:Linux/Xorddos.A</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x943a7734>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When XorDdos is detected on a device, Microsoft 365 Defender raises an alert, which shows the complete attack chain, including the process tree, file information, user information, and prevention details.",
+                    "html": "<p>When XorDdos is detected on a device, Microsoft 365 Defender raises an alert, which shows the complete attack chain, including the process tree, file information, user information, and prevention details.</p>"
+                },
+                {
+                    "id": "<sentence_0x6a62e373>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xad5d9f45>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-18.-Microsoft-365-Defender-alert-for-detection-of-XorDdos-malware_ccexpress.png"
+                    },
+                    "text": "Figure 18. Microsoft 365 Defender alert for detection of XorDdos malware",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"\" class=\"wp-image-114483\" height=\"774\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-18.-Microsoft-365-Defender-alert-for-detection-of-XorDdos-malware_ccexpress.png\" width=\"800\"/><figcaption>Figure 18. Microsoft 365 Defender alert for detection of XorDdos malware</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xabf00f51>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The timeline view displays all of the detection and prevention events associated with XorDdos, providing details such as the MITRE ATT&CK techniques and tactics, remediation status, and event entities graph.",
+                    "html": "<p>The timeline view displays all of the detection and prevention events associated with XorDdos, providing details such as the MITRE ATT&amp;CK techniques and tactics, remediation status, and event entities graph.</p>"
+                },
+                {
+                    "id": "<sentence_0x877a047d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8d6d2480>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-19.-Microsoft-365-Defender-timeline-displaying-that-HFLgGwYfSC.elf-was-run-from-a-world-writable-directory-and-the-remediation-of-dropped-binaries_ccexpress.png"
+                    },
+                    "text": "Figure 19. Microsoft 365 Defender timeline displaying that HFLgGwYfSC.elf was run from a world-writable directory and the remediation of dropped binaries",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"\" class=\"wp-image-114486\" height=\"108\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-19.-Microsoft-365-Defender-timeline-displaying-that-HFLgGwYfSC.elf-was-run-from-a-world-writable-directory-and-the-remediation-of-dropped-binaries_ccexpress.png\" width=\"800\"/><figcaption>Figure 19. Microsoft 365 Defender timeline displaying that HFLgGwYfSC.elf was run from a world-writable directory and the remediation of dropped binaries</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xab3b99bd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Events with the following titles indicate threat activity related to XorDdos:",
+                    "html": "<p>Events with the following titles indicate threat activity related to XorDdos:</p>"
+                },
+                {
+                    "id": "<sentence_0x6f0bd76d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The content of libudev.so was collected into libudev.so.6<crlf>bash process performed System Information Discovery by invoking ifconfig<crlf>gcc.sh was executed after being dropped by HFLgGwYfSC.elf<crlf>A shell command was executed by crond<crlf>SUID/SGID process unix_chkpwd executed",
+                    "html": "<ul><li>The content of libudev.so was collected into libudev.so.6</li><li>bash process performed System Information Discovery by invoking ifconfig</li><li>gcc.sh was executed after being dropped by HFLgGwYfSC.elf</li><li>A shell command was executed by crond</li><li>SUID/SGID process unix_chkpwd executed</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x62905ecf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3013217b>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-20.-Microsoft-365-Defender-timeline-with-an-event-on-a-suspicious-shell-command-run-by-crond-after-it-was-dropped-from-HFLgGwYfSC.elf_ccexpress.png"
+                    },
+                    "text": "Figure 20. Microsoft 365 Defender timeline with an event on a suspicious shell command run by crond after it was dropped from HFLgGwYfSC.elf",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"\" class=\"wp-image-114492\" height=\"362\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/Figure-20.-Microsoft-365-Defender-timeline-with-an-event-on-a-suspicious-shell-command-run-by-crond-after-it-was-dropped-from-HFLgGwYfSC.elf_ccexpress.png\" width=\"800\"/><figcaption>Figure 20. Microsoft 365 Defender timeline with an event on a suspicious shell command run by crond after it was dropped from HFLgGwYfSC.elf</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5154a4b1>",
+            "title": "Hunting queries",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc3f4e6ba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To locate malicious activity related to XorDdos activity, run the following advanced hunting queries in Microsoft 365 Defender or Microsoft Defender Security Center:",
+                    "html": "<p>To locate malicious activity related to XorDdos activity, run the following advanced hunting queries in Microsoft 365 Defender or Microsoft Defender Security Center:</p>"
+                },
+                {
+                    "id": "<sentence_0xb59ce279>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Failed sign-ins",
+                    "html": "<p>Failed sign-ins</p>"
+                },
+                {
+                    "id": "<sentence_0x9aea5809>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DeviceLogonEvents<crlf>| where InitiatingProcessFileName == \"sshd\"<crlf>and ActionType == \"LogonFailed\"<crlf>| summarize count() by dayOfYear = datetime_part(\"dayOfYear\", Timestamp)<crlf>| sort by dayOfYear<crlf>| render linechart",
+                    "html": "\nDeviceLogonEvents\n| where InitiatingProcessFileName == \"sshd\"\n and ActionType == \"LogonFailed\"\n| summarize count() by dayOfYear = datetime_part(\"dayOfYear\", Timestamp)\n| sort by dayOfYear \n| render linechart\n"
+                },
+                {
+                    "id": "<sentence_0xac52bf32>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Creation of the XorDdos-specific dropped files",
+                    "html": "<p>Creation of the XorDdos-specific dropped files</p>"
+                },
+                {
+                    "id": "<sentence_0x98d7e3ed>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DeviceFileEvents<crlf>| extend FullPath=strcat(FolderPath, FileName)<crlf>| where FullPath in (\"/etc/cron.hourly/gcc.sh\", \"/lib/libudev.so.6\", \"/lib/libudev.so\", \"/var/run/gcc.pid\")",
+                    "html": "\nDeviceFileEvents\n| extend FullPath=strcat(FolderPath, FileName)\n| where FullPath in (\"/etc/cron.hourly/gcc.sh\", \"/lib/libudev.so.6\", \"/lib/libudev.so\", \"/var/run/gcc.pid\")\n"
+                },
+                {
+                    "id": "<sentence_0x3b2f90c5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Command-line of malicious process",
+                    "html": "<p>Command-line of malicious process</p>"
+                },
+                {
+                    "id": "<sentence_0x8000113a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DeviceProcessEvents<crlf>| where ProcessCommandLine contains \"cat resolv.conf\"",
+                    "html": "\nDeviceProcessEvents\n| where ProcessCommandLine contains \"cat resolv.conf\"\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb4964d1f>",
+            "title": "Indicators",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x35ac5eae>",
+            "title": "File information",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x584e2822>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x7af2768a>": {
+                            "0": {
+                                "0": "File name:",
+                                "1": "File size:",
+                                "2": "Classification:",
+                                "3": "MD5:",
+                                "4": "Sha1:",
+                                "5": "Sha256:",
+                                "6": "File type:",
+                                "7": "First submission in VT:"
+                            },
+                            "1": {
+                                "0": "HFLgGwYfSC.elf",
+                                "1": "611.22 KB (625889 bytes)",
+                                "2": "DoS:Linux/Xorddos.A",
+                                "3": "2DC6225A9D104A950FB33A74DA262B93",
+                                "4": "F05194FB2B3978611B99CFBF5E5F1DD44CD5E04B",
+                                "5": "F2DF54EB827F3C733D481EBB167A5BC77C5AE39A6BDA7F340BB23B24DC9A4432",
+                                "6": "ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, for GNU/Linux 2.6.9, not stripped",
+                                "7": "2022-01-25 05:32:10 UTC"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>File name:</td><td>HFLgGwYfSC.elf</td></tr><tr><td>File size:</td><td>611.22 KB (625889 bytes)</td></tr><tr><td>Classification:</td><td>DoS:Linux/Xorddos.A</td></tr><tr><td>MD5:</td><td>2DC6225A9D104A950FB33A74DA262B93</td></tr><tr><td>Sha1:</td><td>F05194FB2B3978611B99CFBF5E5F1DD44CD5E04B</td></tr><tr><td>Sha256:</td><td>F2DF54EB827F3C733D481EBB167A5BC77C5AE39A6BDA7F340BB23B24DC9A4432</td></tr><tr><td>File type:</td><td>ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, for GNU/Linux 2.6.9, not stripped</td></tr><tr><td>First submission in VT:</td><td>2022-01-25 05:32:10 UTC</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xda8919f2>",
+            "title": "Dropped files",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x27aebb51>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xa7b7c017>": {
+                            "0": {
+                                "0": "Dropped file path",
+                                "1": "/etc/init.d/HFLgGwYfSC.elf",
+                                "2": "/etc/cron.hourly/gcc.sh",
+                                "3": "/lib/libudev.so",
+                                "4": "/run/gcc.pid",
+                                "5": "/usr/bin/djtctpzfdq",
+                                "6": "/usr/bin/dmpyuitfoq",
+                                "7": "/usr/bin/fdinprytpq",
+                                "8": "/usr/bin/jwvwvxoupv",
+                                "9": "/usr/bin/kagbjahdic",
+                                "10": "/usr/bin/kkldnszwvq",
+                                "11": "/usr/bin/kndmhuqmah",
+                                "12": "/usr/bin/qkxqoelrfa",
+                                "13": "/usr/bin/sykhrxsazz",
+                                "14": "/usr/bin/tcnszvmpqn",
+                                "15": "/usr/bin/zalkpggsgh",
+                                "16": "/usr/bin/zvcarxfquk",
+                                "17": "/tmp/bin/3200"
+                            },
+                            "1": {
+                                "0": "File type",
+                                "1": "Shell Script",
+                                "2": "Shell Script",
+                                "3": "ELF",
+                                "4": "Text",
+                                "5": "ELF",
+                                "6": "ELF",
+                                "7": "ELF",
+                                "8": "ELF",
+                                "9": "ELF",
+                                "10": "ELF",
+                                "11": "ELF",
+                                "12": "ELF",
+                                "13": "ELF",
+                                "14": "ELF",
+                                "15": "ELF",
+                                "16": "ELF",
+                                "17": "ELF(rootkit)"
+                            },
+                            "2": {
+                                "0": "SHA-256",
+                                "1": "6E506F32C6FB7B5D342D1382989AB191C6F21C2D311251D8F623814F468952CF",
+                                "2": "CBB72E542E8F19240130FC9381C2351730D437D42926C6E68E056907C8456459",
+                                "3": "F2DF54EB827F3C733D481EBB167A5BC77C5AE39A6BDA7F340BB23B24DC9A4432",
+                                "4": "932FEEF3AB6FCCB3502F900619B1F87E1CB44A7ADAB48F2C927ECDD67FF6830A",
+                                "5": "53F062A93CF19AEAA2F8481B32118A31B658A126624ABB8A7D82237884F0A394",
+                                "6": "798577202477C0C233D4AF51C4D8FB2F574DDB3C9D1D90325D359A84CB1BD51C",
+                                "7": "2B4500987D50A24BA5C118F506F2507362D6B5C63C80B1984B4AE86641779FF3",
+                                "8": "359C41DA1CBAE573D2C99F7DA9EEB03DF135F018F6C660B4E44FBD2B4DDECD39",
+                                "9": "E6C7EEE304DFC29B19012EF6D31848C0B5BB07362691E4E9633C8581F1C2D65B",
+                                "10": "EF0A4C12D98DC0AD4DB86AADD641389C7219F57F15642ED35B4443DAF3FF8C1E",
+                                "11": "B5FBA27A8E457C1AB6573C378171F057D151DC615D6A8D339195716FA9AC277A",
+                                "12": "D71EA3B98286D39A711B626F687F0D3FC852C3E3A05DE3F51450FB8F7BD2B0D7",
+                                "13": "9D6F115F31EE71089CC85B18852974E349C68FAD3276145DAFD0076951F32489",
+                                "14": "360A6258DD66A3BA595A93896D9B55D22406D02E5C02100E5A18382C54E7D5CD",
+                                "15": "DC2B1CEE161EBE90BE68561755D99E66F454AD80B27CEBE3D4773518AC45CBB7",
+                                "16": "175667933088FBEBCB62C8450993422CCC876495299173C646779A9E67501FF4",
+                                "17": "C8F761D3EF7CD16EBE41042A0DAF901C2FDFFCE96C8E9E1FA0D422C6E31332EA"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Dropped file path</td><td>File type</td><td>SHA-256</td></tr><tr><td>/etc/init.d/HFLgGwYfSC.elf</td><td>Shell Script</td><td>6E506F32C6FB7B5D342D1382989AB191C6F21C2D311251D8F623814F468952CF</td></tr><tr><td>/etc/cron.hourly/gcc.sh</td><td>Shell Script</td><td>CBB72E542E8F19240130FC9381C2351730D437D42926C6E68E056907C8456459</td></tr><tr><td>/lib/libudev.so</td><td>ELF</td><td>F2DF54EB827F3C733D481EBB167A5BC77C5AE39A6BDA7F340BB23B24DC9A4432</td></tr><tr><td>/run/gcc.pid</td><td>Text</td><td>932FEEF3AB6FCCB3502F900619B1F87E1CB44A7ADAB48F2C927ECDD67FF6830A</td></tr><tr><td>/usr/bin/djtctpzfdq</td><td>ELF</td><td>53F062A93CF19AEAA2F8481B32118A31B658A126624ABB8A7D82237884F0A394</td></tr><tr><td>/usr/bin/dmpyuitfoq</td><td>ELF</td><td>798577202477C0C233D4AF51C4D8FB2F574DDB3C9D1D90325D359A84CB1BD51C</td></tr><tr><td>/usr/bin/fdinprytpq</td><td>ELF</td><td>2B4500987D50A24BA5C118F506F2507362D6B5C63C80B1984B4AE86641779FF3</td></tr><tr><td>/usr/bin/jwvwvxoupv</td><td>ELF</td><td>359C41DA1CBAE573D2C99F7DA9EEB03DF135F018F6C660B4E44FBD2B4DDECD39</td></tr><tr><td>/usr/bin/kagbjahdic</td><td>ELF</td><td>E6C7EEE304DFC29B19012EF6D31848C0B5BB07362691E4E9633C8581F1C2D65B</td></tr><tr><td>/usr/bin/kkldnszwvq</td><td>ELF</td><td>EF0A4C12D98DC0AD4DB86AADD641389C7219F57F15642ED35B4443DAF3FF8C1E</td></tr><tr><td>/usr/bin/kndmhuqmah</td><td>ELF</td><td>B5FBA27A8E457C1AB6573C378171F057D151DC615D6A8D339195716FA9AC277A</td></tr><tr><td>/usr/bin/qkxqoelrfa</td><td>ELF</td><td>D71EA3B98286D39A711B626F687F0D3FC852C3E3A05DE3F51450FB8F7BD2B0D7</td></tr><tr><td>/usr/bin/sykhrxsazz</td><td>ELF</td><td>9D6F115F31EE71089CC85B18852974E349C68FAD3276145DAFD0076951F32489</td></tr><tr><td>/usr/bin/tcnszvmpqn</td><td>ELF</td><td>360A6258DD66A3BA595A93896D9B55D22406D02E5C02100E5A18382C54E7D5CD</td></tr><tr><td>/usr/bin/zalkpggsgh</td><td>ELF</td><td>DC2B1CEE161EBE90BE68561755D99E66F454AD80B27CEBE3D4773518AC45CBB7</td></tr><tr><td>/usr/bin/zvcarxfquk</td><td>ELF</td><td>175667933088FBEBCB62C8450993422CCC876495299173C646779A9E67501FF4</td></tr><tr><td>/tmp/bin/3200</td><td>ELF(rootkit)</td><td>C8F761D3EF7CD16EBE41042A0DAF901C2FDFFCE96C8E9E1FA0D422C6E31332EA</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1a43ee76>",
+            "title": "Download URLs",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x30776879>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "www[.]enoan2107[.]com:3306<crlf>www[.]gzcfr5axf6[.]com:3306<crlf>hxxp://aa[.]hostasa[.]org/config.rar",
+                    "html": "<ul><li>www[.]enoan2107[.]com:3306</li><li>www[.]gzcfr5axf6[.]com:3306</li><li>hxxp://aa[.]hostasa[.]org/config.rar</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x57ddf1e4>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x119ae392>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Ratnesh Pandey, Yevgeny Kulakov, and Jonathan Bar Or<crlf>Microsoft 365 Defender Research Team",
+                    "html": "<p>Ratnesh Pandey, Yevgeny Kulakov, and Jonathan Bar Or\nMicrosoft 365 Defender Research Team</p>"
+                }
+            ]
+        }
+    ]
+}

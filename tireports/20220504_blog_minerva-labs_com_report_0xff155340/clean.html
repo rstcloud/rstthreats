@@ -1,0 +1,70 @@
+<div>
+<h1>Minerva Labs Blog</h1>
+<p>News &amp; Reports</p>
+<a class="hs-featured-image-link" href="https://blog.minerva-labs.com/new-black-basta-ransomware-hijacks-windows-fax-service" title="">
+<img class="hs-featured-image" src="https://blog.minerva-labs.com/hubfs/Black%20basta2.jpg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<h2>New Black Basta Ransomware Hijacks Windows Fax Service</h2>
+						 May 02, 2022
+					 | 
+					 
+						
+							Natalie Zargarov
+						
+					 
+<ul class="hs-blog-social-share-list">
+<li class="hs-blog-social-share-item hs-blog-social-share-item-twitter">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-linkedin">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-facebook">
+</li>
+</ul>
+<p>The Black Basta ransomware was first observed in mid-April 2022, but had already caused substantial damage to over ten organizations. This new ransomware became more public after leaking data of the American Dental Association, from which the Black Basta gang was able to exfiltrate 2.9 GB of data. </p>
+<p>Black Basta ransomware must be executed with Administrator privileges, otherwise this ransomware is harmless. </p>
+<p>This means that the threat actor needs to remain undetected inside the organization’s network for quite some time in order to gain privilege access or use stolen credentials (there are a number of darknet websites who offer a large amount of these for sale). </p>
+<p>Black Basta begins by checking if any parameters were passed. The only parameter that this ransomware accepts is “-forcepath”, which we assume that if passed, will encrypt files in the specific path only. However, in dynamic analysis selecting a specific path, no differences in encryption routine were observed. Next, the ransomware deletes shadow copies by executing “C:\Windows\SysNative\vssadmin.exe delete shadows /all /quiet” command. </p>
+<p>Black basta drops two files: dlaksjdoiwq.jpg and fkdjsadasd.ico in the user Temp folder. dlaksjdoiwq.jpg is a desktop wallpaper, pointing to read a ransom note, that is set by the ransomware using the SystemParametersInfoW API call: </p>
+<p><img alt="set wallpaper" src="https://blog.minerva-labs.com/hs-fs/hubfs/set%20wallpaper.png?width=315&amp;name=set%20wallpaper.png" width="315"/>Figure 1 - Set Desktop Wallpaper</p>
+<p><img alt="wallpaper" src="https://blog.minerva-labs.com/hs-fs/hubfs/wallpaper.png?width=1446&amp;name=wallpaper.png" style="max-width:800px;height:auto;width:auto;" width="1446"/>Figure 2 - New Wallpaper</p>
+<p>Next, the ransomware assigns a second dropped file (fkdjsadasd.ico) as a custom icon to all files with “.basta” extension. The icon is assigned by creating and setting a new registry key “HKEY_CLASSES_ROOT\.basta\DefaultIcon” </p>
+<p> <img alt="icon for basta extension files" src="https://blog.minerva-labs.com/hs-fs/hubfs/icon%20for%20basta%20extension%20files.png?width=844&amp;name=icon%20for%20basta%20extension%20files.png" style="max-width:800px;height:auto;width:auto;" width="844"/></p>
+<p>Figure 3 - Assigning custom icon </p>
+<p>Now come the interesting part - the persistence mechanism of the Black Basta ransomware is implemented by “stealing” an existing service name, deleting the service, and then creating a new service with the same(“stolen”) name. In our sample, the legitimate service whose name was stolen is “FAX”: </p>
+<p> <img alt="new service" src="https://blog.minerva-labs.com/hs-fs/hubfs/new%20service.png?width=524&amp;name=new%20service.png" width="524"/></p>
+<p>Figure 4 - "New" Service </p>
+<p>Before the encryption routine begins, the ransomware checks the system boot configuration by using the GetSystemMetrics API call. It then adds “HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\SafeBoot\Network\Fax” to enable a FAX service to run in safe mode: </p>
+<p> <img alt="set fax service at safeboot" src="https://blog.minerva-labs.com/hs-fs/hubfs/set%20fax%20service%20at%20safeboot.png?width=961&amp;name=set%20fax%20service%20at%20safeboot.png" style="max-width:800px;height:auto;width:auto;" width="961"/></p>
+<p>Figure 5 - Safe Boot Configuration </p>
+<p>After all configurations are set, the ransomware reboots the pc in safe mode with networking by executing the ” bcdedit /set safeboot network” command: </p>
+<p> <img alt="run command line" src="https://blog.minerva-labs.com/hs-fs/hubfs/run%20command%20line.png?width=585&amp;name=run%20command%20line.png" width="585"/></p>
+<p>Figure 6 - Reboot in safe mode </p>
+<p>Due to the reboot mode change performed by the ransomware earlier, the PC will reboot in safe mode with the ‘Fax’ service running. This service will then execute the ransomware again, but this time for the purpose of encryption. As most ransomwares these days, Black Basta first enumerates volumes and puts a readme.txt file, a surprisingly short ransom note (maybe because the initial presentation is done in the desktop wallpaper) containing a data publication threat, TOR website address of the gang, and a company ID. This note is written to every folder as a part of the encryption routine. </p>
+<p> <img alt="ransom_note" src="https://blog.minerva-labs.com/hs-fs/hubfs/ransom_note.png?width=696&amp;name=ransom_note.png" style="max-width:800px;height:auto;width:auto;" width="696"/></p>
+<p>Figure 7 - Ransom Note </p>
+<p> The encryption process runs in several threads simultaneously to speed up the encryption, despite high CPU usage: </p>
+<p> <img alt="cpu usage" src="https://blog.minerva-labs.com/hs-fs/hubfs/cpu%20usage.png?width=517&amp;name=cpu%20usage.png" width="517"/></p>
+<p>Figure 8 - 92.83% CPU usage </p>
+<p>When the encryption is finished, the ransomware reboots the pc in normal mode. </p>
+<p>It would seems that every sample is created for a specific company, as a company id is hardcoded into the ransom note as well as a public key. Recent Victims of this ransomware include <a href="https://renewablesnow.com/news/deutsche-windtechnik-hit-by-targeted-cyberattack-781048/" rel="nofollow noopener" target="_blank">Deutsche Windtechnik</a> and the <a href="https://www.bleepingcomputer.com/news/security/american-dental-association-hit-by-new-black-basta-ransomware/" rel="nofollow noopener" target="_blank">American Dental Association</a>.</p>
+<p> </p>
+<p>This article focuses only on the final stages of the Black Basta ransomware, that occurs only after the attacker has achieved initial access and has managed to perform substantial lateral movement within the network. Minerva’s Anti-Ransomware solution recognizes attempts to bypass security measures in order to remain undetected, and uses these very methods to prevent them from ever starting the attack. </p>
+<p> </p>
+<p>Resources: </p>
+<ul>
+<li><a href="https://www.bleepingcomputer.com/news/security/american-dental-association-hit-by-new-black-basta-ransomware/" rel="noopener" target="_blank">https://www.bleepingcomputer.com/news/security/american-dental-association-hit-by-new-black-basta-ransomware/</a> </li>
+</ul>
+<p> </p>
+<p>IOC’s: </p>
+<ul>
+<li>5d2204f3a20e163120f52a2e3595db19890050b2faa96c6cba6b094b0a52b0aa – The Black Basta ransomware </li>
+<li>A70F03BEB3A8246595EAB83935227914 - dlaksjdoiwq.jpg – desktop wallpaper </li>
+<li>eb07a24f63d7f56fb13e34dd60e45a4c8522c32892c8be7dca7d3f742fa86b0a - fkdjsadasd.ico - .basta custom icon </li>
+</ul>
+<a href="malware-evasion-detecting-security-and-forensic-tools?hsLang=en-us">
+« Previous Post
+ </a>
+<a href="a-new-blustealer-loader-uses-direct-syscalls-to-evade-edrs?hsLang=en-us">
+ Next Post »
+</a>
+</div>

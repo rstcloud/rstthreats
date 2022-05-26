@@ -1,0 +1,482 @@
+{
+    "id": "<report_0x3dfa49e7>",
+    "url": "https://labs.k7computing.com/index.php/emotet-takes-the-64-bit-route",
+    "title": "Emotet takes the 64-bit Route",
+    "meta": [
+        {
+            "id": "<chapter_0xcd0be642>",
+            "title": "Emotet takes the 64-bit Route",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x967229f5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By Rajesh RMay 16, 2022",
+                    "html": "\nBy Rajesh RMay 16, 2022\n \n"
+                },
+                {
+                    "id": "<sentence_0x2a79c662>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0xfd8f3db6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe62cf60c>": "https://labs.k7computing.com/index.php/diving-into-the-emotet-maldoc-boutade/"
+                    },
+                    "text": "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain.",
+                    "html": "<p>Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this <a href=\"https://labs.k7computing.com/index.php/diving-into-the-emotet-maldoc-boutade/\" rel=\"noopener\" target=\"_blank\">blog</a>. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain. </p>"
+                },
+                {
+                    "id": "<sentence_0xac72f6d7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x49a7aa2b>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1-2.png"
+                    },
+                    "text": "Figure 1: Emotet workflow",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24003\"><img alt=\"\" class=\"wp-image-24003 size-full\" height=\"166\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1-2.png\" width=\"572\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24003\">Figure 1: Emotet workflow</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x5da6f87d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbaee5239>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure2-2.png"
+                    },
+                    "text": "Figure 2: Emotet payload unpack flow",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24004\"><img alt=\"\" class=\"wp-image-24004 size-full\" height=\"177\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure2-2.png\" width=\"469\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24004\">Figure 2: Emotet payload unpack flow</figcaption></figure>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xa4e52da1>",
+            "title": "Emotet takes the 64-bit Route",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6d47d67c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5118c853>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Emotet.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" class=\"hidden-social-img\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Emotet.png\"/>"
+                },
+                {
+                    "id": "<sentence_0xea794f0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4b2f22ae>": "https://labs.k7computing.com/index.php/category/downloaders/"
+                    },
+                    "text": "Downloaders",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/downloaders/\">Downloaders</a>"
+                },
+                {
+                    "id": "<sentence_0xc8577940>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x56abb54b>": "https://labs.k7computing.com/index.php/category/spam/"
+                    },
+                    "text": "Spam",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/spam/\">Spam</a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1fc92d28>",
+            "title": "First level payload (Custom packed)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x248bb9bd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions.",
+                    "html": "<p>The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions. </p>"
+                },
+                {
+                    "id": "<sentence_0x9b2f9769>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1a42527f>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure3-2.png"
+                    },
+                    "text": "Figure 3: 64bit Custom packed DLL export functions",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24005\"><img alt=\"\" class=\"wp-image-24005 size-full\" height=\"504\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure3-2.png\" width=\"488\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24005\">Figure 3: 64bit Custom packed DLL export functions</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x1dd22fba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The main function contains a lot of byte variables containing encrypted shell code which then allocates heap memory with PAGE_EXECTUABLE_READWRITE permission and proceeds to decrypt and execute the shell code.",
+                    "html": "<p>The main function contains a lot of byte variables containing encrypted shell code which then allocates heap memory with \u201cPAGE_EXECTUABLE_READWRITE\u201d permission and proceeds to decrypt and execute the shell code.</p>"
+                },
+                {
+                    "id": "<sentence_0x29dc5ac1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x465f7c72>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure4-2.png"
+                    },
+                    "text": "Figure 4: Shell code decryption by custom packed DLL",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24006\"><img alt=\"\" class=\"wp-image-24006 size-full\" height=\"544\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure4-2.png\" width=\"404\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24006\">Figure 4: Shell code decryption by custom packed DLL</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf40ea2b5>",
+            "title": "Second level payload (Shell code)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe59a3fc4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The shell codes purpose is to load the DLL and API used in the next level of the payload, which decrypts the Emotets core payload.",
+                    "html": "<p>The shell code\u2019s purpose is to load the DLL and API used in the next level of the payload, which decrypts the Emotet\u2019s core payload.</p>"
+                },
+                {
+                    "id": "<sentence_0xee1a5c78>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x35568bb1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe6e96da1>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure5-2.png"
+                    },
+                    "text": "Figure 5: Shell code load encrypted data from resource section",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24007\"><img alt=\"\" class=\"wp-image-24007 size-full\" height=\"442\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure5-2.png\" width=\"611\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24007\">Figure 5: Shell code load encrypted data from resource section</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xdf53cfbd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API.",
+                    "html": "<p>The shell code\u2019s function was to decrypt and execute the 64-bit DLL payload which has Emotet\u2019s main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API.</p>"
+                },
+                {
+                    "id": "<sentence_0x83626ba5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x92359ed8>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure6-3.png"
+                    },
+                    "text": "Figure 6: Decrypt third level payload which is Emotets main DLL",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24008\"><img alt=\"\" class=\"wp-image-24008 size-full\" height=\"530\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure6-3.png\" width=\"703\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24008\">Figure 6: Decrypt third level payload which is Emotet\u2019s main DLL</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x677e443>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb3c779a2>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure7-2.png"
+                    },
+                    "text": "Figure 7: Copy decrypted PE file without DOS header to another heap memory",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24009\"><img alt=\"\" class=\"wp-image-24009 size-full\" height=\"418\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure7-2.png\" width=\"696\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24009\">Figure 7: Copy decrypted PE file without DOS header to another heap memory</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x882b5968>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x65fbad1d>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure8-2.png"
+                    },
+                    "text": "Figure 8: Partially Copied PE file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24010\"><img alt=\"\" class=\"wp-image-24010 size-full\" height=\"637\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure8-2.png\" width=\"785\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24010\">Figure 8: Partially Copied PE file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xef6184da>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                    "html": "<p>Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the \u201cDllRegisterServer\u201d of first level Emotet export function which in turn executes the third level \u201cDllRegisterServer\u201d. </p>"
+                },
+                {
+                    "id": "<sentence_0x6469a21b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbdfb68d9>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure9-2.png"
+                    },
+                    "text": "Figure 9: Execution of third level payload from first level DLL",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24011\"><img alt=\"\" class=\"wp-image-24011 size-full\" height=\"342\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure9-2.png\" width=\"498\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24011\">Figure 9: Execution of third level payload from first level DLL</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6af599a2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet uses the control flow flattening technique to execute functions. All the function flow works based on setting random values in variables. After every function value is changed it checks the value and finds the next function to execute. Flow diagram of the control flow flattening is as shown below",
+                    "html": "<p>Emotet uses the control flow flattening technique to execute functions. All the function flow works based on setting random values in variables. After every function value is changed it checks the value and finds the next function to execute. Flow diagram of the control flow flattening is as shown below</p>"
+                },
+                {
+                    "id": "<sentence_0x70cd863a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc95960a3>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure10-2.png"
+                    },
+                    "text": "Figure 10: Control flow flattening flow graph",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24012\"><img alt=\"\" class=\"wp-image-24012 size-full\" height=\"543\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure10-2.png\" width=\"578\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24012\">Figure 10: Control flow flattening flow graph</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xd97fa3a5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet also uses different functions for each API call. Every time it searches the API from PEB memory, It changes the windows DLL export name into a hash value to find the required API.",
+                    "html": "<p>Emotet also uses different functions for each API call. Every time it searches the API from PEB memory, It changes the windows DLL export name into a hash value to find the required API.</p>"
+                },
+                {
+                    "id": "<sentence_0xc7969d1d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbc1c20f5>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure11-1.png"
+                    },
+                    "text": "Figure 11: Get API address from loaded memory",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24013\"><img alt=\"\" class=\"wp-image-24013 size-full\" height=\"547\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure11-1.png\" width=\"779\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24013\">Figure 11: Get API address from loaded memory</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6d07899d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Every string used in the Emotet for API argument is decrypted at the time it is needed and removed from memory after it is used. Below is the screenshot of string %s %s, used in string concatenation, being decrypted.",
+                    "html": "<p>Every string used in the Emotet for API argument is decrypted at the time it is needed and removed from memory after it is used. Below is the screenshot of string \u201c%s %s\u201d, used in string concatenation, being decrypted.</p>"
+                },
+                {
+                    "id": "<sentence_0x7bcd6dc9>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xea4e1239>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure12-1.png"
+                    },
+                    "text": "Figure 12: String decryption loop",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24014\"><img alt=\"\" class=\"wp-image-24014 size-full\" height=\"403\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure12-1.png\" width=\"555\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24014\">Figure 12: String decryption loop</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x505a0f20>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value.",
+                    "html": "<p>Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the \u201cZone.Identifier\u201d component of the copied file or executes the Emotet\u2019s main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value.</p>"
+                },
+                {
+                    "id": "<sentence_0x34b37369>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x696e421b>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure13-1.png"
+                    },
+                    "text": "Figure 13: Delete zone identifier of copied file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24015\"><img alt=\"\" class=\"wp-image-24015 size-full\" height=\"124\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure13-1.png\" width=\"782\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24015\">Figure 13: Delete zone identifier of copied file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x8c5df76a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then collects following information from the victims system",
+                    "html": "<p>It then collects following information from the victim\u2019s system </p>"
+                },
+                {
+                    "id": "<sentence_0x28187b98>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Computer name<crlf>Volume information of OS directory<crlf>RtlGetVersion<crlf>System native information<crlf>Malware execution path with file name",
+                    "html": "<ul>\n<li>Computer name</li>\n<li>Volume information of OS directory</li>\n<li>RtlGetVersion </li>\n<li>System native information</li>\n<li>Malware execution path with file name </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xef504f7c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All the collected information is encrypted using the Elliptic Curve Cryptography Algorithm. Following API flow is used to encrypt the data. Finally, they convert the encrypted data to base64.",
+                    "html": "<p>All the collected information is encrypted using the Elliptic Curve Cryptography Algorithm. Following API flow is used to encrypt the data. Finally, they convert the encrypted data to base64. </p>"
+                },
+                {
+                    "id": "<sentence_0xedc2742a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW",
+                    "html": "<ul>\n<li>BCryptOpenAlgorithmProvider</li>\n<li>BcryptDeriveKey</li>\n<li>BcryptGetproperty</li>\n<li>BCryptImportKey</li>\n<li>BcryptGetproperty</li>\n<li>BCryptCreateHash </li>\n<li>BCryptHashData</li>\n<li>BCryptEncrypt</li>\n<li>CryptBinaryToStringW</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xb1fb0f84>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe9af88bf>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure14.png"
+                    },
+                    "text": "Figure 14: Encrypt user information",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24016\"><img alt=\"\" class=\"wp-image-24016 size-full\" height=\"512\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure14.png\" width=\"697\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24016\">Figure 14: Encrypt user information</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xeab948f4>",
+            "title": "C2 communication",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf79ac28>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This third level payload decrypts a self-contained list of IP addresses which is used for C2 communication.",
+                    "html": "<p>This third level payload decrypts a self-contained list of IP addresses which is used for C2 communication.</p>"
+                },
+                {
+                    "id": "<sentence_0x182a8e0c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The converted base64 data is sent to the C&C.",
+                    "html": "<p>The converted base64 data is sent to the C&amp;C.</p>"
+                },
+                {
+                    "id": "<sentence_0xf50c3e5f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Following APIs are used for C&C communication",
+                    "html": "<p>Following APIs are used for C&amp;C communication</p>"
+                },
+                {
+                    "id": "<sentence_0x86f5b9b1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW",
+                    "html": "<ul>\n<li>HttpOpenRequestW</li>\n<li>InternetOpenW</li>\n<li>InternetConnectW</li>\n<li>InternetQueryOptionW</li>\n<li>InternetSetOptionW</li>\n<li>InternetSendRequestW</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x561eac44>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf14a0544>": "https://labs.k7computing.com/wp-content/uploads/2022/05/figure15.png"
+                    },
+                    "text": "Figure 15: Send user data to C&C",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24017\"><img alt=\"\" class=\"wp-image-24017 size-full\" height=\"546\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/figure15.png\" width=\"793\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24017\">Figure 15: Send user data to C&amp;C</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x10afd074>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads.",
+                    "html": "<p>After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads.</p>"
+                },
+                {
+                    "id": "<sentence_0xe2ea37ad>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer.",
+                    "html": "<p>In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer.</p>"
+                },
+                {
+                    "id": "<sentence_0x6143a8b1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd97eb250>",
+            "title": "Indicators of Compromise (IOCs)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6f17cdeb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SHA256: 7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261",
+                    "html": "<p>SHA256: 7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261</p>"
+                },
+                {
+                    "id": "<sentence_0x98ebfb5d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xbd79fc17>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xae97f1a7>",
+            "title": "Like what you're reading? Subscribe to our top stories.",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xaa22ba67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If you want to subscribe to our monthly newsletter, please submit the form below.",
+                    "html": "<p class=\"sendgrid_widget_text\">If you want to subscribe to our monthly newsletter, please submit the form below.</p>"
+                },
+                {
+                    "id": "<sentence_0xac689cac>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Email* :",
+                    "html": " Email* : \n"
+                },
+                {
+                    "id": "<sentence_0x81825d19>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6747a889>": "https://labs.k7computing.com/index.php/play-store-app-serves-teabot-via-github/"
+                    },
+                    "text": "Previous Post Play Store App Serves Teabot Via GitHub<crlf>Next Post",
+                    "html": "<ul class=\"controls\">\n<li class=\"previous-post mouse-leaving\">\n<h3>Previous Post\u00ab <a href=\"https://labs.k7computing.com/index.php/play-store-app-serves-teabot-via-github/\" rel=\"prev\">Play Store App Serves Teabot Via GitHub</a>\n</h3>\n</li>\n<li class=\"next-post mouse-leaving\">\n<h3>Next Post\n</h3>\n</li>\n</ul>"
+                }
+            ]
+        }
+    ]
+}

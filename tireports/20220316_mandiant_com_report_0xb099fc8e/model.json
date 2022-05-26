@@ -1,0 +1,671 @@
+{
+    "id": "<report_0xb099fc8e>",
+    "url": "https://www.mandiant.com/resources/unc2891-overview",
+    "title": "Have Your Cake and Eat it Too? An Overview of UNC2891",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0x55476a1e>",
+            "title": "Have Your Cake and Eat it Too? An Overview of UNC2891",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9077ecd8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mathew Potaczek, Takahiro Sugiyama, Logeswaran Nadarajan, Yu Nakamura, Josh Homan, Martin Co, Sylvain Hirsch<crlf> Mar 16, 2022<crlf> <crlf> 14 mins read<crlf> <crlf>Threat Research<crlf>Uncategorized Groups (UNC Groups)",
+                    "html": "\nMathew Potaczek, Takahiro Sugiyama, Logeswaran Nadarajan, Yu Nakamura, Josh Homan, Martin Co, Sylvain Hirsch\n Mar 16, 2022\n \n 14 mins read\n \nThreat Research\nUncategorized Groups (UNC Groups)\n"
+                },
+                {
+                    "id": "<sentence_0xd829204>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x630d2af0>": "https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945"
+                    },
+                    "text": "The Mandiant Advanced Practices team previously published a threat research blog post that provided an overview of UNC1945 operations where the actor compromised managed services providers to gain access to targets in the financial and professional consulting industries.",
+                    "html": "<p>The Mandiant Advanced Practices team previously published a threat research blog post that provided an <a href=\"https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945\">overview of UNC1945 operations</a> where the actor compromised managed services providers to gain access to targets in the financial and professional consulting industries.</p>"
+                },
+                {
+                    "id": "<sentence_0x2e2f3925>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Since that time, Mandiant has investigated and attributed several intrusions to a threat cluster we believe has a nexus to this actor, currently being tracked as UNC2891. Through these investigations, Mandiant has discovered additional techniques, malware, and utilities being used by UNC2891 alongside those previously observed in use by UNC1945. Despite having identified significant overlaps between these threat clusters, Mandiant has not determined they are attributable to the same actor.",
+                    "html": "<p>Since that time, Mandiant has investigated and attributed several intrusions to a threat cluster we believe has a nexus to this actor, currently being tracked as UNC2891. Through these investigations, Mandiant has discovered additional techniques, malware, and utilities being used by UNC2891 alongside those previously observed in use by UNC1945. Despite having identified significant overlaps between these threat clusters, Mandiant has not determined they are attributable to the same actor.</p>"
+                },
+                {
+                    "id": "<sentence_0x592b55f6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "UNC2891 intrusions appear to be financially motivated and in some cases spanned several years through which the actor had remained largely undetected.<crlf>UNC2891 demonstrated fluency and expertise in Unix and Linux environments, mostly through the targeting of Oracle Solaris based systems with TINYSHELL and SLAPSTICK backdoors.<crlf>Mandiant observed UNC2891 operate with a high degree of OPSEC and leverage both public and private malware, utilities, and scripts to remove evidence and hinder response efforts.<crlf>Mandiant discovered a previously unknown rootkit for Oracle Solaris systems that UNC2891 used to remain hidden in victim networks, we have named this CAKETAP.<crlf>One Variant of CAKETAP manipulated messages transiting a victims Automatic Teller Machine (ATM) switching network. It is believed this was leveraged as part of a larger operation to perform unauthorized cash withdrawals at several banks using fraudulent bank cards.",
+                    "html": "<ul><li>UNC2891 intrusions appear to be financially motivated and in some cases spanned several years through which the actor had remained largely undetected.</li>\n<li>UNC2891 demonstrated fluency and expertise in Unix and Linux environments, mostly through the targeting of Oracle Solaris based systems with TINYSHELL and SLAPSTICK backdoors. </li>\n<li>Mandiant observed UNC2891 operate with a high degree of OPSEC and leverage both public and private malware, utilities, and scripts to remove evidence and hinder response efforts.</li>\n<li>Mandiant discovered a previously unknown rootkit for Oracle Solaris systems that UNC2891 used to remain hidden in victim networks, we have named this CAKETAP.</li>\n<li>One Variant of CAKETAP manipulated messages transiting a victims Automatic Teller Machine (ATM) switching network. It is believed this was leveraged as part of a larger operation to perform unauthorized cash withdrawals at several banks using fraudulent bank cards. </li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xfd30574a>",
+            "title": "Have Your Cake and Eat it Too? An Overview of UNC2891",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8350808e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Blog",
+                    "html": "\nBlog\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc2379703>",
+            "title": "Extensive Use of SLAPSTICK and TINYSHELL Backdoors",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5989ecc6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x630d2af0>": "https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945"
+                    },
+                    "text": "Like past UNC1945 intrusions, Mandiant observed UNC2891 make extensive use of the Pluggable Authentication Module (PAM) based backdoor we track as SLAPSTICK to aid with credential harvesting, and to provide backdoor access to compromised machines in victim networks. As detailed in our previous blog post, SLAPSTICK provides persistent backdoor access to infected systems with a hard-coded magical password, it also logs authentication attempts and corresponding passwords in an encrypted log file. Although this is expected to have tremendously assisted UNC2891 with credential harvesting and lateral movement activities, it also provided valuable information to Mandiant Incident Responders. Although SLAPSTICK log files were often timestomped, Mandiant was able to decode them and trace some of the actors lateral movement activities through the usage of the backdoor provided magical password.",
+                    "html": "<p>Like past UNC1945 intrusions, Mandiant observed UNC2891 make extensive use of the Pluggable Authentication Module (PAM) based backdoor we track as SLAPSTICK to aid with credential harvesting, and to provide backdoor access to compromised machines in victim networks. As detailed in our previous <a href=\"https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945\">blog post</a>, SLAPSTICK provides persistent backdoor access to infected systems with a hard-coded magical password, it also logs authentication attempts and corresponding passwords in an encrypted log file. Although this is expected to have tremendously assisted UNC2891 with credential harvesting and lateral movement activities, it also provided valuable information to Mandiant Incident Responders. Although SLAPSTICK log files were often timestomped, Mandiant was able to decode them and trace some of the actor\u2019s lateral movement activities through the usage of the backdoor provided magical password. </p>"
+                },
+                {
+                    "id": "<sentence_0x77855e81>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x57d1f44e>": "https://www.mandiant.com/sites/default/files/inline-images/unc2891-fig1.png"
+                    },
+                    "text": "Figure 1: Example SLAPSTICK decoded log (fabricated)",
+                    "html": "<figure><img alt=\"Example SLAPSTICK decoded log (fabricated)\" height=\"87\" src=\"/sites/default/files/inline-images/unc2891-fig1.png\" width=\"623\"/><figcaption>Figure 1: Example SLAPSTICK decoded log (fabricated)</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x14d558f5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7ac23834>": "https://github.com/creaktive/tsh"
+                    },
+                    "text": "Alongside SLAPSTICK, UNC2891 often installed a custom variant of the publicly available TINYSHELL backdoor. UNC2891 TINYSHELL backdoors leveraged an external encrypted configuration file and some variants included additional functionality, such as the ability to communicate via a HTTP proxy with basic authentication. In line with the groups familiarity with Unix and Linux based systems, UNC2891 often named and configured their TINYSHELL backdoors with values that masqueraded as legitimate services that might be overlooked by investigators, such as systemd (SYSTEMD), name service cache daemon (NCSD), and the Linux at daemon (ATD).",
+                    "html": "<p>Alongside SLAPSTICK, UNC2891 often installed a custom variant of the <a href=\"https://github.com/creaktive/tsh\">publicly available</a> TINYSHELL backdoor. UNC2891 TINYSHELL backdoors leveraged an external encrypted configuration file and some variants included additional functionality, such as the ability to communicate via a HTTP proxy with basic authentication. In line with the group\u2019s familiarity with Unix and Linux based systems, UNC2891 often named and configured their TINYSHELL backdoors with values that masqueraded as legitimate services that might be overlooked by investigators, such as systemd (SYSTEMD), name service cache daemon (NCSD), and the Linux at daemon (ATD).</p>"
+                },
+                {
+                    "id": "<sentence_0x10ea8a6>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x8f8cdb1f>": {
+                            "0": {
+                                "0": "TINYSHELL Backdoor File Paths",
+                                "1": "/usr/lib/libhelpx.so.1 /usr/lib/systemd/systemd-helper /usr/sbin/nscd"
+                            },
+                            "1": {
+                                "0": "TINYSHELL Configuration File Paths",
+                                "1": "/usr/lib/libatdcf.so /usr/lib/libnscd.so.1 /usr/lib/libsystemdcf.so /var/ntp/ntpstats/1"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\">Table 1: Observed TINYSHELL file paths\n<tbody><tr><td>\n<p>TINYSHELL Backdoor File Paths</p>\n</td>\n<td>\n<p>TINYSHELL Configuration File Paths</p>\n</td>\n</tr><tr><td>\n<p>/usr/lib/libhelpx.so.1</p>\n<p>/usr/lib/systemd/systemd-helper</p>\n<p>/usr/sbin/nscd</p>\n</td>\n<td>\n<p>/usr/lib/libatdcf.so</p>\n<p>/usr/lib/libnscd.so.1</p>\n<p>/usr/lib/libsystemdcf.so</p>\n<p>/var/ntp/ntpstats/1</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x439e2b6c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x5e35bc26>": {
+                            "0": {
+                                "0": "Example Decoded configuration",
+                                "1": "pm_systemd_mag <32-character string> systemd_nme <system id> pm_systemd_adr <C2 IP address/domain> pm_systemd_prt <443 or 53> pm_systemd_tme 300 systemd_non1 none systemd_non2 none systemd_non3 none systemd_non4 none"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\">Table 2: Example decoded TINYSHELL configuration (systemd variant)\n<tbody><tr><td>\n<p>Example Decoded configuration </p>\n</td>\n</tr><tr><td>\n<p>pm_systemd_mag &lt;32-character string&gt;</p>\n<p>systemd_nme &lt;system id&gt;</p>\n<p>pm_systemd_adr &lt;C2 IP address/domain&gt;</p>\n<p>pm_systemd_prt &lt;443 or 53&gt;</p>\n<p>pm_systemd_tme 300</p>\n<p>systemd_non1 none</p>\n<p>systemd_non2 none</p>\n<p>systemd_non3 none</p>\n<p>systemd_non4 none</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xf5f6ef4c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the case of the systemd variant, UNC2891 also leveraged systemd service unit files for persistence of the TINYSHELL backdoor.",
+                    "html": "<p> In the case of the systemd variant, UNC2891 also leveraged systemd service unit files for persistence of the TINYSHELL backdoor.</p>"
+                },
+                {
+                    "id": "<sentence_0x5892a7cb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9f866246>": {
+                            "0": {
+                                "0": "/usr/lib/systemd/system/systemd-helper.service",
+                                "1": "[Unit] Description=Rebuild Hardware Database  [Service] Type=forking ExecStart=/lib/systemd/systemd-helper  [Install] WantedBy=multi-user.target"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\">Table 3: Service unit file used for TINYSHELL persistence\n<tbody><tr><td>\n<p>/usr/lib/systemd/system/systemd-helper.service </p>\n</td>\n</tr><tr><td>\n<p>[Unit]</p>\n<p>Description=Rebuild Hardware Database</p>\n<p> </p>\n<p>[Service]</p>\n<p>Type=forking</p>\n<p>ExecStart=/lib/systemd/systemd-helper</p>\n<p> </p>\n<p>[Install]</p>\n<p>WantedBy=multi-user.target</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x87663d6b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Based on analyzed configurations, UNC2891 had configured TINYSHELL backdoors in a multi-hop structure that leveraged several compromised internal servers for command and control. In one case, Mandiant found evidence that suggests the actor had chained different TINYSHELL variants together to obtain remote access to a server inside a network segment with network restrictions.",
+                    "html": "<p>Based on analyzed configurations, UNC2891 had configured TINYSHELL backdoors in a multi-hop structure that leveraged several compromised internal servers for command and control. In one case, Mandiant found evidence that suggests the actor had chained different TINYSHELL variants together to obtain remote access to a server inside a network segment with network restrictions. </p>"
+                },
+                {
+                    "id": "<sentence_0x7bb71a17>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To keep their network of TINYSHELL connections hidden, UNC2891 had installed and configured a rootkit to filter out these connections from network connection related APIs (keep reading for details on the CAKETAP rootkit). UNC2891 configured remotely accessible systems with TINYSHELL backdoors that used dynamic DNS domains for their external command and control channel. These domains were created per-host and were not used more than once, the subdomains sometimes resembled the hostname of the compromised machine. Mandiant was unable to collect passive DNS data for these dynamic DNS domains, suggesting that UNC2891 had likely enabled IP resolution for short periods of time when access to the network was required. At one victim, these TINYSHELL backdoors were configured to perform communications using TCP over port 53 and 443, likely as a mechanism to bypass outbound network protections, blend in with existing traffic, and evade detection.",
+                    "html": "<p>To keep their network of TINYSHELL connections hidden, UNC2891 had installed and configured a rootkit to filter out these connections from network connection related APIs (keep reading for details on the CAKETAP rootkit). UNC2891 configured remotely accessible systems with TINYSHELL backdoors that used dynamic DNS domains for their external command and control channel. These domains were created per-host and were not used more than once, the subdomains sometimes resembled the hostname of the compromised machine. Mandiant was unable to collect passive DNS data for these dynamic DNS domains, suggesting that UNC2891 had likely enabled IP resolution for short periods of time when access to the network was required. At one victim, these TINYSHELL backdoors were configured to perform communications using TCP over port 53 and 443, likely as a mechanism to bypass outbound network protections, blend in with existing traffic, and evade detection.</p>"
+                },
+                {
+                    "id": "<sentence_0xd1c63419>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x795957ce>": "https://www.mandiant.com/sites/default/files/inline-images/unc2891-fig2.png"
+                    },
+                    "text": "Figure 2: Example of TINYSHELL command and control used by UNC2891",
+                    "html": "<figure><img alt=\"Example of TINYSHELL command and control used by UNC2891\" height=\"627\" src=\"/sites/default/files/inline-images/unc2891-fig2.png\" width=\"619\"/><figcaption>Figure 2: Example of TINYSHELL command and control used by UNC2891</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xffbcdfd5>",
+            "title": "STEELHOUND, STEELCORGI and Environment Variable Keying",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7c3788e2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7c73752c>": "https://yoroi.company/research/opening-steelcorgi-a-sophisticated-apt-swiss-army-knife/",
+                        "<a_0x630d2af0>": "https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945"
+                    },
+                    "text": "UNC2891 often made use of the STEELCORGI in-memory dropper which decrypts its embedded payloads by deriving a ChaCha20 key from the value of an environment variable obtained at runtime. In many cases, Mandiant was unable to recover the requisite environment variables to decrypt the embedded payloads. However, in the limited samples we were able to decrypt, UNC2891 had deployed different versions of an extensive toolkit which appears to be developed under the name SUN4ME. SUN4ME contains tools for network reconnaissance, host enumeration, exploitation of known vulnerabilities, log wiping, file operations, as well as common shell utilities. Yoroi has previously published information about this toolkit following our previous blog post on UNC1945s usage of STEELCORGI.",
+                    "html": "<p>UNC2891 often made use of the STEELCORGI in-memory dropper which decrypts its embedded payloads by deriving a ChaCha20 key from the value of an environment variable obtained at runtime. In many cases, Mandiant was unable to recover the requisite environment variables to decrypt the embedded payloads. However, in the limited samples we were able to decrypt, UNC2891 had deployed different versions of an extensive toolkit which appears to be developed under the name SUN4ME. SUN4ME contains tools for network reconnaissance, host enumeration, exploitation of known vulnerabilities, log wiping, file operations, as well as common shell utilities. Yoroi has previously <a href=\"https://yoroi.company/research/opening-steelcorgi-a-sophisticated-apt-swiss-army-knife/\">published</a> information about this toolkit following our previous blog post on <a href=\"https://www.mandiant.com/resources/live-off-the-land-an-overview-of-unc1945\">UNC1945\u2019s usage of STEELCORGI</a>. </p>"
+                },
+                {
+                    "id": "<sentence_0x40d674f6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant discovered UNC2891 leveraging a similar in-memory dropper that also used environment variables to decrypt its embedded payload but instead relied on RC4 encryption, we have named this STEELHOUND. In addition to functioning as dropper for an embedded payload, STEELHOUND is also able to encrypt new payloads by encrypting a target binary and writing it to disk along with a copy of itself and an end-of-file configuration.",
+                    "html": "<p>Mandiant discovered UNC2891 leveraging a similar in-memory dropper that also used environment variables to decrypt its embedded payload but instead relied on RC4 encryption, we have named this STEELHOUND. In addition to functioning as dropper for an embedded payload, STEELHOUND is also able to encrypt new payloads by encrypting a target binary and writing it to disk along with a copy of itself and an end-of-file configuration.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6df2919>",
+            "title": "WINGHOOK and WINGCRACK",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf0db4dea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During these investigations, Mandiant also discovered a family of keylogger malware we have named WINGHOOK and WINGCRACK.",
+                    "html": "<p>During these investigations, Mandiant also discovered a family of keylogger malware we have named WINGHOOK and WINGCRACK.</p>"
+                },
+                {
+                    "id": "<sentence_0x4532d974>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "WINGHOOK is a keylogger for Linux and Unix based operating systems. It is packaged as a shared library (SO file) that hooks the read and fgets functions, which are two common functions used for processing user input. The captured data is stored in an encoded format in the directory /var/tmp/ with a filename that begins with .zmanDw.<crlf>WINGCRACK is a utility that can decode and display the content of files containing encoded keylog data from WINGHOOK. The malware author appears to refer to these encoded files as schwing files.",
+                    "html": "<ul><li>WINGHOOK is a keylogger for Linux and Unix based operating systems. It is packaged as a shared library (SO file) that hooks the read and fgets functions, which are two common functions used for processing user input. The captured data is stored in an encoded format in the directory /var/tmp/ with a filename that begins with .zmanDw.</li>\n<li>WINGCRACK is a utility that can decode and display the content of files containing encoded keylog data from WINGHOOK. The malware author appears to refer to these encoded files as \u201cschwing\u201d files.</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x85467f33>",
+            "title": "Utilities Observed",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe9aeb960>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant previously observed UNC1945 use a large amount of different public and private tools during their intrusions, and this was also true for UNC2891. Mandiant discovered additional utilities that were leveraged by UNC2891:",
+                    "html": "<p>Mandiant previously observed UNC1945 use a large amount of different public and private tools during their intrusions, and this was also true for UNC2891. Mandiant discovered additional utilities that were leveraged by UNC2891:</p>"
+                },
+                {
+                    "id": "<sentence_0xd58079d3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc78f3b2d>": "https://packetstormsecurity.com/files/23336/Slx2k001.txt.html",
+                        "<a_0xb7a6285e>": "http://www.afn.org/~afn28925/wipe.c",
+                        "<a_0xf4b233e2>": "https://github.com/Kabot/mig-logcleaner-resurrected"
+                    },
+                    "text": "BINBASH is a simple ELF utility that executes a shell after setting the group ID and user ID to either \"root\" or specified values. BINBASH appears to be a compilation of the source code.<crlf>WIPERIGHT is an ELF utility that clears specific log entries on Linux and Unix based systems. It can remove entries associated with a given user in the lastlog, utmp/utmpx, wtmp/wtmpx, and pacct logs. It appears to have originated from available source code, and possibly a more recent version.<crlf>MIGLOGCLEANER is another ELF utility that wipes logs or remove certain strings from logs on Linux and Unix based systems. It is publicly available on GitHub.",
+                    "html": "<ul><li>BINBASH is a simple ELF utility that executes a shell after setting the group ID and user ID to either \"root\" or specified values. BINBASH appears to be a <a href=\"https://packetstormsecurity.com/files/23336/Slx2k001.txt.html\">compilation of the source code</a>.</li>\n<li>WIPERIGHT is an ELF utility that clears specific log entries on Linux and Unix based systems. It can remove entries associated with a given user in the lastlog, utmp/utmpx, wtmp/wtmpx, and pacct logs. It appears to have originated from <a href=\"http://www.afn.org/~afn28925/wipe.c\">available source code</a>, and possibly a <a href=\"https://packetstormsecurity.com/files/23336/Slx2k001.txt.html\">more recent version</a>.</li>\n<li>MIGLOGCLEANER is another ELF utility that wipes logs or remove certain strings from logs on Linux and Unix based systems. It is <a href=\"https://github.com/Kabot/mig-logcleaner-resurrected\">publicly available on GitHub</a>.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xf521228c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Whilst seemingly uncommon amongst threat actors, UNC2891 frequently used the uuencoding scheme to encode and decode files, such as malware binaries or files containing output from extensive host enumeration scripts. The actor often leveraged simple Perl wrapper scripts that performed uuencoding and uudecoding functions.",
+                    "html": "<p>Whilst seemingly uncommon amongst threat actors, UNC2891 frequently used the uuencoding scheme to encode and decode files, such as malware binaries or files containing output from extensive host enumeration scripts. The actor often leveraged simple Perl wrapper scripts that performed uuencoding and uudecoding functions.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa9f1c45f>",
+            "title": "CAKETAP",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x84b7462a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "CAKETAP is a kernel module rootkit that UNC2891 deployed on key server infrastructure running Oracle Solaris. CAKETAP can hide network connections, processes, and files. During initialization, it removes itself from the loaded modules list and updates the last_module_id with the previously loaded module to hide its presence.",
+                    "html": "<p>CAKETAP is a kernel module rootkit that UNC2891 deployed on key server infrastructure running Oracle Solaris. CAKETAP can hide network connections, processes, and files. During initialization, it removes itself from the loaded modules list and updates the last_module_id with the previously loaded module to hide its presence.</p>"
+                },
+                {
+                    "id": "<sentence_0x751dade>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A hook is installed into the function ipcl_get_next_conn, as well as several functions in the ip module. This enables CAKETAP to filter out any connections that match an actor-configured IP address or port (local or remote).",
+                    "html": "<p>A hook is installed into the function ipcl_get_next_conn, as well as several functions in the ip module. This enables CAKETAP to filter out any connections that match an actor-configured IP address or port (local or remote). </p>"
+                },
+                {
+                    "id": "<sentence_0x4a262c4b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "One way to identify CAKETAP running on a Solaris system is to check for the presence of this hook. The following shows an example command to identify a hooked ipcl_get_next_conn function (Note: The mdb command may require special permissions on the system):",
+                    "html": "<p>One way to identify CAKETAP running on a Solaris system is to check for the presence of this hook. The following shows an example command to identify a hooked ipcl_get_next_conn function (Note: The mdb command may require special permissions on the system):</p>"
+                },
+                {
+                    "id": "<sentence_0x583204db>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xa723059a>": {
+                            "0": {
+                                "0": "root@solaris:~# echo 'ipcl_get_next_conn::dis -n 0 ; ::quit' | mdb -k"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p>root@solaris:~# echo 'ipcl_get_next_conn::dis -n 0 ; ::quit' | mdb -k</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x86da8d3d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The output in a clean SPARC Solaris system would look similar to the following:",
+                    "html": "<p>The output in a clean SPARC Solaris system would look similar to the following:</p>"
+                },
+                {
+                    "id": "<sentence_0xda03b7fa>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x874a8939>": {
+                            "0": {
+                                "0": "ipcl_get_next_conn: save %sp, -0xb0, %sp"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p>ipcl_get_next_conn: save %sp, -0xb0, %sp</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x906f9749>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A hooked function would begin with the sethi instruction as follows (the constant 0x11971c00 will change from instance to instance depending on where CAKETAP is loaded):",
+                    "html": "<p>A hooked function would begin with the sethi instruction as follows (the constant 0x11971c00 will change from instance to instance depending on where CAKETAP is loaded):</p>"
+                },
+                {
+                    "id": "<sentence_0x1cb4a8f8>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xce162c4f>": {
+                            "0": {
+                                "0": "ipcl_get_next_conn: sethi %hi(0x11971c00), %g1"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p>ipcl_get_next_conn: sethi %hi(0x11971c00), %g1 </p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x14dac83a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Additional hooks are installed into the mkdirat (make directory at) and getdents64 (get directory entries) system calls. CAKETAP uses the mkdirat hook to receive commands from paths containing the signal string. Commands include configuring network filters, display or update its configuration, and to unhide itself. The getdents64 hook enables CAKETAP to hide files or directories on the file system containing the secret signal string. Table 4 contains the signal strings for the CAKETAP hooks.",
+                    "html": "<p>Additional hooks are installed into the mkdirat (make directory at) and getdents64 (get directory entries) system calls. CAKETAP uses the mkdirat hook to receive commands from paths containing the signal string. Commands include configuring network filters, display or update its configuration, and to unhide itself. The getdents64 hook enables CAKETAP to hide files or directories on the file system containing the secret signal string. Table 4 contains the signal strings for the CAKETAP hooks.</p>"
+                },
+                {
+                    "id": "<sentence_0xcd5e98eb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xce2adc27>": {
+                            "0": {
+                                "0": "Secret",
+                                "1": ".caahGss187",
+                                "2": ".zaahGss187"
+                            },
+                            "1": {
+                                "0": "Usage",
+                                "1": "mkdirat hook signal string",
+                                "2": "getdents64 hook signal string"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\">Table 4: Observed secrets for CAKETAP hooks\n<tbody><tr><td>\n<p>Secret </p>\n</td>\n<td>\n<p>Usage </p>\n</td>\n</tr><tr><td>\n<p>.caahGss187</p>\n</td>\n<td>\n<p>mkdirat hook signal string</p>\n</td>\n</tr><tr><td>\n<p>.zaahGss187</p>\n</td>\n<td>\n<p>getdents64 hook signal string</p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xdb654320>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The mkdirat hook enabled UNC2891 to control and configure CAKETAP through existing backdoor access to compromised servers by issuing shell commands that leverage these system calls (e.g. mkdir for mkdirat). A single character appended to the signal string indicated which command was to be executed. The following commands were observed:",
+                    "html": "<p>The mkdirat hook enabled UNC2891 to control and configure CAKETAP through existing backdoor access to compromised servers by issuing shell commands that leverage these system calls (e.g. mkdir for mkdirat). A single character appended to the signal string indicated which command was to be executed. The following commands were observed:</p>"
+                },
+                {
+                    "id": "<sentence_0x41991105>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x39247968>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "Empty",
+                                "2": "M",
+                                "3": "I",
+                                "4": "i",
+                                "5": "P",
+                                "6": "p",
+                                "7": "S"
+                            },
+                            "1": {
+                                "0": "Function",
+                                "1": "Add the CAKETAP module back to loaded modules list",
+                                "2": "Change the signal string for the getdents64 hook",
+                                "3": "Add a network filter (format <IP>p<PORT>)",
+                                "4": "Remove a network filter",
+                                "5": "Set the current thread TTY to not be filtered by the getdents64 hook",
+                                "6": "Set all TTYs to be filtered by the getdents64 hook",
+                                "7": "Displays the current configuration"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\">Table 5: Observed CAKETAP commands\n<tbody><tr><td>\n<p>Command</p>\n</td>\n<td>\n<p>Function</p>\n</td>\n</tr><tr><td>\n<p>Empty</p>\n</td>\n<td>\n<p>Add the CAKETAP module back to loaded modules list</p>\n</td>\n</tr><tr><td>\n<p>M</p>\n</td>\n<td>\n<p>Change the signal string for the getdents64 hook</p>\n</td>\n</tr><tr><td>\n<p>I</p>\n</td>\n<td>\n<p>Add a network filter (format &lt;IP&gt;p&lt;PORT&gt;)</p>\n</td>\n</tr><tr><td>\n<p>i</p>\n</td>\n<td>\n<p>Remove a network filter</p>\n</td>\n</tr><tr><td>\n<p>P</p>\n</td>\n<td>\n<p>Set the current thread TTY to not be filtered by the getdents64 hook</p>\n</td>\n</tr><tr><td>\n<p>p</p>\n</td>\n<td>\n<p>Set all TTYs to be filtered by the getdents64 hook</p>\n</td>\n</tr><tr><td>\n<p>S</p>\n</td>\n<td>\n<p>Displays the current configuration </p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xf2d53169>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For example, to configure a new network filter and display the current configuration, the following commands might be used:",
+                    "html": "<p>For example, to configure a new network filter and display the current configuration, the following commands might be used:</p>"
+                },
+                {
+                    "id": "<sentence_0xbf1fdf8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "mkdir /some/path/.caahGss187I192.168.1.10p80 - Add network filter for 192.168.1.10:80<crlf>mkdir /some/path/.caahGss187S - Display current configuration",
+                    "html": "<ul><li>mkdir /some/path/.caahGss187I192.168.1.10p80 - Add network filter for 192.168.1.10:80</li>\n<li>mkdir /some/path/.caahGss187S - Display current configuration</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4d285b31>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The hook installed into getdents64 filtered output to hide presence of the signal string in directory contents.",
+                    "html": "<p>The hook installed into getdents64 filtered output to hide presence of the signal string in directory contents. </p>"
+                },
+                {
+                    "id": "<sentence_0xb1c45d72>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant observed UNC2891 load CAKETAP with the module name ipstat from attacker created directories that often resided somewhere inside the /var directory tree.",
+                    "html": "<p>Mandiant observed UNC2891 load CAKETAP with the module name ipstat from attacker created directories that often resided somewhere inside the /var directory tree.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe35e6b93>",
+            "title": "CAKETAP Unauthorized Transactions",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x642721a5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Memory forensics from one victims ATM switch server revealed a variant of CAKETAP with additional network hooking functionality that intercepted specific messages relating to card and pin verification. Evidence suggests that this variant of CAKETAP was used as part of an operation to perform unauthorized transactions using fraudulent bank cards.",
+                    "html": "<p>Memory forensics from one victim\u2019s ATM switch server revealed a variant of CAKETAP with additional network hooking functionality that intercepted specific messages relating to card and pin verification. Evidence suggests that this variant of CAKETAP was used as part of an operation to perform unauthorized transactions using fraudulent bank cards.</p>"
+                },
+                {
+                    "id": "<sentence_0xb7d17127>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This CAKETAP variant targeted specific messages destined for the Payment Hardware Security Module (HSM). This additional network hooking performed several functions:",
+                    "html": "<p>This CAKETAP variant targeted specific messages destined for the Payment Hardware Security Module (HSM). This additional network hooking performed several functions:</p>"
+                },
+                {
+                    "id": "<sentence_0xee3481e1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Manipulation of card verification messages: CAKETAP altered the mode of certain outgoing messages to disable card verification. This resulted in the HSM not performing the proper card verification and instead generating a valid response. Fraudulent bank cards generated verification messages using a custom algorithm using the Primary Account Number (PAN) and other parameters which served as a marker for CAKETAP. CAKETAP examined outgoing messages and if it matched the algorithm, CAKETAP identified the card as fraudulent and stored the PAN in memory to use in the following step.<crlf>Replay of PIN verification messages: CAKETAP examined outgoing PIN verification messages that matched certain conditions and identified those with a Primary Account Number (PAN) that reflected a fraudulent card. If the message was not for a fraudulent card, it would save the message internally and send it unmodified, as to not interrupt legitimate ATM PIN verifications. However, if it was for a fraudulent card, CAKETAP would instead replace the message content with data from a previously saved message. This was effectively a replay attack that resulted in a bypass of PIN verification for fraudulent cards.",
+                    "html": "<ol><li>Manipulation of card verification messages:\nCAKETAP altered the mode of certain outgoing messages to disable card verification. This resulted in the HSM not performing the proper card verification and instead generating a valid response. Fraudulent bank cards generated verification messages using a custom algorithm using the Primary Account Number (PAN) and other parameters which served as a \u201cmarker\u201d for CAKETAP. CAKETAP examined outgoing messages and if it matched the algorithm, CAKETAP identified the card as fraudulent and stored the PAN in memory to use in the following step.</li>\n<li>Replay of PIN verification messages:\nCAKETAP examined outgoing PIN verification messages that matched certain conditions and identified those with a Primary Account Number (PAN) that reflected a fraudulent card. If the message was not for a fraudulent card, it would save the message internally and send it unmodified, as to not interrupt legitimate ATM PIN verifications. However, if it was for a fraudulent card, CAKETAP would instead replace the message content with data from a previously saved message. This was effectively a replay attack that resulted in a bypass of PIN verification for fraudulent cards. </li>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x8e055fc3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Based on Mandiants investigation findings, we believe that CAKETAP was leveraged by UNC2891 as part of a larger operation to successfully use fraudulent bank cards to perform unauthorized cash withdrawals from ATM terminals at several banks.",
+                    "html": "<p>Based on Mandiant\u2019s investigation findings, we believe that CAKETAP was leveraged by UNC2891 as part of a larger operation to successfully use fraudulent bank cards to perform unauthorized cash withdrawals from ATM terminals at several banks. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x214f2767>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x95221f40>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "UNC2891 maintains a high level of OPSEC and employs several techniques to evade detection. The actor uses their skill and experience to take full advantage of the decreased visibility and security measures that are often present in Unix and Linux environments. Mandiant expects that UNC2891 will continue to capitalize on this and perform similar operations for financial gain that target mission critical systems running these operating systems.",
+                    "html": "<p>UNC2891 maintains a high level of OPSEC and employs several techniques to evade detection. The actor uses their skill and experience to take full advantage of the decreased visibility and security measures that are often present in Unix and Linux environments. Mandiant expects that UNC2891 will continue to capitalize on this and perform similar operations for financial gain that target mission critical systems running these operating systems.</p>"
+                },
+                {
+                    "id": "<sentence_0xcaaeb818>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While some of the overlaps between UNC2891 and UNC1945 are notable, it is not conclusive enough to attribute the intrusions to a single threat group. For example, it is possible that significant portions of UNC2891 and UNC1945 activity are carried out by an entity that is a common resource to multiple threat actors, which could explain the perceived difference in intrusion objectivesa common malware developer or an intrusion partner, for example. Regardless, Mandiant is releasing this information on the actor to raise awareness of the fraudulent activity and aid defenders in uncovering further UNC2891 operations.",
+                    "html": "<p>While some of the overlaps between UNC2891 and UNC1945 are notable, it is not conclusive enough to attribute the intrusions to a single threat group. For example, it is possible that significant portions of UNC2891 and UNC1945 activity are carried out by an entity that is a common resource to multiple threat actors, which could explain the perceived difference in intrusion objectives\u2014a common malware developer or an intrusion partner, for example. Regardless, Mandiant is releasing this information on the actor to raise awareness of the fraudulent activity and aid defenders in uncovering further UNC2891 operations.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xfb751364>",
+            "title": "YARA",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x181f8acf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following YARA rules are not intended to be used on production systems or to inform blocking rules without first being validated through an organization's own internal testing processes to ensure appropriate performance and limit the risk of false positives. These rules are intended to serve as a starting point for hunting efforts to identify samples, however, they may need adjustment over time if the malware family changes.",
+                    "html": "<p>The following YARA rules are not intended to be used on production systems or to inform blocking rules without first being validated through an organization's own internal testing processes to ensure appropriate performance and limit the risk of false positives. These rules are intended to serve as a starting point for hunting efforts to identify samples, however, they may need adjustment over time if the malware family changes.</p>"
+                },
+                {
+                    "id": "<sentence_0x1b05e3f9>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9083f4ed>": {
+                            "0": {
+                                "0": "rule TINYSHELL {  meta:  author = \"Mandiant \"  strings:  $sb1 = { C6 00 48 C6 4? ?? 49 C6 4? ?? 49 C6 4? ?? 4C C6 4? ?? 53 C6 4? ?? 45 C6 4? ?? 54 C6 4? ?? 3D C6 4? ?? 46 C6 4? ?? 00 }  $sb2 = { C6 00 54 C6 4? ?? 4D C6 4? ?? 45 C6 4? ?? 3D C6 4? ?? 52 }  $ss1 = \"fork\" ascii fullword wide  $ss2 = \"socket\" ascii fullword wide  $ss3 = \"bind\" ascii fullword wide  $ss4 = \"listen\" ascii fullword wide  $ss5 = \"accept\" ascii fullword wide  $ss6 = \"alarm\" ascii fullword wide  $ss7 = \"shutdown\" ascii fullword wide  $ss8 = \"creat\" ascii fullword wide  $ss9 = \"write\" ascii fullword wide  $ss10 = \"open\" ascii fullword wide  $ss11 = \"read\" ascii fullword wide  $ss12 = \"execl\" ascii fullword wide  $ss13 = \"gethostbyname\" ascii fullword wide  $ss14 = \"connect\" ascii fullword wide  condition:  uint32(0) == 0x464c457f and 1 of ($sb*) and 10 of ($ss*) }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p><code>rule TINYSHELL</code></p>\n<p><code>{</code></p>\n<p><code> meta:</code></p>\n<p><code> author = \"Mandiant \"</code></p>\n<p><code> strings:</code></p>\n<p><code> $sb1 = { C6 00 48 C6 4? ?? 49 C6 4? ?? 49 C6 4? ?? 4C C6 4? ?? 53 C6 4? ?? 45 C6 4? ?? 54 C6 4? ?? 3D C6 4? ?? 46 C6 4? ?? 00 }</code></p>\n<p><code> $sb2 = { C6 00 54 C6 4? ?? 4D C6 4? ?? 45 C6 4? ?? 3D C6 4? ?? 52 }</code></p>\n<p><code> $ss1 = \"fork\" ascii fullword wide</code></p>\n<p><code> $ss2 = \"socket\" ascii fullword wide</code></p>\n<p><code> $ss3 = \"bind\" ascii fullword wide</code></p>\n<p><code> $ss4 = \"listen\" ascii fullword wide</code></p>\n<p><code> $ss5 = \"accept\" ascii fullword wide</code></p>\n<p><code> $ss6 = \"alarm\" ascii fullword wide</code></p>\n<p><code> $ss7 = \"shutdown\" ascii fullword wide</code></p>\n<p><code> $ss8 = \"creat\" ascii fullword wide</code></p>\n<p><code> $ss9 = \"write\" ascii fullword wide</code></p>\n<p><code> $ss10 = \"open\" ascii fullword wide</code></p>\n<p><code> $ss11 = \"read\" ascii fullword wide</code></p>\n<p><code> $ss12 = \"execl\" ascii fullword wide</code></p>\n<p><code> $ss13 = \"gethostbyname\" ascii fullword wide</code></p>\n<p><code> $ss14 = \"connect\" ascii fullword wide</code></p>\n<p><code> condition:</code></p>\n<p><code> uint32(0) == 0x464c457f and 1 of ($sb*) and 10 of ($ss*)</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x3d524eb4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xfc936247>": {
+                            "0": {
+                                "0": "rule TINYSHELL_SPARC {  meta:  author = \"Mandiant\"  strings:  $sb_xor_1 = { DA 0A 80 0C 82 18 40 0D C2 2A 00 0B 96 02 E0 01 98 03 20 01 82 1B 20 04 80 A0 00 01 82 60 20 00 98 0B 00 01 C2 4A 00 0B 80 A0 60 00 32 BF FF F5 C2 0A 00 0B 81 C3 E0 08 }  $sb_xor_2 = { C6 4A 00 00 80 A0 E0 00 02 40 00 0B C8 0A 00 00 85 38 60 00 C4 09 40 02 84 18 80 04 C4 2A 00 00 82 00 60 01 80 A0 60 04 83 64 60 00 10 6F FF F5 90 02 20 01 81 C3 E0 08 }  condition:  uint32(0) == 0x464C457F and (uint16(0x10) & 0x0200 == 0x0200) and (uint16(0x12) & 0x0200 == 0x0200) and 1 of them }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p><code>rule TINYSHELL_SPARC</code></p>\n<p><code>{</code></p>\n<p><code> meta:</code></p>\n<p><code> author = \"Mandiant\"</code></p>\n<p><code> strings:</code></p>\n<p><code> $sb_xor_1 = { DA 0A 80 0C 82 18 40 0D C2 2A 00 0B 96 02 E0 01 98 03 20 01 82 1B 20 04 80 A0 00 01 82 60 20 00 98 0B 00 01 C2 4A 00 0B 80 A0 60 00 32 BF FF F5 C2 0A 00 0B 81 C3 E0 08 }</code></p>\n<p><code> $sb_xor_2 = { C6 4A 00 00 80 A0 E0 00 02 40 00 0B C8 0A 00 00 85 38 60 00 C4 09 40 02 84 18 80 04 C4 2A 00 00 82 00 60 01 80 A0 60 04 83 64 60 00 10 6F FF F5 90 02 20 01 81 C3 E0 08 }</code></p>\n<p><code> condition:</code></p>\n<p><code> uint32(0) == 0x464C457F and (uint16(0x10) &amp; 0x0200 == 0x0200) and (uint16(0x12) &amp; 0x0200 == 0x0200) and 1 of them</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xbfc351f3>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x4abe1971>": {
+                            "0": {
+                                "0": "rule SLAPSTICK {  meta:  author = \"Mandiant \"  strings:  $ss1 = \"%Y %b %d %H:%M:%S \\x00\"  $ss2 = \"%-23s %-23s %-23s\\x00\"  $ss3 = \"%-23s %-23s %-23s %-23s %-23s %s\\x0a\\x00\"  condition:  (uint32(0) == 0x464c457f) and all of them }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p><code>rule SLAPSTICK</code></p>\n<p><code>{</code></p>\n<p><code> meta:</code></p>\n<p><code> author = \"Mandiant \"</code></p>\n<p><code> strings:</code></p>\n<p><code> $ss1 = \"%Y %b %d %H:%M:%S \\x00\"</code></p>\n<p><code> $ss2 = \"%-23s %-23s %-23s\\x00\"</code></p>\n<p><code> $ss3 = \"%-23s %-23s %-23s %-23s %-23s %s\\x0a\\x00\"</code></p>\n<p><code> condition:</code></p>\n<p><code> (uint32(0) == 0x464c457f) and all of them</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xf0e99b03>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xbeda9eb4>": {
+                            "0": {
+                                "0": "rule STEELCORGI {  meta:  author = \"Mandiant \"  strings:  $s1 = \"\\x00\\xff/\\xffp\\xffr\\xffo\\xffc\\xff/\\xffs\\xffe\\xffl\\xfff\\xff/\\xffe\\xffx\\xffe\\x00\"  $s2 = \"\\x00\\xff/\\xffv\\xffa\\xffr\\xff/\\xffl\\xffi\\xffb\\xff/\\xffd\\xffb\\xffu\\xffs\\xff/\\xffm\\xffa\\xffc\\xffh\\xffi\\xffn\\xffe\\xff-\\xffi\\xffd\\x00\"  $sb1 = { FE 1B 7A DE 23 D1 E9 A1 1D 7F 9E C1 FD A4 }  $sb2 = { 3B 8D 4F 45 7C 4F 6A 6C D8 2F 1F B2 19 C4 45 6A 6A }  condition:  (uint32(0) == 0x464c457f) and all of them }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p><code>rule STEELCORGI</code></p>\n<p><code>{</code></p>\n<p><code> meta:</code></p>\n<p><code> author = \"Mandiant \"</code></p>\n<p><code> strings:</code></p>\n<p><code> $s1 = \"\\x00\\xff/\\xffp\\xffr\\xffo\\xffc\\xff/\\xffs\\xffe\\xffl\\xfff\\xff/\\xffe\\xffx\\xffe\\x00\"</code></p>\n<p><code> $s2 = \"\\x00\\xff/\\xffv\\xffa\\xffr\\xff/\\xffl\\xffi\\xffb\\xff/\\xffd\\xffb\\xffu\\xffs\\xff/\\xffm\\xffa\\xffc\\xffh\\xffi\\xffn\\xffe\\xff-\\xffi\\xffd\\x00\"</code></p>\n<p><code> $sb1 = { FE 1B 7A DE 23 D1 E9 A1 1D 7F 9E C1 FD A4 }</code></p>\n<p><code> $sb2 = { 3B 8D 4F 45 7C 4F 6A 6C D8 2F 1F B2 19 C4 45 6A 6A }</code></p>\n<p><code> condition:</code></p>\n<p><code> (uint32(0) == 0x464c457f) and all of them</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x14373d1e>",
+            "title": "Indicators of Compromise",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3aa384d4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9f284fc7>": {
+                            "0": {
+                                "0": "Malware Family",
+                                "1": "STEELCORGI",
+                                "2": "STEELCORGI",
+                                "3": "STEELCORGI",
+                                "4": "TINYSHELL",
+                                "5": "TINYSHELL",
+                                "6": "TINYSHELL",
+                                "7": "STEELHOUND"
+                            },
+                            "1": {
+                                "0": "MD5",
+                                "1": "e5791e4d2b479ff1dfee983ca6221a53",
+                                "2": "0845835e18a3ed4057498250d30a11b1",
+                                "3": "d985de52b69b60aa08893185029bcb31",
+                                "4": "4ff6647c44b0417c80974b806b1fbcc3",
+                                "5": "13f6601567523e6a37f131ef2ac4390b",
+                                "6": "4e9967558cd042cac8b12f378db14259",
+                                "7": "a4617c9a4bde94e867f063c28d763766"
+                            },
+                            "2": {
+                                "0": "SHA1",
+                                "1": "e55514b83135c5804786fa6056c88988ea70e360",
+                                "2": "c28366c3f29226cb2677d391d41e83f9c690caf7",
+                                "3": "a3e75e2f700e449ebb62962b28b7c230790dc25d",
+                                "4": "fa36f10407ed5a6858bd1475d88dd35927492f52",
+                                "5": "4228d71c042d08840089895bfa6bd594b5299a89",
+                                "6": "018bfe5b9f34108424dd63365a14ab005e249fdd",
+                                "7": "097d3a15510c48cdb738344bdf00082e546827e8"
+                            },
+                            "3": {
+                                "0": "SHA256",
+                                "1": "95964d669250f0ed161409b93f7a131bfa03ea302575d555d91ab5869391c278",
+                                "2": "7d587a5f6f36a74dcfbcbaecb2b0547fdf1ecdb034341f4cc7ae489f5b57a11d",
+                                "3": "cd06246aff527263e409dd779b517157882a1f5f74a84ad78b3b0c44d306bfc3",
+                                "4": "55397addbea8e5efb8e6493f3bd1e99f9742ff4cfe0f0d3da7e92067904b5194",
+                                "5": "24f459a2752175449939037d6a1da09cac0e414020ce9c48bcef47ec96e3587b",
+                                "6": "5f46a25473b9dda834519093c66cced0e3630378c2a953ebd83f90f3777f2e19",
+                                "7": "161a2832baba6ff6f9f1b52ed8facfa1197cfc7947fe58152b3617a258cf52b0"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"MsoTableGrid\"><tbody><tr><td>\n<p>Malware Family</p>\n</td>\n<td>\n<p>MD5</p>\n</td>\n<td>\n<p>SHA1</p>\n</td>\n<td>\n<p>SHA256</p>\n</td>\n</tr><tr><td>\n<p><code>STEELCORGI</code></p>\n</td>\n<td>\n<p><code>e5791e4d2b479ff1dfee983ca6221a53</code></p>\n</td>\n<td>\n<p><code>e55514b83135c5804786fa6056c88988ea70e360</code></p>\n</td>\n<td>\n<p><code>95964d669250f0ed161409b93f7a131bfa03ea302575d555d91ab5869391c278</code></p>\n</td>\n</tr><tr><td>\n<p><code>STEELCORGI</code></p>\n</td>\n<td>\n<p><code>0845835e18a3ed4057498250d30a11b1</code></p>\n</td>\n<td>\n<p><code>c28366c3f29226cb2677d391d41e83f9c690caf7</code></p>\n</td>\n<td>\n<p><code>7d587a5f6f36a74dcfbcbaecb2b0547fdf1ecdb034341f4cc7ae489f5b57a11d</code></p>\n</td>\n</tr><tr><td>\n<p><code>STEELCORGI</code></p>\n</td>\n<td>\n<p><code>d985de52b69b60aa08893185029bcb31</code></p>\n</td>\n<td>\n<p><code>a3e75e2f700e449ebb62962b28b7c230790dc25d</code></p>\n</td>\n<td>\n<p><code>cd06246aff527263e409dd779b517157882a1f5f74a84ad78b3b0c44d306bfc3</code></p>\n</td>\n</tr><tr><td>\n<p><code>TINYSHELL</code></p>\n</td>\n<td>\n<p><code>4ff6647c44b0417c80974b806b1fbcc3</code></p>\n</td>\n<td>\n<p><code>fa36f10407ed5a6858bd1475d88dd35927492f52</code></p>\n</td>\n<td>\n<p><code>55397addbea8e5efb8e6493f3bd1e99f9742ff4cfe0f0d3da7e92067904b5194</code></p>\n</td>\n</tr><tr><td>\n<p><code>TINYSHELL</code></p>\n</td>\n<td>\n<p><code>13f6601567523e6a37f131ef2ac4390b</code></p>\n</td>\n<td>\n<p><code>4228d71c042d08840089895bfa6bd594b5299a89</code></p>\n</td>\n<td>\n<p><code>24f459a2752175449939037d6a1da09cac0e414020ce9c48bcef47ec96e3587b</code></p>\n</td>\n</tr><tr><td>\n<p><code>TINYSHELL</code></p>\n</td>\n<td>\n<p><code>4e9967558cd042cac8b12f378db14259</code></p>\n</td>\n<td>\n<p><code>018bfe5b9f34108424dd63365a14ab005e249fdd</code></p>\n</td>\n<td>\n<p><code>5f46a25473b9dda834519093c66cced0e3630378c2a953ebd83f90f3777f2e19</code></p>\n</td>\n</tr><tr><td>\n<p><code>STEELHOUND</code></p>\n</td>\n<td>\n<p><code>a4617c9a4bde94e867f063c28d763766</code></p>\n</td>\n<td>\n<p><code>097d3a15510c48cdb738344bdf00082e546827e8</code></p>\n</td>\n<td>\n<p><code>161a2832baba6ff6f9f1b52ed8facfa1197cfc7947fe58152b3617a258cf52b0</code></p>\n</td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xea368e70>",
+            "title": "MITRE ATT&CK",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd2c50326>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Discovery: T1016:System Network Configuration Discovery T1018:Remote System Discovery T1049:System Network Connections Discovery T1082:System Information Discovery T1083:File and Directory Discovery T1135:Network Share Discovery<crlf>T1016:System Network Configuration Discovery<crlf>T1018:Remote System Discovery<crlf>T1049:System Network Connections Discovery<crlf>T1082:System Information Discovery<crlf>T1083:File and Directory Discovery<crlf>T1135:Network Share Discovery<crlf>Lateral Movement: T1021:Remote Services T1021.004:SSH<crlf>T1021:Remote Services<crlf>T1021.004:SSH<crlf>Credential Access: T1003:OS Credential Dumping T1003.008:/etc/passwd and /etc/shadow T1110:Brute Force T1110.001:Password Guessing T1552:Unsecured Credentials T1552.003:Bash History T1552.004:Private Keys T1556.003:Pluggable Authentication Modules<crlf>T1003:OS Credential Dumping<crlf>T1003.008:/etc/passwd and /etc/shadow<crlf>T1110:Brute Force<crlf>T1110.001:Password Guessing<crlf>T1552:Unsecured Credentials<crlf>T1552.003:Bash History<crlf>T1552.004:Private Keys<crlf>T1556.003:Pluggable Authentication Modules<crlf>Command and Control: T1090:Proxy T1095:Non-Application Layer Protocol T1105:Ingress Tool Transfer T1572:Protocol Tunneling T1573.001:Symmetric Cryptography<crlf>T1090:Proxy<crlf>T1095:Non-Application Layer Protocol<crlf>T1105:Ingress Tool Transfer<crlf>T1572:Protocol Tunneling<crlf>T1573.001:Symmetric Cryptography<crlf>Execution: T1053.001:At (Linux) T1059:Command and Scripting Interpreter T1059.004:Unix Shell<crlf>T1053.001:At (Linux)<crlf>T1059:Command and Scripting Interpreter<crlf>T1059.004:Unix Shell<crlf>Collection: T1056.001:Keylogging T1560:Archive Collected Data T1560.001:Archive via Utility T1560.002:Archive via Library<crlf>T1056.001:Keylogging<crlf>T1560:Archive Collected Data<crlf>T1560.001:Archive via Utility<crlf>T1560.002:Archive via Library<crlf>Defense Evasion: T1014:Rootkit T1027:Obfuscated Files or Information T1070:Indicator Removal on Host T1070.002:Clear Linux or Mac System Logs T1070.004:File Deletion T1070.006:Timestomp T1140:Deobfuscate/Decode Files or Information T1480.001:Environmental Keying T1548.001:Setuid and Setgid T1620:Reflective Code Loading<crlf>T1014:Rootkit<crlf>T1027:Obfuscated Files or Information<crlf>T1070:Indicator Removal on Host<crlf>T1070.002:Clear Linux or Mac System Logs<crlf>T1070.004:File Deletion<crlf>T1070.006:Timestomp<crlf>T1140:Deobfuscate/Decode Files or Information<crlf>T1480.001:Environmental Keying<crlf>T1548.001:Setuid and Setgid<crlf>T1620:Reflective Code Loading<crlf>Persistence: T1543.002:Systemd Service T1547.006:Kernel Modules and Extensions<crlf>T1543.002:Systemd Service<crlf>T1547.006:Kernel Modules and Extensions",
+                    "html": "<ul><li>Discovery:\n<ul><li>T1016:System Network Configuration Discovery</li>\n<li>T1018:Remote System Discovery</li>\n<li>T1049:System Network Connections Discovery</li>\n<li>T1082:System Information Discovery</li>\n<li>T1083:File and Directory Discovery</li>\n<li>T1135:Network Share Discovery</li>\n</ul></li>\n<li>Lateral Movement:\n<ul><li>T1021:Remote Services</li>\n<li>T1021.004:SSH</li>\n</ul></li>\n<li>Credential Access:\n<ul><li>T1003:OS Credential Dumping</li>\n<li>T1003.008:/etc/passwd and /etc/shadow</li>\n<li>T1110:Brute Force</li>\n<li>T1110.001:Password Guessing</li>\n<li>T1552:Unsecured Credentials</li>\n<li>T1552.003:Bash History</li>\n<li>T1552.004:Private Keys</li>\n<li>T1556.003:Pluggable Authentication Modules</li>\n</ul></li>\n<li>Command and Control:\n<ul><li>T1090:Proxy</li>\n<li>T1095:Non-Application Layer Protocol</li>\n<li>T1105:Ingress Tool Transfer</li>\n<li>T1572:Protocol Tunneling</li>\n<li>T1573.001:Symmetric Cryptography</li>\n</ul></li>\n<li>Execution:\n<ul><li>T1053.001:At (Linux)</li>\n<li>T1059:Command and Scripting Interpreter</li>\n<li>T1059.004:Unix Shell</li>\n</ul></li>\n<li>Collection:\n<ul><li>T1056.001:Keylogging</li>\n<li>T1560:Archive Collected Data</li>\n<li>T1560.001:Archive via Utility</li>\n<li>T1560.002:Archive via Library</li>\n</ul></li>\n<li>Defense Evasion:\n<ul><li>T1014:Rootkit</li>\n<li>T1027:Obfuscated Files or Information</li>\n<li>T1070:Indicator Removal on Host</li>\n<li>T1070.002:Clear Linux or Mac System Logs</li>\n<li>T1070.004:File Deletion</li>\n<li>T1070.006:Timestomp</li>\n<li>T1140:Deobfuscate/Decode Files or Information</li>\n<li>T1480.001:Environmental Keying</li>\n<li>T1548.001:Setuid and Setgid</li>\n<li>T1620:Reflective Code Loading</li>\n</ul></li>\n<li>Persistence:\n<ul><li>T1543.002:Systemd Service</li>\n<li>T1547.006:Kernel Modules and Extensions</li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x3a6fbed5>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p>\n</p>"
+                }
+            ]
+        }
+    ]
+}

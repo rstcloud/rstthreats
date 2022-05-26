@@ -1,0 +1,93 @@
+[
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0x77b5853d",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0x8cef957a",
+            "title": "Infection Chain",
+            "text": "The attack-chain starts with a phishing email. The email includes a message about some important document and has a password protected zip archive file attached. The password to the archive is given in the email body, as can be seen in the screenshot below. What makes the phishing email more convincing is that its using conversation hijacking (thread hijacking). A forged reply to a previous stolen email is being used. Additionally, the email has also been sent from the email account from whom the email was stolen from.\nThe content of the zip archive is shown in the screenshot below. It includes a single ISO file with the same filename as the zip archive. It can also be seen that the file was created not that long before the email was sent.\nThe ISO file includes two files, a LNK file named document and a DLL file named main. From the timestamps it can be concluded that the DLL file was prepared the day before while the LNK file was prepared about a week before. It is possible that the LNK file has been used in earlier phishing emails.\nThe LNK file has been made to look like a document file via its embedded icon file. As can be seen in the screenshot below, when a user double clicks the link file, it uses regsvr32 to execute the DLL file.\nThe use of regsvr32 allows for proxy execution of malicious code in main.dll for defense evasion. The DLL file is a loader for the IcedID payload. It contains a number of exports, most of which consist of junk code.\nThe loader will locate the encrypted payload, stored in the resource section of the binary. It does this through the technique API hashing. A decompilation of the simple hashing function is shown below.\nThe resulting hash is then compared with a hardcoded hash, locating the call for FindResourceA. The function is dynamically called to fetch the payload.\nMemory is allocated using VirtualAlloc to hold the decrypted payload.\nThe IcedID Gziploader payload is decoded and placed in memory and then executed. GZiploader fingerprints the machine and sends a beacon to the command and control server with information about the infected host. The information is smuggled through the cookies header via an HTTP GET request.\nThe C2 is located at yourgroceries[.]top. The C2 can respond with a further stage to be dropped and executed. The C2 did not respond with a payload during our analysis."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0xf1fc1a5f",
+            "title": "Conversation Hijacking as a Phishing Technique",
+            "text": "The technique of hijacking an already existing conversation over email to spread malware is something threat actors have been using for a while. Normally email messages are stolen during an infection and used in future attacks to make the phishing email appear more legitimate. In the last six months, threat actors have evolved the technique further to make it even more convincing. Instead of sending the stolen conversation to the victim with a spoofed email address, threat actors are now using the email address of the victim that they stole the original email from to make the phishing email even more convincing.\nKevin Beaumont reported on this conversation hijacking technique back in November 2021 being used to distribute Qakbot. Through the investigation, he confirmed that the Microsoft Exchange servers where the emails originated from had evidence of being exploited by ProxyShell."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0x2762d640",
+            "title": "New Campaign Discovered in March 2022",
+            "text": "In the current mid-March campaign, we have discovered reuse of the same stolen conversation now being sent from the email address that received the latest email. Back in January when this conversation was also used, the FROM address was webmaster@[REDACTED].com with the name of the recipient of the last email in the conversation. By using this approach, the email appears more legitimate and is transported through the normal channels which can also include security products.\nThe majority of the originating Exchange servers we have observed appear to also be unpatched and publicly exposed, making the ProxyShell vector a good theory. While the majority of the Exchange servers used to send the phishing emails can be accessed by anyone over the Internet, we have also seen a phishing email sent internally on what appears to be an internal Exchange server.\nThe code snippet below shows a small part of the email header. The IP address of the Exchange server is a local IP address (172.29.0.12) with a top-level domain name of local. We can also see a header added by Exchange marking it as an internal email. The exchange server also has added a header of the original client (172.29.5.131 which also is a local IP address) that connected to the Exchange server over MAPI.\nWe didnt manage to find a corresponding public IP address for this Exchange server and it is not known to us how it was accessed by the threat actor. The only thing we managed to find was a roundcube webmail instance. The login page is shown in the screenshot below.\nOne of the headers in the snippet above reported that the client connected to the server via MAPI. MAPI is a protocol used (for example, by Outlook) to access the mailbox on an Exchange server. This suggests that the threat actor used an Exchange client instead of using SMTP to send the email. We have also seen the header X-Mailer: Microsoft Outlook 16.0 in multiple phishing emails. In other phishing emails a X-Originating-IP header can be found. This is a header added by the Exchange server when the web interface is used. The IP address in the header is that of the client that connected to the server. We have observed both hosting providers and non-commercial IP addresses for the client IP."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0x27dd1d87",
+            "title": "Attribution",
+            "text": "In June 2021, Proofpoint released a report on different access brokers that facilitates access for ransomware groups. Of the different threat actors, according to Proofpoint, two of them (TA577 and TA551) used IcedID as their malware. The techniques used by TA551 include conversation hijacking and password protected zip files. The group is also known to use regsvr32.exe for signed binary proxy execution for malicious DLLs."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0x6bccefed",
+            "title": "Summary",
+            "text": "The use of conversation hijacking is a powerful social engineering technique that can increase the rate of a successful phishing attempt. The payload has been moved away from office documents to the use of ISO files, employing the use of commodity packers and multiple stages to hide activity. It is important to be able to detect malicious files in memory to detect this type of attack. We recommend you use an endpoint scanner."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x813b6502",
+            "date": "20220328",
+            "title": "New Conversation Hijacking Campaign Delivering IcedID",
+            "url": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid"
+        },
+        "chapter": {
+            "id": "chapter_0xec8ed2e2",
+            "title": "IoCs",
+            "text": "Joakim Kennedy\nDr. Joakim Kennedy is a Security Researcher analyzing malware and tracking threat actors on a daily basis. For the last few years, Joakim has been researching malware written in Go. To make the analysis easier he has written the Go Reverse Engineering Toolkit (github.com/goretk), an open-source toolkit for analysis of Go binaries.\nRyan Robinson\nRyan is a security researcher analyzing malware and scripts. Formerly, he was a researcher on Anomali's Threat Research Team.\nconversation hijacking\nDLL file\nicedID\nIoCs\nLNK file\nMicrosoft Exchange Server\nPhishing\nransomware"
+        }
+    }
+]

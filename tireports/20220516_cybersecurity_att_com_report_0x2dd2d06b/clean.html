@@ -1,0 +1,37 @@
+<div>
+<p>Stories from the SOC is a blog series that describes recent real-world security incident investigations conducted and reported by the AT&amp;T SOC analyst team for <a href="https://cybersecurity.att.com/solutions/extended-detection-and-response" target="_blank">AT&amp;T Managed Extended Detection and Response</a> customers.</p>
+<h2>Executive summary</h2>
+<p>One of the most prevalent threats today, facing both organizations and individuals alike, is the use of ransomware. In 2021, <a href="https://www.idc.com/getdoc.jsp?containerId=US48093721" rel="noopener" target="_blank">37% of organizations said they were victims of some type of ransomware attack</a>. Ransomware can render large amounts of important data inaccessible nearly instantly. This makes reacting to potential ransomware events in a timely and accurate manner extremely important. Utilizing an endpoint security tool is critical to help mitigate these threats. However, it is vital to maintain vigilance and situational awareness when addressing these threats, and not rely solely on one piece of information when performing analysis.</p>
+<p>The AT&amp;T Managed Extended Detection and Response (MXDR) analyst team received an alarm stating SentinelOne had detected ransomware on a customer’s asset. The logs suggested the threat had been automatically quarantined, but further analysis suggested something more sinister was afoot. The same malicious executable had been detected on that asset twice before, both times reportedly being automatically quarantined. This type of persistent malware can be an indicator of a deeper infection such as a rootkit. After a more in-depth analysis and collaboration with the customer, the decision was made to quarantine and power off the asset, and replace the asset entirely due to this persistent malware.</p>
+<h2>Investigation</h2>
+<h3>Initial alarm review</h3>
+<h4>Indicators of Compromise (IOC)</h4>
+<p>The initial SentinelOne alarm alerted us to an executable ‘mssecsvc.exe’:</p>
+<p><img alt="IoC persistent malware" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>The name of the executable as well as the file path is cleverly crafted to imitate a legitimate Windows program.</p>
+<h2>Expanded investigation</h2>
+<h3>Events search</h3>
+<p>Searching events for the file hash revealed it had been repeatedly detected on the same asset over the last 2 weeks. In each instance the event log reports the executable being automatically quarantined by SentinelOne.</p>
+<p><img alt="Persistent malware events" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Additionally, a seach in USM Anywhere revealed two previous investigations opened for the same executable on the same asset. In both previous investigations the customer noted SentinelOne had automatically quarantined the file but did not take any further action regarding the asset.</p>
+<h3>Event deep dive</h3>
+<p>In the new instance of this alarm the event log reports SentinelOne successfully killed any processes associated with the executable and quarantined the file.</p>
+<p><img alt="deep dive 1" style="max-width:80%;height:auto;width:auto;"/> <img alt="Deep dive 2" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>This may lead one to believe there is no longer a threat. But the persistent nature of this file raises more questions than the event log can answer.</p>
+<h3>Reviewing additional indicators</h3>
+<p>It is important to not rely on a single piece of information when assessing threats and to go beyond just what is contained in the logs we are given. Utilizing open-source threat intelligence strengthens our analysis and can confirm findings. Virus Total confirmed the file hash was deemed malicious by multiple other vendors.</p>
+<p><img alt="Persistent malware additional indicators" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>The executable was also analyzed in JoeSandbox. This revealed the file contained a device path for a binary string ‘FLASHPLAYERUPDATESERVICE.EXE which could be used for kernel mode communication, further hinting at a rootkit.</p>
+<p><img alt="JoeSandbox" style="max-width:80%;height:auto;width:auto;"/></p>
+<h2>Response</h2>
+<h4>Building the investigation</h4>
+<p>Despite the event log suggesting the threat had been automatically quarantined, the combination of the repeat occurrence and the findings on open-source threat intel platforms warranted raising an investigation to the customer. The customer was alerted to the additional findings, and it was recommended to remove the asset from the network.</p>
+<p><img alt="Response for persistent malware" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>The customer agreed with the initial analysis and suspected something more serious. The analysts then searched through the Deep Visibility logs from SentinelOne to determine the source of the mssecsvc.exe. Deep Visibility logs allow us to follow associated processes in a storyline order. In this case, it appears the ‘mssecsvc.exe’ originated from the same ‘FlashPlayerUpdateService.exe’ we saw in the JoeSandbox analysis. Deep Visibility also showed us that mssecsvc.exe had a Parent Process of wininit.exe, which was likely to be the source of persistence.</p>
+<p><img alt="customer response to persistent malware" style="max-width:80%;height:auto;width:auto;"/></p>
+<h2>Customer interaction</h2>
+<p>Another notable feature of USM Anywhere is the ability to take action from one centralized portal. As a result of the investigation, the analysts used the Advanced AlienApp for SentinelOne to place the asset in network quarantine mode and then power it off. An internal ticket was submitted by the customer to have the asset replaced entirely.</p>
+<h2>Limitations and opportunities</h2>
+<h3>Limitations</h3>
+<p>A limiting factor for the SOC is our visibility into the customer's environment as well as what information we are presented in log data. The event logs associated with this alarm suggested there was no longer a threat, as it had been killed and quarantined by SentinelOne. Taking a single instance of information at face value could have led to further damage, both financially and reputationally. This investigation highlighted the importance of thinking outside the log, researching historical investigations, and combining multiple sources of information to improve our analysis.</p>
+</div>

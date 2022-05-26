@@ -1,0 +1,430 @@
+{
+    "id": "<report_0x23c9f4a1>",
+    "url": "https://blog.cyble.com/2022/03/15/deep-dive-analysis-pandora-ransomware",
+    "title": "Deep Dive Analysis Pandora Ransomware",
+    "meta": [
+        {
+            "id": "<chapter_0x35a0bc41>",
+            "title": "A Possible Re-brand of Rook Ransomware",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4ae21d67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pandora ransomware came into the spotlight in March 2022 after targeting some high-profile victims on its leak site. The ransomware group announced its first victim on 21 Feb 2022 and has posted around five victims to date.",
+                    "html": "<p>Pandora ransomware came into the spotlight in March 2022 after targeting some high-profile victims on its leak site. The ransomware group announced its first victim on 21 Feb 2022 and has posted around five victims to date.</p>"
+                },
+                {
+                    "id": "<sentence_0xe253481>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x33e49a4a>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-Pandora-ransomware-data-leak-site.png"
+                    },
+                    "text": "Figure 1: Pandora ransomware data leak site",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10085 jetpack-lazy-image\" height=\"387\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-Pandora-ransomware-data-leak-site.png\" width=\"936\"/><img alt=\"\" class=\"wp-image-10085\" height=\"387\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-1-Pandora-ransomware-data-leak-site.png\" width=\"936\"/><figcaption>Figure 1: Pandora ransomware data leak site</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x912df0eb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During a routine threat hunting exercise, Cyble Research Labs came across the sample for this ransomware. Upon execution, the file encrypts the victims system and drops the ransom note in each folder named Restore_My_Files.txt. After encryption, the file is renamed with the extension .Pandora.",
+                    "html": "<p>During a routine threat hunting exercise, Cyble Research Labs came across the sample for this ransomware. Upon execution, the file encrypts the victim\u2019s system and drops the ransom note in each folder named \u201cRestore_My_Files.txt.\u201d After encryption, the file is renamed with the extension \u201c.Pandora\u201c.</p>"
+                },
+                {
+                    "id": "<sentence_0xf3fb5095>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9fefb323>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-Encrypted-Files.png"
+                    },
+                    "text": "Figure 2: Encrypted Files",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10086 jetpack-lazy-image\" height=\"385\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-Encrypted-Files.png\" width=\"787\"/><img alt=\"\" class=\"wp-image-10086\" height=\"385\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-2-Encrypted-Files.png\" width=\"787\"/><figcaption>Figure 2: Encrypted Files</figcaption></figure>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x87779875>",
+            "title": "Deep Dive Analysis Pandora Ransomware",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xcf62749e>",
+            "title": "Technical Analysis",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x53385b66>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware (SHA 256: 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b) is packed using the UPX packer. After unpacking, the payload is compiled using Visual C++. The file has encrypted strings and several jumps and calls that can make debugging difficult, as shown below.",
+                    "html": "<p>The malware (SHA 256: 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b) is packed using the UPX packer. After unpacking, the payload is compiled using Visual C++. The file has encrypted strings and several jumps and calls that can make debugging difficult, as shown below.</p>"
+                },
+                {
+                    "id": "<sentence_0x4c81abcb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8ba0991b>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Code-flow-of-Pandora-Ransomware.png"
+                    },
+                    "text": "Figure 3: Code flow of Pandora Ransomware",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10087 jetpack-lazy-image\" height=\"372\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Code-flow-of-Pandora-Ransomware.png\" width=\"399\"/><img alt=\"\" class=\"wp-image-10087\" height=\"372\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-3-Code-flow-of-Pandora-Ransomware.png\" width=\"399\"/><figcaption>Figure 3: Code flow of Pandora Ransomware</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x614f5db0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware runs a decryption loop that decrypts the strings present in the file, as shown in Figure 4.",
+                    "html": "<p>The malware runs a decryption loop that decrypts the strings present in the file, as shown in Figure 4. </p>"
+                },
+                {
+                    "id": "<sentence_0xd73b6810>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb1ee6ba6>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Decryption-Loop.png"
+                    },
+                    "text": "Figure 4: Decryption Loop",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10088 jetpack-lazy-image\" height=\"159\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Decryption-Loop.png\" width=\"451\"/><img alt=\"\" class=\"wp-image-10088\" height=\"159\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-4-Decryption-Loop.png\" width=\"451\"/><figcaption>Figure 4: Decryption Loop</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xb0bbe420>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Initially, the malware creates a mutex named ThisIsMutexa using CreateMutexA() API to ensure that only one instance of the malware is running in the system.",
+                    "html": "<p>Initially, the malware creates a mutex named \u201cThisIsMutexa\u201d using CreateMutexA() API to ensure that only one instance of the malware is running in the system.</p>"
+                },
+                {
+                    "id": "<sentence_0xa87a7327>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6c2be641>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Creates-Mutex.png"
+                    },
+                    "text": "Figure 5: Creates Mutex",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full is-resized\"><img alt=\"\" class=\"wp-image-10089 jetpack-lazy-image\" height=\"114\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Creates-Mutex.png\" width=\"462\"/><img alt=\"\" class=\"wp-image-10089\" height=\"114\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-5-Creates-Mutex.png\" width=\"462\"/><figcaption>Figure 5: Creates Mutex</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xbea19908>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware then loads ntdll.dll and calls the NtSetInformationProcess () API, which changes the privilege level and sets the malware file as a critical process. The malware then disables the Event Tracing for Windows (ETW) by patching the EtwEventWrite() function and further bypasses Antimalware Scan Interface (AMSI) to evade detection by Anti-Virus products.",
+                    "html": "<p>The malware then loads ntdll.dll and calls the NtSetInformationProcess () API, which changes the privilege level and sets the malware file as a critical process. The malware then disables the Event Tracing for Windows (ETW) by patching the EtwEventWrite() function and further bypasses Antimalware Scan Interface (AMSI) to evade detection by Anti-Virus products.</p>"
+                },
+                {
+                    "id": "<sentence_0xad179290>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The AMSI allows the integration of applications and processes with the anti-malware solution present on a system. AMSI scans files that are executed through PowerShell, Jscript, VBA, VBScript, etc.",
+                    "html": "<p>The AMSI allows the integration of applications and processes with the anti-malware solution present on a system. AMSI scans files that are executed through PowerShell, Jscript, VBA, VBScript, etc.</p>"
+                },
+                {
+                    "id": "<sentence_0x194918ff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware also calls SetProcessShutdownParameters() to reduce the processs priority, i.e., set it to zero. This means that malware will be terminated last before the system shutdown so that the malware gets the maximum amount of time possible to execute in the compromised machine.",
+                    "html": "<p>The malware also calls SetProcessShutdownParameters() to reduce the process\u2019s priority, i.e., set it to zero. This means that malware will be terminated last before the system shutdown so that the malware gets the maximum amount of time possible to execute in the compromised machine.</p>"
+                },
+                {
+                    "id": "<sentence_0x87847bfe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After altering the priority, the malware calls SHEmptyRecycleBinA() API to empty the recycle bin to ensure no deleted files are restored after encryption.",
+                    "html": "<p>After altering the priority, the malware calls SHEmptyRecycleBinA() API to empty the recycle bin to ensure no deleted files are restored after encryption.</p>"
+                },
+                {
+                    "id": "<sentence_0xce7ed86b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Like other ransomware, the malware deletes shadow copies using vssadmin using ShellExecuteW() API, as shown in Figure 6.",
+                    "html": "<p>Like other ransomware, the malware deletes shadow copies using vssadmin using ShellExecuteW() API, as shown in Figure 6.</p>"
+                },
+                {
+                    "id": "<sentence_0x38388ebc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xef426333>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Deletes-shadow-copies.png"
+                    },
+                    "text": "Figure 6: Deletes shadow copies",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full is-resized\"><img alt=\"\" class=\"wp-image-10091 jetpack-lazy-image\" height=\"95\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Deletes-shadow-copies.png\" width=\"639\"/><img alt=\"\" class=\"wp-image-10091\" height=\"95\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-6-Deletes-shadow-copies.png\" width=\"639\"/><figcaption>Figure 6: Deletes shadow copies</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xcd327e02>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before encrypting the machine, the malware gets the Volume details by calling the APIs such as:",
+                    "html": "<p>Before encrypting the machine, the malware gets the Volume details by calling the APIs such as:</p>"
+                },
+                {
+                    "id": "<sentence_0xe4235d8d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GetDriveTypeW()<crlf>FindFirstVolumeW()<crlf>FindNextVolumeW()<crlf>GetVolumePathNamesForVolumeNameW()<crlf>GetLogicalDrives()",
+                    "html": "<ul><li>GetDriveTypeW()</li><li>FindFirstVolumeW()</li><li>FindNextVolumeW()</li><li>GetVolumePathNamesForVolumeNameW()</li><li>GetLogicalDrives()</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xc5286af>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before initiating encryption, the ransomware checks and excludes specific folders from encryption such as AppData, Boot, Windows, Windows.old, Tor Browser, Internet Explorer, Google, Opera, Opera Software, Mozilla, Mozilla Firefox, ProgramData, Program Files, Program Files (x86).",
+                    "html": "<p>Before initiating encryption, the ransomware checks and excludes specific folders from encryption \u2013 such as AppData, Boot, Windows, Windows.old, Tor Browser, Internet Explorer, Google, Opera, Opera Software, Mozilla, Mozilla Firefox, ProgramData, Program Files, Program Files (x86).</p>"
+                },
+                {
+                    "id": "<sentence_0x754f9555>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Ransomware also excludes certain files from encryption such as autorun.inf, boot.ini, bootfont.bin, bootsect.bak, bootmgr, bootmgr.efi, bootmgfw.efi, desktop.ini, iconcache.db, ntldr, ntuser.dat.",
+                    "html": "<p>The Ransomware also excludes certain files from encryption such as autorun.inf, boot.ini, bootfont.bin, bootsect.bak, bootmgr, bootmgr.efi, bootmgfw.efi, desktop.ini, iconcache.db, ntldr, ntuser.dat.</p>"
+                },
+                {
+                    "id": "<sentence_0x1a90fdc5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Additionally, specific extensions are also exempted from encryption such as .pandora, .hta, .exe, .dll, .cpl, .ini, .cab, .cur, .drv, .hlp, .icl, .icns, .ico, .idx, .sys, .spl, .ocx.",
+                    "html": "<p>Additionally, specific extensions are also exempted from encryption \u2013 such as .pandora, .hta, .exe, .dll, .cpl, .ini, .cab, .cur, .drv, .hlp, .icl, .icns, .ico, .idx, .sys, .spl, .ocx.</p>"
+                },
+                {
+                    "id": "<sentence_0xb526c1cc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, the ransomware searches for files using FindFirstFileW() and FindNextFileW () APIs and then proceeds to encrypt them.",
+                    "html": "<p>Finally, the ransomware searches for files using FindFirstFileW() and FindNextFileW () APIs and then proceeds to encrypt them.</p>"
+                },
+                {
+                    "id": "<sentence_0xffa6ca2d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware uses multithreading approach for faster encryption. It calls CreateThread(), SetThreadAffinityMask(), ResumeThread(), CreteIOCompletionPort() and GetQueuedCompletionStatus() APIs for multithreading.",
+                    "html": "<p>The malware uses multithreading approach for faster encryption. It calls CreateThread(), SetThreadAffinityMask(), ResumeThread(), CreteIOCompletionPort() and GetQueuedCompletionStatus() APIs for multithreading.</p>"
+                },
+                {
+                    "id": "<sentence_0x99721a4d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, the ransom note is displayed, as shown in Figure 7.",
+                    "html": "<p>Finally, the ransom note is displayed, as shown in Figure 7.</p>"
+                },
+                {
+                    "id": "<sentence_0x3c832705>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1fc56c44>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Ransom-note.png"
+                    },
+                    "text": "Figure 7: Ransom note",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10092 jetpack-lazy-image\" height=\"427\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Ransom-note.png\" width=\"936\"/><img alt=\"\" class=\"wp-image-10092\" height=\"427\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-7-Ransom-note.png\" width=\"936\"/><figcaption>Figure 7: Ransom note</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdf3e3362>",
+            "title": "Possible ROOK ransomware re-brand:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x71c322ea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During our analysis, we found that the Tactic Technique and Procedures (TTPs) of the Pandora and ROOK ransomware shared a lot of similarities.",
+                    "html": "<p>During our analysis, we found that the Tactic Technique and Procedures (TTPs) of the Pandora and ROOK ransomware shared a lot of similarities.</p>"
+                },
+                {
+                    "id": "<sentence_0xb641f423>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In Dec 2021, ROOK ransomware posted on their leak site claiming to have attacked one of the worlds largest automotive suppliers of technology and components. Following this, their leak site went down around the end of Jan 2022.",
+                    "html": "<p>In Dec 2021, ROOK ransomware posted on their leak site claiming to have attacked one of the world\u2019s largest automotive suppliers of technology and components. Following this, their leak site went down around the end of Jan 2022.</p>"
+                },
+                {
+                    "id": "<sentence_0x2e8e4836>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pandora ransomware in March 2022 posted the same victim on their leak site. Due to this incident and the similarities in how they operate, it is suspected that Pandora might be a re-brand of ROOK ransomware.",
+                    "html": "<p>Pandora ransomware in March 2022 posted the same victim on their leak site. Due to this incident and the similarities in how they operate, it is suspected that Pandora might be a re-brand of ROOK ransomware.</p>"
+                },
+                {
+                    "id": "<sentence_0xba9724d8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc3f93641>": "https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Pandora-ransomware-leak-site.png"
+                    },
+                    "text": "Figure 8: Pandora ransomware leak site",
+                    "html": "<figure class=\"wp-block-image aligncenter size-full\"><img alt=\"\" class=\"wp-image-10094 jetpack-lazy-image\" height=\"363\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Pandora-ransomware-leak-site.png\" width=\"911\"/><img alt=\"\" class=\"wp-image-10094\" height=\"363\" src=\"https://blog.cyble.com/wp-content/uploads/2022/03/Figure-8-Pandora-ransomware-leak-site.png\" width=\"911\"/><figcaption>Figure 8: Pandora ransomware leak site</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xafff379c>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4b94c173>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Theres a good chance that Pandora ransomware is a re-brand of ROOK ransomware. We had observed similar behavior in the past when ransomware groups were coming up with new aliases when they were under scrutiny.",
+                    "html": "<p>There\u2019s a good chance that Pandora ransomware is a re-brand of ROOK ransomware. We had observed similar behavior in the past when ransomware groups were coming up with new aliases when they were under scrutiny.</p>"
+                },
+                {
+                    "id": "<sentence_0x8a13a87>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pandora ransomware gang is suspected of leveraging the double extortion method where the TAs exfiltrate the victims data followed by data encryption. Then, they threaten to leak the exfiltrated data on their leak site or on cybercrime forums.",
+                    "html": "<p>Pandora ransomware gang is suspected of leveraging the double extortion method where the TAs exfiltrate the victim\u2019s data followed by data encryption. Then, they threaten to leak the exfiltrated data on their leak site or on cybercrime forums.</p>"
+                },
+                {
+                    "id": "<sentence_0x7005d01f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Organizations can mitigate such attacks by monitoring the darkweb and acting upon early warning indicators such as compromised credentials, data breaches, and identifying vulnerabilities traded on cybercrime forums.",
+                    "html": "<p>Organizations can mitigate such attacks by monitoring the darkweb and acting upon early warning indicators such as compromised credentials, data breaches, and identifying vulnerabilities traded on cybercrime forums.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xed4a49f5>",
+            "title": "Our Recommendations:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x18857f7f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Enforce password change policies for the network and critical business applications or consider implementing multi-factor authentication for all remote network access points.<crlf>Reduce the attack surface by ensuring that sensitive ports are not exposed on the Internet.<crlf>Conduct cybersecurity awareness programs for employees and contractors.<crlf>Implement a risk-based vulnerability management process for IT infrastructure to ensure that critical vulnerabilities and security misconfigurations are identified and prioritized for remediation.<crlf>Instruct users to refrain from opening untrusted links and email attachments without verifying their authenticity.<crlf>Deploy reputed anti-virus and internet security software package on your company-managed devices, including PCs, laptops, and mobile devices.<crlf>Turn on the automatic software update features on computers, mobiles, and other connected devices wherever possible and pragmatic.<crlf>Define and implement a backup process and secure those backup copies by keeping them offline or on a separate network",
+                    "html": "<ul><li>Enforce password change policies for the network and critical business applications or consider implementing multi-factor authentication for all remote network access points.</li><li>Reduce the attack surface by ensuring that sensitive ports are not exposed on the Internet.</li><li>Conduct cybersecurity awareness programs for employees and contractors.</li><li>Implement a risk-based vulnerability management process for IT infrastructure to ensure that critical vulnerabilities and security misconfigurations are identified and prioritized for remediation.</li><li>Instruct users to refrain from opening untrusted links and email attachments without verifying their authenticity.</li><li>Deploy reputed anti-virus and internet security software package on your company-managed devices, including PCs, laptops, and mobile devices.</li><li>Turn on the automatic software update features on computers, mobiles, and other connected devices wherever possible and pragmatic.</li><li>Define and implement a backup process and secure those backup copies by keeping them offline or on a separate network </li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x421fc722>",
+            "title": "MITRE ATT&CK Techniques",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xbc0ea7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x702a98b0>": "https://attack.mitre.org/techniques/T1059/",
+                        "<a_0xc43798eb>": "https://attack.mitre.org/techniques/T1548",
+                        "<a_0xe0b76714>": "https://attack.mitre.org/techniques/T1134",
+                        "<a_0xe8d2578d>": "https://attack.mitre.org/techniques/T1112",
+                        "<a_0xa4a0c402>": "https://attack.mitre.org/techniques/T1027",
+                        "<a_0x669f0f56>": "https://attack.mitre.org/techniques/T1562/001/",
+                        "<a_0xe196d2a>": "https://attack.mitre.org/techniques/T1082/",
+                        "<a_0x22a1b114>": "https://attack.mitre.org/techniques/T1083",
+                        "<a_0x21dfd9ae>": "https://attack.mitre.org/techniques/T1490/",
+                        "<a_0x85b834f0>": "https://attack.mitre.org/techniques/T1489/",
+                        "<a_0xe841c7a8>": "https://attack.mitre.org/techniques/T1486/",
+                        "<table_0xe591bcf7>": {
+                            "0": {
+                                "0": "Tactic",
+                                "1": "Execution",
+                                "2": "Privilege Escalation",
+                                "3": "Defense Evasion",
+                                "4": "Discovery",
+                                "5": "Impact"
+                            },
+                            "1": {
+                                "0": "Technique ID",
+                                "1": "T1059",
+                                "2": "T1548 T1134",
+                                "3": "T1112 T1027 T1562.001",
+                                "4": "T1082 T1083",
+                                "5": "T1490 T1489 T1486"
+                            },
+                            "2": {
+                                "0": "Technique Name",
+                                "1": "Command and Scripting Interpreter",
+                                "2": "Abuse Elevation Control Mechanism Access Token Manipulation",
+                                "3": "Modify Registry  Obfuscated Files or Information Impair Defenses: Disable or Modify Tools",
+                                "4": "System Information Discovery File and Directory Discovery",
+                                "5": "Inhibit System Recovery Service Stop Data Encrypted for Impact"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Tactic</td><td>Technique ID</td><td>Technique Name</td></tr><tr><td>Execution</td><td><a href=\"https://attack.mitre.org/techniques/T1059/\" rel=\"noreferrer noopener\" target=\"_blank\">T1059</a></td><td>Command and Scripting Interpreter</td></tr><tr><td>Privilege Escalation</td><td><a href=\"https://attack.mitre.org/techniques/T1548\">T1548</a>\n<a href=\"https://attack.mitre.org/techniques/T1134\">T1134</a></td><td>Abuse Elevation Control Mechanism \nAccess Token Manipulation</td></tr><tr><td>Defense Evasion</td><td><a href=\"https://attack.mitre.org/techniques/T1112\">T1112</a>\n<a href=\"https://attack.mitre.org/techniques/T1027\">T1027</a>\n<a href=\"https://attack.mitre.org/techniques/T1562/001/\">T1562.001</a></td><td>Modify Registry\n Obfuscated Files or Information \nImpair Defenses: Disable or Modify Tools</td></tr><tr><td>Discovery</td><td><a href=\"https://attack.mitre.org/techniques/T1082/\">T1082</a>\n<a href=\"https://attack.mitre.org/techniques/T1083\">T1083</a></td><td>System Information Discovery\nFile and Directory Discovery</td></tr><tr><td>Impact</td><td><a href=\"https://attack.mitre.org/techniques/T1490/\" rel=\"noreferrer noopener\" target=\"_blank\">T1490</a>\n<a href=\"https://attack.mitre.org/techniques/T1489/\" rel=\"noreferrer noopener\" target=\"_blank\">T1489</a>\n<a href=\"https://attack.mitre.org/techniques/T1486/\" rel=\"noreferrer noopener\" target=\"_blank\">T1486</a></td><td>Inhibit System Recovery \nService Stop \nData Encrypted for Impact</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2087e68a>",
+            "title": "Indicators of Compromise (IoCs):",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4a2f9a3f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xbbc4a8cd>": {
+                            "0": {
+                                "0": "Indicators",
+                                "1": "0c4a84b66832a08dccc42b478d9d5e1b 160320b920a5ef22ac17b48146152ffbef60461f 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b"
+                            },
+                            "1": {
+                                "0": "Indicator type",
+                                "1": "Md5 SHA-1 SHA-256"
+                            },
+                            "2": {
+                                "0": "Description",
+                                "1": "Executable binary"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Indicators </td><td>Indicator type </td><td>Description </td></tr><tr><td>0c4a84b66832a08dccc42b478d9d5e1b 160320b920a5ef22ac17b48146152ffbef60461f 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b</td><td>Md5 SHA-1 SHA-256 </td><td>Executable binary</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd8853340>",
+            "title": "About Us",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x656b38ea>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9c305198>": "https://cyble.com/"
+                    },
+                    "text": "Cybleis a global threat intelligence SaaS provider that helps enterprises protect themselves from cybercrimes and exposure in theDarkweb. Its prime focus is to provide organizations with real-time visibility to their digital risk footprint. Backed by Y Combinator as part of the 2021 winter cohort,Cyblehas also been recognized by Forbes as one of the top 20 Best Cybersecurity Start-upsToWatch In 2020. Headquartered in Alpharetta, Georgia,and with offices in Australia, Singapore, and India,Cyblehas a global presence. To learn more aboutCyble, visitwww.cyble.com.",
+                    "html": "<p><a href=\"https://cyble.com/\" rel=\"noreferrer noopener\" target=\"_blank\">Cyble</a>\u202fis a global threat intelligence SaaS provider that helps enterprises protect themselves from cybercrimes and exposure in the\u202fDarkweb. Its prime focus is to provide organizations with real-time visibility to their digital risk footprint. Backed by Y Combinator as part of the 2021 winter cohort,\u202fCyble\u202fhas also been recognized by Forbes as one of the top 20 Best Cybersecurity Start-ups\u202fTo\u202fWatch In 2020. Headquartered in Alpharetta, Georgia,\u202fand with offices in Australia, Singapore, and India,\u202fCyble\u202fhas a global presence. To learn more about\u202fCyble, visit\u202f<a href=\"https://cyble.com/\" rel=\"noreferrer noopener\" target=\"_blank\">www.cyble.com</a>.\u202f\u202f </p>"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,337 @@
+<div> <h1>Summary</h1><p>In April 2022, ThreatLabz discovered several newly registered domains, which were created by a threat actor to spoof the official Microsoft Windows 11 OS download portal. We discovered these domains by monitoring suspicious traffic in our Zscaler cloud. The spoofed sites were created to distribute malicious ISO files which lead to a Vidar infostealer infection on the endpoint. These variants of Vidar malware fetch the C2 configuration from attacker-controlled social media channels hosted on Telegram and Mastodon network.</p><p>ThreatLabz believes that the same threat actor is actively leveraging social engineering to impersonate popular legitimate software applications to distribute Vidar malware, as we have also identified an attacker-controlled GitHub repository which hosts several backdoored versions of Adobe Photoshop. These binaries hosted on GitHub, distribute Vidar malware using similar tactics of abusing social media channels for C2 communication.</p><p>In this blog, ThreatLabz analyzes the Vidar distribution vector, threat actor correlation, and technical analysis of the binaries involved in this campaign.</p><p> </p><h2>Key points</h2><ul><li>ThreatLabz discovered several newly registered domains spoofing the official Microsoft Windows 11 OS download portal</li><li>The spoofed domains were distributing malicious ISO files containing samples of the Vidar infostealer malware</li><li>The actual C2s used by the malware samples are obtained from attacker-controlled social media channels hosted on Telegram and Mastodon network</li><li>Using data obtained from this campaign, ThreatLabz was also able to identify another similar one using backdoored versions of Adobe Photoshop</li></ul><p> </p><h1>Distribution Vector - Windows 11 Theme</h1><p>The threat actor registered several domains beginning 20th April 2022 that host web pages that masquerade as the official Microsoft Windows 11 download page, which is the latest version of the operating system. ThreatLabz found several other domains registered by this threat actor similar to the one shown below in Figure 1. All of these domains were used to spread malicious ISO files spoofed as a Windows 11 download.</p><p><img alt="Figure 1" class="lazyloading" src="https://www.zscaler.com/cdn-cgi/image/format=auto/sites/default/files/images/blogs/vidar/Figure%201.png" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 1: Vidar attacker-controlled domain serving malicious ISO file</p><p>The complete list of domains linked to this threat actor that were used in this campaign are mentioned in the Indicators of Compromise (IOC) section.</p><h2> </h2><h2>Technical Analysis</h2><h3>ISO file</h3><p>The binary inside the ISO file is a PE32 binary. The size of the ISO file is very large (more than 300 MB), which helps the attackers evade network security products where there is a file size limitation in place. Example MD5 hashes for this campaign are shown below:</p><p>ISO file MD5 hash: 52c47fdda399b011b163812c46ea94a6
+PE32 file MD5 hash: 6352540cf679dfec21aff6bd9dee3770</p><p>The binary inside the ISO file is digitally signed with a certificate by AVAST. However, this certificate is expired and hence invalid.</p><p>Figure 2 shows the details of the certificate and the corresponding serial number.</p><p><img alt="Figure 2" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 2: Details of the certificate used to sign the malicious Vidar binary</p><p>All of the binaries in this campaign were signed by a certificate with the same serial number. By pivoting on this serial number, we were able to discover several other malicious binaries from multiple different campaigns and actors, which likely indicates that this is a stolen certificate coming from the AVAST compromise back in 2019.</p><h3> </h3><h3>Vidar Samples</h3><p>The Vidar samples in these campaigns are all packed with Themida (except for the MD5 hash 6ae17cb76cdf097d4dc4fcccfb5abd8a) and over 330MB in size. However, the sample contains a PE file that is only around 3.3MB. Figure 3 shows that the rest of the file content is just artificially filled up with 0x10 bytes to increase the file’s size. The Vidar strings extracted from these samples is provided in the Appendix section at the end of the blog.</p><p><img alt="Figure 3" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 3: Padding of bytes to inflate the Vidar binary size from 3.3MB to 330MB</p><p>All of the binaries below are related to the same Windows 11 theme campaign:</p><p>
+MD5: 6352540cf679dfec21aff6bd9dee3770</p><p>
+The Vidar static configuration below contains the embedded parameters needed by the sample to communicate with its C2 and information including the malware version:</p><ul><li>Profile: 670</li><li>Profile ID: 739</li><li>Version: 51.9</li><li>URL marker: hello</li><li>URL1: https://t.me/btc20220425</li><li>Real C2: 195.201.250.209 (Carved out from URL1)</li><li>URL2: https://ieji.de/@ronxik213</li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul><p>The botnet can be identified by its profile ID. Both of the hardcoded URLs are from social media sites. However, they are used as a dead drop resolver as a first stage. The URL marker instructs Vdiar to parse the second stage URL from the social media profiles located at the dead drop resolver URL.</p><p>The following is an example Vidar stealer configuration downloaded from the C2: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;</p><p>This configuration is the default with every stealing function enabled (passwords, cryptocurrency wallets, two-factor authentication, etc)</p><p>The following libraries are downloaded from the C2:</p><ul><li>update.zip (66cf4ebdceedecd9214caab7ca87908d), which contains the following DLL libraries:</li><li>freebl3.dll (ef2834ac4ee7d6724f255beaf527e635) </li><li>mozglue.dll (8f73c08a9660691143661bf7332c3c27)</li><li>msvcp140.dll (109f0f02fd37c84bfc7508d4227d7ed5)</li><li>nss3.dll (bfac4e3c5908856ba17d41edcd455a51)</li><li>softokn3.dll (a2ee53de9167bf0d6c019303b7ca84e5) </li><li>sqlite3.dll (e477a96c8f2b18d6b5c27bde49c990bf) </li><li>vcruntime140.dll (7587bf9cb4147022cd5681b015183046)</li></ul><p>All of these libraries are legitimate that Vidar leverages in order to extract credentials and other data from different applications and browsers.</p><p>
+MD5: da82d43043c101f25633c258f527c9d5
+MD5: e9a3562f3851dd2dba27f90b5b2d15c0</p><p>Vidar static configuration:</p><ul><li>Profile: 1281</li><li>Profile ID: 755</li><li>Version: 51.9</li><li>URL marker: hello</li><li>URL1: 5.252.178.50</li><li>URL2: https://koyu.space/@ronxik123 </li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul><p>For these samples, the URL1 field in the static configuration is a real C2, and a social media profile is used as a backup URL.</p><p>The Vidar stealer configuration downloaded from this C2 was the following: 
+1,1,0,1,1,1,1,0,0,1,250,none;</p><p>This configuration is customized to extract social media passwords with all of the other Vidar features disabled.</p><p>The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).</p><h2> </h2><h1>Distribution Vector - Adobe Photoshop Theme </h1><p>
+ThreatLabz also identified an attacker-controlled GitHub repository which hosts backdoored versions of the application Adobe Photoshop Creative Cloud, which we attribute to the same threat actor. Figure 4 shows the GitHub repository (https://github.com/AdobeInstal) used by the attacker to host a backdoored version of Adobe Photoshop.</p><p><img alt="Figure 4" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 4: Vidar attacker-controlled GitHub repository</p><h2> </h2><h2>Technical Analysis</h2><p>The sample with the MD5 hash below belongs to this Adobe Photoshop theme campaign.</p><p>
+MD5 6ae17cb76cdf097d4dc4fcccfb5abd8a</p><p>Vidar static configuration:</p><ul><li>Profile: 1199</li><li>Profile ID: 0</li><li>Version: 51.8</li><li>URL marker: hello</li><li>URL1: https://t.me/mm20220428</li><li>Real C2: 195.201.250.209 (Carved out from URL1)</li><li>URL2: https://koyu.space/@ronxik123 </li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul><p>The Vidar stealer configuration downloaded from the C2 was the following: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;</p><p>The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).</p><h2> </h2><h1>Social media abuse for C2 communication</h1><p>All the binaries involved in this campaign fetch the IP addresses of the C2 servers from attacker-registered social media accounts on the Telegram and Mastodon networks. In the past, the threat actors distributing Vidar have abused other social media networks such as Mastodon. However, the abuse of Telegram is a new tactic that they added to their arsenal.</p><h3> </h3><h2>Telegram abuse</h2><p>In these campaigns, the threat actor created several Telegram channels with the C2 IP address in the channel description. The format used to store the C2 IP address on social media profiles is the following for this campaign: </p><p>&lt;C2_Url_Marker&gt; &lt;C2_IP_address&gt;|</p><p>The C2_Url_Marker field in these campaigns was hello. The naming convention for the Telegram channels includes a date that corresponds to the date when these channels were created. As an example, the channel with the handle btc20220425 corresponds to a channel created on April 25, 2022, using btc_stacking as the name as shown in Figure 5.</p><p><img alt="Figure 5" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 5: Vidar attacker-controlled Telegram channel with the C2 IP address included in the channel description</p><h3> </h3><h2>Mastodon network abuse</h2><p>The Mastodon network is a decentralized social network which allows anyone to deploy their own instance of a self-hosted online community. There are several instances of such online communities on the Internet, which are built using Mastodon. Two such instances are ieji[.]de and koyu[.]space. The threat actor created a profile on both of these communities and stored the C2 IP address in the profile section using a format similar to the one used for Telegram channels. Figure 6 and Figure 7 show the profiles created by the threat actor on ieji[.]de and koyu[.]space, respectively.</p><p><img alt="Figure 6" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 6: Vidar attacker-controlled profile on the Mastodon community ieji[.]de with the C2 IP address included in the channel description</p><p><img alt="Figure 7" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 7: Vidar attacker-controlled profile on Mastodon community koyu[.]space with the C2 IP address included in the channel description</p><h2> </h2><h1>Conclusion</h1><p>The threat actors distributing Vidar malware have demonstrated their ability to social engineer victims into installing Vidar stealer using themes related to the latest popular software applications. As always, users should be cautious when downloading software applications from the Internet and download software only from the official vendor websites. The Zscaler ThreatLabZ team will continue to monitor this campaign, as well as others, to help keep our customers safe.</p><h2> </h2><h1>Zscaler cloud sandbox detection</h1><p>
+<img alt="Figure 8" class="lazyload" style="max-width:80%;height:auto;width:auto;"/></p><p>Figure 8: Zscaler cloud sandbox detection</p><p>In addition to sandbox detections, Zscaler’s multilayered cloud security platform detects indicators at various levels.</p><p>Win32.Downloader.Vidar
+Win64.Downloader.Vidar</p><h2> </h2><h1>Indicators of compromise</h1><h2>Hashes</h2><p>52c47fdda399b011b163812c46ea94a6
+da82d43043c101f25633c258f527c9d5
+e9a3562f3851dd2dba27f90b5b2d15c0
+6ae17cb76cdf097d4dc4fcccfb5abd8a</p><h2> </h2><h2>Domains</h2><p>ms-win11[.]com
+ms-win11.midlandscancer[.]com
+win11-serv4[.]com
+win11-serv[.]com
+win11install[.]com
+ms-teams-app[.]net</p><h2> </h2><h2>URLs for fetching C2 addresses</h2><p>https://t.me/btc20220425
+https://ieji.de/@ronxik213
+https://koyu.space/@ronxik123
+https://t.me/mm20220428</p><h2> </h2><h2>URLs for fetching ISO files</h2><p>files.getsnyper[.]com/files/msteams/Setup.iso
+files.getsnyper[.]com/files/windows11/Setup.iso
+files.getsnyper[.]com/files/msteamsww/Setup.iso</p><p> </p><h2>Actual C2s</h2><p>195.201.250.209
+107.189.11.124
+5.252.178.50
+107.189.11.124</p><h1> </h1><h1>Appendix</h1><h2>
+Decoded Strings</h2><p>Wallets
+Plugins
+*wallet*.dat
+\\Wallets\\
+keystore
+Ethereum\
+\\Ethereum\\
+Electrum
+\\Electrum\\wallets\\
+ElectrumLTC
+\\Electrum-LTC\\wallets\\
+Exodus
+\\Exodus\\
+exodus.conf.json
+window-state.json
+\\Exodus\\exodus.wallet\\
+passphrase.json
+seed.seco
+info.seco
+ElectronCash
+\\ElectronCash\\wallets\\
+default_wallet
+MultiDoge
+\\MultiDoge\\
+multidoge.wallet
+JAXX
+\\jaxx\\Local Storage\\
+file__0.localstorage
+Atomic
+\\atomic\\Local Storage\\leveldb\\
+000003.log
+CURRENT
+LOCK
+LOG
+MANIFEST-000001
+0000*
+Binance
+\\Binance\\
+app-store.json
+Coinomi
+\\Coinomi\\Coinomi\\wallets\\
+*.wallet
+*.config
+wallet_path
+SOFTWARE\\monero-project\\monero-core
+\\Monero\\
+SELECT fieldname, value FROM moz_formhistory
+\\files\\Soft
+\\files\\Soft\\Authy
+\\Authy Desktop\\Local Storage\\
+\\Authy Desktop\\Local Storage\\*.localstorage
+\\Opera Stable\\Local State
+INSERT_KEY_HERE
+JohnDoe
+HAL9TH
+api.faceit.com
+/core/v1/nicknames/
+about
+Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25
+C:\\ProgramData\\
+.exe
+:Zone.Identifier
+[ZoneTransfer] ZoneId=2
+Windows
+ProgramData
+RECYCLE.BIN
+Config.Msi
+System Volume Information
+msdownld.tmp
+Recovery
+Local\\Temp
+Program Files
+Recycle.Bin
+All Users
+MicrosoftEdge\\Cookies
+Users\\Public
+Local\\Packages
+Local\\NuGet
+Roaming\\WinRAR
+Local\\Microsoft
+Microsoft
+fee_estimates
+peers
+mempool
+banlist
+governance
+mncache
+mnpayments
+netfulfilled
+passwords.txt
+Login Data
+Cookies
+Web Data
+\\files\\Autofill
+\\files\\Cookies
+\\files\\CC
+\\files\\History
+\\files\\Downloads
+\\files\\
+\\files\\Files
+hwid
+os
+platform
+profile
+user
+cccount
+fcount
+telegram
+ver
+vaultcli.dll
+VaultOpenVault
+VaultCloseVault
+VaultEnumerateItems
+VaultGetItem
+VaultFree
+SELECT url FROM moz_places
+%s\\Mozilla\\Firefox\\profiles.ini
+\\signons.sqlite
+SELECT encryptedUsername, encryptedPassword, formSubmitURL FROM moz_logins
+\\logins.json
+formSubmitURL
+usernameField
+encryptedUsername
+encryptedPassword
+guid
+SELECT host, name, value FROM moz_cookies
+SELECT origin_url, username_value, password_value FROM logins
+SELECT name, value FROM autofill
+SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards
+SELECT target_path, tab_url from downloads
+SELECT url, title from urls
+SELECT HOST_KEY, is_httponly, path, is_secure, (expires_utc/1000000)-11644480800, name, encrypted_value from cookies
+C:\\Users\\
+\\AppData\\Roaming\\FileZilla\\recentservers.xml
+&lt;Host&gt;
+&lt;Port&gt;
+&lt;User&gt;
+&lt;Pass encoding=\
+Soft: FileZilla\n
+\\AppData\\Roaming\\.purple\\accounts.xml
+&lt;protocol&gt;
+&lt;name&gt;
+&lt;password&gt;
+Soft: Pidgin\n
+\\Thunderbird\\Profiles\\
+C:\\Program Files (x86)\\Mozilla Thunderbird
+APPDATA
+LOCALAPPDATA
+Thunderbird
+\\files\\Telegram
+\\Telegram Desktop\\tdata\\*
+D877F783D5D3EF8C*
+\\Telegram Desktop\\tdata\\
+key_datas
+\\Telegram Desktop\\tdata\\D877F783D5D3EF8C\\*
+map*
+\\Telegram Desktop\\tdata\\D877F783D5D3EF8C\\
+firefox.exe
+plugin-container.exe
+update_notifier.exe
+Mozilla Firefox
+\\Mozilla\\Firefox\\Profiles\\
+Pale Moon
+\\Moonchild Productions\\Pale Moon\\Profiles\\
+Waterfox
+\\Waterfox\\Profiles\\
+Cyberfox
+\\8pecxstudios\\Cyberfox\\Profiles\\
+BlackHawk
+\\NETGATE Technologies\\BlackHawk\\Profiles\\
+IceCat
+\\Mozilla\\icecat\\Profiles\\
+K-Meleon
+\\K-Meleon\\
+Google Chrome
+\\Google\\Chrome\\User Data\\
+Chromium
+\\Chromium\\User Data\\
+Kometa
+\\Kometa\\User Data\\
+Amigo
+\\Amigo\\User Data\\
+Torch
+\\Torch\\User Data\\
+Orbitum
+\\Orbitum\\User Data\\
+Comodo Dragon
+\\Comodo\\Dragon\\User Data\\
+Nichrome
+\\Nichrome\\User Data\\
+Maxthon5
+\\Maxthon5\\Users\\
+Sputnik
+\\Sputnik\\User Data\\
+Epic Privacy Browser
+\\Epic Privacy Browser\\User Data\\
+Vivaldi
+\\Vivaldi\\User Data\\
+CocCoc
+\\CocCoc\\Browser\\User Data\\
+URAN
+\\uCozMedia\\Uran\\User Data\\
+QIP Surf
+\\QIP Surf\\User Data\\
+Cent Browser
+\\CentBrowser\\User Data\\
+Elements Browser
+\\Elements Browser\\User Data\\
+TorBro Browser
+\\TorBro\\Profile\\
+Suhba Browser
+\\Suhba\\User Data\\
+Mustang Browser
+\\Rafotech\\Mustang\\User Data\\
+Chedot Browser
+\\Chedot\\User Data\\
+Brave_Old
+\\brave\\
+7Star
+\\7Star\\7Star\\User Data\\
+Microsoft Edge
+\\Microsoft\\Edge\\User Data\\
+360 Browser
+\\360Browser\\Browser\\User Data\\
+QQBrowser
+\\Tencent\\QQBrowser\\User Data\\
+Opera
+\\Opera Software\\Opera Stable\\
+OperaGX
+\\Opera Software\\Opera GX Stable\\
+Local State
+Cookies
+%s_%s.txt
+TRUE
+FALSE
+\\Microsoft\\Windows\\Cookies\\Low\\
+Cookies\\IE_Cookies.txt
+\\Packages\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\\AC\\#!001\\MicrosoftEdge\\Cookies\\
+Cookies\\Edge_Cookies.txt
+\\files\\Wallets
+%USERPROFILE%
+%DESKTOP%
+KERNEL32.DLL
+LoadLibraryA
+GetProcAddress
+VirtualAllocExNuma
+gdi32.dll
+ole32.dll
+user32.dll
+psapi.dll
+BCRYPT.DLL
+BCryptCloseAlgorithmProvider
+BCryptDestroyKey
+BCryptOpenAlgorithmProvider
+BCryptSetProperty
+BCryptGenerateSymmetricKey
+BCryptDecrypt
+CRYPT32.DLL
+CryptUnprotectData
+CryptStringToBinaryA
+C:\\ProgramData\\nss3.dll
+NSS_Init
+NSS_Shutdown
+PK11_GetInternalKeySlot
+PK11_FreeSlot
+PK11_Authenticate
+PK11SDR_Decrypt
+advapi32.dll
+RegOpenKeyExA
+RegQueryValueExA
+RegCloseKey
+RegOpenKeyExW
+RegGetValueW
+RegEnumKeyExA
+RegGetValueA
+GetUserNameA
+GetCurrentHwProfileA
+wininet.dll
+InternetCloseHandle
+InternetReadFile
+HttpSendRequestA
+HttpOpenRequestA
+InternetConnectA
+InternetOpenA
+HttpAddRequestHeadersA
+HttpQueryInfoA
+InternetSetFilePointer
+InternetOpenUrlA
+InternetSetOptionA
+DeleteUrlCacheEntry
+CreateCompatibleBitmap
+SelectObject
+BitBlt
+DeleteObject
+CreateDCA
+GetDeviceCaps
+CreateCompatibleDC
+CoCreateInstance
+CoUninitialize
+GetDesktopWindow
+ReleaseDC
+GetKeyboardLayoutList
+CharToOemA
+GetDC
+wsprintfA
+EnumDisplayDevicesA
+GetSystemMetrics
+GetModuleFileNameExA
+GetModuleBaseNameA
+EnumProcessModules</p><p> </p><ul class="zp-0 zm-0 category-tags"><li class="d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8"> <a class="h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag" href="https://www.zscaler.com/blogs/security-research">Security Research</a></li><li class="d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8"> <a class="h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag" href="https://www.zscaler.com/blogs/insights-and-research">Insights and Research</a></li></ul><ul class="w-100 text-center text-md-left sharing-buttons zp-0 zm-0"><li class="d-inline-block zmr-16"> <a class="d-flex sharing-link text-left fg-color-blue" href="mailto:?subject=Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram&amp;body=https://bit.ly/3wiy68Z" title="Share via email"> </a></li><li class="d-inline-block zmr-16"> <a class="d-flex sharing-link text-left fg-color-blue" href="https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3wiy68Z" target="_blank" title="Share on facebook"> </a></li><li class="d-inline-block zmr-16"> <a class="d-flex sharing-link text-left fg-color-blue" href="https://www.linkedin.com/sharing/share-offsite/?title=Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram&amp;url=https://bit.ly/3wiy68Z" target="_blank" title="Share on linkedin"> </a></li><li class="d-inline-block zmr-16"> <a class="d-flex sharing-link text-left fg-color-blue" href="https://twitter.com/intent/tweet?text=https://bit.ly/3wiy68Z%20%E2%80%94%20Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram" target="_blank" title="Tweet"> </a></li><li class="d-inline-block zmr-16"> <a class="d-flex sharing-link text-left fg-color-blue" href="https://www.zscaler.com/blogs/feeds/security-research" title="Check feeds"> </a></li></ul><h2 class="fw-400 fg-color-blue zmb-0 zmt-15 zmt-md-0">Authors</h2><h3 class="zp-12 zmb-4 drop-shadow-hover"> <a class="fg-color-black" href="https://www.zscaler.com/author/sudeepsingh" title="Read all blog by Sudeep Singh">Sudeep Singh</a> </h3> <a class="zmx-12 author-social d-inline-block" href="https://www.linkedin.com/in/sudeep-singh-96559026/" target="_blank" title="Check linkedin profile"> </a><h3 class="zp-12 zmb-4 drop-shadow-hover"> <a class="fg-color-black" href="https://www.zscaler.com/author/svicente" title="Read all blog by Santiago Vicente">Santiago Vicente</a> </h3> <a class="zmx-12 author-social d-inline-block" href="https://twitter.com/smvicente" target="_blank" title="Visit twitter handle"> </a><h3 class="zp-12 zmb-4 drop-shadow-hover"> <a class="fg-color-black" href="https://www.zscaler.com/author/bstonegross" title="Read all blog by Brett Stone-Gross">Brett Stone-Gross</a> </h3><h2 class="fw-400 fg-color-blue zmb-md-24 zmb-0">Recommended for You</h2><h6 class="fw-500 zmb-0"> <a class="fg-color-black" href="https://www.zscaler.com/blogs/security-research/peeking-privateloader" title="Peeking into PrivateLoader">Peeking into PrivateLoader</a></h6><h6 class="fw-500 zmb-0"> <a class="fg-color-black" href="https://www.zscaler.com/blogs/security-research/targeted-attack-thailand-pass-customers-delivers-asyncrat" title="Targeted attack on Thailand Pass customers delivers AsyncRAT">Targeted attack on Thailand Pass customers delivers AsyncRAT</a></h6><h6 class="fw-500 zmb-0"> <a class="fg-color-black" href="https://www.zscaler.com/blogs/security-research/naver-ending-game-lazarus-apt" title='A "Naver"-ending game of Lazarus APT'>A "Naver"-ending game of Lazarus APT</a></h6><h6 class="fw-500 zmb-0"> <a class="fg-color-black" href="https://www.zscaler.com/blogs/security-research/zscaler-threatlabz-discovers-multiple-product-bugs-adobe-acrobat" title="Zscaler ThreatLabz Discovers Multiple Product Bugs in Adobe Acrobat">Zscaler ThreatLabz Discovers Multiple Product Bugs in Adobe Acrobat</a></h6></div>

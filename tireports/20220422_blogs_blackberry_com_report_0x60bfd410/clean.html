@@ -1,0 +1,969 @@
+<div>
+<h1>Threat Thursday: BlackGuard Infostealer Rises from Russian Underground Markets</h1>
+<a href="https://blogs.blackberry.com/en/category/research-and-intelligence" title="RESEARCH &amp; INTELLIGENCE">RESEARCH &amp; INTELLIGENCE</a> / 04.21.22 / 
+ <a href="https://blogs.blackberry.com/en/author/the-blackberry-research-and-intelligence-team">The BlackBerry Research &amp; Intelligence Team</a>
+<ul class="socialSharing-icons">
+<li>
+<a class="twitter-share" href="https://twitter.com/intent/tweet?url=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer&amp;text=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;via=BlackBerry" target="_blank" title="Share on Twitter">
+Share on Twitter
+</a>
+</li>
+<li>
+<a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer" target="_blank" title="Share on FaceBook">
+Share on Facebook
+</a>
+</li>
+<li>
+<a class="linkedin-share" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer&amp;title=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;summary=&amp;source=blogs.blackberry.com" target="_blank" title="Share on LinkedIn">
+Share on Linked In
+</a>
+</li>
+<li>
+<a class="email-share" href="mailto:?subject=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;body=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer" title="Email">
+Email
+</a>
+</li>
+</ul>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-875x530-ibb.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>BlackGuard is one of the latest .NET-based information-stealers to rise to prominence in Russian underground markets. Though not as broad in functionality as other infostealers, BlackGuard’s focus is on web browsers, cryptocurrency services, and “cold wallets” – crypto wallets that store assets offline for greater security.</p>
+<p>BlackGuard has specific functions to extract critical information from a victim's device, similar to both <a href="https://blogs.blackberry.com/en/2022/02/threat-thursday-arkei-infostealer" target="_blank">Arkei</a> and <a href="https://blogs.blackberry.com/en/2022/02/threat-thursday-bhunt-scavenger" target="_blank">Bhunt Scavenger</a>. Additionally, the malware will target VPN clients, instant messaging services, FTP clients and VoIP services.</p>
+<p>Following a growing trend for modern malware, BlackGuard is sold and distributed as Malware-as-a-Service (MaaS). The threat group behind the malware offers both monthly subscriptions and a lifetime pass to use the malware. (For “lifetime,” read “until the malware authors get caught.”)</p>
+<p>While BlackGuard was first observed by <a href="https://www.zscaler.com/blogs/security-research/analysis-blackguard-new-info-stealer-malware-being-sold-russian-hacking" target="_blank">researchers at ZScaler</a>, our analysts took a deeper dive to plumb its depths, and in so doing discovered some functions not previously described, including the malware’s features for evaluating high-value targets, and default browser checks. This blog also includes exclusive screenshots taken from the threat actor’s original sales thread.</p>
+<h3>Operating System</h3>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-table-01.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<h3>Risk &amp; Impact</h3>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-table-02.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<h3>Technical Analysis</h3>
+<p>BlackGuard infostealer fits neatly into the space a few older, discontinued threats have left behind. It provides a degree of obfuscation that other malware authors often charge a sizeable add-on fee for, all included at a relatively cheap price. The threat also offers ease of use, as well as ease of procurement, as it’s sold on a variety of different forums.</p>
+<h3>Anti-Analysis Checks</h3>
+<p>On execution, BlackGuard conducts anti-analysis and anti-detection checks to determine if the malware is being run inside a sandbox or on a device with a specific type of antivirus software installed. If the malware detects the presence of any of the Dynamic-Link Library (.DLL) files listed in the following table, it will attempt to terminate itself, to prevent execution and subsequent detection.</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="302"><p>DLL Name</p>
+</td>
+<td valign="top" width="321"><p>Application Name</p>
+</td>
+</tr><tr><td valign="top" width="302"><p>SbieDll.dll</p>
+</td>
+<td valign="top" width="321"><p>Sandboxie Sandbox</p>
+</td>
+</tr><tr><td valign="top" width="302"><p>SxIn.dll</p>
+</td>
+<td valign="top" width="321"><p>360 Total Security</p>
+</td>
+</tr><tr><td valign="top" width="302"><p>Sf2.dll</p>
+</td>
+<td valign="top" width="321"><p>Avast Antivirus</p>
+</td>
+</tr><tr><td valign="top" width="302"><p>snxhk.dll</p>
+</td>
+<td valign="top" width="321"><p>Avast Antivirus</p>
+</td>
+</tr><tr><td valign="top" width="302"><p>cmdvrt32.dll</p>
+</td>
+<td valign="top" width="321"><p>COMODO Internet Security</p>
+</td>
+</tr></tbody></table>
+<p>
+BlackGuard will also query "IP-Whois" to determine the approximate location of the victim. In some samples of BlackGuard, this function is used to prevent the malware’s execution in specific Eastern European nations, which would appear to confirm suspicions regarding where the malware authors are located.</p>
+<p>In the samples we analyzed, the malware will stop executing if the victim is based in the following countries:</p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="129"><ul>
+<li>Armenia</li>
+</ul>
+</td>
+<td valign="top" width="128"><ul>
+<li>Moldova</li>
+</ul>
+</td>
+<td width="85"><p> </p>
+</td>
+</tr><tr><td valign="top" width="129"><ul>
+<li>Azerbaijan</li>
+</ul>
+</td>
+<td valign="top" width="128"><ul>
+<li>Tajikistan</li>
+</ul>
+</td>
+<td width="85"><p> </p>
+</td>
+</tr><tr><td valign="top" width="129"><ul>
+<li>Belarus</li>
+</ul>
+</td>
+<td valign="top" width="128"><ul>
+<li>Uzbekistan</li>
+</ul>
+</td>
+<td width="85"><p> </p>
+</td>
+</tr><tr><td valign="top" width="129"><ul>
+<li>Kazakhstan</li>
+</ul>
+</td>
+<td valign="top" width="128"><ul>
+<li>Ukraine</li>
+</ul>
+</td>
+<td width="85"><p> </p>
+</td>
+</tr><tr><td valign="top" width="129"><ul>
+<li>Kyrgyzstan</li>
+</ul>
+</td>
+<td valign="top" width="128"><ul>
+<li>Russia</li>
+</ul>
+</td>
+<td width="85"><p> </p>
+</td>
+</tr></tbody></table>
+<h3>
+String Obfuscation</h3>
+<p>BlackGuard is built using the .NET programming language, which is easily human-readable. To foil this transparency, it makes use of the .NET obfuscator, "<a href="https://www.obfuscar.com/" target="_blank">Obfuscar</a>.” This technique is often used in malware – and in legitimate software development to prevent unauthorized analysis that might lead to things like cracking and piracy – as an obfuscator makes the source code of a program harder for a human reader to understand.</p>
+<p>Obfuscar aggregates all of BlackGuard’s string data into a byte array, and then it XORs the data to prevent the strings from being visible during static analysis. The XOR cipher is a simple additive cipher often used in cryptography.</p>
+<p>The byte array is then de-obfuscated at run-time. All original string references are replaced by function calls that use an index and a length to pull the appropriate string out of the byte array. This action is displayed below in Figure 1.</p>
+<p>In some cases, the strings are also Base64-encoded and therefore need to be decoded after being retrieved from the byte array. It’s possible that this has been done specifically for the strings that are more obviously indicative of suspicious activity.</p>
+<p>These strings contain some of the key malicious functions of the malware, and likely have this additional layer of obfuscation added so the decoded version of the strings do not exist in memory for very long. This additional level of obfuscation makes it less likely for the malicious activity to be picked up by memory scanners and other detection-based antivirus systems.</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig01.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 1: Breakdown of string de-obfuscation</p>
+<h3>Information Stealing</h3>
+<p>Once all the anti-analysis checks are complete, BlackGuard will create a folder in %AppData% to store its stolen information.</p>
+<p>After it has created this folder, BlackGuard starts its information-stealer functionality. The malware is designed to have different functions carry out various goals of information theft, as shown in Figure 2 below. Once decoded, each function can be then mapped to a specific goal the threat actor wants to achieve. </p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig-02.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 2 - Breakdown of core infostealer functions</p>
+<h3>VPNs</h3>
+<p>BlackGuard will seek out the presence of two popular Virtual Private Networking (VPN) applications, OpenVPN and NordVPN. The threat searches for both applications by looking for their common installation path. It then searches for the username and password in the user data of both applications.</p>
+<h3>Victim Device Information</h3>
+<p>BlackGuard calls multiple functions to collect data from the victim, which is then stored in a file called “information.txt.” Targeted data includes the following:</p>
+<ul>
+<li>IP address</li>
+<li>Country/location</li>
+<li>Hardware identification (HWID)</li>
+<li>Operating system (OS)</li>
+<li>Log data (of infection)</li>
+</ul>
+<p>The malware also has a separate function for taking a screenshot of the victim’s screen without their knowledge or consent. This only occurs once during the main info-stealing function of the malware. The screenshot is stored in the %AppData% directory alongside “information.txt” as “Screen.Png.”</p>
+<h3>Browsers</h3>
+<p>Like many other modern information stealers, BlackGuard has the functionality to obtain stored browser information to plunder a victim’s saved login credentials.</p>
+<p>BlackGuard attempts to find the following information from the user’s browser:</p>
+<ul>
+<li>Logins</li>
+<li>Autofill information</li>
+<li>URL/History</li>
+<li>Download paths</li>
+</ul>
+<p>As each browser stores its information in a different location, and uses its own method of storage, BlackGuard has specific functions to tackle info-stealing from the most popular browsers, including the following:</p>
+<table border="0" cellpadding="0" cellspacing="0" width="611">
+<tbody><tr><td valign="top" width="221"><ul>
+<li>Chromium</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Iridium</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Epic Privacy Browser</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Google Chrome</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>7Star</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Coz Media Uran</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Google(x86) Chrome</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>CentBrowser</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Fenrir Inc Sleipnir5</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Opera Software</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Chedot</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Catalina Group Citrio</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Opera GX Stable</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Vivaldi</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Coowon</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Mozilla Firefox</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Kometa</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Liebao</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Maple Studio Chrome Plus</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Elements Browser</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>QIP Surf</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Orbitum</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Comodo Dragon</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Amigo</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Torch</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Comodo</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>360Browser</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Maxthon3</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>K-Melon</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Sputnik</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Nichrome</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>CocCoc</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Uran</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="221"><ul>
+<li>Chromodo</li>
+</ul>
+</td>
+<td valign="top" width="183"><ul>
+<li>Microsoft Edge</li>
+</ul>
+</td>
+<td valign="top" width="208"><ul>
+<li>Brave-Browser</li>
+</ul>
+</td>
+</tr></tbody></table>
+<h3>
+Message Applications</h3>
+<p>BlackGuard also targets popular instant messenger (IM) applications for pilfering sensitive information. It achieves this by reading information stored in the application’s relevant %AppData% directory.</p>
+<p>As with browser data, each instant messaging application stores its data in different locations, so BlackGuard has individual built-in functions to search individual apps.</p>
+<p>Let’s look at some examples:</p>
+<ul>
+<li>For Telegram’s collection function, it checks %AppData% before looking for the presence of Telegram.exe, plus a locally stored %tdata% folder that is generated by the messenger.</li>
+<li>For Pidgin, the collection function reads the "accounts.xml" file and copies the protocol, login, and password.
+</li>
+</ul>
+<p>The method for stealing data from the other messaging applications is cruder; BlackGuard simply copies all files from each app’s respective application directory.
+</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="312"><p>Application Name</p>
+</td>
+<td valign="top" width="312"><p>Application Path</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Telegram</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\Telegram Desktop\tdata</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Pidgin</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\.purple\accounts.xml</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Tox</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\Tox</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Element</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\Element\Local Stroage\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Signal</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\Signal\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="312"><p>Proxifier</p>
+</td>
+<td valign="top" width="312"><p>%AppData%\Proxifier4\Profiles</p>
+</td>
+</tr></tbody></table>
+<h3>
+Discord Versions</h3>
+<p>Discord is a relatively new area of interest for malware authors, as it has become one of the most popular Voice-over-IP (VoIP) services globally, with over 150 million active monthly users.</p>
+<p>BlackGuard will attempt to check for the existence of various versions of Discord on the victim’s machine before exfiltrating any user data stored locally, in hopes of finding passwords and accounts.</p>
+<table border="1" cellpadding="0" cellspacing="0" width="538">
+<tbody><tr><td valign="top" width="245"><p>Name</p>
+</td>
+<td valign="top" width="293"><p>Path</p>
+</td>
+</tr><tr><td valign="top" width="245"><p>Discord</p>
+</td>
+<td valign="top" width="293"><p>Discord\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="245"><p>Discord PTB (Public Test Build)</p>
+</td>
+<td valign="top" width="293"><p>Discord PTB\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="245"><p>Discord Canary</p>
+</td>
+<td valign="top" width="293"><p>Discord Canary\\leveldb</p>
+</td>
+</tr></tbody></table>
+<h3>
+Cryptocurrency</h3>
+<p>A primary focus of BlackGuard is stealing cryptocurrency. Like <a href="https://blogs.blackberry.com/en/2022/02/threat-thursday-arkei-infostealer" target="_blank">Arkei </a>infostealer, BlackGuard aims to cover all aspects of crypto applications, services and wallets, to ensure it is hitting all available crypto targets on the victim’s machine.</p>
+<p>All the crypto resources targeted by BlackGuard are noted below:</p>
+<h3>Crypto Wallet Applications</h3>
+<table border="1" cellpadding="0" cellspacing="0" width="623">
+<tbody><tr><td valign="top" width="123"><p>Wallet name</p>
+</td>
+<td valign="top" width="501"><p>Application Path</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Zcash</p>
+</td>
+<td valign="top" width="501"><p>\\Zcash</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Armory</p>
+</td>
+<td valign="top" width="501"><p>\\Armory</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Jaxx</p>
+</td>
+<td valign="top" width="501"><p>\\com.liberty.jaxx\\IndexedDB\\file__0.indexeddb.leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Exodus</p>
+</td>
+<td valign="top" width="501"><p>\\Exodus\\exodus.wallet</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Ethereum</p>
+</td>
+<td valign="top" width="501"><p>\\Ethereum\\keystore</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Electrum</p>
+</td>
+<td valign="top" width="501"><p>\\Electrum\\wallets</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>AtomicWallet</p>
+</td>
+<td valign="top" width="501"><p>\\atomic\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Guarda</p>
+</td>
+<td valign="top" width="501"><p>\\Guarda\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Zap</p>
+</td>
+<td valign="top" width="501"><p>\\Zap\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Binance</p>
+</td>
+<td valign="top" width="501"><p>\\Binance\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>atomic_qt</p>
+</td>
+<td valign="top" width="501"><p>\\atomic_qt\\config</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Frame</p>
+</td>
+<td valign="top" width="501"><p>\\Frame\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Io.solarwallet.app</p>
+</td>
+<td valign="top" width="501"><p>\\io.solarwallet.app\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>TokenPocket</p>
+</td>
+<td valign="top" width="501"><p>\\TokenPocket\\Local Storage\\leveldb</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Litecoin</p>
+</td>
+<td valign="top" width="501"><p>\\Litecoin</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Dash</p>
+</td>
+<td valign="top" width="501"><p>\\DashCore</p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>Chrome Wallets</h3>
+<table border="1" cellpadding="0" cellspacing="0" width="623">
+<tbody><tr><td valign="top" width="123"><p>Hardcoded Name</p>
+</td>
+<td valign="top" width="331"><p>Hardcoded Path</p>
+</td>
+<td valign="top" width="170"><p>Extension ID and Link</p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Binance</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\fhbohimaelbohpjbbldcngcnapndodjp\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/binance-chain-wallet/fhbohimaelbohpjbbldcngcnapndodjp" target="_blank">fhbohimaelbohpjbbldcngcnapndodjp</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Bitapp</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\fihkakfobkmkjojpchpfgcmhfjnmnfpi</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/bitapp-wallet/fihkakfobkmkjojpchpfgcmhfjnmnfpi?catego...&amp;hl=et" target="_blank">fihkakfobkmkjojpchpfgcmhfjnmnfpi</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Coin98</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\aeachknmefphepccionboohckonoeemg\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/coin98-wallet/aeachknmefphepccionboohckonoeemg" target="_blank">aeachknmefphepccionboohckonoeemg</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Equal</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\nkbihfbeogaeaoehlefnkodbefgpgknn\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn" target="_blank">nkbihfbeogaeaoehlefnkodbefgpgknn</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Guild</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\nanjmdknhkinifnkgdcggcfnhdaammmj\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/guildwallet/nanjmdknhkinifnkgdcggcfnhdaammmj" target="_blank">nanjmdknhkinifnkgdcggcfnhdaammmj</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Iconex</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\flpiciilemghbmfalicajoolhkkenfel\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/iconex/flpiciilemghbmfalicajoolhkkenfel?hl=en" target="_blank">flpiciilemghbmfalicajoolhkkenfel</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Math</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\afbcbjpbpfadlkmhmclhkeeodmamcflc\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/math-wallet/afbcbjpbpfadlkmhmclhkeeodmamcflc?hl=en" target="_blank">afbcbjpbpfadlkmhmclhkeeodmamcflc</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Mobox</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\fcckkdbjnoikooededlapcalpionmalo\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/mobox-wallet/fcckkdbjnoikooededlapcalpionmalo" target="_blank">fcckkdbjnoikooededlapcalpionmalo</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Phantom</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\bfnaelmomeimhlpmgjnjophhpkkoljpa\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/phantom/bfnaelmomeimhlpmgjnjophhpkkoljpa?hl=en" target="_blank">bfnaelmomeimhlpmgjnjophhpkkoljpa</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Tron</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\ibnejdfjmmkpcnlpebklmnkoeoihofec\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/tronlink/ibnejdfjmmkpcnlpebklmnkoeoihofec" target="_blank">ibnejdfjmmkpcnlpebklmnkoeoihofec</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_XinPay</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\bocpokimicclpaiekenaeelehdjllofo\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/xdcpay/bocpokimicclpaiekenaeelehdjllofo" target="_blank">bocpokimicclpaiekenaeelehdjllofo</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Ton</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\nphplpgoakhhjchkkhmiggakijnkhfnd\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/ton-wallet/nphplpgoakhhjchkkhmiggakijnkhfnd" target="_blank">nphplpgoakhhjchkkhmiggakijnkhfnd</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Metamask</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\nkbihfbeogaeaoehlefnkodbefgpgknn\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en" target="_blank">nkbihfbeogaeaoehlefnkodbefgpgknn</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Sollet</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\fhmfendgdocmcbmfikdcogofphimnkno\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/sollet/fhmfendgdocmcbmfikdcogofphimnkno?hl=en" target="_blank">fhmfendgdocmcbmfikdcogofphimnkno</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Slope</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\pocmplpaccanhmnllbbkpgfliimjljgo\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/slope-wallet/pocmplpaccanhmnllbbkpgfliimjljgo" target="_blank">pocmplpaccanhmnllbbkpgfliimjljgo</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Starc</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\mfhbebgoclkghebffdldpobeajmbecfk\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/starmask/mfhbebgoclkghebffdldpobeajmbecfk?hl=en" target="_blank">mfhbebgoclkghebffdldpobeajmbecfk</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Swash</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\cmndjbecilbocjfkibfbifhngkdmjgog\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/swash/cmndjbecilbocjfkibfbifhngkdmjgog?hl=en" target="_blank">cmndjbecilbocjfkibfbifhngkdmjgog</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Finnie</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\cjmkndjhnagcfbpiemnkdpomccnjblmj\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/finnie/cjmkndjhnagcfbpiemnkdpomccnjblmj" target="_blank">cjmkndjhnagcfbpiemnkdpomccnjblmj</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Keplr</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\dmkamcknogkgcdfhhbddcghachkejeap\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/keplr/dmkamcknogkgcdfhhbddcghachkejeap?hl=en" target="_blank">dmkamcknogkgcdfhhbddcghachkejeap</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Crocobit</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\pnlfjmlcjdjgkddecgincndfgegkecke\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/crocobit-wallet/pnlfjmlcjdjgkddecgincndfgegkecke" target="_blank">pnlfjmlcjdjgkddecgincndfgegkecke</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Oxygen</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\fhilaheimglignddkjgofkcbgekhenbh\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/oxygen-atomic-crypto-wall/fhilaheimglignddkjgofkcbgekhenbh?hl=en" target="_blank">fhilaheimglignddkjgofkcbgekhenbh</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Nifty</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\jbdaocneiiinmjbjlgalhcelgbejmnid\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/nifty-wallet/jbdaocneiiinmjbjlgalhcelgbejmnid?hl=en" target="_blank">jbdaocneiiinmjbjlgalhcelgbejmnid</a></p>
+</td>
+</tr><tr><td valign="top" width="123"><p>Chrome_Liquality</p>
+</td>
+<td valign="top" width="331"><p>\Google\Chrome\User Data\Default\Local ExtensionSettings\kpfopkelmapcoipemfendmdcghnegimn\</p>
+</td>
+<td valign="top" width="170"><p><a href="https://chrome.google.com/webstore/detail/liquality-wallet/kpfopkelmapcoipemfendmdcghnegimn?hl=en" target="_blank">kpfopkelmapcoipemfendmdcghnegimn</a></p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>Edge Wallets</h3>
+<table border="1" cellpadding="0" cellspacing="0" width="633">
+<tbody><tr><td valign="top" width="136"><p>Hardcoded Name</p>
+</td>
+<td valign="top" width="298"><p>Hardcoded Path</p>
+</td>
+<td valign="top" width="199"><p>Extension ID</p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Auvitas</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ klfhbdnlcfcaccoakhceodhldjojboga\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/auvitas-wallet/klfhbdnlcfcaccoakhceodhldjojboga" target="_blank">klfhbdnlcfcaccoakhceodhldjojboga</a></p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Math</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ dfeccadlilpndjjohbjdblepmjeahlmm\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/math-wallet/dfeccadlilpndjjohbjdblepmjeahlmm" target="_blank">dfeccadlilpndjjohbjdblepmjeahlmm</a></p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Metamask</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ ejbalbakoplchlghecdalmeeeajnimhm\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm" target="_blank">ejbalbakoplchlghecdalmeeeajnimhm</a></p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_MTV</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ oooiblbdpdlecigodndinbpfopomaegl\</p>
+</td>
+<td valign="top" width="199"><p>Oooiblbdpdlecigodndinbpfopomaegl (No longer present)</p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Rabet</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ aanjhgiamnacdfnlfnmgehjikagdbafd\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/rabet/aanjhgiamnacdfnlfnmgehjikagdbafd" target="_blank">aanjhgiamnacdfnlfnmgehjikagdbafd</a></p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Ronin</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ bblmcdckkhkhfhhpfcchlpalebmonecp\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/ronin-wallet/kjmoohlgokccodicjjfebfomlbljgfhk" target="_blank">bblmcdckkhkhfhhpfcchlpalebmonecp</a> (Relisted Link)</p>
+</td>
+</tr><tr><td valign="top" width="136"><p>Edge_Yoroi</p>
+</td>
+<td valign="top" width="298"><p>\Microsoft\Edge\User Data\Default\Local Extension Settings\ akoiaibnepcedcplijmiamnaigbepmcb\</p>
+</td>
+<td valign="top" width="199"><p><a href="https://microsoftedge.microsoft.com/addons/detail/yoroi/akoiaibnepcedcplijmiamnaigbepmcb" target="_blank">akoiaibnepcedcplijmiamnaigbepmcb</a></p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>FTP Clients</h3>
+<p>BlackGuard also attempts to search the victim’s device for two known File Transfer Protocol (FTP) services; FileZilla and WinSCP. These are both popular freeware applications with over a 100 million active downloads at the time of writing.</p>
+<p>BlackGuard will attempt to obtain locally stored information pertaining to the victim’s recent and current FTP servers. It does this to gain access to potentially valuable data the victim has been transferring and interacting with.</p>
+<h3>High-Value Target Evaluation</h3>
+<p>In the creation of a BlackGuard sample, a threat actor can provide a list of relevant strings for the malware to focus on. Located in the resource section of each sample’s binary, BlackGuard’s final information collection process involves the tokenization of these included strings.</p>
+<p>The malware will seek out any references to these relevant strings, iterating through all the data it has gathered. If a string matches, it will be highlighted as a high-value target for the threat actor to note when reviewing successfully exfiltrated data.</p>
+<p>The code for this activity can be seen in the following Figures 3 and 4:</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig03.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+Figure 3 – High-value target evaluation, part 1
+ 
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig04.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 4 – High-value target evaluation, part 2</p>
+<p>As these string lists are defined on the creation of a new sample of BlackGuard, we’ve observed a degree of uniqueness in samples found in the wild. Many of the tokenized strings we’ve found are related to cryptocurrency, banking, and antivirus vendor websites. </p>
+<p>By examining the resources of multiple BlackGuard samples, we have created a list of the most common strings targeted:</p>
+<table border="1" cellpadding="0" cellspacing="0" width="625">
+<tbody><tr><td valign="top" width="406"><p>String</p>
+</td>
+<td valign="top" width="219"><p>Category</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>admin</p>
+</td>
+<td valign="top" width="219"><p>Administration</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>ads.google.com</p>
+</td>
+<td valign="top" width="219"><p>Advertising</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>kaspersky.com</p>
+</td>
+<td valign="top" width="219"><p>Antivirus</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>avast.ru</p>
+</td>
+<td valign="top" width="219"><p>Antivirus</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>malwarebytes.com</p>
+</td>
+<td valign="top" width="219"><p>Antivirus</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>chase.com</p>
+</td>
+<td valign="top" width="219"><p>Banking</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>santander.com</p>
+</td>
+<td valign="top" width="219"><p>Banking</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>www.hsbc.com</p>
+</td>
+<td valign="top" width="219"><p>Banking</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>www.wellsfargo.com</p>
+</td>
+<td valign="top" width="219"><p>Banking</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>www.jpmorgan.com</p>
+</td>
+<td valign="top" width="219"><p>Banking</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>blockchain.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>gate.io</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>bitpapa.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>coinpayments</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>ton.org</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>btc.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>block.io</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>coinbase.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>payeer.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>crypto.com</p>
+</td>
+<td valign="top" width="219"><p>Cryptocurrency</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>paypal.com</p>
+</td>
+<td valign="top" width="219"><p>Online Commerce</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>facebook.com</p>
+</td>
+<td valign="top" width="219"><p>Social Media</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>$#!3301)&amp;(*&amp;$&amp;*$#!234)&amp;(*&amp;$&amp;*$#!234)&amp;</p>
+</td>
+<td valign="top" width="219"><p>Unknown</p>
+</td>
+</tr><tr><td valign="top" width="406"><p>&amp;(*&amp;$&amp;*$#!3301)&amp;(*&amp;$&amp;*$#!234)&amp;(*&amp;$&amp;*$#!234)&amp;(*&amp;$&amp;*$#!234)</p>
+</td>
+<td valign="top" width="219"><p>Unknown</p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<p>Any matches are written to “search_link.txt” and saved to the temporary %AppData% directory along with all other stolen information.</p>
+<p>By viewing screenshots posted on the sales thread created by the malware author, we can identify where these matches are displayed in the command-and-control (C2) panel, as seen in Figure 5 below.</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig05.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 5 – Screenshot of BlackGuard C2 panel</p>
+<h3>Exfiltration to C2</h3>
+<p>Once BlackGuard has copied all the information it has gathered into its temporary directory in %AppData%, it zips the information into a handy RAR archive with a randomly generated name.</p>
+<p>The filename is generated using the country of the victim, as recorded from the IP information previously requested, and then concatenated with a pseudo-random string.</p>
+<p>The string is generated from the following charset: “aytdgirlzxcvbnmasdfghjklqwertyuiopAABBFFGKKDS”</p>
+<p>Example: (Ireland)_[SrqFrBDjypKrrielGGoFAkAFt].rar</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig06.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 6 – Generation of pseudo-random RAR filename</p>
+<p>The newly created RAR file is then sent via a POST request to a hardcoded C2 server, as shown in Figure 7. The request includes some basic details to allow the attacker to quickly identify valuable targets, such as the following:</p>
+<table border="0" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="294"><ul>
+<li>Username</li>
+</ul>
+</td>
+<td valign="top" width="294"><ul>
+<li>Stolen wallet count</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="294"><ul>
+<li>Antivirus</li>
+</ul>
+</td>
+<td valign="top" width="294"><ul>
+<li>Stolen Telegram count</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="294"><ul>
+<li>Operating System</li>
+</ul>
+</td>
+<td valign="top" width="294"><ul>
+<li>Stolen VPN count</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="294"><ul>
+<li>Stolen password count</li>
+</ul>
+</td>
+<td valign="top" width="294"><ul>
+<li>Stolen FTP count</li>
+</ul>
+</td>
+</tr><tr><td valign="top" width="294"><ul>
+<li>Stolen cookie count</li>
+</ul>
+</td>
+<td valign="top" width="294"><ul>
+<li>Country</li>
+</ul>
+</td>
+</tr><tr><td colspan="2" valign="top" width="587"><ul>
+<li>High-value target evaluation result</li>
+</ul>
+</td>
+</tr></tbody></table>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig07.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+Figure 7 – Interception of data via a POST Request
+ 
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig08.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 8 – POST request of data</p>
+<p>In the examples shown above, the malware failed to generate the expected filename for the RAR archive, as our malware analysis took place in an offline and closed environment. Therefore, the IP address was not successfully gathered, and the geo-located country is missing from the filename (as seen in Figures 6 and 8).</p>
+<h3>Files Sent in POST Request</h3>
+<table border="1" cellpadding="0" cellspacing="0" width="688">
+<tbody><tr><td valign="top" width="130"><p>Item</p>
+</td>
+<td valign="top" width="559"><p>Description</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Browsers (Directory)</p>
+</td>
+<td valign="top" width="559"><p>Data collected from Opera, Edge and Chrome. Contains cookies, downloads, history and results of high-value target search.</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Chrome_wallet (Directory)</p>
+</td>
+<td valign="top" width="559"><p>Data collected from Chrome Wallet extensions (from list above).</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Edge_wallet (Directory)</p>
+</td>
+<td valign="top" width="559"><p>Data collected from Edge Wallet extensions (from list above).</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Files (Directory)</p>
+</td>
+<td valign="top" width="559"><p>Files collected from the user’s profile (desktop, documents, etc.)</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Telegram (Directory)</p>
+</td>
+<td valign="top" width="559"><p>Telegram data stolen</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Information.txt</p>
+</td>
+<td valign="top" width="559"><p>Containing information regarding country, HWid, operating system and log date</p>
+</td>
+</tr><tr><td valign="top" width="130"><p>Screen.png</p>
+</td>
+<td valign="top" width="559"><p>Screenshot of user’s desktop</p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>Conclusion</h3>
+<p>As malware infostealers evolve, so too does the market for them. BlackGuard is a complex threat that still seems to be in development, as seen in Figure 9.
+</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2022/04/blackguard-fig09.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<p>Figure 9 – Malware author update log (translated from Russian to English)</p>
+<p>As this threat becomes increasingly popular and widely distributed as a MaaS offering, and the malware’s attack vector varies, it’s difficult to map an exact diagram of a typical attack. Each attack is likely to be tailored to the requirements of the target, so it’s hard to know how this threat is likely to appear in a victim’s environment. Since this threat is priced reasonably inexpensively, it gives novice cyber-criminals access to advanced malware for a nominal fee.</p>
+<p>It has become more common in recent years for people to store financial information and cryptocurrency data on their devices, for the sake of ease and convenience. This makes information-stealing from these devices an extremely rewarding pursuit for profit-driven threat actors. This is true whether the target is an individual or part of a larger enterprise.</p>
+<p>With BlackGuard’s primary laser-focus on cryptocurrency data and wallet information, it is critical for crypto enthusiasts to add more effective security measures to their endpoints.</p>
+<h3>YARA Rule</h3>
+<p>The following YARA rule was authored by the BlackBerry Research &amp; Intelligence Team to catch the threat described in this document:</p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="623"><p>import "pe"</p>
+<p>rule Mal_Infostealer_Win32_BlackGuard
+{
+ meta:
+ description = "Detects W32 BlackGuard Infostealer"
+ author = "BlackBerry Threat Research team "
+ date = "2022-14-04"
+ sha256 = "6AB3B21FA7CB638ED68509BE1ED6302284E8A9CD1A10F9B6837C057154AA6162"
+ license = "This Yara rule is provided under the Apache License 2.0 (https://www.apache.org/licenses/LICENSE-2.0) and open to any user or organization, as long as you use it under this license and ensure originator credit in any derivative to The BlackBerry Research &amp; Intelligence Team"</p>
+<p> strings:
+ $a1 = { 06 91 06 61 20 AA 00 00 00 61 D2 9C 06 17 58 0A }
+ $a2 = "System.Data.SQLite"
+ $a3 = "FromBase64String"
+ $a4 = "BlockInput"
+ $a5 = "UploadFile"
+ $a6 = "Passwords"
+ $a7 = "Discord"
+ $a8 = "GetVolumeInformationA"
+ $a9 = "NordVPN"
+ $a10 = "OpenVPN"
+ $a11 = "ProtonVPN"
+ $a12 = "OperaCookies"
+ $a13 = "EdgeCookies"
+ $a14 = "ChromeCookies"</p>
+<p> $b1 = "upche" wide
+ condition:
+ uint16(0) == 0x5a4d and
+ pe.imphash() == "f34d5f2d4577ed6d9ceec516c1f5a744" and
+ pe.number_of_sections == 3 and
+ pe.section_index(".text") == 0 and
+ pe.section_index(".rsrc") == 1 and
+ pe.section_index(".reloc") == 2 and
+ ((all of ($a*)) or ((12 of ($a*) and all of ($b*))))
+}</p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>Indicators of Compromise (IoCs)</h3>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="623"><p>
+SHA256:
+3df93a8c2843f1e91c7625685fbc4a7fc9438d8debf765d5a5bf9c62dbed6aef
+6ab3b21fa7cb638ed68509be1ed6302284e8a9cd1a10f9b6837c057154aa6162
+ac6fb63231a7cfc8380400721b6b2be8fd4c65f10947edb8b500f5779441338b
+aadec91cc7481998ba59f2ad65005144417c7bde5e28114fc57cd04ee3551be8
+8b6a82bd10fc3cab378e9c2023bee639ed81d1ee02fb882b8601f451466d76bf</p>
+<p>C2 Domains:
+hXXps://greenblguard[.]shop
+hXXps://win[.]mirtonewbacker[.]com
+hXXps://skazkahoho[.]space
+hXXps://fuzzyjazz[.]me</p>
+</td>
+</tr></tbody></table>
+<p> </p>
+<h3>BlackBerry Assistance</h3>
+<p>If you’re battling this malware or a similar threat, you’ve come to the right place, regardless of your existing BlackBerry relationship.</p>
+<p><a href="https://www.blackberry.com/us/en/services/incident-response" target="_blank">The BlackBerry Incident Response team</a> is made up of world-class consultants dedicated to handling response and containment services for a wide range of incidents, including ransomware and Advanced Persistent Threat (APT) cases.</p>
+<p>We have a global consulting team standing by to assist you, providing around-the-clock support where required, as well as local assistance. Please contact us here: <a href="https://www.blackberry.com/us/en/forms/cylance/handraiser/emergency-incident-response-containment" target="_blank">https://www.blackberry.com/us/en/forms/cylance/handraiser/emergency-incident-response-containment</a>
+</p>
+<img alt="" class="cmp-image__image" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/blogs/2021/10/cobalt-strike-beacon-1200px-banner.jpg" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption class="figure-caption"></figcaption>
+<img alt="The BlackBerry Research &amp; Intelligence Team" class="author-avatar" src="https://blogs.blackberry.com/content/dam/blogs-blackberry-com/images/authors/blackberry-logo-square.jpg" style="max-width:80%;height:auto;width:auto;"/>
+<h2>About The BlackBerry Research &amp; Intelligence Team</h2>
+<p>The BlackBerry Research &amp; Intelligence team examines emerging and persistent threats, providing intelligence analysis for the benefit of defenders and the organizations they serve.</p>
+<ul class="socialSharing-icons">
+<li>
+<a class="twitter-share" href="https://twitter.com/intent/tweet?url=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer&amp;text=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;via=BlackBerry" target="_blank" title="Share on Twitter">
+Share on Twitter
+</a>
+</li>
+<li>
+<a class="facebook-share" href="https://www.facebook.com/sharer/sharer.php?u=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer" target="_blank" title="Share on FaceBook">
+Share on Facebook
+</a>
+</li>
+<li>
+<a class="linkedin-share" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer&amp;title=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;summary=&amp;source=blogs.blackberry.com" target="_blank" title="Share on LinkedIn">
+Share on Linked In
+</a>
+</li>
+<li>
+<a class="email-share" href="mailto:?subject=Threat%20Thursday:%20BlackGuard%20Infostealer%20Rises%20from%20Russian%20Underground%20Markets&amp;body=https://blogs.blackberry.com/en/2022/04/threat-thursday-blackguard-infostealer" title="Email">
+Email
+</a>
+</li>
+</ul>
+</div>

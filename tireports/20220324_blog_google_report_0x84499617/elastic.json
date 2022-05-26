@@ -1,0 +1,80 @@
+[
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0xe741eef2",
+            "title": "Countering threats from North Korea",
+            "text": "Mar 24, 2022\n4 min read\nShare\nTwitter\nFacebook\nLinkedin\nMail\nCopy link\nA\n \nAdam Weidemann\n Threat Analysis Group\nShare\nTwitter\nFacebook\nLinkedin\nMail\nCopy link\nOn February 10, Threat Analysis Group discovered two distinct North Korean government-backed attacker groups exploiting a remote code execution vulnerability in Chrome, CVE-2022-0609. These groups' activity has been publicly tracked as Operation Dream Job and Operation AppleJeus.\nWe observed the campaigns targeting U.S. based organizations spanning news media, IT, cryptocurrency and fintech industries. However, other organizations and countries may have been targeted. One of the campaigns has direct infrastructure overlap with a campaign targeting security researchers which we reported on last year. The exploit was patched on February 14, 2022. The earliest evidence we have of this exploit kit being actively deployed is January 4, 2022.\nWe suspect that these groups work for the same entity with a shared supply chain, hence the use of the same exploit kit, but each operate with a different mission set and deploy different techniques. It is possible that other North Korean government-backed attackers have access to the same exploit kit.\nIn this blog, we will walk through the observed tactics, techniques and procedures, share relevant IOCs and analyze the exploit kit used by the attackers. In line with our current disclosure policy, we are providing these details 30 days after the patch release."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0xc17c1da",
+            "title": "Countering threats from North Korea",
+            "text": "Threat Analysis Group"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0xa9dc6996",
+            "title": "Campaign targeting news media and IT companies",
+            "text": "The campaign, consistent with Operation Dream Job, targeted over 250 individuals working for 10 different news media, domain registrars, web hosting providers and software vendors. The targets received emails claiming to come from recruiters at Disney, Google and Oracle with fake potential job opportunities. The emails contained links spoofing legitimate job hunting websites like Indeed and ZipRecruiter.\nExample of spoofed job hunting websites\nVictims who clicked on the links would be served a hidden iframe that would trigger the exploit kit.\nAttacker-Owned Fake Job Domains:\ndisneycareers[.]net\nfind-dreamjob[.]com\nindeedus[.]org\nvarietyjob[.]com\nziprecruiters[.]org\nExploitation URLs:\nhttps[:]//colasprint[.]com/about/about.asp (legitimate but compromised website)\nhttps[:]//varietyjob[.]com/sitemap/sitemap.asp"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0xf2181f35",
+            "title": "Campaign targeting cryptocurrency and Fintech organizations",
+            "text": "Another North Korean group, whose activity has been publicly tracked as Operation AppleJeus, targeted over 85 users in cryptocurrency and fintech industries leveraging the same exploit kit. This included compromising at least two legitimate fintech company websites and hosting hidden iframes to serve the exploit kit to visitors. In other cases, we observed fake websites already set up to distribute trojanized cryptocurrency applications hosting iframes and pointing their visitors to the exploit kit.\nAttacker-Owned Websites:\nblockchainnews[.]vip\nchainnews-star[.]com\nfinancialtimes365[.]com\nfireblocks[.]vip\ngatexpiring[.]com\ngbclabs[.]com\ngiantblock[.]org\nhumingbot[.]io\nonlynova[.]org\nteenbeanjs[.]com\nCompromised Websites (Feb 7 - Feb 9):\nwww.options-it[.]com\nwww.tradingtechnologies[.]com\nExploitation URLs:\nhttps[:]//financialtimes365[.]com/user/finance.asp\nhttps[:]//gatexpiring[.]com/gate/index.asp\nhttps[:]//humingbot[.]io/cdn/js.asp\nhttps[:]//teenbeanjs[.]com/cloud/javascript.asp"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0x318a118c",
+            "title": "Exploit kit overview",
+            "text": "The attackers made use of an exploit kit that contained multiple stages and components in order to exploit targeted users. The attackers placed links to the exploit kit within hidden iframes, which they embedded on both websites they owned as well as some websites they compromised.\nThe kit initially serves some heavily obfuscated javascript used to fingerprint the target system. This script collected all available client information such as the user-agent, resolution, etc. and then sent it back to the exploitation server. If a set of unknown requirements were met, the client would be served a Chrome RCE exploit and some additional javascript. If the RCE was successful, the javascript would request the next stage referenced within the script as SBX, a common acronym for Sandbox Escape. We unfortunately were unable to recover any of the stages that followed the initial RCE.\nCareful to protect their exploits, the attackers deployed multiple safeguards to make it difficult for security teams to recover any of the stages. These safeguards included:\nOnly serving the iframe at specific times, presumably when they knew an intended target would be visiting the site.\nIn some email campaigns the targets received links with unique IDs. This was potentially used to enforce a one-time-click policy for each link and allow the exploit kit to only be served once.\nThe exploit kit would AES encrypt each stage, including the clients responses with a session-specific key.\nAdditional stages were not served if the previous stage failed.\nAlthough we recovered a Chrome RCE, we also found evidence where the attackers specifically checked for visitors using Safari on MacOS or Firefox (on any OS), and directed them to specific links on known exploitation servers. We did not recover any responses from those URLs.\nExample Exploit Kit:\n03a41d29e3c9763093aca13f1cc8bcc41b201a6839c381aaaccf891204335685\nThe attackers made multiple attempts to use the exploit days after the vulnerability was patched on February 14, which stresses the importance of applying security updates as they become available."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x84499617",
+            "date": "20220324",
+            "title": "Countering threats from North Korea",
+            "url": "https://blog.google/threat-analysis-group/countering-threats-north-korea"
+        },
+        "chapter": {
+            "id": "chapter_0xf16640ed",
+            "title": "Protecting Our Users",
+            "text": "As part of our efforts to combat serious threat actors, we use results of our research to improve the safety and security of our products. Upon discovery, all identified websites and domains were added to Safe Browsing to protect users from further exploitation. We also sent all targeted Gmail and Workspace users government-backed attacker alerts notifying them of the activity. We encourage any potential targets to enable Enhanced Safe Browsing for Chrome and ensure that all devices are updated.\nTAG is committed to sharing our findings as a way of raising awareness with the security community, and with companies and individuals that might have been targeted or suffered from these activities. We hope that improved understanding of the tactics and techniques will enhance threat hunting capability and lead to stronger user protections across industry.\nPOSTED IN:"
+        }
+    }
+]

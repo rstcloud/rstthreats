@@ -1,0 +1,531 @@
+{
+    "id": "<report_0x586f99a7>",
+    "url": "https://www.sentinelone.com/labs/moshen-dragons-triad-and-error-approach-abusing-security-software-to-sideload-plugx-and-shadowpad",
+    "title": "Moshen Dragons Triad-and-Error Approach | Abusing Security Software to Sideload PlugX and ShadowPad",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0xc62d688c>",
+            "title": "Moshen Dragons Triad-and-Error Approach | Abusing Security Software to Sideload PlugX and ShadowPad",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd4f6d276>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x51a3e971>": "https://www.sentinelone.com/blog/author/joeyc/"
+                    },
+                    "text": "Joey Chen",
+                    "html": "<a class=\"\" href=\"https://www.sentinelone.com/blog/author/joeyc/\">\nJoey Chen </a>"
+                },
+                {
+                    "id": "<sentence_0x77a1325c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "/",
+                    "html": "\n/\n"
+                },
+                {
+                    "id": "<sentence_0x64e8c6e6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd3523ff1>": "https://www.sentinelone.com/blog/2022/05/"
+                    },
+                    "text": "May 2, 2022",
+                    "html": "<a href=\"https://www.sentinelone.com/blog/2022/05/\" rel=\"bookmark\">\nMay 2, 2022\n</a>"
+                },
+                {
+                    "id": "<sentence_0x4d6d9bd2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By Joey Chen and Amitai Ben Shushan Ehrlich",
+                    "html": "<p>By Joey Chen and Amitai Ben Shushan Ehrlich</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x83d90e6d>",
+            "title": "Moshen Dragons Triad-and-Error Approach | Abusing Security Software to Sideload PlugX and ShadowPad",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x22d28fc8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa92add15>": "https://www.sentinelone.com/labs/category/adversary/"
+                    },
+                    "text": "Adversary",
+                    "html": "<a href=\"https://www.sentinelone.com/labs/category/adversary/\">Adversary</a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc933e0ff>",
+            "title": "Executive Summary",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x96934491>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SentinelLabs researchers are tracking the activity of a Chinese-aligned cyberespionage threat actor operating in Central-Asia, dubbed Moshen Dragon.<crlf>As the threat actor faced difficulties loading their malware against the SentinelOne agent, we observed an unusual approach of trial-and-error abuse of traditional antivirus products to attempt to sideload malicious DLLs.<crlf>Moshen Dragon deployed five different malware triads in an attempt to use DLL search order hijacking to sideload ShadowPad and PlugX variants.<crlf>Moshen Dragon deploys a variety of additional tools, including an LSA notification package and a passive backdoor known as GUNTERS.",
+                    "html": "<ul>\n<li>SentinelLabs researchers are tracking the activity of a Chinese-aligned cyberespionage threat actor operating in Central-Asia, dubbed \u2018Moshen Dragon\u2019.</li>\n<li>As the threat actor faced difficulties loading their malware against the SentinelOne agent, we observed an unusual approach of trial-and-error abuse of traditional antivirus products to attempt to sideload malicious DLLs.</li>\n<li>Moshen Dragon deployed five different malware triads in an attempt to use DLL search order hijacking to sideload ShadowPad and PlugX variants.</li>\n<li>Moshen Dragon deploys a variety of additional tools, including an LSA notification package and a passive backdoor known as GUNTERS.</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1006dd1b>",
+            "title": "Overview",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4d93bf4d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7dfddc5d>": "https://www.sentinelone.com/labs/shadowpad-a-masterpiece-of-privately-sold-malware-in-chinese-espionage/",
+                        "<a_0x7a3260de>": "https://www.recordedfuture.com/redfoxtrot-china-pla-targets-bordering-asian-countries/",
+                        "<a_0xee00a9f1>": "https://malpedia.caad.fkie.fraunhofer.de/actor/nomad_panda"
+                    },
+                    "text": "SentinelLabs recently uncovered a cluster of activity targeting the telecommunication sector in Central Asia, utilizing tools and TTPs commonly associated with Chinese APT actors. The threat actor systematically utilized software distributed by security vendors to sideload ShadowPad and PlugX variants. Some of the activity partially overlaps with threat groups tracked by other vendors as RedFoxtrot and Nomad Panda. We track this cluster of activity as Moshen Dragon.",
+                    "html": "<p>SentinelLabs recently uncovered a cluster of activity targeting the telecommunication sector in Central Asia, utilizing tools and TTPs commonly associated with Chinese APT actors. The threat actor systematically utilized software distributed by security vendors to sideload <a href=\"https://www.sentinelone.com/labs/shadowpad-a-masterpiece-of-privately-sold-malware-in-chinese-espionage/\">ShadowPad and PlugX</a> variants. Some of the activity partially overlaps with threat groups tracked by other vendors as <a href=\"https://www.recordedfuture.com/redfoxtrot-china-pla-targets-bordering-asian-countries/\">RedFoxtrot</a> and <a href=\"https://malpedia.caad.fkie.fraunhofer.de/actor/nomad_panda\">Nomad Panda</a>. We track this cluster of activity as \u2018Moshen Dragon\u2019.</p>"
+                },
+                {
+                    "id": "<sentence_0x7bb5d412>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Usually, good detection has an inverse relationship with visibility of a threat actors TTPs. When part of an infection chain gets detected, it usually means that we dont get to see what the threat actor intended to deploy or ultimately do. In an unexpected twist, our detection capabilities uncovered an unusual TTP as Moshen Dragon attempted to repeatedly bypass that detection.",
+                    "html": "<p>Usually, good detection has an inverse relationship with visibility of a threat actor\u2019s TTPs. When part of an infection chain gets detected, it usually means that we don\u2019t get to see what the threat actor intended to deploy or ultimately do. In an unexpected twist, our detection capabilities uncovered an unusual TTP as Moshen Dragon attempted to repeatedly bypass that detection.</p>"
+                },
+                {
+                    "id": "<sentence_0x146871a7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Every time the intended payload was blocked, we were able to witness the actors reliance on a wide variety of legitimate software leveraged to sideload ShadowPad and PlugX variants. Many of these hijacked programs belong to security vendors, including Symantec, TrendMicro, BitDefender, McAfee and Kaspersky.",
+                    "html": "<p>Every time the intended payload was blocked, we were able to witness the actor\u2019s reliance on a wide variety of legitimate software leveraged to sideload ShadowPad and PlugX variants. Many of these hijacked programs belong to security vendors, including Symantec, TrendMicro, BitDefender, McAfee and Kaspersky.</p>"
+                },
+                {
+                    "id": "<sentence_0x8ddbef6b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8f27af75>": "https://www.trellix.com/en-us/about/newsroom/stories/threat-labs/plugx-a-talisman-to-behold.html"
+                    },
+                    "text": "Rather than criticize any of these products for their abuse by an insistent threat actor, we remind readers that this attack vector reflects an age-old design flaw in the Windows Operating System that allows DLL search order hijacking. Tracking of additional Moshen Dragon loading mechanisms and hijacked software surfaced more payloads uploaded to VirusTotal, some of which were recently published under the name Talisman.",
+                    "html": "<p>Rather than criticize any of these products for their abuse by an insistent threat actor, we remind readers that this attack vector reflects an age-old design flaw in the Windows Operating System that allows DLL search order hijacking. Tracking of additional Moshen Dragon loading mechanisms and hijacked software surfaced more payloads uploaded to VirusTotal, some of which were recently published under the name \u2018<a href=\"https://www.trellix.com/en-us/about/newsroom/stories/threat-labs/plugx-a-talisman-to-behold.html\">Talisman</a>\u2019.</p>"
+                },
+                {
+                    "id": "<sentence_0x420db70a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf7e3d3c9>": "https://decoded.avast.io/threatintel/avast-finds-backdoor-on-us-government-commission-network/"
+                    },
+                    "text": "In addition to ShadowPad and the PlugX Talisman variant, the Moshen Dragon deployed a variety of other tools, including an LSA notification package to harvest credentials and a passive loader dubbed GUNTERS by Avast. Despite all of this visibility, we are still unable to determine their main infection vector. Their concerted efforts include the use of known hacking tools, red team scripts, and on-keyboard attempts at lateral movement and data exfiltration.",
+                    "html": "<p>In addition to ShadowPad and the PlugX Talisman variant, the Moshen Dragon deployed a variety of other tools, including an LSA notification package to harvest credentials and a passive loader dubbed GUNTERS by <a href=\"https://decoded.avast.io/threatintel/avast-finds-backdoor-on-us-government-commission-network/\">Avast</a>. Despite all of this visibility, we are still unable to determine their main infection vector. Their concerted efforts include the use of known hacking tools, red team scripts, and on-keyboard attempts at lateral movement and data exfiltration.</p>"
+                },
+                {
+                    "id": "<sentence_0x5e11560a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We will focus on the actors insistent abuse of different AV products to load malicious payloads in an attempt to bruteforce infection chains that would go undetected by traditional SOC and MDR solutions.",
+                    "html": "<p>We will focus on the actor\u2019s insistent abuse of different AV products to load malicious payloads in an attempt to \u2018bruteforce\u2019 infection chains that would go undetected by traditional SOC and MDR solutions.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x15b59dd3>",
+            "title": "Hijacking Security Products",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9043fb62>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9e064bc>": "https://attack.mitre.org/techniques/T1574/001/",
+                        "<a_0x2f85100>": "https://securelist.com/the-leap-of-a-cycldek-related-threat-actor/101243/"
+                    },
+                    "text": "Moshen Dragon actors systematically abused security software to perform DLL search order hijacking. The hijacked DLL is in turn used to decrypt and load the final payload, stored in a third file residing in the same folder. This combination is recognized as a sideloading triad, a technique commonly associated with Lucky Mouse.",
+                    "html": "<p>Moshen Dragon actors systematically abused security software to perform DLL search order <a href=\"https://attack.mitre.org/techniques/T1574/001/\">hijacking</a>. The hijacked DLL is in turn used to decrypt and load the final payload, stored in a third file residing in the same folder. This combination is recognized as a sideloading triad, a technique commonly associated with <a href=\"https://securelist.com/the-leap-of-a-cycldek-related-threat-actor/101243/\">Lucky Mouse</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x7f1d1442>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The way the payloads were deployed, as well as other actions within target networks, suggest the threat actor uses IMPACKET for lateral movement. Upon execution, some of the payloads will achieve persistence by either creating a scheduled task or a service.",
+                    "html": "<p>The way the payloads were deployed, as well as other actions within target networks, suggest the threat actor uses IMPACKET for lateral movement. Upon execution, some of the payloads will achieve persistence by either creating a scheduled task or a service.</p>"
+                },
+                {
+                    "id": "<sentence_0x93a8d5f7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd98d5299>": "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_impacket.jpg?lossy=0&strip=1&webp=0"
+                    },
+                    "text": "Execution flow of hijacked software as carried out by Moshen Dragon",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_66085\"><img alt=\"\" class=\"size-full wp-image-66085\" height=\"1121\" src=\"https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_impacket.jpg?lossy=0&amp;strip=1&amp;webp=0\" width=\"1999\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-66085\">Execution flow of hijacked software as carried out by Moshen Dragon</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x5942bf9a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As major portions of the Moshen Dragon activity were identified and blocked, the threat actor consistently deployed new malware, using five different security products to sideload PlugX and ShadowPad variants.",
+                    "html": "<p>As major portions of the Moshen Dragon activity were identified and blocked, the threat actor consistently deployed new malware, using five different security products to sideload PlugX and ShadowPad variants.</p>"
+                },
+                {
+                    "id": "<sentence_0x9f0aae3c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A summary of the hijacked software is presented in the table below:",
+                    "html": "<p>A summary of the hijacked software is presented in the table below:</p>"
+                },
+                {
+                    "id": "<sentence_0xe0582239>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x225ed9aa>": {
+                            "0": {
+                                "0": "Product",
+                                "1": "Symantec SNAC",
+                                "2": "TrendMicro Platinum Watch Dog",
+                                "3": "BitDefender SSL Proxy Tool",
+                                "4": "McAfee Agent",
+                                "5": "Kaspersky Anti-Virus Launcher"
+                            },
+                            "1": {
+                                "0": "Path",
+                                "1": "C:\\Windows\\AppPatch, C:\\ProgramData\\SymantecSNAC, C:\\ProgramData\\Symantec\\SNAC, C:\\Windows\\Temp",
+                                "2": "C:\\Windows\\\tAppPatch",
+                                "3": "C:\\ProgramData\\Microsoft\\Windows, C:\\ProgramData\\Microsoft\\Windows\\LfSvc, C:\\ProgramData\\Microsoft\\Windows\\WinMSIPC, C:\\ProgramData\\Microsoft\\Windows\\ClipSVC, C:\\ProgramData\\Microsoft\\Wlansvc, C:\\ProgramData\\Microsoft\\Windows\\Ringtones",
+                                "4": "C:\\ProgramData\\McAfee, C:\\ProgramData\\Microsoft\\WwanSvc, C:\\ProgramData\\Microsoft\\WinMSIPC",
+                                "5": "C:\\ProgramData\\Microsoft\\XboxLive, C:\\programdata\\GoogleUpdate"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>Product</td>\n<td>Path</td>\n</tr>\n<tr>\n<td>Symantec SNAC</td>\n<td>C:\\Windows\\AppPatch, C:\\ProgramData\\SymantecSNAC, C:\\ProgramData\\Symantec\\SNAC, C:\\Windows\\Temp</td>\n</tr>\n<tr>\n<td>TrendMicro Platinum Watch Dog</td>\n<td>C:\\Windows\\\tAppPatch</td>\n</tr>\n<tr>\n<td>BitDefender SSL Proxy Tool</td>\n<td>C:\\ProgramData\\Microsoft\\Windows, C:\\ProgramData\\Microsoft\\Windows\\LfSvc, C:\\ProgramData\\Microsoft\\Windows\\WinMSIPC, C:\\ProgramData\\Microsoft\\Windows\\ClipSVC, C:\\ProgramData\\Microsoft\\Wlansvc, C:\\ProgramData\\Microsoft\\Windows\\Ringtones</td>\n</tr>\n<tr>\n<td>McAfee Agent</td>\n<td>C:\\ProgramData\\McAfee, C:\\ProgramData\\Microsoft\\WwanSvc, C:\\ProgramData\\Microsoft\\WinMSIPC</td>\n</tr>\n<tr>\n<td>Kaspersky Anti-Virus Launcher</td>\n<td>C:\\ProgramData\\Microsoft\\XboxLive, C:\\programdata\\GoogleUpdate</td>\n</tr>\n</tbody>\n</table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x86486162>",
+            "title": "Lateral Movement Using Impacket",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3d2fb208>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xbc0be4a6>": "https://github.com/SecureAuthCorp/impacket",
+                        "<code_0x59399233>": "wmiexec",
+                        "<code_0x8691206f>": "wmiexec"
+                    },
+                    "text": "Impacket is a collection of Python classes for working with network protocols, commonly utilized by threat actors for lateral movement. One of the favorite tools in the Impacket arsenal is wmiexec, which enables remote code execution via WMI. An effective way to identify wmiexec execution is searching for the unique command line pattern it creates. Moshen Dragon activities are rife with this pattern.",
+                    "html": "<p><a href=\"https://github.com/SecureAuthCorp/impacket\">Impacket</a> is a collection of Python classes for working with network protocols, commonly utilized by threat actors for lateral movement. One of the favorite tools in the Impacket arsenal is <code>wmiexec</code>, which enables remote code execution via WMI. An effective way to identify <code>wmiexec</code> execution is searching for the unique command line pattern it creates. Moshen Dragon activities are rife with this pattern.</p>"
+                },
+                {
+                    "id": "<sentence_0xd6fe8e4b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc00c541e>": "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_execution-chain.jpg?lossy=0&strip=1&webp=0"
+                    },
+                    "text": "Lateral Movement utilizing Impacket as identified by the SentinelOne Agent",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_66084\"><img alt=\"\" class=\"size-full wp-image-66084\" height=\"629\" src=\"https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_execution-chain.jpg?lossy=0&amp;strip=1&amp;webp=0\" width=\"866\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-66084\">Lateral Movement utilizing Impacket as identified by the SentinelOne Agent</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe1960e6c>",
+            "title": "LSA Notification Package SecureFilter",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfe3046ff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When on domain controllers, Moshen Dragon dropped a password filter and loaded it into the lsass process via LSA Notification packages. Impacket is used in the following manner:",
+                    "html": "<p>When on domain controllers, Moshen Dragon dropped a password filter and loaded it into the lsass process via LSA Notification packages. Impacket is used in the following manner:</p>"
+                },
+                {
+                    "id": "<sentence_0xfeb2113d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "cmd.exe /Q /c REG ADD \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" /v \"Notification Packages\" /t REG_MULTI_SZ /d \"rassfm\\0scecli\\0SecureFilter\" /f 1> \\\\127.0.0.1\\ADMIN$\\__[REDACTED] 2>&1",
+                    "html": "\ncmd.exe /Q /c REG ADD \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Lsa\" /v \"Notification Packages\" /t REG_MULTI_SZ /d \"rassfm\\0scecli\\0SecureFilter\" /f 1> \\\\127.0.0.1\\ADMIN$\\__[REDACTED] 2>&1\n"
+                },
+                {
+                    "id": "<sentence_0x23217979>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2b2f9bc9>": "https://pentestlab.blog/2020/02/10/credential-access-password-filter-dll/",
+                        "<a_0x9a8ba268>": "https://github.com/GoSecure/DLLPasswordFilterImplant",
+                        "<code_0xa5e25d5>": "C:\\Windows\\System32\\SecureFilter.dll",
+                        "<code_0x4ff2604d>": "C:\\Windows\\Temp\\Filter.log"
+                    },
+                    "text": "The DLL deployed is dropped in the path C:\\Windows\\System32\\SecureFilter.dll in order to enable loading using the Notification Package feature. The DLL seems to rely on an open source project named DLLPasswordFilterImplant, effectively writing changed user passwords to the file C:\\Windows\\Temp\\Filter.log.",
+                    "html": "<p>The DLL deployed is dropped in the path <code>C:\\Windows\\System32\\SecureFilter.dll</code> in order to enable loading using the <a href=\"https://pentestlab.blog/2020/02/10/credential-access-password-filter-dll/\">Notification Package</a> feature. The DLL seems to rely on an open source project named <a href=\"https://github.com/GoSecure/DLLPasswordFilterImplant\">DLLPasswordFilterImplant</a>, effectively writing changed user passwords to the file <code>C:\\Windows\\Temp\\Filter.log</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0xda33baf1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4eede8dd>": "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_SecureFilter.jpg?lossy=0&strip=1&webp=0"
+                    },
+                    "text": "Snippet from SecureFilter.dll",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_66087\"><img alt=\"\" class=\"size-full wp-image-66087\" height=\"266\" src=\"https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_SecureFilter.jpg?lossy=0&amp;strip=1&amp;webp=0\" width=\"948\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-66087\">Snippet from SecureFilter.dll</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x93c5e9e5>",
+            "title": "GUNTERS A Passive Loader",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xeb41b460>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During our analysis of Moshen Dragons activities, we came across a passive loader previously discussed by Avast as GUNTERS. This backdoor appears to be highly targeted as it performs checks to verify that it is executed on the right machine.",
+                    "html": "<p>During our analysis of Moshen Dragon\u2019s activities, we came across a passive loader previously discussed by Avast as \u2018GUNTERS\u2019. This backdoor appears to be highly targeted as it performs checks to verify that it is executed on the right machine.</p>"
+                },
+                {
+                    "id": "<sentence_0xafbb514a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before execution, the malware calculates the hash of the machine hostname and compares it to a hardcoded value, suggesting that the threat actor generates a different DLL for each target machine.",
+                    "html": "<p>Before execution, the malware calculates the hash of the machine hostname and compares it to a hardcoded value, suggesting that the threat actor generates a different DLL for each target machine.</p>"
+                },
+                {
+                    "id": "<sentence_0xf25d9400>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x99cb4bf2>": "WinDivert",
+                        "<code_0x5914bf21>": "SetNtApiFunctions"
+                    },
+                    "text": "The loader utilized WinDivert to intercept incoming traffic, searching for a magic string to initiate a decrypting process utilizing a custom protocol. Following the decryption process, the malware attempts to load a PE file with an exported function named SetNtApiFunctions, which it calls to launch the payload.",
+                    "html": "<p>The loader utilized <code>WinDivert</code> to intercept incoming traffic, searching for a magic string to initiate a decrypting process utilizing a custom protocol. Following the decryption process, the malware attempts to load a PE file with an exported function named <code>SetNtApiFunctions</code>, which it calls to launch the payload.</p>"
+                },
+                {
+                    "id": "<sentence_0x1be9d9fb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4f59a6cc>": "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_NTGetPwdPacket.jpg?lossy=0&strip=1&webp=0"
+                    },
+                    "text": "Exported functions of an internal GUNTERS resource utilized in the loading process",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_66086\"><img alt=\"\" class=\"size-full wp-image-66086\" height=\"562\" src=\"https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Moshen_Dragon_NTGetPwdPacket.jpg?lossy=0&amp;strip=1&amp;webp=0\" width=\"510\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-66086\">Exported functions of an internal GUNTERS resource utilized in the loading process</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xfbe872f4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf7e3d3c9>": "https://decoded.avast.io/threatintel/avast-finds-backdoor-on-us-government-commission-network/"
+                    },
+                    "text": "A thorough analysis of the custom protocol and loading mechanism is available here.",
+                    "html": "<p>A thorough analysis of the custom protocol and loading mechanism is available <a href=\"https://decoded.avast.io/threatintel/avast-finds-backdoor-on-us-government-commission-network/\">here</a>.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x14cc10cf>",
+            "title": "Additional Payloads",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x75ba96f0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SentinelLabs came across additional related artifacts overlapping with this threat cluster. Its possible that some of those were utilized by Moshen Dragon or a related actor.",
+                    "html": "<p>SentinelLabs came across additional related artifacts overlapping with this threat cluster. It\u2019s possible that some of those were utilized by Moshen Dragon or a related actor.</p>"
+                },
+                {
+                    "id": "<sentence_0x2c70fbce>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xdde8ce45>": {
+                            "0": {
+                                "0": "File name",
+                                "1": "SNAC.log",
+                                "2": "SNAC.log",
+                                "3": "SNAC.log",
+                                "4": "bdch.tmp"
+                            },
+                            "1": {
+                                "0": "SHA1",
+                                "1": "e9e8c2e720f5179ff1c0ac30ce017224ac0b2f1b",
+                                "2": "b6c6c292cbd35298a5f055448177bcfd5d0b23bf",
+                                "3": "2294ecbbb065c517bd0e01f3f01aabd0a0402f5a",
+                                "4": "b85880ba6d38164dde4e77a15ab5e65cde7e357a"
+                            },
+                            "2": {
+                                "0": "C&C",
+                                "1": "freewula.strangled.net szuunet.strangled.net",
+                                "2": "final.staticd.dynamic-dns.net",
+                                "3": "dhsg123.jkub.com",
+                                "4": "greenhugeman.dns04.com"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>File name </td>\n<td>SHA1</td>\n<td>C&amp;C</td>\n</tr>\n<tr>\n<td>SNAC.log</td>\n<td>e9e8c2e720f5179ff1c0ac30ce017224ac0b2f1b</td>\n<td>freewula.strangled.net szuunet.strangled.net</td>\n</tr>\n<tr>\n<td>SNAC.log</td>\n<td>b6c6c292cbd35298a5f055448177bcfd5d0b23bf</td>\n<td>final.staticd.dynamic-dns.net</td>\n</tr>\n<tr>\n<td>SNAC.log</td>\n<td>2294ecbbb065c517bd0e01f3f01aabd0a0402f5a</td>\n<td>dhsg123.jkub.com</td>\n</tr>\n<tr>\n<td>bdch.tmp</td>\n<td>b85880ba6d38164dde4e77a15ab5e65cde7e357a</td>\n<td>greenhugeman.dns04.com</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x6c3d0c47>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd93f7330>": "https://vms.drweb.com/virus/?i=21512304",
+                        "<code_0x3a1f41e4>": "SNAC.log",
+                        "<code_0x8e023a1a>": "bdch.tmp"
+                    },
+                    "text": "After analyzing these payloads, we found them to be additional PlugX and ShadowPad variants. SNAC.log payloads have been identified by other researchers as Talisman, which is known to be another variant of PlugX. In addition, the bdch.tmp payload was produced by shellcode with a structure similar to ShadowPad malware but without the initial code obfuscation and decryption logic typically seen in ShadowPad.",
+                    "html": "<p>After analyzing these payloads, we found them to be additional PlugX and ShadowPad variants. <code>SNAC.log</code> payloads have been identified by other researchers as Talisman, which is known to be another variant of <a href=\"https://vms.drweb.com/virus/?i=21512304\">PlugX</a>. In addition, the <code>bdch.tmp</code> payload was produced by shellcode with a structure similar to ShadowPad malware but without the initial code obfuscation and decryption logic typically seen in ShadowPad.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x89624738>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6b6b41cd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "PlugX and Shadowpad have a well-established history of use among Chinese-speaking threat actors primarily for espionage activity. Those tools have flexible, modular functionality and are compiled via shellcode to easily bypass traditional endpoint protection products.",
+                    "html": "<p>PlugX and Shadowpad have a well-established history of use among Chinese-speaking threat actors primarily for espionage activity. Those tools have flexible, modular functionality and are compiled via shellcode to easily bypass traditional endpoint protection products.</p>"
+                },
+                {
+                    "id": "<sentence_0x95bfb453>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Here we focused on Moshen Dragon TTPs observed during an unusual engagement that forced the threat actor to conduct multiple phases of trial-and-error to attempt to deploy their malware. Once the attackers have established a foothold in an organization, they proceed with lateral movement by leveraging Impacket within the network, placing a passive backdoor into the victim environment, harvesting as many credentials as possible to insure unlimited access, and focusing on data exfiltration.",
+                    "html": "<p>Here we focused on Moshen Dragon TTPs observed during an unusual engagement that forced the threat actor to conduct multiple phases of trial-and-error to attempt to deploy their malware. Once the attackers have established a foothold in an organization, they proceed with lateral movement by leveraging Impacket within the network, placing a passive backdoor into the victim environment, harvesting as many credentials as possible to insure unlimited access, and focusing on data exfiltration.</p>"
+                },
+                {
+                    "id": "<sentence_0xe71b6734>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SentinelLabs continue to monitor Moshen Dragon activity as it unfolds.",
+                    "html": "<p>SentinelLabs continue to monitor Moshen Dragon activity as it unfolds.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4a1844de>",
+            "title": "Indicators of Compromise",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xab1ecb4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hijacked DLLs",
+                    "html": "<p>Hijacked DLLs</p>"
+                },
+                {
+                    "id": "<sentence_0x580dca1e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ef3e558ecb313a74eeafca3f99b7d4e038e11516<crlf>3c6a51961aa328ba507796153234309a5e83bee3<crlf>fae572ad1beab78e293f756fd53cf71963fdb1bd<crlf>308ed56dc1fbc98b574f937d4b005190c878416f<crlf>55e89f458b5f5642300dd7c50b444232e37c3fa7",
+                    "html": "<ul>\n<li>ef3e558ecb313a74eeafca3f99b7d4e038e11516</li>\n<li>3c6a51961aa328ba507796153234309a5e83bee3</li>\n<li>fae572ad1beab78e293f756fd53cf71963fdb1bd</li>\n<li>308ed56dc1fbc98b574f937d4b005190c878416f</li>\n<li>55e89f458b5f5642300dd7c50b444232e37c3fa7</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x1b780f67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Payloads",
+                    "html": "<p>Payloads</p>"
+                },
+                {
+                    "id": "<sentence_0x68030cb5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "e9e8c2e720f5179ff1c0ac30ce017224ac0b2f1b<crlf>b6c6c292cbd35298a5f055448177bcfd5d0b23bf<crlf>2294ecbbb065c517bd0e01f3f01aabd0a0402f5a<crlf>b85880ba6d38164dde4e77a15ab5e65cde7e357a",
+                    "html": "<ul>\n<li>e9e8c2e720f5179ff1c0ac30ce017224ac0b2f1b</li>\n<li>b6c6c292cbd35298a5f055448177bcfd5d0b23bf</li>\n<li>2294ecbbb065c517bd0e01f3f01aabd0a0402f5a</li>\n<li>b85880ba6d38164dde4e77a15ab5e65cde7e357a</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x5b9e56a0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Password Filter",
+                    "html": "<p>Password Filter</p>"
+                },
+                {
+                    "id": "<sentence_0xb30557f1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "c4f1177f68676b770934b142f9c3e2c4eff7f164",
+                    "html": "<ul>\n<li>c4f1177f68676b770934b142f9c3e2c4eff7f164</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x83ea635>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GUNTERS",
+                    "html": "<p>GUNTERS</p>"
+                },
+                {
+                    "id": "<sentence_0x6742acd9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "bb68816f324f2ac4f0d4756b66af67d01c8b6e4e<crlf>4025e14a7f8928753ba06ad155944624069497dc<crlf>f5b8ab4a7d9c723c2b3b842b49f66da2e1697ce0",
+                    "html": "<ul>\n<li>bb68816f324f2ac4f0d4756b66af67d01c8b6e4e</li>\n<li>4025e14a7f8928753ba06ad155944624069497dc</li>\n<li>f5b8ab4a7d9c723c2b3b842b49f66da2e1697ce0</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xdd8732ee>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Infrastructure",
+                    "html": "<p>Infrastructure</p>"
+                },
+                {
+                    "id": "<sentence_0x7309731c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "freewula.strangled[.]net<crlf>szuunet.strangled[.]net<crlf>final.staticd.dynamic-dns[.]net<crlf>dhsg123.jkub[.]com<crlf>greenhugeman.dns04[.]com<crlf>gfsg.chickenkiller[.]com<crlf>pic.farisrezky[.]com",
+                    "html": "<ul>\n<li>freewula.strangled[.]net</li>\n<li>szuunet.strangled[.]net</li>\n<li>final.staticd.dynamic-dns[.]net</li>\n<li>dhsg123.jkub[.]com</li>\n<li>greenhugeman.dns04[.]com</li>\n<li>gfsg.chickenkiller[.]com</li>\n<li>pic.farisrezky[.]com</li>\n</ul>"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,145 @@
+[
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x4df8aba",
+            "title": "The State of Browser Extension Malware",
+            "text": "Share this blog\nIt is time for us to change how we think about malware. No longer is it limited to one specific operating system or device type. Like with phishing attacks, malware developers have been working on malware that can impact a broader range of systems to increase the number of potential victims of their malicious campaigns. Web browsers have become very lucrative and effective attack surfaces enabling these threat actors ability to execute code within the application itself as extensions, keeping malicious activity out of the eyes of a majority of endpoint security tools.\nWeb browsers are treasure troves of personal and private information, especially since most sensitive data processed on a device, like credit card info and passwords, pass through the web experience. This fact alone has driven a significant increase in the number of malicious browser extensions detected in the wild, targeting unsuspecting victims in consumer and enterprise settings.\nOnce installed, these malicious extensions can steal cookies or credentials, capture keystrokes, mine cryptocurrencies on the victims device, inject malicious javascript code to web pages, or even use browser exploits to drop malware on the victims device.\nAccording to SentinelOne research, browser extensions were one of the six real-world threats to Chromebook and ChromeOS. The Zimperium zLabs team has classified thousands of malicious browser extension samples hosted in multiple repositories and stores using various dynamic and static reverse engineering methods. The pieces covered in this blog were present in third-party extension stores and not present in any official Chrome repository.\nDuring our research we found that the most common categories for undesirable extensions are:\nSpyware\nJavaScript Injector\nPotentially unwanted applications (PUA)\nAdware\nMiner\nBrowser Modifier\nFake Ad Blocker\nThe distribution of these families is shown in the figure below:\nFigure 1: Classification of malware\nAdware and spyware account for the most common malware families, with 11 out of the top 15 discovered falling into one of those two. Other families were JavaScript Injectors, potentially unwanted applications (PUA), and Browser modifiers.\nIf we include some subfamilies for each category, the family distribution is shown in Figure 2."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x68bbde08",
+            "title": "TOP MALWARE FAMILIES OF CHROME EXTENSIONS",
+            "text": "Figure 2: Top malware families"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x5102e8bc",
+            "title": "Fake Ad Blockers",
+            "text": "Ad blockers are one common extension in the Chrome web store, promising to disable ads on websites and improve the web browsing experience. Many fake ad blockers are clones of legitimate, open-source ad blockers but with additional code inserted to serve a malicious purpose, commonly delivered through third-party extension stores. Some ad blockers are loaded with crypto mining or cookie stuffing for monetary purposes.\nIn affiliate marketing, a third-party website places ads for the product on their website. When users click on the ad and make a purchase, the third-party website earns a commission for that purchase. They can also earn a commission if the user closes that website after that redirect and makes a purchase later using the same browser. Whenever a user is redirected from an ad to the product website, it drops a cookie on the users browser, giving the affiliate marketer credit for the traffic (Figure 3). While affiliate marketing is a legitimate concept, cookie-stuffing is a process where these fake ad blockers redirect users to the website to drop cookies without the users knowledge to generate revenue for the extension developer.\nFigure 4 shows an example of a redirection chain and cooking stuffing for an extension targeting aliexpress.com. From a technical point of view, the affiliate cookies are dropped to the victims browser using the Set-Cookie response header in the HTTP request (Figure 5). If the user later visits the target website and completes a qualifying transaction (such as making a purchase), the malicious party is paid a commission.\nFigure 3: CookieStuffing\nFigure 4: Redirection Chain\nFigure 5: Set-Cookie Header in HTTP Response"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xd033ad28",
+            "title": "Spyware",
+            "text": "Spyware is a problem on all devices, from mobile to traditional endpoints, often relying on complicated malware and exploits. On traditional endpoints, spyware is usually surveilling users by accessing the camera and microphone, as well as monitoring web and communication activity. But spyware built into browser extensions can bypass traditional security layers, are less difficult to build and provide direct access to browser content including unencrypted browser traffic. The spyware extensions are generally designed to steal cookies and credentials for various websites such as Facebook, Roblox, and Crypto Wallets. These types of spyware are often called Infostealers.\nFigure 6: Classification of Spyware\nOne example of spyware is a Fake Google Translate extension ( identifier:hemlmgggokggmncimchkllhcjcaimcle) designed to steal a victims Facebook data. The name and icon of this extension are replaced with that of Google Translate to fool victims into believing that this is a legitimate extension (Figure 7). But analysis of the source code reveals its true intention as spyware.\nFigure 7: Extension: hemlmgggokggmncimchkllhcjcaimcle(Fake Google Translate) spyware\nFigure 8 shows how this extension overrides the favicon, the broad set of permissions requested, and how the description is crafted to mimic Google Translate one.\nFigure 8: manifest.json highlighting the name and fake description.\nmanifest.json has the background variable with the page background.html, which includes background.js (Figure 9). The extension collects all the cookies in variable _0xd560x21, then converts it to JSON and encrypts it before sending it over to the C&C.\nFigure 9: background.js"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x542ff8da",
+            "title": "Potentially Unwanted Applications (PUA)",
+            "text": "PUAs are programs that degrade user experience by displaying ads, redirecting web pages, using computer resources, tracking users, and more. Typically less malicious than other threats, these extensions are installed along with some OS applications. Many of the PUA extensions range from Toolbars to New-tab pages.\nFigure 10: ask.com toolbar\nFigure 10, shows the Ask Toolbar installed and some versions of Java setup (Figure 11). This toolbar statically binds itself on all the web pages a user visits.\nFigure 11: Java setup"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xa5255d26",
+            "title": "JavaScript Injectors",
+            "text": "JavaScript Injector malware injects its malicious javascript code into the web pages a victim visits. This injected Javascript can steal tokens, cookies, payment information, and passwords that are entered on any website. They can also inject malicious or deceiving ads on a webpage.\nJavascript Injectors use more sophisticated techniques like steganography to smuggle malicious code inside images to evade perimeter tools such as web gateways and content filters. Figure 12 shows the manifest file of one example of such extensions.\nFigure 12: manifest.json file\nHere the permissions include cookies, the web_accessible_resources are a548b2c2c8464aeaefad60db73ed6b72.png , tyutsfffr.js, and background.js, and the content_script is tyutsfffr.js. The code which injects malicious code to a webpage is located in the file tyutsfffr.js.\nThe image a548b2c2c8464aeaefad60db73ed6b72.png (Figure 13) has embedded the data shown in Figure 14. The injected code is used to collect Amazon searches and redirect Yahoo searches and other booking websites.\nFigure 13:: a548b2c2c8464aeaefad60db73ed6b72.png\nFigure 14: hex dump of a548b2c2c8464aeaefad60db73ed6b72.png\nFigure 15: tyutsfffr.js\nThe malicious javascript code is hidden in image pixels and then passed to eval (in the run function). After decrypting the a548b2c2c8464aeaefad60db73ed6b72.png using the LoadPNGData process (Figure 15), the actual code results in the following unpacked JavaScript (Figure 16)\nFigure 16: decrypted code from a548b2c2c8464aeaefad60db73ed6b72.png\nAfter several redirections, the end URL is https[://]worksrc.cool/dd906ff71a73923712.js, which contains the malicious code (Figure 16). The analysis of the malicious code is beyond the scope of this blog post."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xed8a79e",
+            "title": "Miners / CryptoJackers",
+            "text": "Cryptojacking uses CPU and other resources on the victims personal computers, laptops, and mobile devices to mine cryptocurrencies. These are more commonly found in binaries such as cracked or downloaded applications, which are moving into leveraging extensions to gain access to CPU and memory resources.\nBelow is one example; this extension appears to be a simple clock, but it mines cryptocurrency on the users personal computer, using resources until the last browser tab is closed.\nFigure 17: Miner Extension\nThe below code is injected into the background.js file and renders a clock that the user may find valuable. In the background, It uses Coinhive service to mine monero on browser tabs and in the background.\nFigure 18: background.js"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xd55f92fd",
+            "title": "Adware",
+            "text": "Adware is malware that automatically shows advertisements that malicious actors can profit from. In browser extensions, adware comes in many forms, and the most common versions of adware have the capability to:\nReplace the default search engine with their own and display searches on the affiliated web pages that display ads and search results.\nInject ads/popups on all the web pages a user visits.\nInject clickunder ads in the current browser sessions. They usually redirect to the affiliated web pages as soon as a user clicks on the website that has been injected with clickunder ads.\nDirectly redirect a Google, Yandex, Bing, Yahoo search to the affiliated web pages.\nFigure 19 shows one such example of adware taking over the search page to show its own ads. When users use Google to search for anything, this extension adds advertisements with affiliated links.\nFigure 19: Search results for laptop when the extension is installed"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x8439c288",
+            "title": "Browser Modifiers",
+            "text": "Browser Modifiers are types of extensions that change the general settings of browsers. As shown below (Figure 20), these settings are usually omnibox search engines or new tab pages, and even home pages of browsers. Some of these extensions change the font and appearance of the browser and display ads on additional tabs, as well as change the default new tab page to a compromised search engine home page. These can also act as redirectors to suspicious websites or even track the search results for their victims.\nFigure 20: Inserted ads appearing on a search page.\nFigure 21 shows the manifest of one of these extensions. In this case, it uses chrome_url_override to replace the newtab.\nFigure 21: manifest.json\nAfter this modification, a new tab shows ads on the search page as shown previously on Figure 20. Furthermore, the icons shown in the new tab are mimicking those of legit apps such as Google Maps to trick users into clicking on them (Figure 22).\nFigure 22: Logo of Google Maps\nHowever, the icons are not using any legitimate service. They are redirecting to a website crafted by the malicious actor to increase profit by exposing the user to more ads. An example of this is shown in Figure 23, in which a basic map is shown (redirected from a fake Google Maps icon) but with ads next to it.\nFigure 23: Maps page with injected ads on the left."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xb4dd9f7e",
+            "title": "Summary",
+            "text": "Malicious actors will continue to use novel ways to evade traditional desktop and gateway security solutions to achieve financially motivated goals. Browser extensions can be installed in the same way as applications by unsuspecting users looking to solve problems or add value to their computing experience. This constantly evolving threat landscape indicates the need for a robust and more innovative way of detection instead of blocklisting IOCs.\nUsers should be trained on the risks associated with browser extensions, especially when sideloaded outside of official repositories, and enterprises should be considering what security controls they have in place for such risks.\nAs we consider risk assessment for applications on traditional and modern operating systems, enterprises must consider how they evaluate and assess risk associated with new and emerging threats. Zimperium is committed to assisting enterprises in assessing and solving modern endpoint security problems."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x357c1f04",
+            "date": "20220409",
+            "title": "The State of Browser Extension Malware",
+            "url": "https://blog.zimperium.com/the-state-of-browser-extension-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x894e6c8b",
+            "title": "About Zimperium",
+            "text": "Zimperium, the global leader in mobile security, offers the only real-time, on-device, machine learning-based protection against Android, iOS, and Chromebook threats. Powered by z9, Zimperium provides protection against device, network, phishing, and malicious app attacks. For more information or to schedule a demo, contact us today.\nPrevious Blog"
+        }
+    }
+]

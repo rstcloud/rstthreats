@@ -1,0 +1,250 @@
+[
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x40c9c756",
+            "title": "Introduction",
+            "text": "We recently came across a sample of the SunnyDay ransomware. As no significant information is available on this ransomware, we decided to write about its inner workings and technical details. As expected, we found some similarities between other ransomware samples such as Ever101, Medusa Locker, Curator, and Payment45. Although it has very similar features to the mentioned ransomware samples, we are not able to make any attribution to its threat group.\nSunnyDay is a simple piece of ransomware based on the SALSA20 stream cipher. It comes with an RSA public key blob embedded to encrypt a generated key used by the symmetric SALSA20 that will damage all the available files on the machine. One of the reasons criminals are using SALSA20 is because it offers speeds of around 414 cycles per byte in software on modern x86 processors and reasonable hardware performance (Wikipedia).\nThe main actions executed by SunnyDay during its execution are:\nDeletes shadow copies (VSS) Terminates and stops target processes and services Generates a key to encrypt files by using SALSA20 stream cipher The key is also encrypted with the RSA public key blob and appended at the end of the encrypted files The extension .sunnyday is appended (name.extension.sunnyday) to the damaged files It also contains a self-removing feature\nDeletes shadow copies (VSS)\nTerminates and stops target processes and services\nGenerates a key to encrypt files by using SALSA20 stream cipher\nThe key is also encrypted with the RSA public key blob and appended at the end of the encrypted files\nThe extension .sunnyday is appended (name.extension.sunnyday) to the damaged files\nIt also contains a self-removing feature"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x3e3e6630",
+            "title": "Technical details of Sunnyday ransomware",
+            "text": "Name: 7862d6e083c5792c40a6a570c1d3824ddab12cebc902ea965393fe057b717c0a.exe\nMD5: de6717493246599d8702e7d1fd6914aab5bd015d\nSample: Bazaar.abuse.ch\nSunnyDay sample is distributed in a form of a 64-bit binary and with the release date of Mar 07 05:47:03 2022 (UTC). According to the sample signatures, it was compiled and linked with Microsoft Visual C++ via Visual Studio 2019 16.2.0 preview 4.\nFigure 1: SunnyDay release date, signature, and tooling details.\nAt the first glance, SunnyDay appears to use typical libraries found on popular ransomware samples. As observed in Figure 2, calls related to Windows CryptoAPI were found; a Windows library commonly found in several ransomware families these days. From this view, the ransomware seems using calls from wininet.dll to perform some communication to its C2; something that will be scrutinized towards the end of the analysis.\nFigure 2: Windows libraries used by SunnyDay ransomware.\nTaking a look at the entropy of the binary, there is no obfuscation in place. Some ransomware families are not using significant features related to code obfuscation and bypassing virtual machines and sandbox environments. In fact, this point moves straightforwardly to its genesis: the principle of causing total destruction in all types of systems and infrastructures not wasting time with useless things.\nFigure 3: Sunnyday binary entropy confirming that it is not packed."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x7a064699",
+            "title": "Final Thoughts",
+            "text": "SunnyDay is a new development from other ransomware families and it is able of encrypting a target machine in a few minutes. This piece of malware takes advantage of the CryptoPP library to use the SALSA20 stream cipher during the encryption process and, thus, speed up the entire operation.\nBy using a hardcoded public RSA blob that comes with the initial binary, it encrypts a random SALSA20 key and appends it at the end of each encrypted file. This blob of 512 bytes is accessed during the decryption process by the decryption tool that will use a private key to decrypt the SALSA20 key and then recover the original files."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xa9e61236",
+            "title": "Indicators of Compromise (IoC)",
+            "text": "Name: 7862d6e083c5792c40a6a570c1d3824ddab12cebc902ea965393fe057b717c0a.exe\nMD5: de6717493246599d8702e7d1fd6914aab5bd015d"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xb7781a35",
+            "title": "Analysis of the SunnyDay ransomware",
+            "text": "Analysis of the SunnyDay ransomware."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x90e4e15b",
+            "title": "Deleted shadow files",
+            "text": "Once running, the ransomware deletes all the shadow files on the machine by using the vssadmin.exe Windows utility.\nProcess created: C:\\Windows\\System32\\vssadmin.exe vssadmin delete shadows /all /quiet\nWith this technique in place, it ensures that victims will not recover the damaged File System by using shadow copies a common process also used by other ransomware families."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x5dcbef44",
+            "title": "Stoped services",
+            "text": "SunnyDay ransomware has hardcoded a list of target services that it tries to stop during its execution. The following image shows it is trying to stop the vmickvexchange service via ControlService() call with the param SERVICE_STOP.\nFigure 4: Block of code responsible of stoping a list of target processes.\nThe list of target processes hardcoded inside the binary is presented below.\nFigure 5: Hardcoded services observed in SunnyDay ransomware."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x67b27753",
+            "title": "Terminated processes",
+            "text": "A list of target processes can also be found on the ransomware binary file. As can be seen, the ransomware obtains the double-linked list of processes via CreateToolhel32Snapshot() and compares each process with the hardcoded ones. If it matches, the process is terminated via TerminateProcess() call. In addition, the tree of processes is iterated by using the Process32NextW() Windows call.\nFigure 6: Block of code responsible of terminate target processes. The process svchost.exe (right side) is one of the processes present in the snapshot and tested against the hardcoded strings.\nThe complete list of target processes is presented below.\nFigure 7: Full list of target processes found inside the SunnyDay sample."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xbe38fa5b",
+            "title": "Skipped file extensions and folders",
+            "text": "Some file extensions and folders are bypassed during the ransomware encryption process. Some important directories are not damaged during the data encryption process, which may allow victims to recover some files in those directories. Also, some popular file extensions are untouchable, which can be an advantage for the victims side.\nFigure 8: Folders and file extensions skipped during the data encryption process."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x7a43f28e",
+            "title": "Data encryption process",
+            "text": "SunnyDay takes advantage of Windows APIs (CryptoAPI) to carry out the encryption process. The ransomware carried a unique RSA public blob (CSP) 2048-bit key and uses some API calls to extract the blob key to encrypt the Salsa20 key to encode the entire victims files.\nSome functions from CryptoAPI are used during this process, namely:\nCryptAcquireContextW(): The CryptAcquireContext function is used to acquire a handle to a particular key container within a particular cryptographic service provider (CSP). CryptImportKey(): The CryptImportKey function transfers a cryptographic key from a key BLOB into a cryptographic service provider (CSP). CryptEncrypt(): The CryptEncrypt function encrypts data. CryptDestroyKey(): The CryptDestroyKey function releases the handle referenced by the hKey parameter. CryptReleaseContext(): The CryptReleaseContext function releases the handle of a cryptographic service provider (CSP) and a key container.\nCryptAcquireContextW(): The CryptAcquireContext function is used to acquire a handle to a particular key container within a particular cryptographic service provider (CSP).\nCryptImportKey(): The CryptImportKey function transfers a cryptographic key from a key BLOB into a cryptographic service provider (CSP).\nCryptEncrypt(): The CryptEncrypt function encrypts data.\nCryptDestroyKey(): The CryptDestroyKey function releases the handle referenced by the hKey parameter.\nCryptReleaseContext(): The CryptReleaseContext function releases the handle of a cryptographic service provider (CSP) and a key container.\nIn sum, these calls are utilized to extract the public key blob from a qword on the data section and encrypt a newly generated key used by the SALSA20 stream cipher to encode all the target files.\nThe details associated with the RSA blob can be observed below. The AlgID CALG_RSA_KEYX was used, and it is a 2048-bit key with the Public Exponent: 65537 in decimal.\nFigure 9: Details about the RSA public key blob hardcoded inside the SunnyDay ransomware sample.\nThe public key is CALG_RSA_KEYX and is hardcoded inside the SunnyDay ransomware sample. This is an important detail about this malware as this blob is imported via the CrypImportKey API call and it will be used to encrypt the key used by SALSA20 to encode the victims files. The original RSA public key is present below as well.\nFigure 10: RSA blob exported to PEM format."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x3b02582d",
+            "title": "Digging into the Public Key Blob Format",
+            "text": "Public key blobs (type PUBLICKEYBLOB) are used to store RSA public keys. They have the following format:\nBLOBHEADER blobheader;\nRSAPUBKEY rsapubkey;\nBYTE modulus[rsapubkey.bitlen/8];\nNotice that PUBLICKEYBLOBs are not encrypted, but contain public keys in plaintext form.\nThe RSAPUBKEY structure contains information specific to the particular public key contained in the key blob. It is defined as follows:\ntypedef struct _RSAPUBKEY {\nDWORD magic;\nDWORD bitlen;\nDWORD pubexp;\n} RSAPUBKEY;\nThe following table describes each of the fields in the RSAPUBKEY structure.\nThe public key modulus data is located directly after the RSAPUBKEY structure. The size of this data will vary depending on the size of the public key. The number of bytes can be determined by dividing the value of RSAPUBKEYs bitlen field by 8.\nOn the other hand, the SALSA20 stream cipher can be easily identified based on string constant and fixed rotation values. Within this context, criminals used the CryptoPP library in order to implement the SALSA20 algorithm in C++; a copy of it was performed by its author as expected.\nThese details can be confirmed in the reverse engineering process as presented below.\nFigure 11: Details about CryptoPP library and SALSA20 symmetric cipher.\nAs mentioned above, SALSA20 is easy to recognize, as it uses well-known values for its internal cryptographic operations.\nFigure 12: Symmetric SALSA20 stream cipher detection.\nBelow, some of the SALSA20 values found on the SunnyDay samples can be found in the CryptoPP library.\nFigure 13: SALSA20 stream cipher details.\nThis ransomware uses a single SALSA20 key to encrypt all the files on a specific machine. The key is generated via CryptoGenRandom() call and next it is encrypted with the RSA 2048-bit key present on the ransomware samples. Finally, the SALSA20 key with 512 bytes is appended at the end of the encrypted files.\nFigure 14: Encrypted files with the added nonce and SALSA20 key (512 bytes) encrypted with the RSA 2048-bit key.",
+            "table": "0;1\nField;Description\nmagic;This must always be set to 0x31415352. Notice that this is just an ASCII encoding of \u201cRSA1.\u201d\nbitlen;Number of bits in the modulus. In practice, this must always be a multiple of 8.\npubexp;The public exponent.\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xac69e046",
+            "title": "The ransomware note",
+            "text": "The ransomware note called !-Recovery_Instructions-!.txt file is dropped in each folder with the instructions to recover the damaged files.\nFigure 15: SunnyDay ransomware note.\nAs can be seen, the compromised machines are identified with a randomly generated ID present at the end of the ransomware note file, along with two email addresses.\n[email protected]\n[email protected]\nAfter the first contact with threat actors, a quick response from an Outlook address is received with additional steps, including the total amount to pay in Bitcoin and the wallet address.\nFigure 16: Additional details including the total to pay in Bitcoin ($160.000) and wallet address (1HSFsP9i6zcNgyx7p84UHzDUfC8k5axUrx).\nAs observed below, no transactions are observed on the specific wallet addressed.\nFigure 17: Bitcoin wallet addressed by criminals."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xd8b08729",
+            "title": "TOR / C2 communication",
+            "text": "A link to download a specific TOR browser version was found during the ransomware analysis. Also, a stream of data with some details about the infected machine was observed, potentially to notify criminals about new infections.\n- %s|DELIMITER|Name(domain): %s(%s)\\r\\nCPU: %S\\r\\nRAM: %d\\r\\nDisks count: %d\\r\\nFiles count: %d|DELIMITER|\nTor: https://dist.torproject.org/torbrowser/8.5.3/torwin32-0.3.5.8.zip\nFigure 18: Information collected during the ransomware execution.\nAs observed, a lot of information is collected during the ransomware execution, namely:\nmachine name domain total RAM total of physical volumes total of encrypted files number of CPUs\nmachine name\ndomain\ntotal RAM\ntotal of physical volumes\ntotal of encrypted files\nnumber of CPUs\nThis data is then grouped into a large string that would be sent to a removed server presumably hosted over the TOR network. Nonetheless, no hardcoded URLs and .onion addresses were observed.\nWe believe the C2 server potentially could be available over the TOR network because the process of downloading and opening the TOR was identified. More details can be observed below.\nFigure 19: TOR browser hardcoded URL and the execution process after downloading the .zip file into the Temp folder.\nIn addition, the hardcoded version of the TOR browser is 8.5.3 (8.x), is not available to download on the official TOR browser webpage as observed below.\nFigure 20: Tor browser version 11x. (April 2022).\nThe version of Tor Browser 8.5.3 is dated from June 2019 and so we believe that it could be a lot of junk and unused resources that come from another variant of this ransomware. This can be a clear sign of cooperation between threat groups."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xd2b760a4",
+            "title": "Self-removing feature",
+            "text": "When the data encryption process terminates, the malware removes itself from the disk.\nFigure 21: Self-removing feature identified on the SunnyDay ransomware.\nWith this mechanism in place, no artifacts on disk are left, preventing, thus, the binaries can be shared on online sandboxes and automatically submitted by AV/EDRs."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xa6a1f43",
+            "title": "Similarities between samples",
+            "text": "As observed on a Twitter presented below, SunnyDay seems to follow the same pattern seen in other samples of this nature. It looks like a new variant of the Ever101 malware, active since 2021 and also reported by Security Joes last year.\n#Ransomware\nEA504E669073D9E506FB403E633A68C8\nExt: .ever101\nNote: !=READMY=!.txt@BleepinComputer @demonslay335 @Amigo_A_ @siri_urz @malwrhunterteam @JAMESWT_MHT pic.twitter.com/OxQMYWQ5Bs\ndnwls0719 (@fbgwls245) May 21, 2021\nWe believe that SunnyDay can be a new variant or development of the next ransomware samples based on its code analysis and ransomware note structure:\nEver101 MedusaLocker Curator Payment45; and Keversen\nEver101\nMedusaLocker\nCurator\nPayment45; and\nKeversen"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x79c8605",
+            "title": "Thank you to all who have contributed",
+            "text": "@AndreyGvozd\n@JAMESWT_MHT"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xa5184b67",
+            "title": "Mitre Att&ck Matrix",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0xe233941e",
+            "title": "Online sandbox",
+            "text": "Bazaar sample VirusTotal sample JoeSandbox analysis Hybrid analysis\nBazaar sample\nVirusTotal sample\nJoeSandbox analysis\nHybrid analysis"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x737558e8",
+            "date": "20220412",
+            "title": "Analysis of the SunnyDay ransomware. Introduction",
+            "url": "https://seguranca-informatica.pt/analysis-of-the-sunnyday-ransomware/?utm_source=rss&utm_medium=rss&utm_campaign=analysis-of-the-sunnyday-ransomware"
+        },
+        "chapter": {
+            "id": "chapter_0x111acc15",
+            "title": "Yara rule",
+            "text": "Yara rule is available on GitHub.\nPedro Tavares\nPedro Tavares is a professional in the field of information security working as an Ethical Hacker/Pentester, Malware Researcher and also a Security Evangelist. He is also a founding member at CSIRT.UBI and Editor-in-Chief of the security computer blog seguranca-informatica.pt.\nIn recent years he has invested in the field of information security, exploring and analyzing a wide range of topics, such as pentesting (Kali Linux), malware, exploitation, hacking, IoT and security in Active Directory networks. He is also Freelance Writer (Infosec. Resources Institute and Cyber Defense Magazine) and developer of the 0xSI_f33d a feed that compiles phishing and malware campaigns targeting Portuguese citizens.\nRead more here."
+        }
+    }
+]

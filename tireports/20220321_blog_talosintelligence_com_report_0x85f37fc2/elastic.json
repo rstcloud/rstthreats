@@ -1,0 +1,67 @@
+[
+    {
+        "report": {
+            "id": "report_0x85f37fc2",
+            "date": "20220322",
+            "title": "Threat Advisory: CaddyWiper",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html"
+        },
+        "chapter": {
+            "id": "chapter_0x59b27016",
+            "title": "Threat Advisory: CaddyWiper",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x85f37fc2",
+            "date": "20220322",
+            "title": "Threat Advisory: CaddyWiper",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html"
+        },
+        "chapter": {
+            "id": "chapter_0x4de4364a",
+            "title": "Overview",
+            "text": "Cybersecurity company ESET\ndisclosed\nanother Ukraine-focused wiper dubbed \"CaddyWiper\" on March 14. This wiper is relatively smaller than previous wiper attacks we've seen in Ukraine such as \"\nHermeticWiper\n\" and \"\nWhisperGate\n,\" with a compiled size of just 9KB. \nThe wiper discovered has the same compilation timestamp day (March 14) and initial reports suggest that it was deployed via GPO.\nCisco Talos is actively conducting analysis to confirm the details included in these reports."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x85f37fc2",
+            "date": "20220322",
+            "title": "Threat Advisory: CaddyWiper",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html"
+        },
+        "chapter": {
+            "id": "chapter_0xc4200a42",
+            "title": "Analysis",
+            "text": "The wiper is relatively small in size and dynamically resolves most of the APIs it uses. Our analysis didn't show any indications of persistency, self-propagation or exploitation code. \nBefore starting any file destruction, it checks to ensure that the machine is not a domain controller. If the machine is a domain controller, it stops execution.\nPseudo-code: CaddyWiper checking for the Domain Controller role of the machine.\nIf the system is not a domain controller, the wiper will destroy files on \"C:\\Users,\" followed by wiping of all files in the next drive letter until it reaches the \"Z\" drive. This means that the wiper will also attempt to wipe any network mapped drive attached to the system.\nFile in drives with letters from D:\\ overwritten with zeros.\nThis ensures that the system will not crash due to the wipe of system files."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x85f37fc2",
+            "date": "20220322",
+            "title": "Threat Advisory: CaddyWiper",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html"
+        },
+        "chapter": {
+            "id": "chapter_0xf464ed3b",
+            "title": "File wiping algorithm",
+            "text": "The file destruction algorithm is composed of two stages: a first stage to overwrite files and another to destroy the physical disk layout and the partition tables along with it. For the file destruction, it takes ownership of the files by modifying their ACL entries after it has obtained the '\nSeTakeOwnershipPrivilege\n'. A file found will then simply be overwritten with zeros. \nA file that is larger than 10,485,760 bytes (0xA00000) in size will simply have the first 10,485,760 bytes overwritten with zeros.\nFile overwritten with a buffer consisting of zeros.\nThe wiper will then move on to the next drive on the system beginning with the \"D\" drive. It will recursively gain rights to files on a drive and overwrite them with zeros. This is done for the next 23 drives alphabetically (through \"Z:\\\").\nOn the second stage, the wiper attempts to set the drive layout of all the physical drives on the system numbered 9 to 0. This will wipe out all\nextended information\nabout the physical drive's partitions including MBR, GPT and partition entries.\nWiper recursively performing IOCTL_DISK_SET_DRIVE_LAYOUT_EX requests with a zeroed out buffer.\nDestroying the start of the files and the partitions tables is a common technique seen on other wipers, and its highly effective in preventing the file recovery."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x85f37fc2",
+            "date": "20220322",
+            "title": "Threat Advisory: CaddyWiper",
+            "url": "http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html"
+        },
+        "chapter": {
+            "id": "chapter_0x564324eb",
+            "title": "IOCs",
+            "text": "a294620543334a721a2ae8eaaf9680a0786f4b9a216d75b55cfd28f39e9430ea1e87e9b5ee7597bdce796490f3ee09211df48ba1d11f6e2f5b255f05cc0ba176ea6a416b320f32261da8dafcf2faf088924f99a3a84f7b43b964637ea87aef72f1e8844dbfc812d39f369e7670545a29efef6764d673038b1c3edd11561d6902\nPosted by\nAsheer Malhotra\nat\n12:48 PM\nLabels:\nMalware\n,\nSecureX\n,\nUkraine\n,\nwiper\nShare This Post"
+        }
+    }
+]

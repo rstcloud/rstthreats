@@ -1,0 +1,1674 @@
+{
+    "title": "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload",
+    "url": "https://www.cadosecurity.com/linux-attack-techniques-dynamic-linker-hijacking-with-ld-preload",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x7a1325f0>",
+                    "type": "Threat",
+                    "value": "xmrig_miner"
+                },
+                "references": {
+                    "sentences": [
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xd61db454>",
+                    "type": "Threat",
+                    "value": "log4shell_vuln"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools.",
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves.",
+                        "As a result, the miner executes uninterrupted and successfully generates profits for the malware developer.",
+                        "At Cado Labs, we regularly analyse malware campaigns targeting Linux and have decided to document some common and not-so-common attack techniques observed in these campaigns. We hope this will help defenders identify and mitigate these techniques in their Linux environments. In this blog were going to analyse a common method of execution flow hijacking on Linux: dynamic linker hijacking.",
+                        "However, if we think like an attacker, shared libraries present an opportunity to hijack the execution flow of an application and run malicious code in the context of a legitimate process. Generally, dynamic linker hijacking involves tricking the dynamic linker into loading a malicious library implanted by the attacker.",
+                        "Linux has long dominated the server computing landscape, and the rapid adoption of cloud technologies by organisations around the world has only contributed to this. As a result, many recent high-profile malware campaigns have targeted Linux servers (often in cloud environments) and used them to illicitly mine cryptocurrency, conduct denial of service (DoS) attacks, steal sensitive data and carry out other nefarious activities.",
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used.",
+                        "This can be used to supplement existing payloads by implementing features like process hiding, as well discuss later. It also brings stealth benefits to a malware campaign and although many modern operating systems are hardened to prevent arbitrary libraries from being loaded, this is still a highly-effective technique and one which is often seen in the wild.",
+                        "To demonstrate this in action, we examined a recent sample of cryptomining malware:",
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x53a9ab58>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "53047c6f255ceee5ec989d73a36fa97ac6035325ea1a81e959b585220188fd11"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x1c03897b>",
+                    "type": "Category",
+                    "value": "rootkit"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x825ecaea>",
+                    "type": "Category",
+                    "value": "cryptomining"
+                },
+                "references": {
+                    "sentences": [
+                        "As a result, the miner executes uninterrupted and successfully generates profits for the malware developer.",
+                        "Once the hide function is invoked, the miner process is hidden as the process name is hardcoded in the version of libprocesshider.so that the script downloads. This means that although the miner is likely executing with high utilisation of system resources (something that would typically draw attention) this would be near-impossible for an administrator to identify using system monitoring tools alone.",
+                        "To demonstrate this in action, we examined a recent sample of cryptomining malware:",
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xd91561a2>",
+                    "type": "Category",
+                    "value": "botnet"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0x24d4f3a8>",
+                    "type": "Industry",
+                    "value": "transport"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0xfdb2489c>",
+                    "type": "File",
+                    "value": "ld.so.preload"
+                },
+                "references": {
+                    "sentences": [
+                        "According to the libprocesshider documentation, once the path to libprocesshider is added to LD_PRELOAD or the ld.so.preload file, the specified executable will first load libprocesshider and details of the process will be hidden from process monitoring tools.",
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x57cd007c>",
+                            "type": "UnknownWord",
+                            "value": "correctly"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xcb9d901e>",
+                            "type": "UnknownWord",
+                            "value": "ld_preload"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe200a016>",
+                            "type": "UnknownWord",
+                            "value": "libprocesshider"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x2af077c4>",
+                            "type": "UnknownWord",
+                            "value": "preloaded"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xda42c261>",
+                            "type": "UnknownWord",
+                            "value": "system-wide"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x53a9ab58>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "53047c6f255ceee5ec989d73a36fa97ac6035325ea1a81e959b585220188fd11"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x53a9ab58>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "53047c6f255ceee5ec989d73a36fa97ac6035325ea1a81e959b585220188fd11"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0xef5d3bee>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "0e6d37099dd89c7eed44063420bd05a2d7b0865a0f690e12457fbec68f9b67a8"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x722ca0ca>",
+                    "type": "UnknownWord",
+                    "value": "linker"
+                },
+                "references": {
+                    "sentences": [
+                        "Background on Dynamic Linker Hijacking",
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools.",
+                        "Cado Response Screenshot demonstrating dynamic linker hijacking attempt",
+                        "At Cado Labs, we regularly analyse malware campaigns targeting Linux and have decided to document some common and not-so-common attack techniques observed in these campaigns. We hope this will help defenders identify and mitigate these techniques in their Linux environments. In this blog were going to analyse a common method of execution flow hijacking on Linux: dynamic linker hijacking.",
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves.",
+                        "How to Detect Dynamic Linker Hijacking in your Environment",
+                        "Linux Dynamic Linker Hijacking in Action",
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking",
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:",
+                        "However, if we think like an attacker, shared libraries present an opportunity to hijack the execution flow of an application and run malicious code in the context of a legitimate process. Generally, dynamic linker hijacking involves tricking the dynamic linker into loading a malicious library implanted by the attacker.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xabbf9dce>",
+                    "type": "UnknownWord",
+                    "value": "preload"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hook the appropriate syscall, the library needs to be loaded first In steps the dynamic linkers LD Preload feature!",
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves.",
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly.",
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x44fc6b8>",
+                    "type": "UnknownWord",
+                    "value": "empowers"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4fc4636>",
+                    "type": "UnknownWord",
+                    "value": "cado"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Response Screenshot demonstrating dynamic linker hijacking attempt",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaefe79a6>",
+                    "type": "UnknownWord",
+                    "value": "effortlessly"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x59b7a025>",
+                    "type": "UnknownWord",
+                    "value": "forensic-level"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd73a11d8>",
+                    "type": "UnknownWord",
+                    "value": "unprecedented"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbb04cccd>",
+                    "type": "UnknownWord",
+                    "value": "simplify"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response.",
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdeb72ed9>",
+                    "type": "UnknownWord",
+                    "value": "trial"
+                },
+                "references": {
+                    "sentences": [
+                        "Free Trial"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f015a59>",
+                    "type": "UnknownWord",
+                    "value": "sitemap"
+                },
+                "references": {
+                    "sentences": [
+                        "Sitemap | Privacy Policy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x335fc84b>",
+                    "type": "UnknownWord",
+                    "value": "contributed"
+                },
+                "references": {
+                    "sentences": [
+                        "Linux has long dominated the server computing landscape, and the rapid adoption of cloud technologies by organisations around the world has only contributed to this. As a result, many recent high-profile malware campaigns have targeted Linux servers (often in cloud environments) and used them to illicitly mine cryptocurrency, conduct denial of service (DoS) attacks, steal sensitive data and carry out other nefarious activities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6058156c>",
+                    "type": "UnknownWord",
+                    "value": "illicitly"
+                },
+                "references": {
+                    "sentences": [
+                        "Linux has long dominated the server computing landscape, and the rapid adoption of cloud technologies by organisations around the world has only contributed to this. As a result, many recent high-profile malware campaigns have targeted Linux servers (often in cloud environments) and used them to illicitly mine cryptocurrency, conduct denial of service (DoS) attacks, steal sensitive data and carry out other nefarious activities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6a591f51>",
+                    "type": "UnknownWord",
+                    "value": "dos"
+                },
+                "references": {
+                    "sentences": [
+                        "Linux has long dominated the server computing landscape, and the rapid adoption of cloud technologies by organisations around the world has only contributed to this. As a result, many recent high-profile malware campaigns have targeted Linux servers (often in cloud environments) and used them to illicitly mine cryptocurrency, conduct denial of service (DoS) attacks, steal sensitive data and carry out other nefarious activities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbc1f02ad>",
+                    "type": "UnknownWord",
+                    "value": "nefarious"
+                },
+                "references": {
+                    "sentences": [
+                        "Linux has long dominated the server computing landscape, and the rapid adoption of cloud technologies by organisations around the world has only contributed to this. As a result, many recent high-profile malware campaigns have targeted Linux servers (often in cloud environments) and used them to illicitly mine cryptocurrency, conduct denial of service (DoS) attacks, steal sensitive data and carry out other nefarious activities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdb3b8ed8>",
+                    "type": "UnknownWord",
+                    "value": "analyse"
+                },
+                "references": {
+                    "sentences": [
+                        "At Cado Labs, we regularly analyse malware campaigns targeting Linux and have decided to document some common and not-so-common attack techniques observed in these campaigns. We hope this will help defenders identify and mitigate these techniques in their Linux environments. In this blog were going to analyse a common method of execution flow hijacking on Linux: dynamic linker hijacking."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x52055be2>",
+                    "type": "UnknownWord",
+                    "value": "not-so-common"
+                },
+                "references": {
+                    "sentences": [
+                        "At Cado Labs, we regularly analyse malware campaigns targeting Linux and have decided to document some common and not-so-common attack techniques observed in these campaigns. We hope this will help defenders identify and mitigate these techniques in their Linux environments. In this blog were going to analyse a common method of execution flow hijacking on Linux: dynamic linker hijacking."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x34d7b17a>",
+                    "type": "UnknownWord",
+                    "value": "commonly-used"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3b39de75>",
+                    "type": "UnknownWord",
+                    "value": "dylibs"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x275a64d3>",
+                    "type": "UnknownWord",
+                    "value": "specify"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system.",
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x69f89f19>",
+                    "type": "UnknownWord",
+                    "value": "cryptographic"
+                },
+                "references": {
+                    "sentences": [
+                        "Typical examples of shared libraries include things like compression and cryptographic libraries, features which are commonly used by applications but are difficult and time-consuming to implement after all, why reinvent the wheel?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2ff5f8dc>",
+                    "type": "UnknownWord",
+                    "value": "time-consuming"
+                },
+                "references": {
+                    "sentences": [
+                        "Typical examples of shared libraries include things like compression and cryptographic libraries, features which are commonly used by applications but are difficult and time-consuming to implement after all, why reinvent the wheel?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf1ccb372>",
+                    "type": "UnknownWord",
+                    "value": "reinvent"
+                },
+                "references": {
+                    "sentences": [
+                        "Typical examples of shared libraries include things like compression and cryptographic libraries, features which are commonly used by applications but are difficult and time-consuming to implement after all, why reinvent the wheel?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x43f14ee5>",
+                    "type": "UnknownWord",
+                    "value": "wheel"
+                },
+                "references": {
+                    "sentences": [
+                        "Typical examples of shared libraries include things like compression and cryptographic libraries, features which are commonly used by applications but are difficult and time-consuming to implement after all, why reinvent the wheel?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x52b1cdf4>",
+                    "type": "UnknownWord",
+                    "value": "implanted"
+                },
+                "references": {
+                    "sentences": [
+                        "However, if we think like an attacker, shared libraries present an opportunity to hijack the execution flow of an application and run malicious code in the context of a legitimate process. Generally, dynamic linker hijacking involves tricking the dynamic linker into loading a malicious library implanted by the attacker."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4b28b51e>",
+                    "type": "UnknownWord",
+                    "value": "highly-effective"
+                },
+                "references": {
+                    "sentences": [
+                        "This can be used to supplement existing payloads by implementing features like process hiding, as well discuss later. It also brings stealth benefits to a malware campaign and although many modern operating systems are hardened to prevent arbitrary libraries from being loaded, this is still a highly-effective technique and one which is often seen in the wild."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x52c8e6d2>",
+                    "type": "UnknownWord",
+                    "value": "linuxs"
+                },
+                "references": {
+                    "sentences": [
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6f77b3e6>",
+                    "type": "UnknownWord",
+                    "value": "linkers"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hook the appropriate syscall, the library needs to be loaded first In steps the dynamic linkers LD Preload feature!",
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x10fdb9>",
+                    "type": "UnknownWord",
+                    "value": "contemporary"
+                },
+                "references": {
+                    "sentences": [
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc3974b06>",
+                    "type": "UnknownWord",
+                    "value": "envars"
+                },
+                "references": {
+                    "sentences": [
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcb9d901e>",
+                    "type": "UnknownWord",
+                    "value": "ld_preload"
+                },
+                "references": {
+                    "sentences": [
+                        "According to the libprocesshider documentation, once the path to libprocesshider is added to LD_PRELOAD or the ld.so.preload file, the specified executable will first load libprocesshider and details of the process will be hidden from process monitoring tools.",
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:",
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system.",
+                        "[LD_PRELOAD is] A list of additional, user-specified, ELF shared objects"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xcb9d901e>",
+                            "type": "UnknownWord",
+                            "value": "ld_preload"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb4884e8d>",
+                    "type": "UnknownWord",
+                    "value": "man"
+                },
+                "references": {
+                    "sentences": [
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd7436302>",
+                    "type": "UnknownWord",
+                    "value": "user-specified"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system.",
+                        "[LD_PRELOAD is] A list of additional, user-specified, ELF shared objects"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x539c7a1a>",
+                    "type": "UnknownWord",
+                    "value": "selectively"
+                },
+                "references": {
+                    "sentences": [
+                        "to be loaded before all others. This feature can be used to selectively override"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x751ac47e>",
+                    "type": "UnknownWord",
+                    "value": "override"
+                },
+                "references": {
+                    "sentences": [
+                        "to be loaded before all others. This feature can be used to selectively override"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x46f1bff>",
+                    "type": "UnknownWord",
+                    "value": "invocation"
+                },
+                "references": {
+                    "sentences": [
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "Line 214: invocation of the hide() function"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a1cc528>",
+                    "type": "UnknownWord",
+                    "value": "envar"
+                },
+                "references": {
+                    "sentences": [
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x40319969>",
+                    "type": "UnknownWord",
+                    "value": "consults"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a931d35>",
+                    "type": "UnknownWord",
+                    "value": "precedence"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xda42c261>",
+                    "type": "UnknownWord",
+                    "value": "system-wide"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xda42c261>",
+                            "type": "UnknownWord",
+                            "value": "system-wide"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2af077c4>",
+                    "type": "UnknownWord",
+                    "value": "preloaded"
+                },
+                "references": {
+                    "sentences": [
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x2af077c4>",
+                            "type": "UnknownWord",
+                            "value": "preloaded"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd4648915>",
+                    "type": "UnknownWord",
+                    "value": "utilised"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe200a016>",
+                    "type": "UnknownWord",
+                    "value": "libprocesshider"
+                },
+                "references": {
+                    "sentences": [
+                        "According to the libprocesshider documentation, once the path to libprocesshider is added to LD_PRELOAD or the ld.so.preload file, the specified executable will first load libprocesshider and details of the process will be hidden from process monitoring tools.",
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly.",
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe200a016>",
+                            "type": "UnknownWord",
+                            "value": "libprocesshider"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe1dbff5>",
+                    "type": "UnknownWord",
+                    "value": "lsof"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x13043227>",
+                    "type": "UnknownWord",
+                    "value": "hooking"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4bb64151>",
+                    "type": "UnknownWord",
+                    "value": "proc"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x92d834e3>",
+                    "type": "UnknownWord",
+                    "value": "<pid>"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x16eec167>",
+                    "type": "UnknownWord",
+                    "value": "naturally"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb04a1974>",
+                    "type": "UnknownWord",
+                    "value": "desirable"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9e44f7de>",
+                    "type": "UnknownWord",
+                    "value": "unimpeded"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa87c886f>",
+                    "type": "UnknownWord",
+                    "value": "undetectable"
+                },
+                "references": {
+                    "sentences": [
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa421a391>",
+                    "type": "UnknownWord",
+                    "value": "sed"
+                },
+                "references": {
+                    "sentences": [
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x57cd007c>",
+                    "type": "UnknownWord",
+                    "value": "correctly"
+                },
+                "references": {
+                    "sentences": [
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x57cd007c>",
+                            "type": "UnknownWord",
+                            "value": "correctly"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5323e639>",
+                    "type": "UnknownWord",
+                    "value": "invoked"
+                },
+                "references": {
+                    "sentences": [
+                        "Once the hide function is invoked, the miner process is hidden as the process name is hardcoded in the version of libprocesshider.so that the script downloads. This means that although the miner is likely executing with high utilisation of system resources (something that would typically draw attention) this would be near-impossible for an administrator to identify using system monitoring tools alone.",
+                        "Further down the script, we can see the hide function being invoked:",
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe4feda6d>",
+                    "type": "UnknownWord",
+                    "value": "youll"
+                },
+                "references": {
+                    "sentences": [
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc9740a34>",
+                    "type": "UnknownWord",
+                    "value": "var"
+                },
+                "references": {
+                    "sentences": [
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa9be8a78>",
+                    "type": "UnknownWord",
+                    "value": "java_c"
+                },
+                "references": {
+                    "sentences": [
+                        "If you examine lines 211 to 214 in the screenshot above, youll see a file at the path /var/tmp/java_c/java_c is executed prior to the hide function being invoked. Despite the name, this is the binary for the XMRig Monero mining software, commonly seen in cryptojacking campaigns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x23cb9f49>",
+                    "type": "UnknownWord",
+                    "value": "utilisation"
+                },
+                "references": {
+                    "sentences": [
+                        "Once the hide function is invoked, the miner process is hidden as the process name is hardcoded in the version of libprocesshider.so that the script downloads. This means that although the miner is likely executing with high utilisation of system resources (something that would typically draw attention) this would be near-impossible for an administrator to identify using system monitoring tools alone."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc0b313eb>",
+                    "type": "UnknownWord",
+                    "value": "near-impossible"
+                },
+                "references": {
+                    "sentences": [
+                        "Once the hide function is invoked, the miner process is hidden as the process name is hardcoded in the version of libprocesshider.so that the script downloads. This means that although the miner is likely executing with high utilisation of system resources (something that would typically draw attention) this would be near-impossible for an administrator to identify using system monitoring tools alone."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2323dda2>",
+                    "type": "UnknownWord",
+                    "value": "alone"
+                },
+                "references": {
+                    "sentences": [
+                        "Once the hide function is invoked, the miner process is hidden as the process name is hardcoded in the version of libprocesshider.so that the script downloads. This means that although the miner is likely executing with high utilisation of system resources (something that would typically draw attention) this would be near-impossible for an administrator to identify using system monitoring tools alone."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa68b33ac>",
+                    "type": "UnknownWord",
+                    "value": "uninterrupted"
+                },
+                "references": {
+                    "sentences": [
+                        "As a result, the miner executes uninterrupted and successfully generates profits for the malware developer."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x26629c95>",
+                    "type": "UnknownWord",
+                    "value": "fortunately"
+                },
+                "references": {
+                    "sentences": [
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa01d0db7>",
+                    "type": "UnknownWord",
+                    "value": "unset"
+                },
+                "references": {
+                    "sentences": [
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x61464ae6>",
+                    "type": "UnknownWord",
+                    "value": "shouldnt"
+                },
+                "references": {
+                    "sentences": [
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5ac012a8>",
+                    "type": "UnknownWord",
+                    "value": "vanilla"
+                },
+                "references": {
+                    "sentences": [
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd40aa9fb>",
+                    "type": "UnknownWord",
+                    "value": "indicative"
+                },
+                "references": {
+                    "sentences": [
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x70e6c62b>",
+                    "type": "UnknownWord",
+                    "value": "demonstrating"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Response Screenshot demonstrating dynamic linker hijacking attempt"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc185cb2a>",
+                    "type": "UnknownWord",
+                    "value": "matt"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe9a59f5a>",
+                    "type": "UnknownWord",
+                    "value": "muir"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa3d9c50e>",
+                    "type": "UnknownWord",
+                    "value": "passion"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xedc7db2c>",
+                    "type": "UnknownWord",
+                    "value": "unix"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd2c2945e>",
+                    "type": "UnknownWord",
+                    "value": "unix-like"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfcc63ac6>",
+                    "type": "UnknownWord",
+                    "value": "devops"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd60d875a>",
+                    "type": "UnknownWord",
+                    "value": "cloud-focused"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe62a26d6>",
+                    "type": "UnknownWord",
+                    "value": "blossom"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1422273a>",
+                    "type": "UnknownWord",
+                    "value": "capital"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf5ad22ec>",
+                    "type": "UnknownWord",
+                    "value": "ten"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x78f71c5f>",
+                    "type": "UnknownWord",
+                    "value": "eleven"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x46e84755>",
+                    "type": "UnknownWord",
+                    "value": "ventures"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x591cc5f4>",
+                    "type": "UnknownWord",
+                    "value": "prev"
+                },
+                "references": {
+                    "sentences": [
+                        "Prev Post"
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x722ca0ca>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x722ca0ca>",
+                    "type": "UnknownWord",
+                    "value": "linker"
+                },
+                "references": {
+                    "sentences": [
+                        "Background on Dynamic Linker Hijacking",
+                        "Dynamic linker hijacking is often utilised by Linux malware to install rootkits on the target system. One popular open source rootkit is libprocesshider.so. As the name suggests, libprocesshider is used to hide processes from Linux performance monitoring tools, such as top, ps, lsof and so on. It achieves this by hooking syscalls used for enumerating the /proc/<PID> directories and preventing them from doing so (more info here). Naturally, this is desirable for virtually all categories of malware, as malicious processes may be able to execute unimpeded if they are undetectable by the bundled monitoring tools.",
+                        "Cado Response Screenshot demonstrating dynamic linker hijacking attempt",
+                        "At Cado Labs, we regularly analyse malware campaigns targeting Linux and have decided to document some common and not-so-common attack techniques observed in these campaigns. We hope this will help defenders identify and mitigate these techniques in their Linux environments. In this blog were going to analyse a common method of execution flow hijacking on Linux: dynamic linker hijacking.",
+                        "Dynamic linking, a feature present in virtually all modern operating systems, allows certain commonly-used libraries (referred to as shared objects in Linux, dylibs in macOS, and Dynamic Linked Libraries/DLLs in Windows) to be loaded by an application at runtime. When a developer compiles an executable, they specify which libraries should be loaded and the operating systems linker retrieves these and loads them when the application is launched. This allows the code contained within the libraries to be shared across applications and saves the developer writing this code and shipping it themselves.",
+                        "How to Detect Dynamic Linker Hijacking in your Environment",
+                        "Linux Dynamic Linker Hijacking in Action",
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking",
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:",
+                        "However, if we think like an attacker, shared libraries present an opportunity to hijack the execution flow of an application and run malicious code in the context of a legitimate process. Generally, dynamic linker hijacking involves tricking the dynamic linker into loading a malicious library implanted by the attacker.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0xabbf9dce>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xabbf9dce>",
+                    "type": "UnknownWord",
+                    "value": "preload"
+                },
+                "references": {
+                    "sentences": [
+                        "In order to hook the appropriate syscall, the library needs to be loaded first In steps the dynamic linkers LD Preload feature!",
+                        "Similarly, the /etc/ld.so.preload file shouldnt exist in a vanilla installation of Linux. If this file exists and it contains paths to arbitrary executables, this is again indicative of malicious libraries being used. Simply delete the file to prevent the libraries being loaded in future and remove the libraries themselves.",
+                        "As can be seen on lines 18 20, a function named hide first uses sed to remove any lines containing libprocesshider from the /etc/ld.so.preload file. A path containing the compiled libprocesshider shared object (library) is then added back into the ld.so.preload file to ensure that its loaded correctly.",
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system."
+                    ],
+                    "titles": [
+                        "Linux Attack Techniques: Dynamic Linker Hijacking with LD Preload"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0xdeb72ed9>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdeb72ed9>",
+                    "type": "UnknownWord",
+                    "value": "trial"
+                },
+                "references": {
+                    "sentences": [
+                        "Free Trial"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x52c8e6d2>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x52c8e6d2>",
+                    "type": "UnknownWord",
+                    "value": "linuxs"
+                },
+                "references": {
+                    "sentences": [
+                        "Using Linuxs LD Preload Feature for Dynamic Linker Hijacking"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xcb9d901e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcb9d901e>",
+                    "type": "UnknownWord",
+                    "value": "ld_preload"
+                },
+                "references": {
+                    "sentences": [
+                        "According to the libprocesshider documentation, once the path to libprocesshider is added to LD_PRELOAD or the ld.so.preload file, the specified executable will first load libprocesshider and details of the process will be hidden from process monitoring tools.",
+                        "Essentially, this means that shortly after invocation, the dynamic linker will read the contents of $LD_PRELOAD and load any shared objects located at paths defined in the envar before any other (potentially benign) shared objects are loaded. Since its easy for a malicious shell script or other executable to set the value of LD_PRELOAD, you can see how this could be leveraged by malware to run additional payloads.",
+                        "In Linux, the dynamic linkers are referred to as ld.so and ld-linux.so. The latter is commonly used in contemporary Linux distributions as it handles dynamic linking for executables in the ELF binary format the current default format on Linux.<crlf>A number of environment variables (envars) can be used during the execution of the dynamic linker, the most important of which (for our purposes) is LD_PRELOAD. From the ld.so man page:",
+                        "Although effective, fortunately this technique is relatively easy to detect on Linux. To check the contents of the LD_PRELOAD envar, the export command can be used. If you suspect your system has been compromised and this envar is set then its likely that a malicious library has been used. The unset command can be used to delete the value of the envar and reveal the malware if a process hiding library was used.",
+                        "The LD_PRELOAD envar is not the only place where users can specify shared objects to be loaded first. The dynamic linker also consults the file /etc/ld.so.preload which can also contain user-specified paths to shared objects. In the case that paths are defined both in the envar and in this file, the envar takes precedence. Additionally, the ld.so.preload file causes a system-wide configuration change, resulting in shared objects being preloaded by any binary on the system.",
+                        "[LD_PRELOAD is] A list of additional, user-specified, ELF shared objects"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xfdb2489c>",
+                            "type": "File",
+                            "value": "ld.so.preload"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xcb9d901e>",
+                            "type": "UnknownWord",
+                            "value": "ld_preload"
+                        }
+                    }
+                ]
+            },
+            "<UNKNOWNWORD_0xd2c2945e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd2c2945e>",
+                    "type": "UnknownWord",
+                    "value": "unix-like"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xfcc63ac6>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfcc63ac6>",
+                    "type": "UnknownWord",
+                    "value": "devops"
+                },
+                "references": {
+                    "sentences": [
+                        "Matt Muir<crlf>Matt is a security researcher with a passion for UNIX and UNIX-like operating systems. He previously worked as a macOS malware analyst and his background includes experience in the areas of digital forensics, DevOps, and operational cyber security. Matt enjoys technical writing and has published research including pieces on TOR browser forensics, an emerging cloud-focused botnet, and the exploitation of the Log4Shell vulnerability."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xe62a26d6>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe62a26d6>",
+                    "type": "UnknownWord",
+                    "value": "blossom"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x1422273a>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1422273a>",
+                    "type": "UnknownWord",
+                    "value": "capital"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x78f71c5f>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x78f71c5f>",
+                    "type": "UnknownWord",
+                    "value": "eleven"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x46e84755>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x46e84755>",
+                    "type": "UnknownWord",
+                    "value": "ventures"
+                },
+                "references": {
+                    "sentences": [
+                        "Cado Security provides the cloud investigation platform that empowers security teams to respond to threats at cloud speed. By automating data capture and processing across cloud and container environments, Cado Response effortlessly delivers forensic-level detail and unprecedented context to simplify cloud investigation and response. Backed by Blossom Capital and Ten Eleven Ventures, Cado Security has offices in the United States and United Kingdom. For more information, please visit or follow us on Twitter @cadosecurity."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [
+                "https://github.com/gianlucaborello/libprocesshider"
+            ],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://www.cadosecurity.com",
+                "https://www.cadosecurity.com/free-investigation/",
+                "https://www.cadosecurity.com/demo/",
+                "https://twitter.com/CadoSecurity",
+                "https://www.linkedin.com/company/cado-security/",
+                "https://aws.amazon.com/marketplace/seller-profile?id=38874fd2-b585-412f-992a-cf111bbca38a",
+                "https://cadosecurity.com/sitemap/",
+                "https://cadosecurity.com/privacy-policy/",
+                "https://man7.org/linux/man-pages/man8/ld.so.8.html",
+                "https://sysdig.com/blog/hiding-linux-processes-for-fun-and-profit/",
+                "https://www.virustotal.com/gui/file/53047c6f255ceee5ec989d73a36fa97ac6035325ea1a81e959b585220188fd11",
+                "https://www.cadosecurity.com/",
+                "https://twitter.com/CadoSecurity",
+                "https://www.cadosecurity.com/cado-security-selected-as-top-10-finalist-for-rsa-conference-2022-innovation-sandbox-contest/"
+            ]
+        },
+        "images": [
+            "https://www.cadosecurity.com/wp-content/uploads/image3-8.png",
+            "https://www.cadosecurity.com/wp-content/uploads/image2-8.png",
+            "https://www.cadosecurity.com/wp-content/uploads/image1-11.png",
+            "https://www.cadosecurity.com/wp-content/uploads/image4-8.png",
+            "https://www.cadosecurity.com/wp-content/uploads/Screen-Shot-2022-05-17-at-3.08.55-PM.png",
+            "https://www.cadosecurity.com/wp-content/uploads/Screen-Shot-2022-01-07-at-11.27.32-AM.png"
+        ]
+    }
+}

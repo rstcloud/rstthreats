@@ -1,0 +1,131 @@
+<div>
+<p>In this study we are considering one of Zeus successors – Zloader 2. We’ll show how it works and its code peculiarities. We’ll present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families.</p>
+<h2>Introduction</h2>
+<p>Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions it’s able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.</p>
+<h2>History</h2>
+<p>According to <a href="https://zeusmuseum.com/zeus%201/" rel="noreferrer noopener" target="_blank">ZeusMuseum</a>, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code <a href="https://threatpost.com/zeus-source-code-leaked-051011/75217/" rel="noreferrer noopener" target="_blank">leaked</a>. As a result, new versions and variants appeared. One of the Zeus successors named Zloader <a href="https://blog.malwarebytes.com/cybercrime/2017/01/zbot-with-legitimate-applications-on-board/" rel="noreferrer noopener" target="_blank">appeared</a> at the turn of 2016 and 2017. Finally, another successor named Silent Night <a href="https://blog.malwarebytes.com/threat-analysis/2020/05/the-silent-night-zloader-zbot/" rel="noreferrer noopener" target="_blank">appeared</a> in 2019. It was for sale on the underground market. </p>
+<p>The earliest version of this variant we found has a SHA256:
+<code>384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a</code>
+Timestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted.</p>
+<p>Microsoft recently <a href="https://blogs.microsoft.com/on-the-issues/2022/04/13/zloader-botnet-disrupted-malware-ukraine/">announced</a> a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court.</p>
+<p>Although the original name of the malware likely was Silent Night and the <a href="https://zeusmuseum.com/zloader%202/" rel="noreferrer noopener" target="_blank">ZeusMuseum</a> calls it Zloader 2 we are simply going to use the name Zloader.</p>
+<h2>Technical analysis</h2>
+<h3>Modules and components</h3>
+<p>Zloader consists of different modules and components:</p>
+<ul><li>Downloader – initial infector</li><li>Backdoor – main module, exists in x86 and x64 versions</li><li>VNC module (x86 and x64)</li><li>Web Injects – received from C&amp;C</li><li>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)</li></ul>
+<p>Backdoors, VNC modules and additional libraries have assigned module IDs that are used by other components to refer to them.</p>
+<h3>Distribution</h3>
+<p>Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature.</p>
+<p>Map showing the distribution of infected systems:</p>
+<p><img height="389" src="https://lh6.googleusercontent.com/ZmMYYUJfjI2rdiRWIRRvPDsaecgIezMrlYIA8BAYAjlcPVJenIp7lbvrmEpN_XtJs4NRcT19doiFw9__EqI5ZBEPXkQSQUfRKHS69lh2muuBOU-s536GyrlNd74KEyeAh-21EFu7" width="624"/></p>
+<h3>Code peculiarities</h3>
+<p>Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called.</p>
+<p>Second, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other “replacement” functions. To add more insult to the injury multiple “replacement” functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned “replacement” functions. </p>
+<p>Strings are encrypted with a simple XOR algorithm.</p>
+<p>Samples have very little imported functions. APIs are resolved in runtime by the hashes of their names.</p>
+<p>As a result, more than a half of the file size is useless and serves as an obfuscation of simple operations.</p>
+<p></p>
+<p><img height="528" src="https://lh6.googleusercontent.com/I0WQosnGRXyP_gEuuGswjk_VglMMG0ypH-tgkzHAjZMo8d_E01Xv1fWvAd-KCPIw0R3cwyAfgy2PvRCI6FM5ZwG0Kd52lV5Wc6krjcqV8aeI_a0-jje8CI9Ns2L_00UP9xl47EoW" width="624"/></p>
+<h3>Configuration</h3>
+<p>Both Downloader and Backdoor modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like <code>vcvslrpvwwfanquofupxt</code>. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:</p>
+<ul><li>Botnet name (<code>divader</code> on the picture below)</li><li>Campaign name (<code>xls_s_2010</code>)</li><li>List of hardcoded C&amp;Cs</li><li>RC4 key (<code>03d5ae30a0bd934a23b6a7f0756aa504</code>)</li></ul>
+<p></p>
+<p><img height="881" src="https://lh4.googleusercontent.com/md7sG8nyfvIkMyTJMfr5EBH1oOxnHKbLb5kCic-vkhKCC9cLTlDFTjBwpRjnJ3a1vrq5yoZc_61byCVL9bzk-0z9T0tFJmhDo8-EPTT5DLyzxBM0L4B7W2_Z7HV2Jbv_azoeblT3" width="624"/></p>
+<h3>BinStorage</h3>
+<p>We have to briefly cover the BinStorage – the data format used by Zloader to communicate with C&amp;Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing <code>FieldID - DWORD</code> describing the meaning of the data.</p>
+<p>Some FieldIDs are hardcoded. For example, in <code>FieldID=0x4E20</code> the last working C&amp;C is stored. Other FieldIDs are derived from file paths (used to store stolen files).</p>
+<h3>Registry usage</h3>
+<p>Zloader modules (at least Downloaders and Backdoors) use a registry to store various data necessary for their work. The ROOT_KEY for this data is <code>HKEY_CURRENT_USER\Software\Microsoft\</code></p>
+<p>The most important and interesting data structure, stored by the Zloader in the registry is called <code>MAIN_STRUCT</code>. It’s subkey in the <code>ROOT_KEY</code> and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the <code>MAIN_STRUCT</code>.</p>
+<p><code>MAIN_STRUCT</code> is encrypted using RC4 with the key from the configuration. It stores:</p>
+<ul><li>Registry paths to other storages, used by Zloader</li><li>Files and directories path, used by Zloader</li><li>Encryption key(s) to decrypt those storages</li></ul>
+<h3>Files usage</h3>
+<p>Root path is <code>%APPDATA%</code>. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the <code>MAIN_STRUCT</code>.</p>
+<h3>Networking</h3>
+<p>As was mentioned before, communication between the bot and C&amp;C is done using BinStorages. Depending on the actual type of the message, field list may be changed, but there are 5 constant fields sent to C&amp;C:</p>
+<ul><li>Some DWORD from the Configuration</li><li>Botnet name from the Configuration</li><li>BotID, derived from the system information</li><li>Debug flag from the Configuration</li><li>16 random bytes</li></ul>
+<p>Requests are encrypted using the RC4 key from the Configuration. C&amp;C responses are signed with RSA.</p>
+<h4>PING request</h4>
+<p>This request is used to check if C&amp;C is alive. Response contains only random bytes sent by a bot.</p>
+<h4>DOWNLOAD MODULE request</h4>
+<p>This request is used to download modules by their ID from the C&amp;C. The response is not in a BinStorage form!</p>
+<h4>GET CONFIG request</h4>
+<p>Used to receive configuration updates: new C&amp;Cs, WebInjects, tasks for downloading etc.</p>
+<h4>C&amp;Cs and DGA</h4>
+<p>As was shown before, built in configuration has a list of hardcoded C&amp;Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&amp;Cs, Zloader uses DGA – Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration.</p>
+<p>There is a 3rd type of C&amp;Cs – received in the response from the server. They’re stored into the Registry.</p>
+<h3>Downloader module</h3>
+<p>Analysis based on version 1.6.28.0, <code>44ede6e1b9be1c013f13d82645f7a9cff7d92b267778f19b46aa5c1f7fa3c10b</code></p>
+<p>Function of Downloader is to download, install and run the next module – the Backdoor.</p>
+<h4>Main function</h4>
+<p>Just after the start of the Downloader module, junk code is started. It consists of many junk functions, which forms a kind of a “network”. In the image below there is a call graph from just a single junk function. These functions also trying to read, write and delete some <code>*.txt</code> files <code>%TEMP%</code>. The purpose of this is to delay the execution of the payload and, We suppose, to complicate the emulation, debugging and analysis.</p>
+<p>The second and the last task of the Main function is to start <code>msiexec.exe</code> and perform the PE injection of the code into it. Injected data consists of two buffers: the big one, where the Downloader is stored in the encrypted form and the small one (0x42 bytes) with decryption code. Just after the injection Downloader terminates himself.</p>
+<h4>Injected code</h4>
+<p>Control flow passed to the small buffer, which decrypts the Downloader in the address space of msiexec.exe After the decryption, Downloader begins to execute its main task. </p>
+<p>First of all, the injected code tries to read <code>MAIN_STRUCT</code> from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: <code>MAIN_STRUCT</code> is created, Downloader module is copied into <code>%APPDATA%</code> and added to the autorun key <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> with random value name.</p>
+<p>In any case, the Backdoor module is requested from the disk or from the network and executed.</p>
+<h3>Backdoor module</h3>
+<p>Analysis based on version 1.6.28.0, <code>c7441a27727069ce11f8d54676f8397e85301b4d65d4d722c6b239a495fd0282</code></p>
+<p>There are actually two Backdoor modules: for 32-bit systems (moduleID <code>0x3EE</code>) and for 64-bit systems (moduleID <code>0x3E9</code>). Downloader always requests a 32-bit Backdoor.</p>
+<p>Backdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger.</p>
+<p>Key Backdoor abilities:</p>
+<ul><li>Starting VNC module</li><li>Injecting WebInjects into the pages visited using browsers</li><li>Downloading and execute arbitrary file</li><li>Keylogging</li><li>Making screenshots</li><li>Stealing files and sending to C&amp;C</li></ul>
+<h4>Stealing files</h4>
+<p>The largest group of software from which Zloader steal files is crypto wallets:</p>
+<ul><li>Electrum</li><li>Ethereum</li><li>Exodus cryptowallet</li><li>Zcash</li><li>Bitcoin-Qt</li><li>Etc.</li></ul>
+<p>It also steals data from browsers: cookies from Chrome, Firefox and IE; saved logins from Chrome. And, finally, it is able to steal accounts information from Microsoft Outlook.</p>
+<h4>Hooking</h4>
+<p>To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:</p>
+<ul><li>explorer.exe</li><li>msiexec.exe</li><li>iexplore.exe</li><li>firefox.exe</li><li>chrome.exe</li><li>msedge.exe</li></ul>
+<p>64-bit version of Backdoor is injected into 64-bit processes, 32-bit version – into 32-bit processes.</p>
+<p>Injected code hooks the following WinAPI functions:</p>
+<ul><li>NtCreateUserProcess</li><li>NtCreateThread</li><li>ZwDeviceIoControlFile</li><li>TranslateMessage</li><li>CertGetCertificateChain</li><li>CertVerifyCertificateChainPolicy</li></ul>
+<p>Hooks might be divided in 3 groups, depending on the purpose:</p>
+<ol><li><code>NtCreateUserProcess</code> and <code>NtCreateThread</code> are hooked to inject a Backdoor module to newly created threads and processes.</li><li><code>ZwDeviceIoControlFile</code>, <code>CertGetCertificateChain</code> and <code>CertVerifyCertificateChainPolicy</code> are hooked to support WebInjection mechanism</li><li><code>TranslateMessage</code> is hooked to log the keys pressed and to create screenshots</li></ol>
+<h4>Web Injecting</h4>
+<p>First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is “Main Instance” and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks <code>ZwDeviceIoControlFile</code> and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.</p>
+<p>Hooked ZwDeviceIoControlFile function is waiting for <code>IOCTL_AFD_CONNECT</code> or <code>IOCTL_AFD_SUPER_CONNECT</code> and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates.</p>
+<h2>Botnets, Campaigns and their activity</h2>
+<p>Most active botnets and campaigns use RC4 key <code>03d5ae30a0bd934a23b6a7f0756aa504</code> and we’ll focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x.</p>
+<h3>Botnet and Campaign names</h3>
+<p>Among botnet names it is worth mentioning the following groups:</p>
+<ol><li><code>DLLobnova</code>, <code>AktualizacjaDLL</code>, <code>googleaktualizacija</code>, <code>googleaktualizacija1</code>, <code>obnovlenie19</code>, <code>vasja</code>, <code>ivan</code></li><li><code>9092zi</code>, <code>9092ti</code>, <code>9092ca</code>, <code>9092us</code>, <code>909222</code>, <code>9092ge</code></li></ol>
+<p>The first one contains transliterated Slavic words and names (<code>vasja</code>, <code>ivan</code>), maybe with errors. It sheds light on the origins of bad guys – they are definitely Slavs.</p>
+<p>Samples with botnet names from the second group were first observed in November 2021 and we found 6 botnet names from this group in the next two months. Letters after numbers, like <code>ca</code> and <code>us</code> might be country codes.</p>
+<p>We see the same picture with campaign names: quite a big amount of Slavic words and the same <code>9092*</code> group. </p>
+<h3>WebInjects</h3>
+<p>We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc.</p>
+<p>Injected code is usually small: from dozens of bytes up to 20 kb. To perform its tasks, it loads JavaScript code from external domains, controlled by bad guys. Analysis of these domains allowed us to find connections between Zloader operators and other cybercrime gangs.</p>
+<h3>Download tasks</h3>
+<p>Zloader is able to download and execute arbitrary files by the commands from his C&amp;Cs, but for a long time we haven’t seen these commands at all. Things changed on 24 November 2021, when botnet <code>9092ca</code> received a command to download and execute the file from <code>teamworks455[.]com</code>. This domain was mentioned in [6].</p>
+<p>Another two download tasks contained <code>braves[.]fun</code> and <code>endoftheendi[.]com</code></p>
+<h2>Connections</h2>
+<p>During our tracking we have noticed links to other malware families we originally thought were unrelated.</p>
+<h3>Raccoon Stealer</h3>
+<p>Two out of three download tasks contained links to Raccoon Stealer. Downloaded samples have the following sha256 hashes:</p>
+<ul><li><code>5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc</code></li><li><code>5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed</code></li></ul>
+<p>Both of them have the same Raccoon configuration with Telegram channel <code>kumchakl1</code>. </p>
+<p>Moreover, Raccoon was mentioned in [6] before we received commands from C&amp;Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer <a href="https://decoded.avast.io/vladimirmartyanov/raccoon-stealer-trash-panda-abuses-telegram/" rel="noreferrer noopener" target="_blank">here</a>.</p>
+<h3>Ursnif</h3>
+<p>Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions.</p>
+<h4>Digital Signatures</h4>
+<p>It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!</p>
+<p>As an example, consider a signature:
+Issuer <code>BABJNCXZHQCJUVWAJJ</code> 
+Thumbprint <code>46C79BD6482E287647B1D6700176A5F6F5AC6D57</code>.</p>
+<p>Zloader sample signed with it has a SHA256 hash:
+<code>2a9ff0a0e962d28c488af9767770d48b9128b19ee43e8df392efb2f1c5a696f</code>. </p>
+<p>Signed Ursnif sample has a SHA256 hash:
+<code>54e6e6b23dec0432da2b36713a206169468f4f9d7691ccf449d7d946617eca45</code></p>
+<p>It is not the only digital signature, shared among Ursnif and Zloader samples.</p>
+<h4>Infrastructure</h4>
+<p>As we mentioned before, the first observed download command contained a link to <code>teamworks455[.]com</code>. We checked the TLS certificate for this site and realized that it was for another site – <code>dotxvcnjlvdajkwerwoh[.]com</code>. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data.</p>
+<p>Another example – <code>aerulonoured[.]su</code> – host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021.</p>
+<p>Third example – <code>qyfurihpsbhbuvitilgw[.]com</code> which was found in Zeus configuration update, received from C&amp;C on 20 October 2021. It must be added to a C&amp;C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021</p>
+<p>And, finally, 4th example – <code>etjmejjcxjtwweitluuw[.]com</code> This domain was generated using DGA from key <code>03d5ae30a0bd934a23b6a7f0756aa504</code> and date – 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&amp;C. The same host was found in Ursnif WebInjects on 1 November 2021</p>
+<h2>Conclusion</h2>
+<p>We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it.</p>
+<p></p>
+Tagged as<a href="https://decoded.avast.io/tag/analysis/" rel="tag">analysis</a>, <a href="https://decoded.avast.io/tag/botnet/" rel="tag">botnet</a>, <a href="https://decoded.avast.io/tag/malware/" rel="tag">malware</a>, <a href="https://decoded.avast.io/tag/reversing/" rel="tag">reversing</a>, <a href="https://decoded.avast.io/tag/takedown/" rel="tag">takedown</a> 
+Share:<a class="meks_ess-item socicon-twitter" href="#">Twitter</a><a class="meks_ess-item socicon-facebook" href="#">Facebook</a>
+</div>

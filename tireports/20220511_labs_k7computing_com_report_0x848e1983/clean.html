@@ -1,0 +1,85 @@
+<div>
+<img alt="" class="hidden-social-img" src="https://labs.k7computing.com/wp-content/uploads/2022/05/APT-Attacks-on-EDU2.png" style="max-width:80%;height:auto;width:auto;"/>
+<a class="uncategorized" href="https://labs.k7computing.com/index.php/category/advanced-persistent-threats/">Advanced Persistent Threats</a><a class="uncategorized" href="https://labs.k7computing.com/index.php/category/macro/">Macro</a><a class="uncategorized" href="https://labs.k7computing.com/index.php/category/remote-access-trojan/">Remote Access Trojan</a>
+<h1 class="entry-title">Transparent Tribe Targets Educational Institution</h1>
+By SaikumaravelMay 11, 2022
+ 
+<p></p><p>Recently we came across a <a href="https://twitter.com/h2jazi/status/1518382259228844033" rel="noopener" target="_blank">Twitter feed</a> that described a Transparent Tribe malware sample targeting Indian Institute of Technology (IIT), Hyderabad and the sample was fairly new and did not have many detections (at the time of writing this blog) which attracted our interest in diving deeper into the sample. </p>
+<p>Transparent Tribe aka APT36 or Mythic Leopard is suspected to be of Pakistani origin and primarily targets Indian government and military entities, as per public <a href="https://www.news18.com/news/tech/smelling-a-rat-murky-hacking-group-transparent-tribe-targeting-indias-govt-and-military-says-report-4925648.html" rel="noopener" target="_blank">reports </a>. Transparent Tribe has been active since 2013 and has targeted government organizations in around 30 countries. Their usual attack sequence is to create fake domains mimicking the government organization and then deliver the payload. It frequently uses Crimson RAT, a Windows based Remote Admin Tool which provides unauthorized access to a victim’s device over a network.</p>
+<p>In 2019, we in K7 Labs published an <a href="https://labs.k7computing.com/index.php/transparent-tribe-apt-targeting-india/" rel="noopener" target="_blank">article</a> about Transparent Tribe targeting the CLAWS, a security think tank team affiliated with the Indian Army. Recently similar kinds of attacks have been happening more frequently, targeting state governments and other government institutions. Transparent Tribe recently targeted the West Bengal government employees by sending a spoofed document (of a legitimate government document) which delivers a Crimson RAT payload. Our sample of interest now, also delivers a document pretending to be a legitimate survey form by IIT Hyderabad. Once the document is opened, it asks the user to enable a macro through which it can run the VBA script.</p>
+<figure class="wp-caption aligncenter" id="attachment_23915"><img alt="" class="wp-image-23915 size-full" height="818" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1.png" style="max-width:800px;height:auto;width:auto;" width="847"/><figcaption class="wp-caption-text" id="caption-attachment-23915">Figure 1: Survey form with macro</figcaption></figure>
+<p>We used <a href="http://decalage.info/python/oletools" rel="noopener" target="_blank">oletools</a> to extract the VBA script from the macro. We then gleaned that this was the same method which had been used before. The malicious macro contained one Form Object for which the first two values are “80” “75” which when converted to ASCII will be “PK” indicating Pakistan that adds suspicion that this attack could be of Pakistan origin. </p>
+<figure class="wp-caption aligncenter" id="attachment_23917"><img alt="" class="wp-image-23917 size-full" height="489" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure2.png" width="561"/><figcaption class="wp-caption-text" id="caption-attachment-23917">Figure 2: VBA script</figcaption></figure>
+<p>While executing the document it runs the VBA script. Like the other Transparent Tribe variants, in this VBA script it creates a new directory E0d1 under C:\ProgramData\ and writes the array of values from the VBA into a file Chairtabkjh.zip in that directory. The zip file contains the executable file named Chairtabkjh8.exe which is extracted in the same path. The extracted file adds a startup entry to run in the background as a child process of the word document. </p>
+<figure class="wp-caption alignnone" id="attachment_23918"><img alt="" class="wp-image-23918 size-full" height="67" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure3.png" style="max-width:800px;height:auto;width:auto;" width="887"/><figcaption class="wp-caption-text" id="caption-attachment-23918">Figure 3: Dropped zip</figcaption></figure>
+<h3>Analysis </h3>
+<p>We identified that the binary Chairtabkjh8.exe is .NET compiled and protected by Crypto-Obfuscator. We used <a href="https://github.com/Rhotav/Crypto-Deobfuscator" rel="noopener" target="_blank">Crypto-Deobfuscator</a> to de-obfuscate the binary for analysis. </p>
+<figure class="wp-caption aligncenter" id="attachment_23919"><img alt="" class="wp-image-23919 size-full" height="108" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure4.png" width="345"/><figcaption class="wp-caption-text" id="caption-attachment-23919">Figure 4: Compiler details</figcaption></figure>
+<p>It uses AMSI (Anti Malware Scan Interface) bypass technique to escape from scanning of AMSI API.</p>
+<figure class="wp-caption alignnone" id="attachment_23920"><img alt="" class="wp-image-23920 size-full" height="176" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure5.png" style="max-width:800px;height:auto;width:auto;" width="705"/><figcaption class="wp-caption-text" id="caption-attachment-23920">Figure 5: AMSI bypass</figcaption></figure>
+<p>It also uses Base64 encoding technique to encode the strings and the most common persistent technique of adding a run entry for the Chairtabkjh8.exe. The registry path is encoded in Base64 and while executing it decodes and adds the run entry.</p>
+<figure class="wp-caption aligncenter" id="attachment_23921"><img alt="" class="wp-image-23921 size-full" height="239" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure6.png" style="max-width:800px;height:auto;width:auto;" width="759"/><figcaption class="wp-caption-text" id="caption-attachment-23921">Figure 6: Base64 encoding</figcaption></figure>
+<p>After adding the run entry, the next function executed is for delayed execution technique. It performed a delayed execution technique by holding the execution. It gets the current system time and holds for 3 minutes before continuing execution. </p>
+<figure class="wp-caption aligncenter" id="attachment_23922"><img alt="" class="wp-image-23922 size-full" height="110" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure7.png" width="511"/><figcaption class="wp-caption-text" id="caption-attachment-23922">Figure 7: Delayed execution technique</figcaption></figure>
+<p>Since we already know Transparent Tribe uses RAT, this sample that is being analyzed may also use some of these common malicious behaviors of RAT like</p>
+<ol>
+<li>List victim’s all files and folders in a C2 specified directory path</li>
+<li>Run specific processes at the endpoint keylogger </li>
+<li>Gets the information about the image files like image name, size of image and its creation time as specified by C2</li>
+<li>Take screenshots of the present day display screen and send it to C2.</li>
+<li>Forward keylogger logs to the C2.</li>
+<li>Send system information including computer name, username etc., to C2</li>
+</ol>
+<p>In this scenario, we found only two such behaviors related to Crimson RAT, first one being Chairtabkjh8.exe sends system information to C2 including computer name and username. Second activity being it gets the information about the image files like image name, size of image and its creation time as specified by C2.</p>
+<figure class="wp-caption aligncenter" id="attachment_23923"><img alt="" class="wp-image-23923 size-full" height="132" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure8.png" width="542"/><figcaption class="wp-caption-text" id="caption-attachment-23923">Figure 8: Gets system information</figcaption></figure>
+<figure class="wp-caption aligncenter" id="attachment_23924"><img alt="" class="wp-image-23924 size-full" height="470" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure9.png" style="max-width:800px;height:auto;width:auto;" width="683"/><figcaption class="wp-caption-text" id="caption-attachment-23924">Figure 9: Gets image information</figcaption></figure>
+<p>After collecting the data from the victim’s system, it tries to make a TCP connection to send the data to the C2 server sunnyleone[.]hopto[.]org by using different customized ports each time to connect to the C2. Since the C2 was down at the time of analysis of this sample, it was not able to make a successful connection.</p>
+<p>Ports used</p>
+<ul>
+<li>10101</li>
+<li>4401</li>
+<li>3203</li>
+<li>4866</li>
+<li>8832</li>
+</ul>
+<figure class="wp-caption aligncenter" id="attachment_23925"><img alt="" class="wp-image-23925 size-full" height="113" src="https://labs.k7computing.com/wp-content/uploads/2022/05/Figure10.png" style="max-width:800px;height:auto;width:auto;" width="1010"/><figcaption class="wp-caption-text" id="caption-attachment-23925">Figure 10: TCP connection to C2</figcaption></figure>
+<p>It is always advisable to verify if the files or documents are from reputable sources and exercise caution while using them. Also protect your system by using a reputable security product such as “K7 Total Security” and keep it updated to stay safe from threats.</p>
+<p>Indicators of Compromise (IOCs)</p>
+<table>
+<tbody>
+<tr>
+<td>File Name</td>
+<td>Hash</td>
+<td>Detection Name</td>
+</tr>
+<tr>
+<td>Assignment-88.docm</td>
+<td>64C20687676B7A96987D0F9C4F8777B9</td>
+<td>Trojan ( 0001140e1 )</td>
+</tr>
+<tr>
+<td>Chairtabkjh8.exe</td>
+<td>E3A45FFFAB35F9E0331963A1F1D793DD</td>
+<td>Trojan ( 005393351 )</td>
+</tr>
+</tbody>
+</table>
+<p>C2</p>
+<p>hxxps://sunnyleone[.]hopto[.]org</p>
+<p>References</p>
+<p><a href="https://twitter.com/h2jazi/status/1518382259228844033" rel="noopener" target="_blank">https://twitter.com/h2jazi/status/1518382259228844033</a></p>
+<p></p>
+<h3 class="comment-reply-title">Like what you're reading? Subscribe to our top stories.</h3>
+<p>If you want to subscribe to our monthly newsletter, please submit the form below.</p> Email* : 
+<ul class="controls">
+<li class="previous-post mouse-leaving">
+<h3>Previous Post« <a href="https://labs.k7computing.com/index.php/shells-blooming-in-spring/" rel="prev">Shells blooming in Spring</a>
+</h3>
+</li>
+<li class="next-post mouse-leaving">
+<h3>Next Post
+</h3>
+</li>
+</ul>
+<h3 class="related-title">More Posts</h3>
+</div>

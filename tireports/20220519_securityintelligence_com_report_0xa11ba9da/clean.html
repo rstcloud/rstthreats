@@ -1,0 +1,418 @@
+<div>
+<img alt="A computer screen with program code warning of a detected malware script program. 3d illustration" class="i-amphtml-fill-content i-amphtml-replaced-content" src="https://securityintelligence.com/wp-content/webp-express/webp-images/doc-root/wp-content/uploads/2022/05/Malware-Detected-Warning-Screen-630x330.jpeg.webp" style="max-width:80%;height:auto;width:auto;"/>
+<a href="https://securityintelligence.com/category/x-force/malware-threat/">Malware</a>
+May 19, 2022
+ By <a href="https://securityintelligence.com/author/charlotte-hammond/">Charlotte Hammond</a>
+ co-authored by
+ 
+ <a href="https://securityintelligence.com/author/ole-villadsen/">Ole Villadsen</a>
+ , 
+ <a href="https://securityintelligence.com/author/golo-muhr/">Golo Mühr</a>
+ 25 min read
+<p>IBM Security X-Force researchers have continually analyzed the use of several crypters developed by the <a href="https://securityintelligence.com/posts/trickbot-gang-doubles-down-enterprise-infection/">cybercriminal group ITG23</a>, also known as Wizard Spider, DEV-0193, or simply the “Trickbot Group”. The results of this research, along with evidence gained from the disclosure of internal ITG23 chat logs (“<a href="https://www.breachquest.com/conti-leaks-insight-into-a-ransomware-unicorn/" rel="noopener nofollow" target="_blank">Contileaks</a>”), provide new insight into the connections and cooperation between prominent cybercriminal groups whose attacks often lead to ransomware.</p>
+<p>Crypters are applications designed to encrypt and obfuscate malware to evade analysis by antivirus scanners and malware analysts. Crypters generally operate by encrypting the pre-compiled malware payload and embedding it within a secondary binary, known as a stub, which contains code to decrypt and execute the malicious payload. The use of crypters allows malware developers to easily experiment with different methods of evading antivirus detection without having to make changes to the malware itself.</p>
+<p>X-Force analyzed thirteen crypters that have all been used with malware built or operated by ITG23 internal teams or third-party distributors — including Trickbot, BazarLoader, Conti, and Colibri — as well as malware developed by other groups such as Emotet, IcedID, Qakbot, and MountLocker. The presence of one of these crypters on a file sample is a strong indication that its developer, distributer, or operator is either a part of ITG23 or has a partnership with the group.</p>
+<p>X-Force found evidence that ITG23 by mid-2021 scaled up their efforts to crypt malware with the development of several new crypters and the construction of a Jenkins build server to automate the crypting of malware at scale. X-Force also observed the analyzed crypters used repeatedly by Emotet and IcedID malware samples, indicating ITG23 is also crypting malware for these groups. These findings add to a growing body of evidence indicating a close relationship between ITG23 and the threat actors behind the development and operation of IcedID and Emotet.</p>
+<p>Additionally, X-Force uncovered that at least one ITG23 crypter has been used repeatedly since late February 2022 with the Qakbot banking trojan and at least once with the Gozi banking trojan likely delivered by the ITG23 distribution affiliate TA551 (tracked by X-Force as Hive0106). X-Force’s analysis of these crypters has also uncovered a previously undisclosed relationship between the IcedID group and MountLocker ransomware-as-a-service (RaaS) operation.</p>
+<h2>A Tangled Web They Weave</h2>
+<h3>ITG23’s “Build Machine”</h3>
+<p>ITG23 is a cybercriminal gang known primarily for developing the Trickbot banking Trojan, which was first identified in 2016 and initially used to facilitate online banking fraud. The group since that time expanded its operations to develop and operate new malware such as BazarLoader and <a href="https://securityintelligence.com/posts/new-malware-trickbot-anchordns-backdoor-upgrades-anchormail/">Anchor</a>. ITG23 also adapted to the ransomware economy by using its payloads to gain a foothold in victim environments for ransomware attacks and developing and operating the Conti and Diavol RaaS operations. ITG23 is best thought of as a group of groups, not unlike a large corporation, who report to common “upper management” and share infrastructure and support functions, such as IT and human resources. One of these support groups within ITG23 is dedicated to developing crypters for use with the group’s own malware operations as well as for several other groups.</p>
+<p>ITG23 have been crypting their malware for several years, and crypters used by the group were regularly seen in use with malware such as Trickbot, Emotet, Cobalt Strike and Ryuk. However, the development of multiple new crypters during the past year suggests a focused effort to scale up their crypting operation.</p>
+<p>Evidence gained from several sources, including ContiLeaks, indicates that ITG23 has set up a Jenkins build server to automate the mass crypting of malware, also referred to as the “Build Machine”. Jenkins is an open-source automation server designed to automate the building, testing, and deploying of software. The “Build Machine” was created in April 2021, coinciding with an increase in the use of crypters with malware developed by ITG23 and other groups.</p>
+<p>Since that time, ITG23 crypters have been applied to:</p>
+<ul><li>Malware used to gain a foothold in victim environments, such as Trickbot, BazarLoader, Sliver, IcedID, Emotet, Qakbot, and Gozi. We even identified ITG23 crypters with <a href="https://blog.malwarebytes.com/threat-intelligence/2022/04/colibri-loader-combines-task-scheduler-and-powershell-in-clever-persistence-technique/" rel="noopener nofollow" target="_blank">Colibri</a>, a loader advertised on underground forums that was used to download Trickbot in fall of 2021, likely by an internal ITG23 distribution affiliate. Some of these malware families are built by ITG23, such as Trickbot and BazarLoader, and others are built by different groups, such as IcedID, Emotet, and Qakbot. ITG23 distribution affiliates have deployed <a href="https://www.proofpoint.com/us/blog/security-briefs/ta551-uses-sliver-red-team-tool-new-activity" rel="noopener nofollow" target="_blank">Sliver</a>, an open source, cross-platform adversary simulation and red team platform, probably to gain access for ITG23 internal red teams to conduct ransomware attacks.</li>
+<li><a href="https://www.cobaltstrike.com/features/" rel="noopener nofollow" target="_blank">Cobalt Strike</a> beacon samples downloaded during attacks commencing with the above malware and used by internal red teams or other affiliates when performing ransomware attacks.</li>
+<li>Ransomware such as Conti and MountLocker, also known as Xinglocker, AstroLocker, and Quantum, which are often deployed following an infection with the above tools and malware.</li>
+</ul><p>ITG23 has discontinued use of Trickbot and BazarLoader as of December 2021 and February 2022, respectively, but X-Force continues to observe the crypters leveraged by other malware, including IcedID, Emotet, Conti, Qakbot, and the adversary simulation software Cobalt Strike. One notable exception is the Anchor malware which although attributed to ITG23 does not tend to use the same crypters as the other malware mentioned throughout this report. The Anchor malware was commonly observed using a separate crypter, named ShellStarter, which has some code overlap with Anchor itself and was likely created by the same developer. The ShellStarter crypter was also regularly used with Cobalt Strike payloads, but otherwise did not seem to be used for general crypting operations. We are also currently analyzing <a href="https://www.proofpoint.com/us/blog/threat-insight/bumblebee-is-still-transforming" rel="noopener nofollow" target="_blank">Bumblebee</a> malware samples which we have also linked to ITG23 to determine if they are using an ITG23 crypter.</p>
+<h3>ContiLeaks</h3>
+<p>In February 2022, a Ukrainian security researcher using the Twitter handle “<a href="https://research.nccgroup.com/2022/03/31/conti-nuation-methods-and-techniques-observed-in-operations-post-the-leaks/" rel="noopener nofollow" target="_blank">ContiLeaks</a>” revealed a wealth of information about ITG23 and its operations, including private conversations between its members. While these leaks appeared to concentrate on the Conti RaaS operation, they also show that it was part of the larger ITG23 “corporation” which also includes ITG23’s crypting operation. These chats indicate that the head of this crypting operation uses the handle “Bentley”, who manages a team of developers responsible for both developing the crypters and crypting malware for affiliates and partners. Bentley in turn regularly provides status reports to “Mango”, a more senior manager within ITG23 who reports to the group’s former leader “Stern.” Other <a href="https://research.checkpoint.com/2022/leaks-of-conti-ransomware-group-paint-picture-of-a-surprisingly-normal-tech-start-up-sort-of/" rel="noopener nofollow" target="_blank">security researchers</a> have also identified Bentley and his role managing the crypting team. Below is an example of a status update on malware crypting that Bentley would send on a regular basis to Mango.</p>
+<p><code>Date: Aug 26, 2021 @ 11:08:21.000
+From: bentley@q3mcco35auwcstmt.onion
+To: mango@q3mcco35auwcstmt.onion
+Message:
+Проект лео - 13 криптов. Билд машина (Project leo - 13 crypts. Build Machine)
+БК (BK)
+группа 15: 20 криптов, билд машина (group 15: 20 crypts, build machine)
+группа 19: 5 крипта, билд машина (group 19: 5 crypts, build machine)
+группа 20: 1 крипто, билд машина (group 20: 1 crypt, build machine)
+Трик: (Trick)
+4 длл: 2 сэм 2 невил (4 dll: 2 sam 2 nevil)
+Тройка: (Troika:)
+невил (nevil)
+Шелкод: билд машина (Shellcode: Build Machine)
+Кобальт: билд машина (Cobalt: Build Machine)</code></p>
+<p>Chat logs from the ContiLeaks also provide details about the creation of the build machine. On April 15, 2021, Mango informed Stern that the build machine for the crypters would be ready by the end of April 2021.</p>
+<p><code>Mango → Stern: билд машина для крипторов будет готова к концу месяца, вчера уже начали обкатывать ее но пока сыровата
+(The build machine for cryptors will be ready by the end of the month, yesterday they already started to run it in, but it’s still raw)</code></p>
+<p>On June 7, 2021, Bentley provides an update to Stern on the status of the transition of work to the build machine.</p>
+<p><code>Bentley → Stern: Дела - хорошо. Интересно и насыщено.
+Все крипторы перешли из ручного труда в автоматическуй сборку через билд машину.
+Теперь они занимаются актуализацией и чисткой стабов. А файлы я делаю на билд машине, проверяю и выдаю.
+Если что-то билдится грязным - обращаюсь к криптору. Он чистит стаб. Снова проверяем и выдаем.
+Задачи:
+1. Криптование файлов для Лео на билд машине.
+2. Шелкод кобальт
+3. Локеры
+4. Коабальт ехе и длл
+5. dll трика
+6. Обучаю и предоставлюя доступ другим членам команды к билд машине, чтобы они могли сами собирать крипты.
+7. Подготовака линков для нагрузки и тестирование ехелей для netwalker, hash, cherry.</code></p>
+<p><code>Everything is OK. Interesting and rich.
+All cryptors have moved from manual labor to automatic assembly through the build machine.
+Now they are engaged in updating and cleaning stubs. And I make files on the build machine, check and issue.
+If something is being built dirty, I turn to cryptor. He cleans the stub. Check again and release.</code>
+<code>Tasks:
+1. Crypting files for Leo on the build machine.
+2. Cobalt shellcode
+3. Lockers
+4. Cobalt exe and dll
+5. Trickbot dll
+6. Educate and give other team members access to the build machine so that they can collect the crypts themselves.
+7. Preparing links for loading and testing excels for netwalker, hash, cherry.</code></p>
+<p>Within the ContiLeaks, there are multiple references to the use of a Jenkins server for the Build Machine. In one such example, on January 17, 2022, two ITG23 developers “derekson” and “elon” discuss the Jenkins server. X-Force also uncovered Program Database (PDB) file paths used by ITG23 crypters that reference Jenkins (see below for more details).</p>
+<p><code>Derekson → Elon: Привет. Почти закончил со вторым сервером. Скажи когда можно подключить к дженкинсу для теста?</code></p>
+<p><code>(Hello. Almost finished with the second server. Tell me when can I connect to jenkins for a test?) </code></p>
+<p>Throughout the leaked chats, there are multiple examples of Bentley delivering crypted malware samples to affiliates and partners such as <a href="https://securityintelligence.com/posts/trickbot-gang-doubles-down-enterprise-infection/">Cherry, Netwalker, and Zeus</a>. X-Force assesses that “zevs” (“zeus”) is affiliated with the prominent distribution group Hive0106 (aka TA551), which used the gtags ‘zev,’ ‘zem’ and ‘zvs’ during their Trickbot campaigns. Hive0106 is a prominent distribution affiliate with an established relationship with ITG23. Throughout the chats, “zeus” is alternatively translated as “зевса”, “зевсом”, “зевсу”, and “зевс” depending on the grammatical case.</p>
+<p>For example, on Aug 10, 2021, Bentley sends the following request to Hof, a developer associated with Trickbot malware:</p>
+<p><code>Bentley → Hof: Доброе утро. Сделай, пожалуйста, zev4.dll и zem1.dll для Зевса
+(Good morning. Please make zev4.dll and zem1.dll for Zeus)</code></p>
+<p>The following messages also indicate crypted samples were prepared for Zevs:</p>
+<p><code>August 31, 2021:
+Bentley → Zevs: Еще ответ: у нас есть опыт серийной выдачи криптов п БК* уже, один заказчик берет партиями по 30-100 штук
+(Another answer: we have experience in the serial issuance of crypts and BK* already, one customer takes in batches of 30-100 pieces)</code></p>
+<p><code>September 24, 2021:</code></p>
+<p><code>Neo → Zevs: монт молчит, я крипты готовил 3 штуки к 8 по мск
+(Mont is silent, I prepared 3 crypts by 8 Moscow time)</code></p>
+<p>*We assess БК (BK) likely is a reference to BazarLoader based on analyzing multiple chat references to this acronym.</p>
+<h3>Emotet and IcedID: Longtime Pals</h3>
+<p>The use of ITG23 crypters with Emotet and IcedID malware is the latest evidence of a close relationship with these groups that has featured distributing each other’s malware and cooperating on malware development. Emotet first appeared in 2014 as a banking trojan and later emerged as a prominent downloader for other banking trojans, including IcedID, Qakbot, and Trickbot. IcedID, also known as Bokbot and often referred to by ITG23 as Anubis, is a banking trojan <a href="https://securityintelligence.com/new-banking-trojan-icedid-discovered-by-ibm-x-force-research/">first discovered</a> by X-Force in September 2017. Since that time IcedID — like many banking trojans — has evolved to include backdoor and data harvesting capabilities and is often used as a downloader for other malware, including <a href="https://thedfirreport.com/2021/07/19/icedid-and-cobalt-strike-vs-antivirus/" rel="noopener nofollow" target="_blank">Cobalt Strike and ransomware</a>.</p>
+<p>Emotet: ITG23 and the Emotet group have a history of seeding each other’s malware. ITG23 has used Emotet extensively to deliver Trickbot malware often leading to the notorious <a href="https://www.cybereason.com/blog/research/triple-threat-emotet-deploys-trickbot-to-steal-data-spread-ryuk-ransomware" rel="noopener nofollow" target="_blank">Emotet -&gt; Trickbot -&gt; Ryuk</a> ransomware attack sequence. Following actions to <a href="https://www.cyberscoop.com/trickbot-takedown-cyber-command-microsoft/" rel="noopener nofollow" target="_blank">disrupt Trickbot group</a> operations in fall 2020, <a href="https://intel471.com/blog/trickbot-online-emotet-microsoft-cyber-command-disruption-attempts/" rel="noopener nofollow" target="_blank">Emotet moved quickly</a> to assist ITG23’s recovery by downloading Trickbot malware to infected machines. A year later, ITG23 returned the favor by <a href="https://www.bleepingcomputer.com/news/security/emotet-malware-is-back-and-rebuilding-its-botnet-via-trickbot/" rel="noopener nofollow" target="_blank">seeding Emotet samples</a> to facilitate Emotet’s return following the January 2021 <a href="https://www.justice.gov/opa/pr/emotet-botnet-disrupted-international-cyber-operation" rel="noopener nofollow" target="_blank">international law enforcement operation</a> against the group.</p>
+<p>The presence of “Veron” aka “Mors” participating in conversations with ITG23 members in the leaked chats also points to ITG23’s close cooperation with Emotet. Historically, “mors” was a gtag used with Trickbot samples delivered by Emotet. Based on the conversations, <a href="https://research.checkpoint.com/2022/leaks-of-conti-ransomware-group-paint-picture-of-a-surprisingly-normal-tech-start-up-sort-of/" rel="noopener nofollow" target="_blank">Veron/Mors</a> appears to be a liaison to ITG23 for Emotet related matters. Veron/Mors also seemed to work with the crypting team, and messages can be found from Bentley which discuss crypting files for Veron. Bentley sent the following messages to Veron and Stern between February and May 2021 possibly related to crypting Emotet samples for testing purposes before Emotet’s reappearance in November:</p>
+<p><code>February 24, 2021:
+Stern → Bentley: veron запустился? (Veron started?)
+Bentley → Stern: Он начинает в марте. Работаем над криптами для него. наших криптора
+(He starts in March. We're working over the crypters for him. Our crypters)</code></p>
+<p><code>March 1, 2021:
+Stern → Bentley: veron не начал еще? (Veron hasn't started yet?)
+Bentley → Stern: Првиет. Еще не начанал. Сделали годеый крипт его длл. Ждем как даст полную версию со всеми ньюансами
+(Hi. Not started yet. Made a suitable crypter for his dll. We're waiting for a full version with all the nuances.)</code></p>
+<p><code>May 5, 2021
+Bentley → Veron: Можешь дать длл на крипт? Пока можем начать криптовать и готовить стабы
+(Can you give a dll for the crypt? For now, we can start to crypt and prepare stubs)</code></p>
+<p>Messages between Veron and Stern in May 2021 seem to suggest that the return of Emotet may have been delayed due a need to rewrite parts of the code for security purposes.</p>
+<p><code>May 18, 2021:
+Stern → Veron: привет. когда стартуем?
+(Hi, when are we starting?)
+Veron → Stern: привет, я скажу когда точно, в ближайшее время уже, делаю чтобы не взломали
+(Hello, I'll tell you exactly when, in the near future already, I'm doing it so that they don't get hacked)</code></p>
+<p><code>May 24, 2021:
+Veron → Stern: привет, сорри, что задерживаем, но надо переписать часть, я за безопасность
+напиши как будешь, если вопросы есть
+(hello, sorry for the delay, but we need to rewrite part, I'm for security
+let me know if you have any questions)</code></p>
+<p>IcedID: The first evidence of ITG23’s cooperation with the IcedID group appeared in May 2018 when security researchers observed <a href="https://www.flashpoint-intel.com/blog/trickbot-icedid-collaborate-increase-impact/" rel="noopener nofollow" target="_blank">IcedID downloading Trickbot malware</a>. Several months later other researchers noted <a href="https://www.fortinet.com/blog/threat-research/icedid---trickbot--a-give-and-take-relationship" rel="noopener nofollow" target="_blank">Trickbot returning the gesture</a> and downloading an updated IcedID variant that incorporated features used with Trickbot samples, suggesting that the two groups also collaborated on development. In early 2019, other analysts observed IcedID using a <a href="https://www.crowdstrike.com/blog/sin-ful-spiders-wizard-spider-and-lunar-spider-sharing-the-same-web/" rel="noopener nofollow" target="_blank">custom Trickbot shareDLL module</a> to download core Trickbot malware. These researchers a month later described <a href="https://www.crowdstrike.com/blog/wizard-spider-lunar-spider-shared-proxy-module/" rel="noopener nofollow" target="_blank">a new Trickbot proxy module</a> for man-in-the-middle (MITM) attacks against web browsers that was highly similar to the IcedID proxy module. A Trickbot module named <a href="https://securelist.com/trickbot-module-descriptions/104603/" rel="noopener nofollow" target="_blank">anubisDll32</a> was also developed containing the IcedID core code. In November 2021, X-Force and other researchers observed multiple campaigns during which BazarLoader was used to <a href="https://twitter.com/malware_traffic/status/1465853138657808521" rel="noopener nofollow" target="_blank">download IcedID malware</a>.</p>
+<p>ITG23’s leaked chats provide additional insight into ITG23’s close relationship with IcedID, although the exact nature of this relationship remains unclear. On May 1, 2021, Stern congratulates “Leo” on his “cool bot IcedID” for gaining the attention of security researchers, revealing that Leo is likely affiliated with the IcedID group.</p>
+<p><code>Stern → Leo: а твой крутой бот ICEDld
+(and your cool ICEDId bot)
+Stern → Leo: про него пишут исследователи
+(researchers write about it)
+Stern → Leo: что ты сейчас на первом месте
+(that you're in the first place)</code></p>
+<p>The leaked chats often refer to a “Project Leo”, which we assess is a reference to IcedID. Bentley regularly provides Mango with updates on crypting related to “Project Leo” and in November 2021, Stern messaged the following instruction to Bentley:</p>
+<p><code>Stern → Bentley: "включи крипты лео
+(turn on the crypts of Leo)"</code></p>
+<h3>IcedID and MountLocker Ransomware</h3>
+<p>X-Force uncovered evidence that ITG23 crypters were used with <a href="https://blogs.blackberry.com/en/2020/12/mountlocker-ransomware-as-a-service-offers-double-extortion-capabilities-to-affiliates" rel="noopener nofollow" target="_blank">MountLocker</a> (see below), a ransomware-as-a-service (RaaS) operation that has been active since July 2020. Since then, MountLocker has <a href="https://www.trendmicro.com/en_us/research/21/j/ransomware-operators-found-using-new-franchise-business-model.html" rel="noopener nofollow" target="_blank">rebranded</a> several times to other names including XingLocker, AstroLocker, and Quantum. This evidence — combined with code overlap between <a href="https://thedfirreport.com/2021/10/18/icedid-to-xinglocker-ransomware-in-24-hours/" rel="noopener nofollow" target="_blank">IcedID and MountLocker</a> ransomware and the use of IcedID alongside MountLocker during multiple ransomware attacks — suggests that the IcedID group operates the MountLocker RaaS.</p>
+<p>The following conversation between Stern and Bentley on May 6, 2021, provides additional evidence that Leo, who operates IcedID, also has some involvement with ransomware. Stern asks Bentley which ‘lockers’, aka ransomware, his team have been crypting, and Bentley responds that they have had binaries from Reshaev and from Leo. Reshaev is a developer/manager for the Conti ransomware.</p>
+<p><code>Stern: как автобилды работают?
+Bentley: Большая часть стабов уже работают. Выдаем локеры ехе 32 64 длл 32 64 , кобу 32 64 как ехе так и длл. Шелкоды в ехе и длл. Простые длл, БК.
+Stern: какие локеры
+Bentley: от решаева в ехе и от лео в длл
+Stern: How's the autobuild working?
+Bentley: Most of the stubs are already working. We issue lockers exe 32 64 dll 32 64, cobalt 32 64 as exe and dll. Shellcode in exe and dll. Simple Dll, BK.
+Stern: Which lockers?
+Bentley: From Reshaev in exe and from Leo in Dll</code></p>
+<p>Analysis of IcedID and MountLocker samples reveals areas of code overlap, particularly in the logging and decryption functions. Both IcedID and MountLocker generate extensive debug logs, which are formatted in an almost identical manner.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 1 — Debug log strings from an IcedID sample</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 2 — Debug log strings from a MountLocker sample</p>
+<p>Additionally, samples of both IcedID and MountLocker were identified which contained almost identical XOR decryption and key generation algorithms.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 3 — XOR algorithm and key generation function from an IcedID sample</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 4 — XOR algorithm and key generation function from a MountLocker sample</p>
+<h3>Qakbot: A New Partner?</h3>
+<p>While monitoring for signs of ITG23 crypters’ use in the wild, X-Force identified the first known use in late February 2022 of an ITG23 crypter with Qakbot aka Qbot. The <a href="https://www.microsoft.com/security/blog/2021/12/09/a-closer-look-at-qakbots-latest-building-blocks-and-how-to-knock-them-down/" rel="noopener nofollow" target="_blank">Qakbot</a> banking trojan was first identified in 2007 and like other banking trojan groups, it has increased its functionality over the years and evolved into a flexible downloader and backdoor often leading to ransomware attacks. The appearance of ITG23 crypters on Qakbot samples provides evidence of a direct relationship between ITG23 and the Qakbot group. The relationship between ITG23 and Qakbot is also supported by <a href="https://www.prodaft.com/m/reports/WizardSpider_TLPWHITE_v.1.4.pdf" rel="noopener nofollow" target="_blank">additional evidence</a> published recently. That said, the discovery does not come as a complete surprise. In the leaked chats, “Tramp” asked Bentley on December 6, 2021, about crypting Qakbot:</p>
+<p><code>Tramp → Bentley: криптанем квак бота ?
+(crypt Quak Bot?)
+Bentley → Tramp: давай попробуем
+(let's try)</code></p>
+<p>Tramp later sends Bentley a file named stager_1_tr.dll to be crypted. Tramp may be affiliated with “TR”, a prominent distribution affiliate also known as TA577 and which is currently distributing Qakbot. We have since identified ITG23 crypters used with Qakbot samples delivered by the two most prominent and current Qakbot distribution affiliates — TA570 and TA577 — suggesting that ITG23 is assisting the Qakbot group with crypting its malware and not just a single distribution affiliate. There is also evidence that Qakbot has a relationship with the Emotet group, dating back several years. Emotet has historically been used to <a href="https://www.bleepingcomputer.com/news/security/emotet-botnet-is-now-heavily-spreading-qakbot-malware/" rel="noopener nofollow" target="_blank">download Qakbot</a> in addition to Trickbot, for example during 2020 and then more recently in <a href="https://twitter.com/Cryptolaemus1/status/1506647250927300611" rel="noopener nofollow" target="_blank">March 2022</a>. Given ITG23’s partnership with Emotet, it is possible that the Emotet group is facilitating ITG23’s relationship with Qakbot leading to the latter’s use of an ITG23 crypter.</p>
+<h3>Hive0106 (TA551) Gozi Sample</h3>
+<p>X-Force researchers also found a <a href="https://research.checkpoint.com/2020/gozi-the-malware-with-a-thousand-faces/" rel="noopener nofollow" target="_blank">Gozi</a> sample using an ITG23 crypter on April 7, 2022 (see below). Gozi is also a banking trojan first appearing in 2007 that has evolved into a multi-module, multi-purpose malware. However, unlike the other banking trojans discussed so far, the Gozi source code has leaked and the malware is not operated or developed by a single group. The threat actor Hive0106 (aka TA551) was likely responsible for this <a href="https://twitter.com/k3dg3/status/1512067808133214225" rel="noopener nofollow" target="_blank">campaign</a> delivering Gozi. We assess that Bentley and his team likely crypted this Gozi sample on behalf of this group, with which they have an established relationship.</p>
+<h2>The Crypters</h2>
+<p>Crypters are applications designed to encrypt and obfuscate malware to protect it from anti-virus scanners and malware analysts. The crypting process generally involves encrypting a pre-compiled malware payload, such as an EXE, DLL file, or shellcode, and embedding it within a secondary binary, known as a ‘stub’, which contains code to decrypt and execute the malicious payload. The stubs generally take the form of binaries, such as Exe or DLL files, are often either polymorphic or updated frequently in order to evade signature-based detection methods, and usually make use of code obfuscation techniques.</p>
+<p>When the crypted binary is executed, the stub code will extract the embedded payload, decrypt it, load it into memory and execute it. As a result of this behavior, the crypted binary containing the stub code may also be referred to as a ‘loader’ or ‘in-memory dropper’.</p>
+<p>In order to protect their payloads many crypters may also include additional functionality to detect sandbox environments, hinder AV scanners, escalate privileges, or perform other basic system checks. It’s common for crypters to utilize a high level of code obfuscation within the stubs, and the majority also employ polymorphic techniques such as <a href="https://securityintelligence.com/posts/trickbot-gang-template-based-metaprogramming-bazar-malware/">metaprogramming</a> to ensure that each crypted binary is unique and thus make it harder to identify via signature-based detection methods.</p>
+<p>Another common technique is for the crypter to disguise the malware as a benign executable, and to this end, they will often use source code from legitimate applications as a template for the stub binary, or include strings or functions which mimic benign activity. The code to decrypt and load the payload will be made as inconspicuous as possible in an effort to hide it from the attention of malware scanners.</p>
+<p>All of these techniques together also provide obstacles for the malware reverse engineer and make it harder to write detection signatures and automated malware parsers.</p>
+<p>X-Force research indicates that ITG23 is providing crypting services to other threat actors in addition to using them for their own malware. Using the same crypter for multiple malware families has an additional benefit of confusing the identification capabilities of AV applications. Indeed, it is not uncommon to see a crypted malware binary flagged by AV as belonging to one malware family, when it is in fact a completely different one, and they just happen to be using the same crypter.</p>
+<p>X-Force analysts are tracking at least thirteen crypters we believe to be developed and currently in use by ITG23 that we are calling Dave, Pear, Lore, Mirror, Galore, Rustic, Tron, Hexa, Stub, Error, Skeleton, Charm, and Graven. Whilst variants of the Dave RC4 crypter have been in use for at least a couple of years, the rest appear to have been primarily developed in the past year. ITG23 has used these crypters with Trickbot, BazarLoader and Conti malware — all of which are attributed to ITG23 — and used them to crypt malware on behalf of groups such as IcedID and Emotet. We have also observed these crypters used with Cobalt Strike samples, which we assess are used by ransomware internal red teams or affiliates when conducting attacks on clients infected with Trickbot, BazarLoader, IcedID or Emotet.</p>
+<p>In the sections below, we provide an overview of each of the crypters and the examples of the malware families they have been used with.</p>
+<h3>Dave</h3>
+<p>Dave is one of the older crypters that X-Force tracks as currently in use by ITG23, having been used since at least 2020. Several variations of Dave exist, but one of the most common variants stores the payload either as an RCData type resource or within the data section, and decrypts it using a custom RC4 algorithm, which uses a variable sbox size rather than the standard for RC4 which is 256 bytes. Dave is so-called as it commonly wraps the payload in a second-stage shellcode loader, where the ascii string ‘dave’ is used to mark the end of the payload. Dave loaders have been most frequently observed loading Emotet and Trickbot, but also occasionally BazarLoader, Ryuk, Conti, IcedID, Cobalt Strike and Colibri.</p>
+<p>It is common practice for malware developers to ‘strip’ malware binaries during compilation which removes symbol information such as variable and function names. This has the benefits of making the malware more difficult to analyze, as well as removing details, which may potentially be used by analysts to fingerprint the developer.</p>
+<p>Almost all samples analyzed by X-Force are fully stripped, however from November 2021 to January 2022 X-Force observed a number of unstripped Dave-crypted samples uploaded to repositories such as VirusTotal, providing a rare insight into the coding style of the developer. Based off some of the strings and function names X-Forced determined the developer utilized components of publicly available code for the stub, for example, the function CLoad::FromMemory() can be traced back to a 2016 code sample, memlib.cpp, originally published on a <a href="https://www.mpgh.net/forum/showthread.php?t=1101356" rel="noopener nofollow" target="_blank">forum</a>. The aforementioned shellcode with the ‘dave’ signature also appears to be modified from the open source <a href="https://github.com/monoxgas/sRDI" rel="noopener nofollow" target="_blank">sRDI repository</a>.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 5 — Unstripped Dave stub with original function and variable names as assigned by the developer.</p>
+<p>Select samples using the Dave crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td> SHA256 Hash</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>a9c4eafcff0567c68919c93ddf8baa769392e92706e6b35f7b989310d70f732f</td>
+</tr><tr><td>Colibri</td>
+<td>f5fd02ebd2376fd1bc1ff121e9bfda618755a5c049edc8a4288eb67eb1cc7f9b</td>
+</tr><tr><td>Emotet</td>
+<td>5da102cc1ff7d842e3b5c9d6f571bd3b3afdc1715d37f120b31e1859928f5837</td>
+</tr><tr><td>Trickbot</td>
+<td>947c81aefdb479de7e75f14be2921bb829478680e039c2bc40a4c258524819b8</td>
+</tr><tr><td>BazarLoader</td>
+<td>47bac27be954cf593ac731cd57fa98b565cf5036a6fbf35c508549f039eea8f3</td>
+</tr><tr><td>Conti</td>
+<td>5ace33358a8b11ae52050d02d2d6705f04bd47a27c6c6e28ef65028bbfaf5da9</td>
+</tr><tr><td>Ryuk</td>
+<td>180f82bbedb03dc29328e32e054069870a1e65078b78b2120a84c96aaed7d843</td>
+</tr></tbody></table><h3>Pear</h3>
+<p>Pear crypter can be tracked back to at least March 2021, when it was used to crypt IcedID. Pear has been primarily observed in use with IcedID payloads, but samples loading BazarLoader, Trickbot, and Colibri payloads have also been found. Pear crypter stores the payload within one of the stub binary’s data sections, and custom algorithms are used to encrypt the payload. The exact format and values of the encryption algorithm change per sample, suggesting a technique such as metaprogramming may have been employed to generate the algorithms. The encrypted payload often has a recognizable alternating byte pattern that makes use of a restricted set of bytes in order to keep the entropy low. Entropy measures the level of randomness in the data, and many encryption algorithms will generate encrypted data with a distinctively high entropy value, which is easily detectable by binary analysis tools. By using an algorithm that outputs lower-entropy data, the encrypted payload is less easy to detect by automated systems.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 6 — Pear crypted sample with distinctive encrypted payload utilizing a restricted byte set.</p>
+<p>Select samples using the Pear crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>IcedID</td>
+<td>9f4bdbfec9f091e985e153a1597fc271abd0320c60dfe37dc3e7d81e5d18ad83</td>
+</tr><tr><td>BazarLoader</td>
+<td>26cac671e215d88b5070af7d94200588d2b7c414a6e8debf7370b993fcfffb23</td>
+</tr><tr><td>Colibri</td>
+<td>b1fc2855f5579f02ac6d03c2d20e85948e9609fd769389addb8ce5986b1f8ecd</td>
+</tr><tr><td>Trickbot</td>
+<td>e2ba0567ac236a24bfd4df321ae7860e8fe2810dbd088e0e90d67167c1ccd4c5</td>
+</tr></tbody></table><h3>
+Lore</h3>
+<p>Lore crypter has been in use since at least May 2021 and has been observed with payloads including Emotet, Trickbot, BazarLoader, IcedID and Cobalt Strike. This crypter stores the payload as a BITMAP type resource, with a 103-byte bitmap file header added to the start of the payload data. Upon execution, the stub code loads the resource, removes the bitmap header, and decrypts the remaining data using XOR and a hardcoded key. The payload is then loaded into memory and executed. The crypter originally appeared to be designed for use with PE payloads, and so shellcode-based payloads were wrapped in an additional second stage loader.</p>
+<p>Lore crypted binaries often include a lot of extraneous imports and junk functions in an attempt to obscure the location of the payload decryption and loading code from analysts. This loading code instead uses API hashes to retrieve handles to the API functions it requires, so the extraneous imports can generally be ignored by the analyst.</p>
+<p>A handful of Lore crypted samples were identified containing the following PDB paths:</p>
+<p><code>204506c69824371017f482e88f9fbb14cfd0fbc17233fa8d3ffbf4f527e20af5 c:\jenkins\workspace\crypter5_generic_exe\Bin\x64\Release\MFC_Stub.pdb
+d1a12e52d9fcc57580146370933a3f9eb027c5fec972abc9ac2f2b7d9f94e0d3 c:\jenkins\workspace\crypter5_shellcode_64_exe\Bin\x64\Release\MFC_Stub.pdb
+41c56e92efd01a553d0faf39ccb440c7e84d32531335c262572d6a01bf7f70c8 c:\jenkins\workspace\crypter5_generic_exe\Bin\x86\Release\MFC_Stub.pdb
+615f9a5517e71648a0780c186af8642e2848589d6962bc12ff34c0c54b650df5 c:\jenkins\workspace\crypter5_shellcode_64_exe\Bin\x64\Release\MFC_Stub.pdb</code></p>
+<p>These paths provide evidence of a Jenkins server being used for crypting operations and also suggest that it likely contains a number of different crypters, with crypter5 being Lore Crypter. This is corroborated by the PDB path found within some Error crypted samples, detailed further below, which refer to it as ‘crypter7’.</p>
+<p>The directory names ‘crypter5_generic_exe’ and ‘crypter5_shellcode_64_exe’ indicate that different configurations of the crypter stubs were likely compiled for different types of payloads. In this case, the two samples containing the reference ‘crypter5_shellcode_64_exe’ are both 64-bit executable files that contain Cobalt Strike shellcode http stagers as their payloads. For the two samples containing the reference ‘crypter5_generic_exe’, one is a 64-bit executable containing a BazarLoader payload and the other is a 32-bit executable containing a Conti ransomware executable.</p>
+<p>Select samples using the Lore crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>ee8efcd34db429697337d7275d713385600c510558a8a4615bd1eb18847f43f2</td>
+</tr><tr><td>Conti</td>
+<td>e6e248be24782f28a492055ebb35886ad057d8a5ff4d7315f22af1fe29d9df0d</td>
+</tr><tr><td>IcedID</td>
+<td>7a6c42343b3d422c9f6f5c72763645b8f1b4931c609c320e60816aee55e4ae8a</td>
+</tr><tr><td>Emotet</td>
+<td>70b66e57ea54f48a8b288d65d93063478e27b5710cab106cf41464e086e784db</td>
+</tr><tr><td>Trickbot</td>
+<td>2587e94f3bc1ae54ff7732984925def76de934b3e1b1f7407bd66491db18f7e0</td>
+</tr><tr><td>BazarLoader</td>
+<td>8661bd7d893fe1dd2109fac55cf9cea5f609012769732039e20165a3198c1086</td>
+</tr></tbody></table><h3>
+Mirror</h3>
+<p>Mirror crypter has been observed since November 2021, and so far has primarily been found loading BazarLoader payloads, as well as some IcedID and Cobalt Strike. Mirror crypter shares some code overlap and obfuscation mechanisms with Lore crypter, suggesting they may have the same developer or codebase. Mirror splits its encrypted payload into three parts which are stored across different sections of the resulting binary loader. Two main variants of the Mirror stub code have been found so far, one which decrypts the payload using AES-256 via the Windows CryptDecrypt API, and a second which decrypts the payload using XOR and a hardcoded key.</p>
+<p>Select samples using the Mirror crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>BazarLoader (IDB Sample)</td>
+<td>cbd830c745bbec26733214798fe144c61ef4bac342c853f8a08b682077b2178b</td>
+</tr><tr><td>BazarLoader (XOR variant)</td>
+<td>b44d0261823595b303bdae62df7790b30c13a0a897978d30f3041c27a645eac6</td>
+</tr><tr><td>IcedID</td>
+<td>00c46232cdad873bf02787746fba9d196a6045bac1051154af7772f5b0f29b87</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>9eedbac3f1c8795cf1f04301ecf2d66aacacbbb9e6c087ed158f00f81fae7375</td>
+</tr></tbody></table><h3>
+Galore</h3>
+<p>Whilst the majority of ITG23’s current crypter stubs are coded in C/C++, it seems the developers also experimented with alternative languages, producing crypters with loader stubs written in both the Go and Rust programming languages. Galore crypter uses the Go programming language and has been observed in the wild since mid-2021 when it was frequently used to crypt BazarLoader payloads. The Go programming language has become increasingly popular with malware authors over the past few years due to its convenient cross-platform support, and the fact that it produces large and complex binaries upon compilation which can be tricky to reverse engineer and often have lower detection rates against AV applications than their C/C++ coded counterparts.</p>
+<p>Upon execution the Galore stub code decrypts the payload using XOR, and loads and executes the PE payload using code based off the open-source <a href="https://github.com/stephenfewer/ReflectiveDLLInjection" rel="noopener nofollow" target="_blank">Reflective DLL Injection</a> project. The use of this Reflective Dll Injection code is common in many of ITG23’s crypters.</p>
+<p>Select samples using the Galore crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Baazarloader</td>
+<td>26be0ba3533703f5eeea8489e6a8881461dab7f597f33e546182ba1910953d09</td>
+</tr></tbody></table><h3>
+Rustic</h3>
+<p>Rustic crypter uses the Rust programming language which, like Go, has been seeing an increase in popularity with malware developers. The payload is stored in the .rdata section of the loader and encrypted using a XOR based algorithm with two keys applied in multiple iterations. The crypter supports both shellcode and PE payloads, with shellcode payloads loaded into memory and executed directly, and PE payloads loaded in a similar manner to Galore crypter, using the Reflective DLL Injection technique.</p>
+<p>Rustic crypted samples were first observed in early September 2021 and it has been used with malware including BazarLoader, IcedID, Cobalt Strike, Quantum, as well as implants from <a href="https://github.com/BishopFox/sliver" rel="noopener nofollow" target="_blank">Sliver</a> which is a post-exploitation framework written in Go.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 7 — Rustic stub loader code responsible for loading and decrypting the payload</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 8 — Strings within a Rustic-crypted sample indicate that the binary was written using the Rust language</p>
+<p>Select samples using the Rustic crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Sliver</td>
+<td>45aa8efb6b1a9a0e0091040bb99a7c37d346aaf306fa4e31e9d5d9f0fef56676</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>e75fce425df2e878c7938cdf86c8e4bde541c68f75d55edb62a670af52521740</td>
+</tr><tr><td>BazarLoader</td>
+<td>8d84152b69161bf5abb2f80fef310ec92cc8b1cb23dff18eebd8d039cda8f8ad</td>
+</tr><tr><td>IcedID</td>
+<td>bec6dc7f7bfbded59d1a9290105e13ac91cf676ef5a4513bacbfcabf73630202</td>
+</tr><tr><td>Quantum</td>
+<td>fd7ca7af9b2b6c5ffdb3206d647301de8bea33a69679e117be30e9a601c5dea2</td>
+</tr></tbody></table><h3>
+Tron</h3>
+<p>Tron crypter first appeared in the wild in September 2021 when it was used to crypt Trickbot binaries associated with gtag rob132. Since then, it has been observed with payloads within Emotet, Trickbot, BazarLoader, IcedID, Conti and Cobalt Strike. Of note, Tron is the crypter identified in this article from <a href="https://cert.gov.ua/article/39708" rel="noopener nofollow" target="_blank">CERT-UA</a>.</p>
+<p>Tron crypted binaries have their payload usually stored within the .text section of the stub loader which, upon execution, unpacks and decompresses the payload, and then loads it into memory and executes it. The decompression of the payload is performed using the Zlib library; however, the unpacking appears to be performed using code originating from an obscure Github project called Megatron (<a href="https://github.com/akakist/megatron/)" rel="noopener nofollow" target="_blank">https://github.com/akakist/megatron/)</a>, specifically a module called ioBuffer.cpp which implements basic buffer manipulation and unpacking functions. The Megatron project has since been taken down but previously strings from the source code in Github could be observed within the unpacking functions in the crypted binaries.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 9 — The source code of ioBuffer.cpp as seen on Github</p>
+<p>The above image shows the source code of ioBuffer.cpp as seen on Github, specifically a function named inBuffer::get_8() is shown, which contains the error string “inBuffer::get_8: noenough“. This same function and error string can be seen within the unpacking functions of the crypted binary.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>The payload data is split into chunks which are delimited with the bytes ‘c3 cc cc cc’, where the number of ‘cc’ bytes varies based on alignment. Bytes used to calculate the size of each chunk are added at the start of each chunk. The unpacking code parses the payload data, calculating the size of each chunk and appending the chunk data to the output buffer whilst checking for and discarding the 0xc3 and 0xcc padding bytes.</p>
+<p>The compressed and decompressed sizes are then parsed from the start of the unpacked data, and the zlib.decompress function is used to decompress the payload. One version of this crypter stores the payload in multiple parts, which are unpacked individually and then joined together before decompression.</p>
+<p>Several other variants of the Tron crypter have also been observed. One example contains the same ioBuffer unpacking functions, but the payloads are decrypted using XOR rather than decompressed using Zlib. Some variants also have the payload stored in the .data section, and others may encode the payload in a numeric ascii format.</p>
+<p>Some samples were identified containing path strings for header files such as the following:</p>
+<p><code>Z:\cr4\ballast\5\core\src\BitArray.h
+Z:\cr\crypter4\ballast\3\openjp2\opj_intmath.h</code></p>
+<p>Considering the PDB strings identified within Lore and Error crypted samples, these path strings may indicate that Tron crypter is referred to as crypter4 within the group.</p>
+<p>Select samples using the Tron crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>44e2057c7466881a61e3b542ce055b3d54aa7d88040ce879a915e20ed996d097</td>
+</tr><tr><td>Conti</td>
+<td>38784c635de9716c09a6f11f4d76f6402b5f6638f1614ed929c7de136bb5301a</td>
+</tr><tr><td>Emotet</td>
+<td>8d8138c23bf514a984918f7b5c5a7501e91b2c058574b7ce0b9ccbe638e82387</td>
+</tr><tr><td>Trickbot</td>
+<td>fd083bc2dbc3426a332eaf861dea03c648ad04cb73ba8f09504c970af9134898</td>
+</tr><tr><td>BazarLoader</td>
+<td>b88382ef06808155253f631a06e31024436e19d5bffd34f9b03906295e82de52</td>
+</tr><tr><td>IcedID</td>
+<td>2b9cba43290c9d4cc2d6a47432ddac5752c63e5ac519c2056ba466580424ed3b</td>
+</tr></tbody></table><h3>
+Hexa</h3>
+<p>Hexa crypter compresses and RC4 encrypts its payload, and then encodes it as a hexadecimal ascii string to reduce entropy. This is then stored in the data sections of the stub binary, with some variants splitting the payload across two or three different sections. Upon execution the payload is reconstructed, decompressed and decrypted and then copied to a newly created memory section and execution transferred to the payload. Portable executable (PE) payloads may be preceded by a shellcode loader which is responsible for properly mapping the PE file into memory and executing it.</p>
+<p>Hexa makes use of code obfuscation techniques to hinder analysis efforts including splitting the code into many tiny blocks separated by jumps, and the inclusion of blocks of junk data.</p>
+<p>Hexa crypted samples were observed towards the end of 2021, with payloads including BazarLoader, Cobalt Strike, and Conti. It has also seen an increase in usage over the past couple of months where it has been used with malware families including IcedID, QakBot and Gozi.</p>
+<p>Select samples using the Hexa crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>IcedID</td>
+<td>bbefa9f7747822e017580206931aec6e948e6cb3ca897b9615d87430b99e7d1e</td>
+</tr><tr><td>Qakbot</td>
+<td>0da8df441dc92d6719092aea1d3e9709e802aa87410279374d69626573fd3177</td>
+</tr><tr><td>BazarLoader</td>
+<td>18bbaddacba7bcdda4a1a088a640e167271f44d6232c20aa7d88eceeb3028826</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>b51465ca7e71da2cd29072c819076c4efccb391dea353f16a36b0a60459b3358</td>
+</tr><tr><td>Conti</td>
+<td>c77032c772e0ef0e3200edf38223f9c6047e56294e840ea79689b9e56048c69c</td>
+</tr><tr><td>Gozi</td>
+<td>41ae907a2bb73794bb2cff40b429e62305847a3e1a95f188b596f1cf925c4547</td>
+</tr></tbody></table><h3></h3>
+<h3>Stub</h3>
+<p>Stub crypter was first observed in November 2021. It has been used primarily in IcedID campaigns, but samples have also been identified with payloads such as BazarLoader, Cobalt Strike, Conti, and Quantum ransomware, which is a variant of MountLocker and thought to be associated with the IcedID group.</p>
+<p>Stub crypter stores the payload across multiple RCDATA type resources with sequential ids, e.g. 200, 201, 202. The first resource contains the encryption key, and the remaining resources each hold an encrypted section of the payload PE file.</p>
+<p>To generate the encryption key, the malware takes the first resource, removes a 62-byte header, and then proceeds to generate each byte of the key by combining the next three bytes from the resource data using bitwise shift and or operations. The final key length is usually 1024 bytes.
+The malware then proceeds to decrypt the next resource using this key and a custom xor-based algorithm, which varies between samples. The first decrypted resource contains the PE header of the payload binary, and the loading code uses information from this header to map each of the remaining PE sections into memory as it decrypts them from the resources. The loaded payload is then executed at its entry point.</p>
+<p>Select samples using the Stub crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>BazarLoader</td>
+<td>936426ce7210fbd0ce519fb4121289fc1c43247fa96a7d1cd96d276f1662df26</td>
+</tr><tr><td>Quantum</td>
+<td>faf49653a0f057ed09a75c4dfc01e4d8e6fef203d0102a5947a73db80be0db1d</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>84f1e4c2524fea85c43f9df6ac1449c95d2d3ba5bd7cb6bff2f4e1c97dc8cbe1</td>
+</tr><tr><td>IcedID</td>
+<td>008a674e33435ce0b892d0a68ac6d01f9606c040da87b21a10ed069729ee04ff</td>
+</tr><tr><td>Conti</td>
+<td>41896f40197a6160fcab046b5fc63a36d0805dbb1ca5a03af35b92b27d9a0eb5</td>
+</tr></tbody></table><h3></h3>
+<h3>Error</h3>
+<p>Error crypter was prominent from late November 2021 to January 2022 when it was used to crypt samples in Emotet, IcedID and BazarLoader campaigns, as well as being used with Cobalt Strike payloads. Error crypted binaries contain a large amount of junk code and strings for obfuscation, with one variant seemingly designed to be disguised as a hospital administration tool. Some samples also contain strings, which appear to have been generated from literary texts such as ‘David Copperfield’.</p>
+<p><img alt="" class="i-amphtml-intrinsic-sizer" src="" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 10 — Error crypted sample containing strings relating to a hospital administration application</p>
+<p>Error crypter encrypts its payload using XOR and the encrypted payload is divided into small chunks which are scrambled up and stored. Upon execution, the stub code uses a complicated series of functions to retrieve the data chunks and reconstruct the encrypted payload. The XOR key required for decryption is generated in a similarly convoluted manner, with data being decrypted and retrieved from various sources and concatenated to form a string. This string is then hashed, and the hash is used to generate the final XOR key.</p>
+<p>An example of one of the strings used to generate the XOR decryption key is as follows:</p>
+<p><code>2021-12-03-mok.35022336.17:33:40===700524802745472.xKUzpAWUHQuKEHhnAwJ4MEDN4oDSNpNqXpt.2691200820897.302</code></p>
+<p>Error crypter also includes some anti-debugging functions within the stub code including checking for the presence of a debugger and checking the system time year against a hard coded value.</p>
+<p>Some Error crypted samples were found to contain the following PDB string:</p>
+<p><code>C:\\crypter7\\Bin\\x64\\Release\\Dll\\cryptERRDll.pdb</code></p>
+<p>This PDB string suggests that this crypter may have been known as ‘crypter7’ or ‘cryptERR’ internally within ITG23.</p>
+<p>Select samples using the Error crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Emotet</td>
+<td>a7343086d72f81f91cedc05d88b11cf44ba5da9ac6c25983870f3a77f854f4e9</td>
+</tr><tr><td>BazarLoader</td>
+<td>f17718d8f12cfada48a9288bf5f91e81787e361071f82345364c8e85b539524a</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>1d20191aee650fd8c58c6564ce9ff5b86138a954bc49a3e25033cc888fc85466</td>
+</tr><tr><td>IcedID</td>
+<td>f9f62722ff249e8219d4864dc46a1bbb3871b1b3f9c4139ffe2726b8f6f27ad0</td>
+</tr></tbody></table><h3></h3>
+<h3>Charm</h3>
+<p>Charm crypter was observed primarily in campaigns between August 2021 and October 2021, and has been seen loading payloads such as BazarLoader, Cobalt Strike, Conti, and MountLocker. Charm crypter compresses its payload using an arithmetic coding algorithm, and then xor encrypts the compressed data and splits it into many small segments which are stored throughout the loader binary. Charm crypted binaries are obfuscated using junk code to hinder analysis.</p>
+<p>Select samples using the Charm crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>BazarLoader</td>
+<td>8758196b4266ca7809e54c84ff6767784cb105fce247ad3459a15bb8ef9032c8</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>6eccc2f0b5fb42a7b59881acdef621cc086d6ab76dfd80e5a3b3542590197805</td>
+</tr><tr><td>Conti</td>
+<td>63061a372c41f5797f18dfeed166ec350e4029c46ad3c42ff79b8e284eb65ad6</td>
+</tr><tr><td>Quantum</td>
+<td>267f6ba1363b2dbf56ad7e324380782de682a59f7d647eaee7d92b1ba5d2fcfa</td>
+</tr></tbody></table><h3>Graven</h3>
+<p>Graven crypter splits the payload into three parts which are stored in different sections of the generated loader binary. Each part is then split into small pseudo-randomly sized chunks, delimited with pseudo-randomly sized chunks of null bytes. The algorithm to determine both the size of payload chunks and null-byte chunks is deterministic with a fixed seed allowing for the payload to be reconstructed by the loader. Upon execution, the payload is rebuilt and decrypted using AES, then loaded into memory and executed. Some variants of Graven also include code to create a mutex with the name 7ce3e80173264ea19b05306b865eadf9.</p>
+<p>Graven crypted samples were primarily observed between November 2021 and February 2022, and payloads include BazarLoader, Emotet, and IcedID.</p>
+<p>Select samples using the Graven crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>BazarLoader</td>
+<td>4246dbf6daf37bac0e525bdd8122131bedf4e32f9542c4696fa525e1f71a6508</td>
+</tr><tr><td>Emotet</td>
+<td>836d8e2f36ad80f937a377f568d78653e975e4b52db995ae18272dfecca9ac0f</td>
+</tr><tr><td>IcedID</td>
+<td>a61b1d70d469b8ca7acdbd26fc859e6aeb229c4636fe9c92eac856914f326ac8</td>
+</tr></tbody></table><h3>Skeleton</h3>
+<p>Skeleton is a fairly basic crypter, which stores the payload as a XOR encrypted, MessageTable type resource within the loader binary, often with just a hardcoded ascii string used as the XOR key. Upon execution, the payload resource is loaded, decrypted, and executed in memory. Variants have been found loading either shellcode or PE formatted payloads. PE payloads are mapped into memory, imports loaded, and then executed from their entrypoint. Skeleton crypted binaries have been observed loading Trickbot, Cobalt Strike and IcedID payloads between December 2021 and late March 2022.</p>
+<p>Select samples using the Skeleton crypter:</p>
+<table border="1"><tbody><tr><td>Sample Family</td>
+<td>SHA256 Hash</td>
+</tr><tr><td>Trickbot</td>
+<td>01c69d0acc8734993ba9cbfe9b0da4616bb05041e103afdb487759995b93ee5c</td>
+</tr><tr><td>IcedID</td>
+<td>617e0f57f4283ca044003326663b5614d66f97e16bccdd8bec1321fad44a7195</td>
+</tr><tr><td>Cobalt Strike</td>
+<td>3dea0bac5c9ae010b4abeb532a3a347cd55682512ffe287dbb310d5d434777ef</td>
+</tr></tbody></table><h2>Recommendations</h2>
+<ul><li>Ensure anti-virus software and associated files are up to date.</li>
+<li>Search for existing signs of the indicated IoCs in your environment.</li>
+<li>Consider blocking and or setting up detection for all URL and IP based IoCs.</li>
+<li>Keep applications and operating systems running at the current released patch level.</li>
+<li>Do not install unapproved apps on a device that has access to the corporate network.</li>
+<li>Exercise caution with attachments and links in emails.</li>
+</ul><h2>X-Force</h2>
+<p>If you have questions or want a deeper discussion on how IBM X-Force can help you with incident response, threat intelligence, or offensive security services schedule a follow up meeting here:</p>
+<p><a href="https://www.ibm.com/security/services/incident-response-services?schedulerform">IBM X-Force Scheduler</a></p>
+<p>If you are experiencing cybersecurity issues or an incident, contact X-Force to help.</p>
+<p>US hotline 1-888-241-9812 Global hotline (+001) 312-212-8034</p>
+<a href="https://securityintelligence.com/tag/ibm-x-force-research/" rel="tag">IBM X-Force Research</a> | <a href="https://securityintelligence.com/tag/ransomware-attacks/" rel="tag">ransomware attacks</a> | <a href="https://securityintelligence.com/tag/cyber-crime/" rel="tag">Cybercrime</a> | <a href="https://securityintelligence.com/tag/cyber-criminals/" rel="tag">Cybercriminals</a> | <a href="https://securityintelligence.com/tag/malware/" rel="tag">Malware</a> | <a href="https://securityintelligence.com/tag/ransomware/" rel="tag">Ransomware</a> | <a href="https://securityintelligence.com/tag/ransomware-as-a-service-raas/" rel="tag">Ransomware-as-a-Service (RaaS)</a> | <a href="https://securityintelligence.com/tag/trojan/" rel="tag">Trojan</a> | <a href="https://securityintelligence.com/tag/x-force/" rel="tag">X-Force</a>
+<a href="https://securityintelligence.com/author/charlotte-hammond/">Charlotte Hammond</a>
+Malware Reverse Engineer, IBM Security
+<p>Charlotte is a malware reverse engineer for IBM Security's X-Force IRIS team. She has been working in the security industry for more than 7 years with a focu... </p>
+</div>

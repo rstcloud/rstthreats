@@ -1,0 +1,916 @@
+{
+    "id": "<report_0x194ce6a6>",
+    "url": "https://www.zscaler.com/blogs/security-research/analysis-blackguard-new-info-stealer-malware-being-sold-russian-hacking",
+    "title": "Analysis of BlackGuard - a new info stealer malware being sold in a Russian hacking forum",
+    "meta": [
+        {
+            "id": "<chapter_0x3be03f3>",
+            "title": "Analysis of BlackGuard - a new info stealer malware being sold in a Russian hacking forum",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8edefc7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1c94aca7>": "https://www.zscaler.com/cdn-cgi/image/format%3Dauto/sites/default/files/images/blogs/----category-images/security-threats-hacking/zscaler-blog-security-threats-hacking-1%402x.jpg"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"BlackGuard Stealer\" class=\"lazyloaded\" src=\"/cdn-cgi/image/format%3Dauto/sites/default/files/images/blogs/----category-images/security-threats-hacking/zscaler-blog-security-threats-hacking-1%402x.jpg\"/>"
+                },
+                {
+                    "id": "<sentence_0x8e8811f1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Introduction:",
+                    "html": "<p>Introduction:</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xcb0ba704>",
+            "title": "Analysis of BlackGuard - a new info stealer malware being sold in a Russian hacking forum",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x9e02118f>",
+            "title": "Introduction:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x19c457d5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hacking forums often double up as underground marketplaces where cybercriminals buy, rent, and sell all kinds of malicious illegal products, including software, trojans, stealers, exploits, and leaked credentials. Malware-as-a-service has contributed substantially to the growth of ransomware and phishing attacks (among other attack types) in the past year, as they lower the technical barrier to entry for criminals to carry out attacks.",
+                    "html": "<p>Hacking forums often double up as underground marketplaces where cybercriminals buy, rent, and sell all kinds of malicious illegal products, including software, trojans, stealers, exploits, and leaked credentials. Malware-as-a-service has contributed substantially to the growth of ransomware and phishing attacks (among other attack types) in the past year, as they lower the technical barrier to entry for criminals to carry out attacks.</p>"
+                },
+                {
+                    "id": "<sentence_0x39ece9a2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While recently perusing one of these hacking forums during regular research activities, the Zscaler ThreatLabz team came across BlackGuard, a sophisticated stealer, advertised for sale. Blackguard is currently being sold as malware-as-a-service with a lifetime price of $700 and a monthly price of $200.",
+                    "html": "<p>While recently perusing one of these hacking forums during regular research activities, the Zscaler ThreatLabz team came across BlackGuard, a sophisticated stealer, advertised for sale. Blackguard is currently being sold as malware-as-a-service with a lifetime price of $700 and a monthly price of $200.</p>"
+                },
+                {
+                    "id": "<sentence_0x4e220824>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard has the capability to steal all types of information related to Crypto wallets, VPN, Messengers, FTP credentials, saved browser credentials, and email clients.",
+                    "html": "<p>BlackGuard has the capability to steal all types of information related to Crypto wallets, VPN, Messengers, FTP credentials, saved browser credentials, and email clients.</p>"
+                },
+                {
+                    "id": "<sentence_0xf239739c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blog, we share analysis and screenshots of the techniques this stealer uses to steal information and evade detection using obfuscation, as well as techniques used for anti-debugging.",
+                    "html": "<p>In this blog, we share analysis and screenshots of the techniques this stealer uses to steal information and evade detection using obfuscation, as well as techniques used for anti-debugging.</p>"
+                },
+                {
+                    "id": "<sentence_0x1ceb712e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x25f37bdc>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x419b1681>": "https://lh6.googleusercontent.com/Y9W4ma_hQ8biEiYEVdBKfBUKqpOzSR7lo8wvgtpxBASJ4riona-Hd5H3kj7bzU6wPF_bzs-YmiamyvYqT6nLN-xSeR7T90hu0VjRX2kmK3pdXAeMmwGri_IugJo-mxMETa-RWvUE",
+                        "<img_0x419b1681>": "https://lh6.googleusercontent.com/Y9W4ma_hQ8biEiYEVdBKfBUKqpOzSR7lo8wvgtpxBASJ4riona-Hd5H3kj7bzU6wPF_bzs-YmiamyvYqT6nLN-xSeR7T90hu0VjRX2kmK3pdXAeMmwGri_IugJo-mxMETa-RWvUE"
+                    },
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><a class=\"fancybox-media\" href=\"https://lh6.googleusercontent.com/Y9W4ma_hQ8biEiYEVdBKfBUKqpOzSR7lo8wvgtpxBASJ4riona-Hd5H3kj7bzU6wPF_bzs-YmiamyvYqT6nLN-xSeR7T90hu0VjRX2kmK3pdXAeMmwGri_IugJo-mxMETa-RWvUE\"><img class=\"lazyloaded\" height=\"230\" src=\"https://lh6.googleusercontent.com/Y9W4ma_hQ8biEiYEVdBKfBUKqpOzSR7lo8wvgtpxBASJ4riona-Hd5H3kj7bzU6wPF_bzs-YmiamyvYqT6nLN-xSeR7T90hu0VjRX2kmK3pdXAeMmwGri_IugJo-mxMETa-RWvUE\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xa356fc56>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 1. Forum thread promoting the BlackGuard stealer",
+                    "html": "<p class=\"text-align-center\">Fig 1. Forum thread promoting the BlackGuard stealer</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc78109cc>",
+            "title": "Technical Analysis:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe73a0d9e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard is a .NET stealer packed with a crypto packer. Currently, it is in active development and has the following capabilities:",
+                    "html": "<p>BlackGuard is a .NET stealer packed with a crypto packer. Currently, it is in active development and has the following capabilities:</p>"
+                },
+                {
+                    "id": "<sentence_0xfa197d3e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x58041395>",
+            "title": "Anti-Detection:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdbb2638e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Once executed, it checks and kills the processes related to antivirus and sandbox as shown in the figure below.",
+                    "html": "<p>Once executed, it checks and kills the processes related to antivirus and sandbox as shown in the figure below.</p>"
+                },
+                {
+                    "id": "<sentence_0xa7c83723>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4b22610f>": "https://lh4.googleusercontent.com/hZeKYdR2kCGY3xXOLu8oBgn8W6qRZeKa5DjdVL9MJhSOJJq9g0El--pMnY1oswn_Z13WEanbX9pwQQfMTneCOzLPJuDnjf4n2ZbEM-eXvEweaeL_5MeOKQBtSoCeZvzYQjN7V-qD",
+                        "<img_0x4b22610f>": "https://lh4.googleusercontent.com/hZeKYdR2kCGY3xXOLu8oBgn8W6qRZeKa5DjdVL9MJhSOJJq9g0El--pMnY1oswn_Z13WEanbX9pwQQfMTneCOzLPJuDnjf4n2ZbEM-eXvEweaeL_5MeOKQBtSoCeZvzYQjN7V-qD"
+                    },
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><a class=\"fancybox-media\" href=\"https://lh4.googleusercontent.com/hZeKYdR2kCGY3xXOLu8oBgn8W6qRZeKa5DjdVL9MJhSOJJq9g0El--pMnY1oswn_Z13WEanbX9pwQQfMTneCOzLPJuDnjf4n2ZbEM-eXvEweaeL_5MeOKQBtSoCeZvzYQjN7V-qD\"><img class=\"lazyloaded\" height=\"224\" src=\"https://lh4.googleusercontent.com/hZeKYdR2kCGY3xXOLu8oBgn8W6qRZeKa5DjdVL9MJhSOJJq9g0El--pMnY1oswn_Z13WEanbX9pwQQfMTneCOzLPJuDnjf4n2ZbEM-eXvEweaeL_5MeOKQBtSoCeZvzYQjN7V-qD\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x61cd3dc9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 2. BlackGuard detects antivirus processes",
+                    "html": "<p class=\"text-align-center\">Fig 2. BlackGuard detects antivirus processes</p>"
+                },
+                {
+                    "id": "<sentence_0x64ca8d18>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x184146d0>",
+            "title": "String Obfuscation:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x15e45f7b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The stealer contains a hardcoded array of bytes which is decoded in runtime to ASCII strings followed by base64 decoding. This allows it to bypass antivirus and string-based detection.",
+                    "html": "<p>The stealer contains a hardcoded array of bytes which is decoded in runtime to ASCII strings followed by base64 decoding. This allows it to bypass antivirus and string-based detection.</p>"
+                },
+                {
+                    "id": "<sentence_0xab63069f>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xe319dad0>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x65b3317e>": "https://lh6.googleusercontent.com/vu5XQ7LX-t8MK-BRjpsodSvF3oivwxq1NgPkMfoffxma0hGioWeg7NYUkLPiSBX2M9OeOGGUTHPrppGN-nKilzcfZHBJ8Y9AvWaRqFCE6p8fEmjuioXFTSFBRNdIxzF6TdAG7bcW",
+                        "<img_0x65b3317e>": "https://lh6.googleusercontent.com/vu5XQ7LX-t8MK-BRjpsodSvF3oivwxq1NgPkMfoffxma0hGioWeg7NYUkLPiSBX2M9OeOGGUTHPrppGN-nKilzcfZHBJ8Y9AvWaRqFCE6p8fEmjuioXFTSFBRNdIxzF6TdAG7bcW"
+                    },
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><a class=\"fancybox-media\" href=\"https://lh6.googleusercontent.com/vu5XQ7LX-t8MK-BRjpsodSvF3oivwxq1NgPkMfoffxma0hGioWeg7NYUkLPiSBX2M9OeOGGUTHPrppGN-nKilzcfZHBJ8Y9AvWaRqFCE6p8fEmjuioXFTSFBRNdIxzF6TdAG7bcW\"></a><a class=\"fancybox-media\" href=\"https://lh6.googleusercontent.com/vu5XQ7LX-t8MK-BRjpsodSvF3oivwxq1NgPkMfoffxma0hGioWeg7NYUkLPiSBX2M9OeOGGUTHPrppGN-nKilzcfZHBJ8Y9AvWaRqFCE6p8fEmjuioXFTSFBRNdIxzF6TdAG7bcW\"><img class=\"lazyloaded\" height=\"158\" src=\"https://lh6.googleusercontent.com/vu5XQ7LX-t8MK-BRjpsodSvF3oivwxq1NgPkMfoffxma0hGioWeg7NYUkLPiSBX2M9OeOGGUTHPrppGN-nKilzcfZHBJ8Y9AvWaRqFCE6p8fEmjuioXFTSFBRNdIxzF6TdAG7bcW\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x7b90df75>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 3. String decryption technique",
+                    "html": "<p class=\"text-align-center\">Fig 3. String decryption technique</p>"
+                },
+                {
+                    "id": "<sentence_0xd90c44b1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf5b81ced>",
+            "title": "Anti-CIS:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3386b874>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard checks for the infected device country by sending a request to http://ipwhois.app/xml/ and exits itself if the device is located in the Commonwealth of Independent States (CIS).",
+                    "html": "<p>BlackGuard checks for the infected device country by sending a request to \u201chttp://ipwhois.app/xml/\u201d and exits itself if the device is located in the Commonwealth of Independent States (CIS).</p>"
+                },
+                {
+                    "id": "<sentence_0x1f28a92b>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"184\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xae95a8b4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 4. Whitelist CIS",
+                    "html": "<p class=\"text-align-center\">Fig 4. Whitelist CIS</p>"
+                },
+                {
+                    "id": "<sentence_0x9ab3e971>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xaf9f727a>",
+            "title": "Anti-Debug:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x237b87d2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard uses user32!BlockInput() which can block all mouse and keyboard events in order to disrupt attempts at debugging.",
+                    "html": "<p>BlackGuard uses user32!BlockInput() which can block all mouse and keyboard events in order to disrupt attempts at debugging.\n </p>"
+                },
+                {
+                    "id": "<sentence_0x9d8e9973>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"127\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa48bae64>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 5. Anti-debugging technique",
+                    "html": "<p class=\"text-align-center\">Fig 5. Anti-debugging technique</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6ca05d21>",
+            "title": "Stealing Function:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x88aea76a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After all the checks are completed, the stealer function gets called which collects information from various browsers, software, and hardcoded directories, as shown in the screenshot below.",
+                    "html": "<p>After all the checks are completed, the stealer function gets called which collects information from various browsers, software, and hardcoded directories, as shown in the screenshot below.</p>"
+                },
+                {
+                    "id": "<sentence_0x5dcd422d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xdccbb368>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"224\"/> </p>"
+                },
+                {
+                    "id": "<sentence_0xb44f2680>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 6. Stealer code",
+                    "html": "<p class=\"text-align-center\"> Fig 6. Stealer code</p>"
+                },
+                {
+                    "id": "<sentence_0xe6e10ae1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"> <img class=\"lazyload\" height=\"277\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xca79f8ea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 7. Features Posted on forum",
+                    "html": "<p class=\"text-align-center\">Fig 7. Features Posted on forum</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcb0e829e>",
+            "title": "Browsers:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb69ce1f5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard steals credentials from Chrome- and Gecko-based browsers using the static path. It has the capability to steal history, passwords, autofill information, and downloads.",
+                    "html": "<p>BlackGuard steals credentials from Chrome- and Gecko-based browsers using the static path. It has the capability to steal history, passwords, autofill information, and downloads.</p>"
+                },
+                {
+                    "id": "<sentence_0x4a035ba8>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"304\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xbc897a3a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 8. Browser stealing function",
+                    "html": "<p class=\"text-align-center\">Fig 8. Browser stealing function</p>"
+                },
+                {
+                    "id": "<sentence_0xaefa85d7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Chrome, Opera, Firefox, MapleStudio, Iridium, 7Star, CentBrowser, Chedot, Vivaldi, Kometa, Elements Browser, Epic Privacy Browser, uCozMedia, Coowon, liebao, QIP Surf, Orbitum, Comodo, Amigo, Torch, Comodo, 360Browser, Maxthon3, K-Melon, Sputnik, Nichrome, CocCoc, Uran, Chromodo, Edge, BraveSoftware.",
+                    "html": "<p>Chrome, Opera, Firefox, MapleStudio, Iridium, 7Star, CentBrowser, Chedot, Vivaldi, Kometa, Elements Browser, Epic Privacy Browser, uCozMedia, Coowon, liebao, QIP Surf, Orbitum, Comodo, Amigo, Torch, Comodo, 360Browser, Maxthon3, K-Melon, Sputnik, Nichrome, CocCoc, Uran, Chromodo, Edge, BraveSoftware.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x816b3799>",
+            "title": "Cryptocurrency Wallets:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfeb32940>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BlackGuard also supports the stealing of wallets and other sensitive files related to crypto wallet applications. It targets sensitive data in files such as wallet.dat that contain the address, the private key to access this address, and other data. The stealer checks for the default wallet file location in AppData and copies it to the working folder.",
+                    "html": "<p>BlackGuard also supports the stealing of wallets and other sensitive files related to crypto wallet applications. It targets sensitive data in files such as wallet.dat that contain the address, the private key to access this address, and other data. The stealer checks for the default wallet file location in AppData and copies it to the working folder.</p>"
+                },
+                {
+                    "id": "<sentence_0x5e4e6842>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x327ec84d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"129\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa3716fbf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 9. Crypto wallet stealing function",
+                    "html": "<p class=\"text-align-center\">Fig 9. Crypto wallet stealing function</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x96804588>",
+            "title": "Crypto Extensions:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x37879748>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This stealer also targets crypto wallet extensions installed in Chrome and Edge with hardcoded extension IDs as shown in the figure below.",
+                    "html": "<p>This stealer also targets crypto wallet extensions installed in Chrome and Edge with hardcoded extension IDs as shown in the figure below.</p>"
+                },
+                {
+                    "id": "<sentence_0x391f1a46>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x62688819>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"181\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x5de6c88b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 10. Crypto extensions stealing function",
+                    "html": "<p class=\"text-align-center\">Fig 10. Crypto extensions stealing function</p>"
+                },
+                {
+                    "id": "<sentence_0x3d609ca0>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x555cbb38>",
+            "title": "C2 Exfiltration:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2f3f75d1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After collecting the information, BlackGuard creates a .zip of all the files and sends it to the C2 server through a POST request along with the system information like Hardware ID and country as shown in the figure below.",
+                    "html": "<p>After collecting the information, BlackGuard creates a .zip of all the files and sends it to the C2 server through a POST request along with the system information like Hardware ID and country as shown in the figure below.</p>"
+                },
+                {
+                    "id": "<sentence_0x2caf4eeb>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"217\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xd8055a06>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 11. C2 Exfiltration code snippet",
+                    "html": "<p class=\"text-align-center\">Fig 11. C2 Exfiltration code snippet</p>"
+                },
+                {
+                    "id": "<sentence_0xcabfb2ea>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xf15aa152>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"206\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xc7b4b14e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 12. Traffic capture of exfiltration",
+                    "html": "<p class=\"text-align-center\">Fig 12. Traffic capture of exfiltration</p>"
+                },
+                {
+                    "id": "<sentence_0x2132ce3a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p>\n</p>"
+                },
+                {
+                    "id": "<sentence_0x86ed81af>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"274\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xba071ee5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 13. Panel screenshot",
+                    "html": "<p class=\"text-align-center\">Fig 13. Panel screenshot</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4656c362>",
+            "title": "Targeted Applications:",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x9f4654d7>",
+            "title": "Crypto Wallets:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xde648ed9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "AtomicWallet, BitcoinCore, DashCore, Electrum, Ethereum, Exodus, LitecoinCore, Monero, Jaxx, Zcash, Solar, Zap, AtomicDEX, Binance, Frame, TokenPocket, Wassabi.",
+                    "html": "<p>AtomicWallet, BitcoinCore, DashCore, Electrum, Ethereum, Exodus, LitecoinCore, Monero, Jaxx, Zcash, Solar, Zap, AtomicDEX, Binance, Frame, TokenPocket, Wassabi.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc0393e06>",
+            "title": "Crypto Wallet Extensions:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x76275dea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Binance, coin98, Phantom, Mobox, XinPay, Math10, Metamask, BitApp, Guildwallet, iconx, Sollet, Slope Wallet, Starcoin, Swash, Finnie, KEPLR, Crocobit, OXYGEN, Nifty, Liquality, Auvitas wallet, Math wallet, MTV wallet, Rabet wallet, Ronin wallet, Yoroi wallet, ZilPay wallet, Exodus, Terra Station, Jaxx.",
+                    "html": "<p>Binance, coin98, Phantom, Mobox, XinPay, Math10, Metamask, BitApp, Guildwallet, iconx, Sollet, Slope Wallet, Starcoin, Swash, Finnie, KEPLR, Crocobit, OXYGEN, Nifty, Liquality, Auvitas wallet, Math wallet, MTV wallet, Rabet wallet, Ronin wallet, Yoroi wallet, ZilPay wallet, Exodus, Terra Station, Jaxx.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1f9efb23>",
+            "title": "Email Clients:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa702ea22>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Outlook",
+                    "html": "<p>Outlook</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x3a583952>",
+            "title": "Other Applications:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf95d4f67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "NordVPN, OpenVPN, ProtonVpn, Totalcomander, Filezilla, WinSCP, Steam",
+                    "html": "<p>NordVPN, OpenVPN, ProtonVpn, Totalcomander, Filezilla, WinSCP, Steam</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xec4e0e2b>",
+            "title": "Messengers:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb446cbe2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Telegram, Signal, Tox, Element, Pidgin, Discord",
+                    "html": "<p>Telegram, Signal, Tox, Element, Pidgin, Discord</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcea8b16d>",
+            "title": "Conclusion:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd82acde6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While applications of BlackGuard are not as broad as other stealers, BlackGuard is a growing threat as it continues to be improved and is developing a strong reputation in the underground community.",
+                    "html": "<p>While applications of BlackGuard are not as broad as other stealers, BlackGuard is a growing threat as it continues to be improved and is developing a strong reputation in the underground community.</p>"
+                },
+                {
+                    "id": "<sentence_0xb9a91bc3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To combat against BlackGuard and similar credential theft malware, we recommend that security teams inspect all traffic and use malware prevention tools that include both antivirus (for known threats) and sandboxing capabilities (for unknown threats). We also recommend training end users on the following:",
+                    "html": "<p>To combat against BlackGuard and similar credential theft malware, we recommend that security teams inspect all traffic and use malware prevention tools that include both antivirus (for known threats) and sandboxing capabilities (for unknown threats). We also recommend training end users on the following:</p>"
+                },
+                {
+                    "id": "<sentence_0x8d4d68c6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Dont use the same passwords for all the services and replace them on a regular cadence.<crlf>Use multi-factor authentication where applicable.<crlf>Avoid visiting unknown sites.<crlf>Avoid opening suspicious unknown files.",
+                    "html": "<ol><li>Don\u2019t use the same passwords for all the services and replace them on a regular cadence.</li><li>Use multi-factor authentication where applicable. </li><li>Avoid visiting unknown sites.</li><li>Avoid opening suspicious unknown files.</li></ol>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4ceda405>",
+            "title": "IOCs:",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x894ec6f4>",
+            "title": "Hashes:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xac43bc97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "4d66b5a09f4e500e7df0794552829c925a5728ad0acd9e68ec020e138abe80ac",
+                    "html": "<p>4d66b5a09f4e500e7df0794552829c925a5728ad0acd9e68ec020e138abe80ac</p>"
+                },
+                {
+                    "id": "<sentence_0xfa307184>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "c98e24c174130bba4836e08d24170866aa7128d62d3e2b25f3bc8562fdc74a66",
+                    "html": "<p>c98e24c174130bba4836e08d24170866aa7128d62d3e2b25f3bc8562fdc74a66</p>"
+                },
+                {
+                    "id": "<sentence_0x5d8b2eea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "7f2542ed2768a8bd5f6054eaf3c5f75cb4f77c0c8e887e58b613cb43d9dd9c13",
+                    "html": "<p>7f2542ed2768a8bd5f6054eaf3c5f75cb4f77c0c8e887e58b613cb43d9dd9c13</p>"
+                },
+                {
+                    "id": "<sentence_0x963dab22>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "f2d25cb96d3411e4696f8f5401cb8f1af0d83bf3c6b69f511f1a694b1a86b74d",
+                    "html": "<p>f2d25cb96d3411e4696f8f5401cb8f1af0d83bf3c6b69f511f1a694b1a86b74d</p>"
+                },
+                {
+                    "id": "<sentence_0xbc065275>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "bbc8ac47d3051fbab328d4a8a4c1c8819707ac045ab6ac94b1997dac59be2ece",
+                    "html": "<p>bbc8ac47d3051fbab328d4a8a4c1c8819707ac045ab6ac94b1997dac59be2ece</p>"
+                },
+                {
+                    "id": "<sentence_0xde1fba72>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "f47db48129530cf19f3c42f0c9f38ce1915f403469483661999dc2b19e12650b",
+                    "html": "<p>f47db48129530cf19f3c42f0c9f38ce1915f403469483661999dc2b19e12650b</p>"
+                },
+                {
+                    "id": "<sentence_0xc3ff66fd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ead17dee70549740a4e649a647516c140d303f507e0c42ac4b6856e6a4ff9e14",
+                    "html": "<p>ead17dee70549740a4e649a647516c140d303f507e0c42ac4b6856e6a4ff9e14</p>"
+                },
+                {
+                    "id": "<sentence_0xd1bc59d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "1ee88a8f680ffd175943e465bf85e003e1ae7d90a0b677b785c7be8ded481392",
+                    "html": "<p>1ee88a8f680ffd175943e465bf85e003e1ae7d90a0b677b785c7be8ded481392</p>"
+                },
+                {
+                    "id": "<sentence_0xf2c01ee1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "71edf6e4460d3eaf5f385610004cfd68d1a08b753d3991c6a64ca61beb4c673a",
+                    "html": "<p>71edf6e4460d3eaf5f385610004cfd68d1a08b753d3991c6a64ca61beb4c673a</p>"
+                },
+                {
+                    "id": "<sentence_0xe42ae603>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "e08d69b8256bcea27032d1faf574f47d5412b6da6565dbe52c968ccecea1cd5d",
+                    "html": "<p>e08d69b8256bcea27032d1faf574f47d5412b6da6565dbe52c968ccecea1cd5d</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5e2e72d9>",
+            "title": "Domains:",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd335a7fb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "win.mirtonewbacker.com",
+                    "html": "<p>win.mirtonewbacker.com</p>"
+                },
+                {
+                    "id": "<sentence_0x8ac8e0b7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "umpulumpu.ru",
+                    "html": "<p>umpulumpu.ru</p>"
+                },
+                {
+                    "id": "<sentence_0xacf34fce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "greenblguard.shop",
+                    "html": "<p>greenblguard.shop</p>"
+                },
+                {
+                    "id": "<sentence_0x825acaeb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "onetwostep.at",
+                    "html": "<p>onetwostep.at\n </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc5eb139a>",
+            "title": "Zscaler coverage:",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xed5b058d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We have ensured coverage for the payloads seen in these attacks via advanced threat signatures as well as our advanced cloud sandbox.",
+                    "html": "<p>We have ensured coverage for the payloads seen in these attacks via advanced threat signatures as well as our advanced cloud sandbox.</p>"
+                },
+                {
+                    "id": "<sentence_0xa852f261>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe6b907>",
+            "title": "Advanced Threat Protection:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf707a007>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Win32.PWS.Blackguard",
+                    "html": "<p>Win32.PWS.Blackguard</p>"
+                },
+                {
+                    "id": "<sentence_0xac98c10>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdc50643>",
+            "title": "Advanced Cloud Sandbox:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x26f746d8>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"><img class=\"lazyload\" height=\"305\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xda9e7caa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Fig 14. Zscaler sandbox detection",
+                    "html": "<p class=\"text-align-center\">Fig 14. Zscaler sandbox detection</p>"
+                },
+                {
+                    "id": "<sentence_0xb6816a8>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x5fdefbd6>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p class=\"text-align-center\"> </p>"
+                },
+                {
+                    "id": "<sentence_0x7b0a0618>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc10c879a>": "https://www.zscaler.com/blogs/security-research",
+                        "<a_0xe6443cb9>": "https://www.zscaler.com/blogs/insights-and-research"
+                    },
+                    "text": "Security Research<crlf>Insights and Research",
+                    "html": "<ul class=\"zp-0 zm-0 category-tags\"><li class=\"d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8\"> <a class=\"h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag\" href=\"https://www.zscaler.com/blogs/security-research\">Security Research</a></li><li class=\"d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8\"> <a class=\"h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag\" href=\"https://www.zscaler.com/blogs/insights-and-research\">Insights and Research</a></li></ul>"
+                },
+                {
+                    "id": "<sentence_0xd093d6fb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xce15d8ce>": "mailto:?subject=Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum&body=https://bit.ly/3uFDpNN",
+                        "<a_0x80a154ce>": "https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3uFDpNN",
+                        "<a_0x10e6b5ed>": "https://www.linkedin.com/sharing/share-offsite/?title=Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum&url=https://bit.ly/3uFDpNN",
+                        "<a_0xab61f869>": "https://twitter.com/intent/tweet?text=https://bit.ly/3uFDpNN%20%E2%80%94%20Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum",
+                        "<a_0x56b76d46>": "https://www.zscaler.com/blogs/feeds/security-research"
+                    },
+                    "text": "",
+                    "html": "<ul class=\"w-100 text-center text-md-left sharing-buttons zp-0 zm-0\"><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"mailto:?subject=Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum&amp;body=https://bit.ly/3uFDpNN\" title=\"Share via email\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3uFDpNN\" target=\"_blank\" title=\"Share on facebook\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://www.linkedin.com/sharing/share-offsite/?title=Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum&amp;url=https://bit.ly/3uFDpNN\" target=\"_blank\" title=\"Share on linkedin\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://twitter.com/intent/tweet?text=https://bit.ly/3uFDpNN%20%E2%80%94%20Analysis%20of%20BlackGuard%20-%20a%20new%20info%20stealer%20malware%20being%20sold%20in%20a%20Russian%20hacking%20forum\" target=\"_blank\" title=\"Tweet\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"/blogs/feeds/security-research\" title=\"Check feeds\"> </a></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xed475317>",
+            "title": "Mitesh Wani",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xce2b5878>",
+            "title": "Kaivalya Khursale",
+            "title_level": 3,
+            "sentences": []
+        }
+    ]
+}

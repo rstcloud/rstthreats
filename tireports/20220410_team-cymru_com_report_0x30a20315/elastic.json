@@ -1,0 +1,95 @@
+[
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0x62fa0b9d",
+            "title": "MoqHao Part 2: Continued European Expansion",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0x86f9fe4a",
+            "title": "Dragon News Blog",
+            "text": "View all posts\nPost date April 7, 2022\nPost author Josh Hopkins"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0xd6a259dc",
+            "title": "Monitoring Roaming Mantis Operations with Pure Signal Recon",
+            "text": "This blog is a product of ongoing collaboration with @ninoseki, a Tokyo-based researcher who has tracked MoqHao for several years. His public GitHub contains numerous useful OSINT threat hunting tools."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0xa3c7dd59",
+            "title": "Introduction",
+            "text": "MoqHao (also referred to as Wroba and XLoader) is a malware family commonly associated with the Roaming Mantis threat actor group. MoqHao is generally used to target Android users, often via an initial attack vector of phishing SMS messages (smishing).\nRoaming Mantis are characterized as Chinese-speaking and financially motivated. The group has historically targeted countries in the Far East in particular Japan, South Korea and Taiwan.\nWe have previously blogged on a MoqHao campaign targeting Japan during the Golden Week holiday period in April/May 2021.\nIn the recent past, several vendors (e.g., Kaspersky) have noted an expansion in Roaming Mantis operations to include several European countries.\n.\nFigure 1: Tweet by @ninoseki highlighting MoqHao campaigns targeting France and Germany (August 2021)\nIn this blog we will examine open-source hints attributable to the threat actors, coupled with Team Cymrus insights, to provide an assessment of Roaming Mantis current target base."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0xaeab68f4",
+            "title": "Landing Pages",
+            "text": "When following a malicious link distributed in a Roaming Mantis smishing campaign, users are directed to a landing page. These pages are tailored specifically to a target country / language; users from other regions are presented with an error page (404 resource not found).\nBased on the user-agent information for the connecting device, one of two outcomes will occur:\n.\nFor Android devices, a malicious APK (MoqHao) is downloaded. .\nFor Apple (iOS) devices, the user is presented with a phishing page where they are asked to enter credentials for a spoofed entity.\nTo determine common characteristics of the infrastructure utilized for the hosting of Roaming Mantis landing pages, 43 IP addresses, which were observed hosting these pages since the beginning 2022, were analyzed. The following findings were true across all the IPs:\n.\nThe re-use of the same X.509 certificate (SHA1: 834024f91f67445a7fd1a98689cb3f49b4c3ade7), hosted on TCP/443. This certificate has a common name value of localhost and an alt name value which contains (at the time of reporting) 335 legitimate domains, summarized as follows: Global brands, such as Google, PayPal, Tumblr, and YouTube. South Korean entities, such as Naver and Daum. ccTLDs for .kr (South Korea) and .tw (Taiwan). .\nGlobal brands, such as Google, PayPal, Tumblr, and YouTube.\nSouth Korean entities, such as Naver and Daum.\nccTLDs for .kr (South Korea) and .tw (Taiwan). .\nThe presence of Merlin command and control (C2) infrastructure listening on TCP/443, based on the detection of a JARM fingerprint for this service (29d21b20d29d29d21c41d21b21b41d494e0df9532e75299f15ba73156cee38). .\nOpen ports; TCP/5985, TCP/10081, TCP/47001. .\nPassive scanning of TCP/10081 on the landing page hosting IPs indicated an additional HTTP service listening on this port. The HTML title value for this service provides useful insight into victim targeting, as summarized in Table 1 below.\nTable 1: Insight derived from TCP/10081 on the Landing Page hosting IPs\nAs can be seen, in addition to campaigns targeting France, Germany, Japan, South Korea, and the United States, infrastructure was set up for the specific targeting of UK-based users. This finding would indicate a further expansion of Roaming Mantis operations within Europe.",
+            "table": "Landing IP;WHOIS;HTML Title;Translation\n142.0.136.49;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.0.136.50;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.0.136.52;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.4.97.105;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.4.97.106;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.4.97.107;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.4.97.108;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n142.4.97.109;PEGTECHINC, US;\u7f8e\u56fd\u4e0b\u8f7d;US Download\n134.119.193.106;VELIANET-AS, DE;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n134.119.193.108;VELIANET-AS, DE;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n134.119.193.109;VELIANET-AS, DE;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n134.119.193.110;VELIANET-AS, DE;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n192.51.188.142;HDTIDC LIMITED, HK;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n192.51.188.145;HDTIDC LIMITED, HK;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n192.51.188.146;HDTIDC LIMITED, HK;\u82f1\u56fd\u4e0b\u8f7d;UK Download\n27.124.36.25;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.36.27;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.36.32;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.36.52;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.39.241;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.39.242;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n27.124.39.243;BGPNET Global ASN, SG;\u97e9\u56fd\u4e0b\u8f7d;South Korea Download\n192.51.188.101;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n192.51.188.103;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n192.51.188.111;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n192.51.188.14;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.111;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.15;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.18;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.20;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.30;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.32;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n91.204.227.40;HDTIDC LIMITED, HK;\u65e5\u672c\u4e0b\u8f7d;Japan Download\n146.0.74.157;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.197;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.199;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.202;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.203;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.205;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.206;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n146.0.74.228;HOSTKEY-AS, NL;\u5fb7\u56fd\u4e0b\u8f7d;Germany Download\n134.119.205.21;VELIANET-AS, DE;\u6cd5\u56fd\u4e0b\u8f7d;France Download\n134.119.205.22;VELIANET-AS, DE;\u6cd5\u56fd\u4e0b\u8f7d;France Download\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0x534f8719",
+            "title": "MoqHao Command & Control",
+            "text": "In this section we will examine network telemetry relating to the connections made once the malicious APK (MoqHao) is installed on a victim Android device.\nBy examining this stage of the attack, it is possible to identify potential victims with a higher degree of certainty. This confidence is based on the chain of events leading to this point, i.e., a user has interacted with a link contained within an SMS message, visited a landing page, and the malicious APK has successfully been deployed on the users device to the point where it has begun to beacon to the C2 server.\nThe starting point for this part of the analysis was a MoqHao sample (SHA1: 74558f86e4b4513f7f52d6b99b7e06d978aec97b) uploaded to VirusTotal by a user in the United Kingdom on March 16, 2022.\nAnalysis of this sample identified a C2 server hosted on 103.249.28.207 (EHOSTICT, KR). Network telemetry for this IP revealed a small number of connections inbound on TCP/28866, sourced from IP addresses assigned to UK mobile providers.\n.\nFigure 2: A capture of network telemetry for 103.249.28.207 from Pure Signal Recon\n.\nIn addition, 103.249.28.207 was observed as a C2 server in what appeared to be four further campaigns:\n.\nTCP/28866 Spain, Turkey .\nTCP/29869 South Africa .\nTCP/28844 Afghanistan, Bangladesh, India, Iran, and Pakistan (South Asia) .\nFigure 3: Victim connections to 103.249.28.207\n.\nPassive scanning of 103.249.28.207 identified open TCP/3389 (commonly associated with the Remote Desktop Protocol (RDP)), with a machine name of WIN-MM79JTRSTL7.\nAs an aside, screen captures of RDP activity on 103.249.28.207, sourced from Shodan, provided another Chinese flag for this activity.\nAs recently as January 05, 2022, a remote login page was captured (associated with machine name WIN-MM79JTRSTL7), which indicated Chinese language settings the characters , meaning password in Mandarin, were displayed.\n.\nFigure 4: Remote login portal for 103.249.28.207 (January 2022)\n.\nThis login page was visible dating back to the end of 2020, all the time associated with the same machine name (WIN-MM79JTRSTL7). A screen capture from January 22, 2020, indicated Korean language settings the characters , meaning password in Korean, were displayed.\n.\nFigure 5: Remote login portal for 103.249.28.207 (January 2020)\n.\nGiven that 103.249.28.207 is assigned to a South Korean provider (Ehost IDC), the information from Shodan may be indicative of a Chinese-speaking user accessing / utilizing the machine since late 2020.\nA pivot on the value WIN-MM79JTRSTL7 identified a further eight IP addresses, all assigned to EHOSTICT, KR, which were accessed by the same machine. Network telemetry data was obtained for these IPs for the beginning of 2022 onwards, where MoqHao campaigns were identified, they are referenced in Table 2 below\nTable 2: Summary of MoqHao C2 servers\n.\nIn the case of 103.249.28.210, samples uploaded to VirusTotal in early 2021 provide an indication as to when it was an active MoqHao C2. For the remaining IPs it is not clear if they were previously MoqHao C2s. One possibility may be that they are being configured for future use.\nAlthough not an exhaustive study of MoqHao C2 infrastructure, it is clear from the findings of this analysis and other findings from the community, that Roaming Mantis continue to expand their operations. What was previously considered to be a regional threat now has a global footprint.",
+            "table": "IP Address;C2 Port;Target Countries\n103.249.28.206;37689;China, Hong Kong, Japan, Singapore, Taiwan\n103.249.28.208;38866, 38876;Taiwan\n103.249.28.209;28856;United States\n103.249.28.210;;No active campaigns\n61.97.248.5;28836;Turkey\n61.97.248.6;;No active campaigns\n61.97.248.7;;No active campaigns\n61.97.248.8;;No active campaigns\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x30a20315",
+            "date": "20220410",
+            "title": "Dragon News Blog. MoqHao Part 2: Continued European Expansion",
+            "url": "https://team-cymru.com/blog/2022/04/07/moqhao-part-2-continued-european-expansion"
+        },
+        "chapter": {
+            "id": "chapter_0x699553c1",
+            "title": "Indicators of Compromise",
+            "text": "103.249.28.206\n103.249.28.207\n103.249.28.208\n103.249.28.209\n61.97.248.5\n.\n74558f86e4b4513f7f52d6b99b7e06d978aec97b\n0\nshares\nTweet\nShare\nLinkedIn\nEmail\nCategories Network Security, Research, UK\nTags #Android, #APK, #Europe, #Merlin, #moqhao, #RoamingMantis, #Smishing, #threatintel, #threatrecon"
+        }
+    }
+]

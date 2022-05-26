@@ -1,0 +1,469 @@
+{
+    "id": "<report_0x2ed3633c>",
+    "url": "https://labs.k7computing.com/index.php/the-discord-token-grab",
+    "title": "The Discord Token Grab",
+    "meta": [
+        {
+            "id": "<chapter_0xe13a570b>",
+            "title": "The Discord Token Grab",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x49c34ec2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By Rahul RApril 4, 2022",
+                    "html": "\nBy Rahul RApril 4, 2022\n \n"
+                },
+                {
+                    "id": "<sentence_0x28230a50>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x48213f2b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Recently we came across a Twitter feed that described a malware sample coded in Python and fairly new to have many detections (at the time of writing this blog) which attracted our interest in diving deeper into the sample.",
+                    "html": "<p>Recently we came across a Twitter feed that described a malware sample coded in Python and fairly new to have many detections (at the time of writing this blog) which attracted our interest in diving deeper into the sample.</p>"
+                },
+                {
+                    "id": "<sentence_0x1ee5ce89>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Upon analyzing the sample we found some interesting technique that describes how threat actors steal your credentials/any personal information stored in Discord; a popular social networking app, by grabbing Discords authtokens.",
+                    "html": "<p> Upon analyzing the sample we found some interesting technique that describes how threat actors steal your credentials/any personal information stored in Discord; a popular social networking app, by grabbing Discord\u2019s authtokens.</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x3974b5ea>",
+            "title": "The Discord Token Grab",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x25d4d1c2>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x40eab30>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Discord-Stealer.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" class=\"hidden-social-img\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Discord-Stealer.png\"/>"
+                },
+                {
+                    "id": "<sentence_0x8c40f83e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5d09026c>": "https://labs.k7computing.com/index.php/category/social-networking-apps/"
+                    },
+                    "text": "Social Networking Apps",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/social-networking-apps/\">Social Networking Apps</a>"
+                },
+                {
+                    "id": "<sentence_0xc3722ddc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x1e7f2d69>": "https://labs.k7computing.com/index.php/category/stealer-trojan/"
+                    },
+                    "text": "Stealer Trojan",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/stealer-trojan/\">Stealer Trojan</a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcfc469f>",
+            "title": "Lets now look at the analysis",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdc7a3f82>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As the first step of analysis , we used Detect It Easy to identify the compiler and its Microsoft Visual C++. Further investigation showed that the malwares source python script is compiled using PyInstaller to create a Microsoft Visual C payload.",
+                    "html": "<p>As the first step of analysis , we used \u201cDetect It Easy\u201d to identify the compiler and its Microsoft Visual C++. Further investigation showed that the malware\u2019s source python script is compiled using PyInstaller to create a Microsoft Visual C payload.</p>"
+                },
+                {
+                    "id": "<sentence_0x967b5c97>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x63ddffa6>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure1.png"
+                    },
+                    "text": "Figure 1: Compiler details",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23739\"><img alt=\"\" class=\"wp-image-23739 size-full\" height=\"287\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure1.png\" width=\"635\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23739\">Figure 1: Compiler details</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2b3cbad1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The compiled sample has the actual malicious python script 333.py in the overlay.",
+                    "html": "<p>The compiled sample has the actual malicious python script 333.py in the overlay. </p>"
+                },
+                {
+                    "id": "<sentence_0xa3fd2129>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc1270b8a>": "https://github.com/extremecoders-re/pyinstxtractor"
+                    },
+                    "text": "We used pyinstxtractor to extract the .pyc files (including 333.pyc) from the zlib archive (overlay).",
+                    "html": "<p>We used <a href=\"https://github.com/extremecoders-re/pyinstxtractor\" rel=\"noopener\" target=\"_blank\">pyinstxtractor</a> to extract the .pyc files (including 333.pyc) from the zlib archive (overlay).</p>"
+                },
+                {
+                    "id": "<sentence_0xa4d9198c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4be5eec8>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure2.png"
+                    },
+                    "text": "Figure 2: Extracted files from binary",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23740\"><img alt=\"\" class=\"wp-image-23740 size-full\" height=\"407\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure2.png\" width=\"1124\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23740\">Figure 2: Extracted files from binary</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2328ff45>",
+            "title": "Behavioral Analysis",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xef184a09>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdb2fb4e3>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure3.png"
+                    },
+                    "text": "Figure 3: Startup logo",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23742\"><img alt=\"\" class=\"wp-image-23742 size-full\" height=\"322\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure3.png\" width=\"489\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23742\">Figure 3: Startup logo</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xd9f96922>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the original malware sample is executed, it verifies and downloads the required python modules through pip if not found in the users PC.",
+                    "html": "<p>When the original malware sample is executed, it verifies and downloads the required python modules through pip if not found in the user\u2019s PC.</p>"
+                },
+                {
+                    "id": "<sentence_0x55ade7bf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5c55b48d>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure4.png"
+                    },
+                    "text": "Figure 4: Imported Modules",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23743\"><img alt=\"\" class=\"wp-image-23743 size-full\" height=\"230\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure4.png\" width=\"442\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23743\">Figure 4: Imported Modules</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x513855ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After downloading the required modules, it searches for all the processes running in the system and kills if the process name has any one of the strings http, wireshark, fiddler, packet in their name.",
+                    "html": "<p>After downloading the required modules, it searches for all the processes running in the system and kills if the process name has any one of the strings \u201chttp, wireshark, fiddler, packet\u201d in their name.</p>"
+                },
+                {
+                    "id": "<sentence_0xc50e43b1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For ease of understanding, images shown below are from the extracted 333.pyc file.",
+                    "html": "<p>For ease of understanding, images shown below are from the extracted 333.pyc file. </p>"
+                },
+                {
+                    "id": "<sentence_0x22a8e279>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8f8177d6>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure5.png"
+                    },
+                    "text": "Figure 5: Procedure for killing monitoring apps",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23745\"><img alt=\"\" class=\"wp-image-23745 size-full\" height=\"294\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure5.png\" width=\"804\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23745\">Figure 5: Procedure for killing monitoring apps</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2232d6ca>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After killing the identified network monitoring application, it sends a POST request with the following JSON containing ready to log message to the Discord webhook url hxxps[:]//discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G",
+                    "html": "<p>After killing the identified network monitoring application, it sends a POST request with the following JSON containing \u201cready to log\u201d message to the Discord webhook url \u201chxxps[:]//discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0x9ea250a4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc8219337>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure6.png"
+                    },
+                    "text": "Figure 6: JSON payload sent during the start of malware activity",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23746\"><img alt=\"\" class=\"wp-image-23746 size-full\" height=\"465\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure6.png\" width=\"951\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23746\">Figure 6: JSON payload sent during the start of malware activity</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6f714347>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After the initial network request, it starts the activity to steal cookies and tokens of Discord.",
+                    "html": "<p>After the initial network request, it starts the activity to steal cookies and tokens of Discord. </p>"
+                },
+                {
+                    "id": "<sentence_0x50e2bb22>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9ff827d2>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure7.png"
+                    },
+                    "text": "Figure 7: Default location of browsers local storage",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23748\"><img alt=\"\" class=\"wp-image-23748 size-full\" height=\"244\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure7.png\" width=\"747\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23748\">Figure 7: Default location of browsers local storage</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xd5359222>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware steals the token from the below mentioned browsers and apps",
+                    "html": "<p>The malware steals the token from the below mentioned browsers and apps</p>"
+                },
+                {
+                    "id": "<sentence_0xc18abf85>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Discord app<crlf>Google Chrome<crlf>Opera Browser<crlf>Brave<crlf>Yandex",
+                    "html": "<ol>\n<li>Discord app</li>\n<li>Google Chrome</li>\n<li>Opera Browser</li>\n<li>Brave </li>\n<li>Yandex</li>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0xda22685e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then for each of the obtained paths, it creates a full path using string operation and points to the leveldb directory.",
+                    "html": "<p>Then for each of the obtained paths, it creates a full path using string operation and points to the leveldb directory.</p>"
+                },
+                {
+                    "id": "<sentence_0x58b41415>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For example, the full path to the leveldb directory in Chrome would look like C:\\Users\\*******\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Local Storage\\leveldb\\",
+                    "html": "<p>For example, the full path to the leveldb directory in Chrome would look like \u201cC:\\Users\\*******\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Local Storage\\leveldb\\\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0xba8e654>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x770f9f0>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure8.png"
+                    },
+                    "text": "Figure 8: Parsing files to steal Discord token",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23749\"><img alt=\"\" class=\"wp-image-23749 size-full\" height=\"398\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure8.png\" width=\"1187\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23749\">Figure 8: Parsing files to steal Discord token</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x661864c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then iterates through all the files inside the obtained directory and searches for files ending with .log or .ldb extension. Once a log file is obtained it reads the content into memory and searches for the Discord token/MFA pattern through the below regex r[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}, rmfa\\.[\\w-]{84}. Each token found is then appended to a Python List.",
+                    "html": "<p>It then iterates through all the files inside the obtained directory and searches for files ending with .log or .ldb extension. Once a log file is obtained it reads the content into memory and searches for the Discord token/MFA pattern through the below regex r\u201d[\\w-]{24}\\.[\\w-]{6}\\.[\\w-]{27}\u201d, r\u201dmfa\\.[\\w-]{84}\u201d. Each token found is then appended to a Python List.</p>"
+                },
+                {
+                    "id": "<sentence_0x7b60ce47>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using the stolen token, the malware sends an API request to the Discord server /billing/payment-sources route, to check if the user has any saved payment sources like credit/debit cards.",
+                    "html": "<p>Using the stolen token, the malware sends an API request to the Discord server \u201c/billing/payment-sources\u201d route, to check if the user has any saved payment sources like credit/debit cards.</p>"
+                },
+                {
+                    "id": "<sentence_0xb2ef87a7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xebdadd4b>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure9.png"
+                    },
+                    "text": "Figure 9: Checks if the user has any payment info saved",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23750\"><img alt=\"\" class=\"wp-image-23750 size-full\" height=\"183\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure9.png\" width=\"1091\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23750\">Figure 9: Checks if the user has any payment info saved</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xa5d30bdf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following information is collected by the malware by sending a request to the URL with the stolen token in the Authorization Header.",
+                    "html": "<p>The following information is collected by the malware by sending a request to the URL with the stolen token in the Authorization Header. </p>"
+                },
+                {
+                    "id": "<sentence_0xc3b54547>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "User data saved in Discord<crlf>Public IP address of the user obtained through a GET request to ipinfo.io/json<crlf>Username<crlf>Discord user_id<crlf>Avatar_id<crlf>Avatar_url<crlf>Email<crlf>Phone Number<crlf>MFA_Enabled status<crlf>Premium user status<crlf>Is Email verified<crlf>Billing Information",
+                    "html": "<ol>\n<li>User data saved in Discord</li>\n<li>Public IP address of the user obtained through a GET request to \u201cipinfo.io/json\u201d</li>\n<li>Username</li>\n<li>Discord user_id</li>\n<li>Avatar_id</li>\n<li>Avatar_url</li>\n<li>Email</li>\n<li>Phone Number</li>\n<li>MFA_Enabled status</li>\n<li>Premium user status</li>\n<li>Is Email verified</li>\n<li>Billing Information</li>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x79decdb0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc133942c>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure10.png"
+                    },
+                    "text": "Figure 10: User data response from Discord Server",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23751\"><img alt=\"\" class=\"wp-image-23751 size-full\" height=\"345\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure10.png\" width=\"501\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23751\">Figure 10: User data response from Discord Server</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2bcfaa90>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After collecting all the information, it creates a JSON payload for sending it to the webhook URL.",
+                    "html": "<p>After collecting all the information, it creates a JSON payload for sending it to the webhook URL.</p>"
+                },
+                {
+                    "id": "<sentence_0xa0474984>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The JSON payload structure in this malware is as follows",
+                    "html": "<p>The JSON payload structure in this malware is as follows</p>"
+                },
+                {
+                    "id": "<sentence_0xd822bfdc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdea3a6f8>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure11.png"
+                    },
+                    "text": "Figure 11: Stolen Information sent to C2 as JSON payload",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23752\"><img alt=\"\" class=\"wp-image-23752 size-full\" height=\"583\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure11.png\" width=\"989\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23752\">Figure 11: Stolen Information sent to C2 as JSON payload</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xd98891e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The process then continues to run in the background and maintains all the tokens sent to the C2 in its local memory. If a user changes their Discord credentials, a new token would get generated and this would trigger the malware again to send the details to its C2 server.",
+                    "html": "<p>The process then continues to run in the background and maintains all the tokens sent to the C2 in its local memory. If a user changes their Discord credentials, a new token would get generated and this would trigger the malware again to send the details to its C2 server.</p>"
+                },
+                {
+                    "id": "<sentence_0xd54d405d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware also has the capability to steal the browser cookies and send them to C2.",
+                    "html": "<p>The malware also has the capability to steal the browser cookies and send them to C2.</p>"
+                },
+                {
+                    "id": "<sentence_0xc45b5f3b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5d9b734a>": "https://labs.k7computing.com/wp-content/uploads/2022/04/Figure12.png"
+                    },
+                    "text": "Figure 12: Browser cookie stealing capability",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_23753\"><img alt=\"\" class=\"wp-image-23753 size-full\" height=\"480\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/04/Figure12.png\" width=\"979\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-23753\">Figure 12: Browser cookie stealing capability</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x3232e298>",
+            "title": "Indicators of Compromise (IOCs)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x45db0865>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hash: CBA0E7DEBB118110852F7F2B1F0C9C2A",
+                    "html": "<p>Hash: CBA0E7DEBB118110852F7F2B1F0C9C2A</p>"
+                },
+                {
+                    "id": "<sentence_0xd1039a0f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection Name: Trojan ( 0001140e1 )",
+                    "html": "<p>Detection Name: Trojan ( 0001140e1 )</p>"
+                },
+                {
+                    "id": "<sentence_0x9198b7bc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C2 (Discord Webhook URL): hxxps://discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G",
+                    "html": "<p>C2 (Discord Webhook URL): <a href=\"\">hxxps://discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G</a></p>"
+                },
+                {
+                    "id": "<sentence_0x1f9480c6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "References:",
+                    "html": "<p>References: </p>"
+                },
+                {
+                    "id": "<sentence_0xfa694840>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://twitter.com/struppigel/status/1506613766804357128",
+                    "html": "<p>https://twitter.com/struppigel/status/1506613766804357128</p>"
+                },
+                {
+                    "id": "<sentence_0xb9e4da01>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x336eb669>",
+            "title": "Like what you're reading? Subscribe to our top stories.",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2b230a00>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If you want to subscribe to our monthly newsletter, please submit the form below.",
+                    "html": "<p class=\"sendgrid_widget_text\">If you want to subscribe to our monthly newsletter, please submit the form below.</p>"
+                },
+                {
+                    "id": "<sentence_0x97e4387b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Email* :",
+                    "html": " Email* : \n"
+                },
+                {
+                    "id": "<sentence_0x4a7a64d7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x82e7bcd3>": "https://labs.k7computing.com/index.php/dissecting-the-kazy-crypter/"
+                    },
+                    "text": "Previous Post Dissecting the Kazy Crypter<crlf>Next Post",
+                    "html": "<ul class=\"controls\">\n<li class=\"previous-post mouse-leaving\">\n<h3>Previous Post\u00ab <a href=\"https://labs.k7computing.com/index.php/dissecting-the-kazy-crypter/\" rel=\"prev\">Dissecting the Kazy Crypter </a>\n</h3>\n</li>\n<li class=\"next-post mouse-leaving\">\n<h3>Next Post\n</h3>\n</li>\n</ul>"
+                }
+            ]
+        }
+    ]
+}

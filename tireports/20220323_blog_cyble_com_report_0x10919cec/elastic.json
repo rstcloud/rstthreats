@@ -1,0 +1,188 @@
+[
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xde26985b",
+            "title": "GodFather Malware Under the Lens",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xdf489ffc",
+            "title": "Technical Analysis",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xf2743b6a",
+            "title": "APK Metadata Information",
+            "text": "App Name: apkversion1.1.5.43\nPackage Name: com.rduzmauwns.jieliysagr\nSHA256 Hash: 0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8\nFigure 1 shows the metadata information of an application.\nFigure 1 App Metadata Information\nThe figure below shows the application icon and name displayed on the Android device.\nFigure 2 App Icon and Name"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xd002c146",
+            "title": "Manifest Description",
+            "text": "The malware requests users for 23 different permissions, out of which it abuses 11. These dangerous permissions are listed below.\nWe observed a defined launcher activity in the malicious apps manifest file, which loads the applications first screen, as shown below.\nFigure 3 Launcher Activity",
+            "table": "0;1\nPermissions;Description\nRead_SMS;Access SMSs from the victim\u2019s device.\nRECEIVE_SMS;Intercept SMSs received on the victim\u2019s device\nREAD_CONTACTS;Access phone contacts\nREAD_PHONE_STATE;Allows access to phone state, including the current cellular network information, the phone number and the serial number of the phone, the status of any ongoing calls, and a list of any Phone Accounts registered on the device.\nRECORD_AUDIO;Allows the app to record audio with the microphone, which attackers can potentially misuse.\nSEND_SMS;Allows an application to send SMS messages.\nCALL_PHONE;Allows an application to initiate a phone call without going through the dialer user interface for the user to confirm the call.\nWRITE_EXTERNAL_STORAGE;Allows the app to write or delete files in the device\u2019s external storage\nWRITE_SMS;Allows the app to modify or delete SMSs\nDISABLE_KEYGUARD;Allows the app to disable the keylock and any associated password security\nBIND_ACCESSIBILITY_SERVICE;Used for Accessibility Service\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x8f9987cb",
+            "title": "Source Code Review",
+            "text": "During our analysis, we observed that the malware initially requests the victims to enable Accessibility, and then it hides its icon from the Android devices screen.\nThe malware uses the code snippet shown in the below image to hide its icon from the device screen.\nFigure 4 Code to Hide Icon\nThe malware calls the SendNewUser() method to get the victims device details and post them to the TAs C&C server, as shown in Figure 5.\nFigure 5 Code to Get New Victims Info\nThe malware can perform money transfers by making USSD (Unstructured Supplementary Service Data) calls without using the dialer user interface, as shown in the below code snippet.\nFigure 6 Code to Transfer Money through USSD\nThe malware also uses the method SmsSender() to send multi-part text-based SMSs, as shown below. This is done to bypass character limitations while sending SMSs.\nFigure 7 Code to Send SMS\nThe below code snippet represents the malwares ability to steal SMSs present in the victims device.\nFigure 8 Code to Steal Text SMSs\nThe malware uses the method callForward() which forwards the victims incoming calls to a number provided by TAs C&C server, as shown in the below figure.\nFigure 9 Code to Forwarding Calls\nThe method linkopen() provides the feature to the malware to open URLs in the device browser without the users intervention, as shown in Figure 10.\nFigure 10 Code to Open URL in Browser\nFigure 11 demonstrates the code that illustrates the malwares ability to steal application key logs.\nFigure 11 Code to Steal Application Keylogs\nThe malware also uses VNC Viewer to remotely view/control the screens of an infected device, as shown below.\nFigure 12 Uses VNC Viewer to Control Device Screen\nThe malware fetches the C&C URL from the Telegram channel hxxps://t[.]me/dobrynyanikitichsobre, which will send the sensitive data from the victims device as shown in Figure 13. While analysing the sample, we could not observe any C&C communication activity as the malware failed to get the C&C URL from the Telegram channel.\nFigure 13 Gets C&C URL from Telegram Channel\nThe malware can also terminate itself whenever it gets the corresponding commands from the C&C server.\nFigure 14 Code to Self-Terminate\nBelow, we have listed the commands used by the TAs to control infected devices:",
+            "table": "0;1\nCommand;Description\nstartUSSD;To Transfer money using USSD\nsentSMS;To Send SMS to a particular number\nstartApp;To Launch the Application Activity\ngetSMS;To Get SMSs Present in the Device\nstartforward;To forwarding Calls\nlinkopen;To Open URL in Browser\nkillbot;To Kill Itself\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xc681375e",
+            "title": "Conclusion",
+            "text": "Banking threats are increasing with every passing day and growing in sophistication. The GodFather malware variant is one such example. The malicious code present in the malware gives it the capability to steal sensitive information from the compromised device.\nThere is also the additional threat of TAs using this sensitive data to commit financial fraud and further propagate the malware to other devices."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x5d8022b2",
+            "title": "Our Recommendations",
+            "text": "We have listed some essential cybersecurity best practices that create the first line of control against attackers. We recommend that our readers follow the best practices given below:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xb31205a2",
+            "title": "How to prevent malware infection?",
+            "text": "Download and install software only from official app stores like Google Play Store or the iOS App Store.\nUse a reputed anti-virus and internet security software package on your connected devices, such as PCs, laptops, and mobile devices.\nUse strong passwords and enforce multi-factor authentication wherever possible.\nEnable biometric security features such as fingerprint or facial recognition for unlocking the mobile device where possible.\nBe wary of opening any links received via SMS or emails delivered to your phone.\nEnsure that Google Play Protect is enabled on Android devices.\nBe careful while enabling any permissions.\nKeep your devices, operating systems, and applications updated."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x5e2c9196",
+            "title": "How to identify whether you are infected?",
+            "text": "Regularly check the Mobile/Wi-Fi data usage of applications installed in mobile devices.\nKeep an eye on the alerts provided by Anti-viruses and Android OS and take necessary actions accordingly."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x12223c15",
+            "title": "What to do when you are infected?",
+            "text": "Disable Wi-Fi/Mobile data and remove SIM card as in some cases, the malware can re-enable the Mobile Data.\nPerform a factory reset.\nRemove the application in case a factory reset is not possible.\nTake a backup of personal media Files (excluding mobile applications) and perform a device reset."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x4d1acefc",
+            "title": "What to do in case of any fraudulent transaction?",
+            "text": "In case of a fraudulent transaction, immediately report it to the concerned bank."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0xd578392f",
+            "title": "What should banks do to protect their customers?",
+            "text": "Banks and other financial entities should educate customers on safeguarding themselves from malware attacks via telephone, SMSs, or emails."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x7c6df102",
+            "title": "MITRE ATT&CK Techniques",
+            "text": "",
+            "table": "0;1;2\nTactic;Technique ID;Technique Name\nInitial Access;T1476;Deliver Malicious App via Other Mean.\nInitial Access;T1444;Masquerade as Legitimate Application\nExecution;T1575;Native Code\nCollection;T1412;Capture SMS Messages\nCommand and Control;T1436;Commonly Used Por\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x10919cec",
+            "date": "20220323",
+            "title": "GodFather Malware Under the Lens. Android Malware Targeting Banking Users Across Europe.GodFather Malware Under the Lens",
+            "url": "https://blog.cyble.com/2022/03/23/godfather-malware-under-the-lens"
+        },
+        "chapter": {
+            "id": "chapter_0x8a9e3e59",
+            "title": "Indicators of Compromise (IOCs)",
+            "text": "",
+            "table": "0;1;2\nIndicators;Indicator Type;Description\n0b72c22517fdefd4cf0466d8d4c634ca73b7667d378be688efe131af4ac3aed8;SHA256;GodFather APK\n3fa48a36d22d848ad111b246ca94fa58088dbb7a;SHA1;GodFather APK\nec9f857999b4fc3dd007fdb786b7a8d1;MD5;GodFather APK\nc79857015dbf220111e7c5f47cf20a656741a9380cc0faecd486b517648eb199;SHA256;GodFather APK\n2b3b78d3a62952dd88fc4da4688928ec6013af71;SHA1;GodFather APK\nd7118d3d6bf476d046305be1e1f9b388;MD5;GodFather APK\nhxxps://t[.]me/dobrynyanikitichsobre;URL;Telegram Channel Used to Fetch URL\n"
+        }
+    }
+]

@@ -1,0 +1,64 @@
+<div>
+<figure class="c-article__figure u-hidden@md">
+<img alt="" class="attachment-securelist-2020-thumbnail size-securelist-2020-thumbnail wp-post-image" height="450" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2021/04/09161647/shutterstock_1450854554-800x450.jpeg" style="max-width:80%;height:auto;width:auto;" width="800"/> </figure>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/incidents/">Incidents</a>
+</p>
+<h1 class="c-article__title">CVE-2022-0847 aka Dirty Pipe vulnerability in Linux kernel</h1>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/incidents/">Incidents</a>
+</p>
+<p>14 Mar 2022</p>
+<p>
+ 1 minute read								</p>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories.svg"/>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories--invert.svg"/>
+<p>Table of Contents</p>
+<ul class="c-list-links"><li><a href="#dirty-pipe-technical-details">Dirty Pipe technical details</a></li><li><a href="#dirty-pipe-mitigations">Dirty Pipe mitigations</a></li><li><a href="#iocs-md5-hashes-of-cve-2022-0847-exploits">IOCs (MD5 hashes of CVE-2022-0847 exploits)</a></li></ul>
+<figure class="c-article__figure u-hidden u-block@md">
+<img alt="" class="attachment-securelist-2020-thumbnail-large size-securelist-2020-thumbnail-large wp-post-image" height="600" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2021/04/09161647/shutterstock_1450854554-1200x600.jpeg" style="max-width:80%;height:auto;width:auto;" width="1200"/> </figure>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/amr/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_3.png"/>
+AMR</a>
+</li>
+</ul>
+<p>Last week, security researcher Max Kellermann discovered a <a href="https://dirtypipe.cm4all.com/" rel="noopener" target="_blank">high severity vulnerability</a> in the Linux kernel, which was assigned the designation CVE-2022-0847. It affects the Linux kernels from 5.8 through any version before 5.16.11, 5.15.25 and 5.10.102, and can be used for local privilege escalation. The vulnerability resides in the pipe tool, which is used for unidirectional communication between processes, so the researcher called it “Dirty Pipe”. Although the flaw is fixed in the latest Linux kernel versions, and, according to our data, there is no mass exploitation of this vulnerability at the moment, a detailed description and a working POC are available online, which increases the risk of this vulnerability being exploited by attackers.</p>
+<p>Kaspersky products protect against attacks leveraging the Dirty Pipe vulnerability. The detection verdicts are:</p>
+<ul>
+<li>HEUR:Exploit.Linux.CVE-2022-0847.a</li>
+<li>HEUR:Exploit.Linux.CVE-2022-0847.b</li>
+<li>HEUR:Exploit.Linux.CVE-2022-0847.с</li>
+<li>HEUR:Exploit.Linux.CVE-2022-0847.gen</li>
+</ul>
+<h2 id="dirty-pipe-technical-details">Dirty Pipe technical details</h2>
+<p>An unprivileged local user could use the Dirty Pipe flaw to write to pages in the page cache backed by read-only files and as such, escalate their privileges on the system. This vulnerability happens due to usage of partially uninitialized memory of the pipe buffer structure during its construction. A lack of zero initialization of the new structure’s member results in a stale value of flags, which can be abused by an attacker to gain write access to pages in the cache even if they originally were marked with a read-only attribute.</p>
+<p>There are plenty of ways for attackers to gain the root privileges using this vulnerability, such as unauthorized creation of new cron jobs, SUID binary hijacking, /etc/passwd modification, and so on.</p>
+<p>A working version of the Dirty Pipe exploit is already available on various security-related sites and repositories, so it can be used by attackers ITW.</p>
+<h2 id="dirty-pipe-mitigations">Dirty Pipe mitigations</h2>
+<p>To ensure that your corporate infrastructure is protected against this and similar threats:</p>
+<ul>
+<li>Apply all relevant security updates once they are available. To patch CVE-2022-0847, update your Linux systems to versions 5.16.11, 5.15.25 and 5.10.102 or newer.</li>
+<li>Use a security solution that provides patch management and endpoint protection, such as Kaspersky Endpoint Security for Linux.</li>
+<li>Use the latest <a href="https://www.kaspersky.com/enterprise-security/threat-intelligence" rel="noopener" target="_blank">Threat Intelligence</a> information to stay aware of actual TTPs used by threat actors.</li>
+</ul>
+<h2 id="iocs-md5-hashes-of-cve-2022-0847-exploits">IOCs (MD5 hashes of CVE-2022-0847 exploits)</h2>
+<p><a href="https://opentip.kaspersky.com/ebc8f0556e031a0b1180cfdfe6bf6e03/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">ebc8f0556e031a0b1180cfdfe6bf6e03</a>
+<a href="https://opentip.kaspersky.com/c3662a101db6bd9edec35767c7b85741/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL" rel="noopener" target="_blank">c3662a101db6bd9edec35767c7b85741</a></p>
+<ul class="c-list-tags">
+<li><a class="c-link-tag" href="https://securelist.com/tag/linux/">Linux</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware-technologies/">Malware Technologies</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/vulnerabilities/">Vulnerabilities</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/vulnerabilities-and-exploits/">Vulnerabilities and exploits</a></li>
+</ul>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/amr/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_1.png"/>
+AMR</a>
+</li>
+</ul>
+</div>

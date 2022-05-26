@@ -1,0 +1,136 @@
+[
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0x19853737",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "text": "APT reports\n31 Mar 2022\n9 minute read\nTable of Contents\nBackground\nInitial infection\nBackdoor creation\nInfrastructure\nAttribution\nConclusions\nIndicators of Compromise\nMITRE ATT&CK Mapping\nAuthors\nGReAT\nFor the Lazarus threat actor, financial gain is one of the prime motivations, with a particular emphasis on the cryptocurrency business. As the price of cryptocurrency surges, and the popularity of non-fungible token (NFT) and decentralized finance (DeFi) businesses continues to swell, the Lazarus groups targeting of the financial industry keeps evolving.\nWe recently discovered a Trojanized DeFi application that was compiled in November 2021. This application contains a legitimate program called DeFi Wallet that saves and manages a cryptocurrency wallet, but also implants a malicious file when executed. This malware is a full-featured backdoor containing sufficient capabilities to control the compromised victim. After looking into the functionalities of this backdoor, we discovered numerous overlaps with other tools used by the Lazarus group.\nThe malware operator exclusively used compromised web servers located in South Korea for this attack. To take over the servers, we worked closely with the KrCERT and, as a result of this effort, we had an opportunity to investigate a Lazarus group C2 server. The threat actor configured this infrastructure with servers set up as multiple stages. The first stage is the source for the backdoor while the goal of the second stage servers is to communicate with the implants. This is a common scheme used in Lazarus infrastructure."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0x9dc5754e",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "text": "APT reports"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0x2c3f824a",
+            "title": "Background",
+            "text": "In the middle of December 2021, we noticed a suspicious file uploaded to VirusTotal. At first glance, it looked like a legitimate application related to decentralized finance (DeFi); however, looking closer we found it initiating an infection scheme. When executed, the app drops both a malicious file and an installer for a legitimate application, launching the malware with the created Trojanized installer path. Then, the spawned malware overwrites the legitimate application with the Trojanized application. Through this process, the Trojanized application gets removed from the disk, allowing it to cover its tracks.\nInfection timeline"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0xe6f1d0be",
+            "title": "Initial infection",
+            "text": "While its still unclear how the threat actor tricked the victim into executing the Trojanized application (0b9f4612cdfe763b3d8c8a956157474a), we suspect they sent a spear-phishing email or contacted the victim through social media. The hitherto unknown infection procedure starts with the Trojanized application. This installation package is disguised as a DeFi Wallet program containing a legitimate binary repackaged with the installer.\nUpon execution, it acquires the next stage malware path (C:\\ProgramData\\Microsoft\\GoogleChrome.exe) and decrypts it with a one-byte XOR (Key: 0x5D). In the process of creating this next malware stage, the installer writes the first eight bytes including the MZ header to the file GoogleChrome.exe and pushes the remaining 71,164 bytes from the data section of the Trojanized application. Next, the malware loads the resource CITRIX_MEETINGS from its body and saves it to the path C:\\ProgramData\\Microsoft\\CM202025.exe. The resulting file is a legitimate DeFi Wallet application. Eventually, it executes the previously created malware with its file name as a parameter:\nC:\\ProgramData\\Microsoft\\GoogleChrome.exe [current file name]\nMalware creation diagram"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0x37fdc09",
+            "title": "Backdoor creation",
+            "text": "The malware (d65509f10b432f9bbeacfc39a3506e23) generated by the above Trojanized application is disguised as a benign instance of the Google Chrome browser. Upon launch, the malware checks if it was provided with one argument before attempting to copy the legitimate application C:\\ProgramData\\Microsoft\\CM202025.exe to the path given as the command line parameter, which means overwriting the original Trojanized installer, almost certainly in an attempt to conceal its prior existence. Next, the malware executes the legitimate file to deceive the victim by showing its benign installation process. When the user executes the newly installed program, it shows the DeFi Wallet software built with the public source code[1].\nScreenshot of the manipulated application\nNext, the malware starts initializing the configuration information. The configuration shows the structure shown in the table below, consisting of flags, C2 server addresses, victim identification value, and time value. As the structure suggests, this malware can hold up to five C2 addresses, but only three C2 servers are included in this case.\nThe malware randomly chooses a C2 server address and sends a beacon signal to it. This signal is a hard-coded 0x60D49D94 DWORD without encryption; the response data returned from the C2 carries the same value. If the expected value from the C2 server is received, the malware starts its backdoor operation.\nFollowing further communication with the C2, the malware encrypts data by a predefined method. The encryption is done via RC4 and the hard-coded key 0xD5A3 before additionally being encoded with base64.\nThe malware generates POST parameters with hard-coded names. The request type (msgID), victim identification value, and a randomly generated value are merged into the jsessid parameter. It also uses the cookie parameter to store four randomly generated four-byte values. These values are again encrypted with RC4 and additionally base64 encoded. Based on our investigation of the C2 script, we observed this malware not only uses a parameter named jsessid, but also jcookie as well.\nStructure of jsessid parameter\nThe following HTTP request shows the malware attempting to connect to the C2 with the request type 60d49d98 and a randomly generated cookie value.\nDepending on the response from the C2, the malware performs its instructed backdoor task. It carries various functionalities to gather system information and control the victim machine.",
+            "table": "0;1\nCommand;Description\n0x60D49D97;Set time configuration with the current time interval (default is 10) value\n0x60D49D9F;Set time configuration with delivered data from C2 server\n0x60D49DA0;Gather system information, such as IP address, computer name, OS version, CPU architecture\n0x60D49DA1;Collect drive information including type and free size\n0x60D49DA2;Enumerate files (with file name, size, time)\n0x60D49DA3;Enumerate processes\n0x60D49DA4;Terminate process\n0x60D49DA5;Change working directory\n0x60D49DA6;Connect to a given IP address\n0x60D49DA7;File timestamping\n0x60D49DA8;Execute Windows command\n0x60D49DA9;Securely delete a file\n0x60D49DAA;Spawn process with CreateProcessW API\n0x60D49DAB;Spawn process with CreateProcessAsUserW API\n0x60D49DAC;Spawn process with high integrity level\n0x60D49DAD;Download file from C2 server and save to given file path\n0x60D49DAE;Send file creation time and contents\n0x60D49DAF;Add files to .cab file and send it to the C2 server\n0x60D49DB0;Collect a list of files at the given path\n0x60D49DB1;Send the configuration to the C2 server\n0x60D49DB2;Receive new configuration from the C2 server\n0x60D49DB3;Set config to the current time\n0x60D49DB4;Sleep 0.1 seconds and continue\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0xa3311082",
+            "title": "Infrastructure",
+            "text": "Lazarus only used compromised web servers located in South Korea in this campaign. As a result of working closely with the KrCERT in taking down some of them, we had a chance to look into the corresponding C2 script from one of the compromised servers. The script described in this section was discovered in the following path:\nThe script is a VBScript.Encode ASP file, commonly used by the Lazarus group in their C2 scripts. After decoding, it shows the string 60d49d95 as an error response code, whereas the string 60d49d94 is used as a success message. In addition, the connection history is saved to the file stlogo.jpg and the C2 address for the next stage is stored in the file globals.jpg located in the same folder.\nConfiguration of C2 script\nThis script checks what value is delivered in the jcookie parameter and, if its longer than 24 characters, it extracts the first eight characters as msgID. Depending on the msgID value, it calls different functions. The backdoor command and command execution result delivered by the backdoor get stored to global variables. We have seen this scheme in operation before with the Bookcode[2] cluster. This script uses the following variables as flags and buffers to deliver data and commands between the backdoor and a second stage C2 server:\nlFlag: flag to signal that there is data to deliver to the backdoor\nlBuffer: buffer to store data to be later sent to the backdoor\ntFlag: flag to signal that there is a response from the backdoor\ntBuffer: buffer to store incoming data from the backdoor",
+            "table": "0;1;2\nmsgID;Function name;Description\n60d49d98;TFConnect;Save the \u2018TID\u2019 value (victim identifier) to the log file, send \u2018jcookie\u2019 value with the client\u2019s IP address after acquiring the next stage C2 address from the config file (globals.jpg). Forward the response from the next stage server to the client.\n60d49d99;TConnect;Deliver the command to the backdoor:  If the lFlag is \u2018true\u2019, send lBuffer to the client. Reset \u2018lBuffer\u2019 and set lFlag to \u2018false\u2019. Otherwise, reset \u2018tBuffer\u2019 and set tFlag to \u2018false\u2019.\n60d49d9a;LConnect;Send the command and return the command execution result:  Set \u2018\u200b\u200blBuffer\u2019 value to \u2018jcookie\u2019 parameter, delivering \u2018tBuffer\u2019 to the client.\n60d49d9c;Check;Retrieve host information (computer name, OS version). Delete the configuration file, which saves the C2\u2019s next stage address, if it exists. Then save the new configuration with delivered data through the \u2018jcookie\u2019 parameter.\n60d49d9d;LogDown;Deliver log file after base64 encoding and then delete it.\nthe others;;Write connections with unknown/unexpected msgID (request type) data to a log file, entries are tagged with \u2018xxxxxxxx\u2019.\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0xdabda805",
+            "title": "Attribution",
+            "text": "We believe with high confidence that the Lazarus group is linked to this malware as we identified similar malware in the CookieTime cluster. The CookieTime cluster, called LCPDot by JPCERT, was a malwae cluster that was heavily used by the Lazarus group until recently. Weve seen Lazarus group target the defence industry using the CookieTime cluster with a job opportunity decoy. We have already published several reports about this cluster to our Threat Intelligence Service customers, and we identified a Trojanized Citrix application (5b831eaed711d5c4bc19d7e75fcaf46e) with the same code signature as the CookieTime malware. The backdoor discovered in the latest investigation, and the previously discovered Trojanized application, are almost identical. They share, among other things, the same C2 communication method, backdoor functionalities, random number generation routine and the same method to encrypt communication data. Also, this malware was mentioned in an article by Ahnlab discussing connections with the CookieTime (aka LCPDot) malware.\nSame backdoor switch of old CookieTime malware\nIn turn, we identified that the CookieTime cluster has ties with the Manuscrypt and ThreatNeedle clusters, which are also attributed to the Lazarus group. This doesnt only apply to the backdoor itself, but also to the C2 scripts, which show several overlaps with the ThreatNeedle cluster. We discovered almost all function and variable names, which means the operators recycled the code base and generated corresponding C2 scripts for the malware.\nAlmost identical scripts to fetch IP address of client\nSimilar scripts to save data to a file",
+            "table": "0;1\nThreatNeedle C2 script from: edujikim[.]com/pay_sample/INIstart.asp;C2 script of this case\n\"12345678910111213  Sub writeDataToFile(strFileName, byData) Dim objFSO, objFile, strFilePath Const ForAppending = 8 strFilePath = Server.MapPath(\"\".\"\") & \"\"\\\"\" & strFileName Set objFSO = CreateObject(\"\"Scripting.FileSystemObject\"\") Set objFile = objFSO.OpenTextFile(strFilePath, ForAppending, True) objFile.Write byData objFile.Close End Sub\";\"12345678910  Sub WritedatA(filepath,byData) dim objFSO,oBJFile ConSt ForAppEnDing=8 Set objFsO=CreateObject(\"\"Scripting.FileSystemObject\"\") SeT objFIle=objFso.OpENTextFile(filepaTh,FoRAppending,True) objFilE.Write ByDatA objFIle.CLose EnD Sub\"\n12345678910111213;\"Sub writeDataToFile(strFileName, byData) Dim objFSO, objFile, strFilePath Const ForAppending = 8 strFilePath = Server.MapPath(\"\".\"\") & \"\"\\\"\" & strFileName Set objFSO = CreateObject(\"\"Scripting.FileSystemObject\"\") Set objFile = objFSO.OpenTextFile(strFilePath, ForAppending, True) objFile.Write byData objFile.Close End Sub\"\n12345678910;\"Sub WritedatA(filepath,byData) dim objFSO,oBJFile ConSt ForAppEnDing=8 Set objFsO=CreateObject(\"\"Scripting.FileSystemObject\"\") SeT objFIle=objFso.OpENTextFile(filepaTh,FoRAppending,True) objFilE.Write ByDatA objFIle.CLose EnD Sub\"\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0xd7be6816",
+            "title": "Conclusions",
+            "text": "In a previous investigation we discovered that the BlueNoroff group, which is also linked to Lazarus, compromised another DeFi wallet program called MetaMask. As we can see in the latest case, the Lazarus and BlueNoroff groups attempt to deliver their malware without drawing attention to it and have evolved sophisticated methods to lure their victims. The cryptocurrency and blockchain-based industry continues to grow and attract high levels of investment. For this reason, we strongly believe Lazaruss interest in this industry as a major source of financial gain will not diminish any time soon."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0xcef790d6",
+            "title": "Indicators of Compromise",
+            "text": "Trojanized DeFi application\n0b9f4612cdfe763b3d8c8a956157474a DeFi-App.exe\nDropped backdoor\nd65509f10b432f9bbeacfc39a3506e23 %ProgramData%\\Microsoft\\GoogleChrome.exe\nSimilar backdoor\na4873ef95e6d76856aa9a43d56f639a4\nd35a9babbd9589694deb4e87db222606\n70bcafbb1939e45b841e68576a320603\n3f4cf1a8a16e48a866aebd5697ec107b\nb7092df99ece1cdb458259e0408983c7\n8e302b5747ff1dcad301c136e9acb4b0\nd90d267f81f108a89ad728b7ece38e70\n47b73a47e26ba18f0dba217cb47c1e16\n77ff51bfce3f018821e343c04c698c0e\nFirst stage C2 servers (Legitimate, compromised)\nhxxp://emsystec[.]com/include/inc[.]asp\nhxxp://www[.]gyro3d[.]com/common/faq[.]asp\nhxxp://www[.]newbusantour[.]co[.]kr/gallery/left[.]asp\nhxxp://ilovesvc[.]com/HomePage1/Inquiry/privacy[.]asp\nhxxp://www[.]syadplus[.]com/search/search_00[.]asp\nhxxp://bn-cosmo[.]com/customer/board_replay[.]asp\nSecond stage C2 servers (Legitimate, compromised)\nhxxp://softapp[.]co[.]kr/sub/cscenter/privacy[.]asp\nhxxp://gyro3d[.]com/mypage/faq[.]asp"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xa0091d73",
+            "date": "20220331",
+            "title": "Lazarus Trojanized DeFi app for delivering malware",
+            "url": "https://securelist.com/lazarus-trojanized-defi-app/106195"
+        },
+        "chapter": {
+            "id": "chapter_0x9761c3e8",
+            "title": "MITRE ATT&CK Mapping",
+            "text": "This table contains all the TTPs identified in the analysis of the activity described in this report.\n[1] https://github.com/DeFiCh/app\n[2] APT Intel report: Lazarus Covet Covid19 Related Intelligence\nBackdoor\nFinancial malware\nGoogle Chrome\nLazarus\nMalware Technologies\nTrojan\nAuthors\nGReAT",
+            "table": "0;1;2\nTactic;Technique;Technique Name\nExecution;T1204.002;User Execution: Malicious File Use Trojanized application to drop malicious backdoor\nPersistence;T1547.001;Boot or Logon Autostart Execution: Registry Run Keys / Startup Folder Register dropped backdoor to the Run registry key\nDefense Evasion;T1070.004;Indicator Removal on Host: File Deletion The Trojanized application overwrites itself after creating a legitimate application to remove its trace\nDefense Evasion;T1070.006;Indicator Removal on Host: Timestomp Backdoor capable of timestomping specific files\nDiscovery;T1057;Process Discovery List running processes with backdoor\nDiscovery;T1082;System Information Discovery Gather IP address, computer name, OS version, and CPU architecture with backdoor\nDiscovery;T1083;File and Directory Discovery List files in some directories with backdoor\nDiscovery;T1124;System Time Discovery Gather system information with backdoor\nCommand and Control;T1071.001;Application Layer Protocol: Web Protocols Use HTTP as C2 channel with backdoor\nCommand and Control;T1573.001;Encrypted Channel: Symmetric Cryptography Use RC4 encryption and base64 with backdoor\nExfiltration;T1041;Exfiltration Over C2 Channel Exfiltrates gathered data over C2 channels with backdoor\n"
+        }
+    }
+]

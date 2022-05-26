@@ -1,0 +1,603 @@
+{
+    "id": "<report_0xadcbc069>",
+    "url": "https://www.intezer.com/blog/threat-hunting/threat-hunting-sigma-detection-rules",
+    "title": "SOC Level Up: Threat Hunting and Detection With Sigma",
+    "meta": [
+        {
+            "id": "<chapter_0xadc48643>",
+            "title": "SOC Level Up: Threat Hunting and Detection With Sigma",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x72f8df44>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Written by Nicole Fishbein - 17 May 2022",
+                    "html": "Written by Nicole Fishbein - 17 May 2022"
+                },
+                {
+                    "id": "<sentence_0x4db83290>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xa46c004c>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Threat-Hunting-and-Detection-With-Sigma-1270x475.png"
+                    },
+                    "text": "",
+                    "html": "<img class=\"featured-img\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Threat-Hunting-and-Detection-With-Sigma-1270x475.png\"/>"
+                },
+                {
+                    "id": "<sentence_0xc78b56c3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "How Sigma Can Help in Threat Hunting",
+                    "html": "<p>How Sigma Can Help in Threat Hunting </p>"
+                },
+                {
+                    "id": "<sentence_0xe69d1635>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "How to Use Sigma Rules For Threat Hunting",
+                    "html": "<p>How to Use Sigma Rules For Threat Hunting</p>"
+                },
+                {
+                    "id": "<sentence_0xcabcb3bc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using Sigma to Write Detection Rules for Emotet",
+                    "html": "<p>Using Sigma to Write Detection Rules for Emotet </p>"
+                },
+                {
+                    "id": "<sentence_0x6d2d8464>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "There is a But",
+                    "html": "<p>There is a \u201cBut\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0x39771d8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Take the Detection Opportunities a Step Further",
+                    "html": "<p>Take the Detection Opportunities a Step Further</p>"
+                },
+                {
+                    "id": "<sentence_0xdb6ba5d1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Conclusion",
+                    "html": "<p id=\"h-conclusion\">Conclusion</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x32d206cd>",
+            "title": "SOC Level Up: Threat Hunting and Detection With Sigma",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa9db64a6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4ba89365>": "https://www.intezer.com/blog/threat-hunting/intro-to-sigma-rules/"
+                    },
+                    "text": "In the last part of the SOC Level Up series, we introduced Sigma an open-source framework to write one rule that can be used in multiple environments. In this blog, we will show how Sigma rules can be used for threat hunting and detection.",
+                    "html": "<p>In the last part of the SOC Level Up series, we introduced <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/threat-hunting/intro-to-sigma-rules/\">Sigma</a> \u2013 an open-source framework to write one rule that can be used in multiple environments. In this blog, we will show how Sigma rules can be used for threat hunting and detection. </p>"
+                },
+                {
+                    "id": "<sentence_0xb31e6862>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Security teams and especially SOC analysts are overwhelmed with data while attack surfaces are growing and cyber attackers find new ways to breach organizations while staying undetected, making the security teams difficulties more painful. The solution might sound obvious have a well-defined security posture to prevent threats from getting into the system, but with the constantly evolving threat landscape and existing pain points of security teams, this is easier said than done. Therefore, it is critical to proactively hunt and detect threats in the organization, for any incidents in which the threat bypassed all of the security measures and infiltrated the environment.",
+                    "html": "<p>Security teams and especially SOC analysts are overwhelmed with data while attack surfaces are growing and cyber attackers find new ways to breach organizations while staying undetected, making the security teams\u2019 difficulties more painful. The solution might sound obvious \u2013 have a well-defined security posture to prevent threats from getting into the system, but with the constantly evolving threat landscape and existing pain points of security teams, this is easier said than done. Therefore, it is critical to proactively hunt and detect threats in the organization, for any incidents in which the threat bypassed all of the security measures and infiltrated the environment. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x572e8f6e>",
+            "title": "How Sigma Can Help in Threat Hunting",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x84de35c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To detect threats you need to know what is happening in the environment, which can be accomplished using logs and monitoring tools (which are based on logs too). But these days the issue is that there are too many logs too much information that SOC analysts and security teams are not capable of analyzing and processing them all. So SIEM platforms came to help, providing the ability to aggregate, query, and extract important information from the logs. Essentially making it possible to proactively hunt for threats inside the organization.",
+                    "html": "<p>To detect threats you need to know what is happening in the environment, which can be accomplished using logs and monitoring tools (which are based on logs too). But these days the issue is that there are too many logs \u2013 too much information \u2013 that SOC analysts and security teams are not capable of analyzing and processing them all. So SIEM platforms came to help, providing the ability to aggregate, query, and extract important information from the logs. Essentially making it possible to proactively hunt for threats inside the organization.</p>"
+                },
+                {
+                    "id": "<sentence_0x6881ec59>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x60b985a7>": "https://www.intezer.com/blog/threat-hunting/scale-incident-response-detection-engineering/"
+                    },
+                    "text": "While security tools are evolving, so do cyber attackers. This progression makes threat detection even more significant and forces the security community to further evolve the hunting and detection strategy. The new and more advanced approach to threat hunting is detection engineering a process of constantly evolving and tuning to detect threats before they cause significant damage. In a way it requires a change in the mindset, you need to see the traces left by a threat as detection opportunities and use them to detect the threat in your organization.",
+                    "html": "<p>While security tools are evolving, so do cyber attackers. This progression makes threat detection even more significant and forces the security community to further evolve the hunting and detection strategy. The new and more advanced approach to threat hunting is <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/threat-hunting/scale-incident-response-detection-engineering/\">detection engineering</a> \u2013 a process of constantly evolving and tuning to detect threats before they cause significant damage. In a way it requires a change in the mindset, you need to see the traces left by a threat as detection opportunities and use them to detect the threat in your organization. </p>"
+                },
+                {
+                    "id": "<sentence_0x71fbccbb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Sigma is a universal markup language for analyzing logs, allowing you to write rules for detecting a threat based on the threats detection opportunities. The flexibility of Sigma rules makes it possible to use detection rules created by other members of the security community and utilize them in your organization, since the rule can be compiled for any SIEM and log source.",
+                    "html": "<p>Sigma is a universal markup language for analyzing logs, allowing you to write rules for detecting a threat based on the threat\u2019s detection opportunities. The flexibility of Sigma rules makes it possible to use detection rules created by other members of the security community and utilize them in your organization, since the rule can be compiled for any SIEM and log source. </p>"
+                },
+                {
+                    "id": "<sentence_0x816d9dfb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below, we will show how to identify detection opportunities in blogs or security tools, and how to use this information to create your own detection rules using Sigma.",
+                    "html": "<p>Below, we will show how to identify detection opportunities in blogs or security tools, and how to use this information to create your own detection rules using Sigma.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc6776ed5>",
+            "title": "How to Use Sigma Rules For Threat Hunting",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x887fc4d3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Creating detection rules is not an easy task, for two main reasons.",
+                    "html": "<p>Creating detection rules is not an easy task, for two main reasons.</p>"
+                },
+                {
+                    "id": "<sentence_0xe65a4c20>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, you need to find indicators that can be used to detect the threat, either by performing an analysis of existing samples of the threat or by locating them in technical reports and threat intelligence feeds. Frequently the detection information is hidden among the rest of the details. Either way, it requires time and effort to find useful information that can be used in detection rules.",
+                    "html": "<p>First, you need to find indicators that can be used to detect the threat, either by performing an analysis of existing samples of the threat or by locating them in technical reports and threat intelligence feeds. Frequently the detection information is \u201chidden\u201d among the rest of the details. Either way, it requires time and effort to find useful information that can be used in detection rules. </p>"
+                },
+                {
+                    "id": "<sentence_0x67938201>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xeb25ca1c>": "http://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html"
+                    },
+                    "text": "The other difficulty is making an efficient rule, one that will not trigger false positive alerts and is not too strict to avoid miss detection of threats. Detection rules are made of different indicators of compromise and behavior artifacts, all of which can be arranged in what is known as the Pyramid of Pain (created by David J Bianco). The idea is to organize attack indicators in ascending order based on the pain it will cause the attackers when these indicators are detected and denied from them by security tools. But the more harm it will cause the attacker, the harder it is for security teams to identify these indicators.<crlf>For example, a files hash is the easiest indicator to find and to detect but it is also trivial for threat actors to modify it simply by changing one bit in a file. On the other hand, detecting a threat based on its behavior (TTPs) requires more effort from the security team they need to execute the threat in a sandbox and understand its execution flow. But for threat actors, it is also much harder to change the behavior of the threat and stay undetected.",
+                    "html": "<p>The other difficulty is making an efficient rule, one that will not trigger false positive alerts and is not too strict to avoid miss detection of threats. Detection rules are made of different indicators of compromise and behavior artifacts, all of which can be arranged in what is known as the <a class=\"blog-text-link\" href=\"http://detect-respond.blogspot.com/2013/03/the-pyramid-of-pain.html\">Pyramid of Pain</a> (created by David J Bianco). The idea is to organize attack indicators in ascending order based on the \u201cpain\u201d it will cause the attackers when these indicators are detected and denied from them by security tools. But the more harm it will cause the attacker, the harder it is for security teams to identify these indicators. \nFor example, a file\u2019s hash is the easiest indicator to find and to detect but it is also trivial for threat actors to modify it simply by changing one bit in a file. On the other hand, detecting a threat based on its behavior (TTPs) requires more effort from the security team \u2013 they need to execute the threat in a sandbox and understand its execution flow. But for threat actors, it is also much harder to change the behavior of the threat and stay undetected.</p>"
+                },
+                {
+                    "id": "<sentence_0x967a262a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xbdc6e1fa>": "https://www.sans.org/tools/the-pyramid-of-pain/",
+                        "<img_0xc69b5481>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Pyramid-of-Pain-V2-DavidJBianco.png"
+                    },
+                    "text": "Pyramid of Pain by David J Bianco",
+                    "html": "<figure class=\"aligncenter size-full is-resized\"><img alt=\"IoCs to TTPs: Pyramid of Pain by David J Bianco\" class=\"wp-image-25636\" height=\"405\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/Pyramid-of-Pain-V2-DavidJBianco.png\" width=\"720\"/><figcaption><a class=\"blog-text-link\" href=\"https://www.sans.org/tools/the-pyramid-of-pain/\" rel=\"noreferrer noopener nofollow\" target=\"_blank\">Pyramid of Pain by David J Bianco</a></figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4a6e92cd>",
+            "title": "Using Sigma to Write Detection Rules for Emotet",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe61ec0fc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x550676c4>": "https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53",
+                        "<a_0x175ac408>": "https://www.europol.europa.eu/media-press/newsroom/news/world%E2%80%99s-most-dangerous-malware-emotet-disrupted-through-global-action",
+                        "<a_0x281509a7>": "https://www.globenewswire.com/news-release/2022/03/09/2399720/0/en/February-2022-s-Most-Wanted-Malware-Emotet-Remains-Number-One-While-Trickbot-Slips-Even-Further-Down-the-Index.html"
+                    },
+                    "text": "Lets take a look at Emotet a dangerous malware that has been operating since 2014. Despite the arrests and the efforts of law enforcement in January 2021, the malware is still operating. Emotet started as a banking information stealer, but it kept evolving during its time of operation and became a full-scale cybercrime organization that is also able to deploy other threats into compromised systems.",
+                    "html": "<p>Let\u2019s take a look at <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53\">Emotet</a> \u2013 a dangerous malware that has been operating since 2014. Despite the arrests and the efforts of law enforcement in <a class=\"blog-text-link\" href=\"https://www.europol.europa.eu/media-press/newsroom/news/world%E2%80%99s-most-dangerous-malware-emotet-disrupted-through-global-action\">January 2021</a>, the malware is <a class=\"blog-text-link\" href=\"https://www.globenewswire.com/news-release/2022/03/09/2399720/0/en/February-2022-s-Most-Wanted-Malware-Emotet-Remains-Number-One-While-Trickbot-Slips-Even-Further-Down-the-Index.html\">still operating</a>. Emotet started as a banking information stealer, but it kept evolving during its time of operation and became a full-scale cybercrime organization that is also able to deploy other threats into compromised systems. </p>"
+                },
+                {
+                    "id": "<sentence_0x2add49dd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2dbad223>": "https://analyze.intezer.com/files/6d55f25222831cce73fd9a64a8e5a63b002522dc2637bd2704f77168c7c02d88/behavior",
+                        "<a_0xf90f13c9>": "https://www.intezer.com/blog/malware-analysis/analyze-malicious-microsoft-office-files/"
+                    },
+                    "text": "Usually, the chain of execution that drops Emotet consists of a phishing email with attached decoy document that tricks the user to click a link or just open the file allowing the execution of malicious code that leads to Emotet execution.<crlf>Our goal is to write detection rules for Emotet, so lets take a look at a recently discovered sample of Emotet. We will use oleid and olevba to discover the macros embedded in the file (for more information, check out this blog about analyzing malicious Office files).",
+                    "html": "<p>Usually, the chain of execution that drops Emotet consists of a phishing email with attached decoy document that tricks the user to click a link or just open the file allowing the execution of malicious code that leads to Emotet execution. \nOur goal is to write detection rules for Emotet, so let\u2019s take a look at a recently discovered <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/files/6d55f25222831cce73fd9a64a8e5a63b002522dc2637bd2704f77168c7c02d88/behavior\">sample</a> of Emotet. We will use oleid and olevba to discover the macros embedded in the file (for more information, check out this blog about <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/analyze-malicious-microsoft-office-files/\">analyzing malicious Office files</a>).</p>"
+                },
+                {
+                    "id": "<sentence_0x8abdc4b4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x17b5c149>": "https://lh4.googleusercontent.com/b2FKfvKJhwHAjUi4Bb6OQyjdwD0h4sQu2SF-l9MrYJgJ5b-FedKDgjQizjnBqpzDo3CDcN3cqKTCljdIzniXHEHkyajS8oL75X-6cqT8fvLFojvF8d3FtyAMZhRN0t9AXPyKjTwboFV2r__zOA"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter\"><img alt=\"\" src=\"https://lh4.googleusercontent.com/b2FKfvKJhwHAjUi4Bb6OQyjdwD0h4sQu2SF-l9MrYJgJ5b-FedKDgjQizjnBqpzDo3CDcN3cqKTCljdIzniXHEHkyajS8oL75X-6cqT8fvLFojvF8d3FtyAMZhRN0t9AXPyKjTwboFV2r__zOA\"/></figure>"
+                },
+                {
+                    "id": "<sentence_0x4bfc5565>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa80dcc74>": "https://www.intezer.com/blog/malware-analysis/how-to-detect-legitimate-apps-used-by-attackers/"
+                    },
+                    "text": "From this short analysis, we know that the malicious document will execute commands using cmd and it will use a signed binary called MSHTA to download and execute code from a given URL. Using legitimate and signed binaries is a very common technique used by threat actors you can read more about how to detect MSHTA and related techniques here.",
+                    "html": "<p>From this short analysis, we know that the malicious document will execute commands using cmd and it will use a signed binary called MSHTA to download and execute code from a given URL. Using legitimate and signed binaries is a very common technique used by threat actors \u2013 you can read more about <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/how-to-detect-legitimate-apps-used-by-attackers/\">how to detect MSHTA and related techniques here</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x4d3a51ba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In general, the process tree of the threat execution provides very useful detection indicators. We can get even more information by executing the sample in a sandbox environment and inspecting the process tree as shown below.",
+                    "html": "<p>In general, the process tree of the threat execution provides very useful detection indicators. We can get even more information by executing the sample in a sandbox environment and inspecting the process tree as shown below.</p>"
+                },
+                {
+                    "id": "<sentence_0x23fc9dde>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x34dc3367>": "https://lh3.googleusercontent.com/zOXd_CqTtshTCcFP5JEz6qA3XrdXcZpp6BovzaO8Rw-7i4gtg-C-AfKUBeZ1-aeZ9lK3xmg07fi7jqQ794brLOCbLpGHFAu3JR6Qr5c2j3iRmIzwz7zgE6pbHn1NnRno2zybfg_z_iBGk-5LQg"
+                    },
+                    "text": "Process tree of the sample election in Intezer.",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"\" src=\"https://lh3.googleusercontent.com/zOXd_CqTtshTCcFP5JEz6qA3XrdXcZpp6BovzaO8Rw-7i4gtg-C-AfKUBeZ1-aeZ9lK3xmg07fi7jqQ794brLOCbLpGHFAu3JR6Qr5c2j3iRmIzwz7zgE6pbHn1NnRno2zybfg_z_iBGk-5LQg\"/><figcaption>Process tree of the sample election in Intezer.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xf439ac70>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We will use the following information to make a basic Sigma rule:",
+                    "html": "<p>We will use the following information to make a basic Sigma rule:</p>"
+                },
+                {
+                    "id": "<sentence_0x65ed02e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The sample connects to the IPip address 91.240.118[.]16<crlf>URL: http://91.240.118[.]168/zzx/ccv/fe.html<crlf>The processes that are executed are excel.exe -> cmd.exe -> mshta.exe",
+                    "html": "<ul><li>The sample connects to the IPip address 91.240.118[.]16</li><li>URL: \u201chttp://91.240.118[.]168/zzx/ccv/fe.html\u201d</li><li>The processes that are executed are excel.exe -&gt; cmd.exe -&gt; mshta.exe </li></ul>"
+                },
+                {
+                    "id": "<sentence_0xd596cf6>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x186415d7>": "title: Emotet document execution detection\nauthor: Intezer\nlogsource:\n category: process_creation\n product: windows\ndetection:\n selection1:\n ParentImage:\n - 'excel.exe'\n Image:\n - 'cmd.exe'\n commandline|contains:\n - 'mshta'\n condition: selection1"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-xml hljs\">title: Emotet document execution detection\nauthor: Intezer\nlogsource:\n category: process_creation\n product: windows\ndetection:\n selection1:\n ParentImage:\n - 'excel.exe'\n Image:\n - 'cmd.exe'\n commandline|contains:\n - 'mshta'\n condition: selection1</code>"
+                },
+                {
+                    "id": "<sentence_0x22c5c035>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection rule for Emotet based only on process execution.",
+                    "html": "<p class=\"has-text-align-center\">Detection rule for Emotet based only on process execution.</p>"
+                },
+                {
+                    "id": "<sentence_0xe46c8de4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5b394f06>": "https://www.bleepingcomputer.com/news/security/emotet-malware-now-wants-you-to-upgrade-microsoft-word/",
+                        "<a_0x67279de1>": "https://github.com/SigmaHQ/sigma/blob/becf3baeb4f6313bf267f7e8d6e9808fc0fc059c/rules/windows/process_creation/proc_creation_win_office_shell.yml"
+                    },
+                    "text": "This rule is based exactly on the information we have found in our analysis making the rule very strict (for instance we detect only the cmd process that was executed by Excel, so if the threat actor tries using Word instead of Excel we will miss the execution). In some cases we will want to keep our rule strict to avoid false positives, in other cases it can be useful to add relevant information. For example, in some cases Emotet uses Word documents so we can extend the rule to include detection of cmd processes that execute Word, Excel, and PowerPoint. This way the detection will cover other variants of the threat. A good example of a rule that covers more variants of shell execution by Office software is a rule created by Michael Haag, Florian Roth, Markus Neis, Elastic, FPT.EagleEye Team called proc_creation_win_office_shell.yml.",
+                    "html": "<p>This rule is based exactly on the information we have found in our analysis making the rule very strict (for instance we detect only the cmd process that was executed by Excel, so if the threat actor tries using Word instead of Excel we will miss the execution). In some cases we will want to keep our rule strict to avoid false positives, in other cases it can be useful to add relevant information. For example, in some cases <a class=\"blog-text-link\" href=\"https://www.bleepingcomputer.com/news/security/emotet-malware-now-wants-you-to-upgrade-microsoft-word/\">Emotet uses Word documents</a> so we can extend the rule to include detection of cmd processes that execute Word, Excel, and PowerPoint. This way the detection will cover other variants of the threat. A good example of a rule that covers more variants of shell execution by Office software is a rule created by Michael Haag, Florian Roth, Markus Neis, Elastic, FPT.EagleEye Team called <a class=\"blog-text-link\" href=\"https://github.com/SigmaHQ/sigma/blob/becf3baeb4f6313bf267f7e8d6e9808fc0fc059c/rules/windows/process_creation/proc_creation_win_office_shell.yml\">proc_creation_win_office_shell.yml</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x165b49ea>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x87809f49>": "title: Emotet Download IP\nauthor: Intezer\nlogsource:\n category: firewall\ndetection:\n select_outgoing:\n dst_ip:\n - '91.240.118.16'\n condition: select_outgoing"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-xml hljs\">title: Emotet Download IP\nauthor: Intezer\nlogsource:\n category: firewall\ndetection:\n select_outgoing:\n dst_ip:\n - '91.240.118.16'\n condition: select_outgoing</code>"
+                },
+                {
+                    "id": "<sentence_0x6f5b27b2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection rule for Emotet server based on the IP address from the sample",
+                    "html": "<p class=\"has-text-align-center\">Detection rule for Emotet server based on the IP address from the sample</p>"
+                },
+                {
+                    "id": "<sentence_0x318b7978>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x281dedda>": "title: Emotet IP addresses\nauthor: Intezer\nlogsource:\n category: webserver\ndetection:\n selection1:\n c-uri|contains: 'http://91.240.118.168/zzx/ccv/fe.html'\n condition: selection1"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-xml hljs\">title: Emotet IP addresses\nauthor: Intezer\nlogsource:\n category: webserver\ndetection:\n selection1:\n c-uri|contains: 'http://91.240.118.168/zzx/ccv/fe.html'\n condition: selection1</code>"
+                },
+                {
+                    "id": "<sentence_0x4e3bb4c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Detection rule for Emotet based on the URL from the sample",
+                    "html": "<p class=\"has-text-align-center\">Detection rule for Emotet based on the URL from the sample</p>"
+                },
+                {
+                    "id": "<sentence_0x71a2e42>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x27a4c67b>": "https://github.com/executemalware/Malware-IOCs/blob/main/2022-03-24%20Emotet%20(E4)%20IOCs",
+                        "<a_0x19668e01>": "https://twitter.com/hashtag/Emotet?src=hashtag_click"
+                    },
+                    "text": "We used two networking indicators in our detection rule, but there are many resources with information that we can use to enhance our Emotet detection indicators (including github and twitter).",
+                    "html": "<p>We used two networking indicators in our detection rule, but there are many resources with information that we can use to enhance our Emotet detection indicators (including <a class=\"blog-text-link\" href=\"https://github.com/executemalware/Malware-IOCs/blob/main/2022-03-24%20Emotet%20(E4)%20IOCs\">github</a> and <a class=\"blog-text-link\" href=\"https://twitter.com/hashtag/Emotet?src=hashtag_click\">twitter</a>). </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x343ebd24>",
+            "title": "There is a But",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x524af786>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x52ed6584>": "https://www.intezer.com/blog/malware-analysis/emotet-evolves-but-code-remains-mostly-the-same/"
+                    },
+                    "text": "Emotet is a threat that is constantly evolving not only its features but also its infrastructure which is based on botnets that deliver the malware to victims systems, allowing the attackers to constantly change the domains and the IP addresses of these servers. As described in the Pyramid of Pain, mentioned above, it is relatively easy for attackers to change the hashes and IP addresses once they are detected by security tools and organizations. This makes some of the detection rules useless as the indicators are not relevant anymore.",
+                    "html": "<p>Emotet is a threat that is <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/emotet-evolves-but-code-remains-mostly-the-same/\">constantly evolving</a> not only its features but also its infrastructure which is based on botnets that deliver the malware to victims\u2019 systems, allowing the attackers to constantly change the domains and the IP addresses of these servers. As described in the Pyramid of Pain, mentioned above, it is relatively easy for attackers to change the hashes and IP addresses once they are detected by security tools and organizations. This makes some of the detection rules useless as the indicators are not relevant anymore.</p>"
+                },
+                {
+                    "id": "<sentence_0x2f0045c8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Our goal is to have solid detection rules that will not produce false positive alerts and will help protect the organization. We need to make our Sigma rules more advanced, to catch variants within a malware family like Emotet.",
+                    "html": "<p>Our goal is to have solid detection rules that will not produce false positive alerts and will help protect the organization. We need to make our Sigma rules more advanced, to catch variants within a malware family like Emotet.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xea9c85cf>",
+            "title": "Take the Detection Opportunities a Step Further",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1aa96b12>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To be able to detect Emotet and similar threats that evolve, we need to find the detection indicators that are shared among the malware family. This detection strategy will produce alerts that are specific for a certain threat, because we will use indicators that are part of the threats behavior and were used more than once.",
+                    "html": "<p>To be able to detect Emotet and similar threats that evolve, we need to find the detection indicators that are shared among the malware family. This detection strategy will produce alerts that are specific for a certain threat, because we will use indicators that are part of the threat\u2019s behavior and were used more than once.</p>"
+                },
+                {
+                    "id": "<sentence_0x33fffb99>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To implement this approach we will need to have information about the connections between samples of the same malware family, and identify detection indicators that are common in a specific malware family. Intezer offers this capability, with a proprietary code reuse database that also extracts valuable information about the detection indicators of different malware samples.<crlf>In the next section here, we will show how to build Sigma rules using detection indicators that are shared among several samples of the same threat.",
+                    "html": "<p>To implement this approach we will need to have information about the connections between samples of the same malware family, and identify detection indicators that are common in a specific malware family. Intezer offers this capability, with a proprietary code reuse database that also extracts valuable information about the detection indicators of different malware samples. \nIn the next section here, we will show how to build Sigma rules using detection indicators that are shared among several samples of the same threat. </p>"
+                },
+                {
+                    "id": "<sentence_0x20e5a543>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x54e8274f>": "https://analyze.intezer.com/files/12315dbe67fd3db9ce3c1f520fef14e10e946b7a1d8628583c2a26949312edc5/detect-hunt"
+                    },
+                    "text": "Lets examine another Excel file that delivers Emotet:",
+                    "html": "<p>Let\u2019s examine another Excel <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/files/12315dbe67fd3db9ce3c1f520fef14e10e946b7a1d8628583c2a26949312edc5/detect-hunt\">file</a> that delivers Emotet:</p>"
+                },
+                {
+                    "id": "<sentence_0x3dda5282>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x54e8274f>": "https://analyze.intezer.com/files/12315dbe67fd3db9ce3c1f520fef14e10e946b7a1d8628583c2a26949312edc5/detect-hunt",
+                        "<img_0xca0d26d6>": "https://lh3.googleusercontent.com/WbRp7T2K3kafsL-Ew6UPGrPG0k_U3HS_248jLBIxA6GTuh7jMQngegsSt_ZLfbxaHemootB-1yNZsEDQROzjDiDc2hy9Ysona61WL6rugaHUBSw7RjiL1S412iW4zwiNg0_FL8-fLe8_0rcwTQ"
+                    },
+                    "text": "Analysis of Emotet",
+                    "html": "<figure class=\"aligncenter\"><img alt=\"emotet threat analysis for detection rules\" src=\"https://lh3.googleusercontent.com/WbRp7T2K3kafsL-Ew6UPGrPG0k_U3HS_248jLBIxA6GTuh7jMQngegsSt_ZLfbxaHemootB-1yNZsEDQROzjDiDc2hy9Ysona61WL6rugaHUBSw7RjiL1S412iW4zwiNg0_FL8-fLe8_0rcwTQ\"/><figcaption><a class=\"blog-text-link\" href=\"https://analyze.intezer.com/files/12315dbe67fd3db9ce3c1f520fef14e10e946b7a1d8628583c2a26949312edc5/detect-hunt\" rel=\"noreferrer noopener\" target=\"_blank\">Analysis</a> of Emotet</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xb516f376>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The file was executed in Intezers sandbox and its behavior was analyzed allowing the platform to extract detection indicators. In this file we have 24 indicators total and five of them were previously seen in other Emotet samples. The indicators of this file can produce good detection rules as they are based on the execution process, which is a key part of the malware. This reduces the chances of the threat actor changing these indicators (unlike file names or URLs that are easy to change).",
+                    "html": "<p>The file was executed in Intezer\u2019s sandbox and its behavior was analyzed allowing the platform to extract detection indicators. In this file we have 24 indicators total and five of them were previously seen in other Emotet samples. The indicators of this file can produce good detection rules as they are based on the execution process, which is a key part of the malware. This reduces the chances of the threat actor changing these indicators (unlike file names or URLs that are easy to change). </p>"
+                },
+                {
+                    "id": "<sentence_0xfaa6cf72>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We can use the information provided by Intezer to produce the following Sigma rule:",
+                    "html": "<p>We can use the information provided by Intezer to produce the following Sigma rule:</p>"
+                },
+                {
+                    "id": "<sentence_0x30e5cf04>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x691cbbce>": "title: Emotet vbs execution detection\nauthor: Intezer\nlogsource:\n category: process_creation\n product: windows\ndetection:\n selection1:\n ParentImage:\n - 'excel.exe'\n Image:\n - 'wscript.exe'\n commandline|contains:\n - 'vbs'\n condition: selection1"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-xml hljs\">title: Emotet vbs execution detection\nauthor: Intezer\nlogsource:\n category: process_creation\n product: windows\ndetection:\n selection1:\n ParentImage:\n - 'excel.exe'\n Image:\n - 'wscript.exe'\n commandline|contains:\n - 'vbs'\n condition: selection1</code>"
+                },
+                {
+                    "id": "<sentence_0x4bc76dfa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet detection rule based on indicators that are common in the Emotet family.",
+                    "html": "<p class=\"has-text-align-center\">Emotet detection rule based on indicators that are common in the Emotet family.</p>"
+                },
+                {
+                    "id": "<sentence_0xc8b1b11f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xdab8f6c0>": "title: Emotet family file creation detection\nauthor: Intezer\nlogsource:\n product: windows\n category: file_event\ndetection:\n filename:\n TargetFilename|endswith:\n - 'Application Data\\Microsoft\\Forms\\EXCEL.box'\n condition: filename"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-xml hljs\">title: Emotet family file creation detection\nauthor: Intezer\nlogsource:\n product: windows\n category: file_event\ndetection:\n filename:\n TargetFilename|endswith:\n - 'Application Data\\Microsoft\\Forms\\EXCEL.box'\n condition: filename</code>"
+                },
+                {
+                    "id": "<sentence_0x98b98f32>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet detection based on indicators that are common in the Emotet family",
+                    "html": "<p class=\"has-text-align-center\">Emotet detection based on indicators that are common in the Emotet family</p>"
+                },
+                {
+                    "id": "<sentence_0xc2e25a4a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Both rules are based on behavior that was seen in different samples of Emotet. We can make the first rule even more strict by using specific commands and file names in the commandline specification. The second rule is based on a file that is seen in Emotet samples while it might look like a false positive, based on our observations this file can be used as a good indication of malicious activity caused by Emotet.",
+                    "html": "<p>Both rules are based on behavior that was seen in different samples of Emotet. We can make the first rule even more strict by using specific commands and file names in the \u2018commandline\u2019 specification. The second rule is based on a file that is seen in Emotet samples \u2013 while it might look like a false positive, based on our observations this file can be used as a good indication of malicious activity caused by Emotet. </p>"
+                },
+                {
+                    "id": "<sentence_0x879473bc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7286f21f>": "https://analyze.intezer.com/api/docs/documentation"
+                    },
+                    "text": "Recently Intezer added detection opportunities per family to allow you to stay ahead of emerging threats. This feature allows users to get all of the detection artifacts that were seen in a specific family and combined with Intezers API allows users to extract up-to-date behavioral artifacts, so you can create rules to proactively hunt for the existence of a threat within your organization and create updated detection rules.",
+                    "html": "<p>Recently Intezer added detection opportunities per family to allow you to stay ahead of emerging threats. This feature allows users to get all of the detection artifacts that were seen in a specific family and combined with <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/api/docs/documentation\">Intezer\u2019s API</a> allows users to extract up-to-date behavioral artifacts, so you can create rules to proactively hunt for the existence of a threat within your organization and create updated detection rules.</p>"
+                },
+                {
+                    "id": "<sentence_0xebc073a2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x550676c4>": "https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53",
+                        "<img_0x23b91967>": "https://lh6.googleusercontent.com/TJaUi8MB3CtRCggWPwOf9s2j-nWSEZUcR3Kn7t-8v04PKp5hA0GjPvS3FYH4ABHr1bvQ2lBK66FBh__IVyr07Yuzqw8UUi506mnGXr7nLYJ3QR7S8cCPHw8pPYDK1qiu13R2EPxY3ziXN8m55g"
+                    },
+                    "text": "Family page view for Emotet in an enterprise account, showing the relevant detection opportunities",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"artifacts for sigma detection rules\" src=\"https://lh6.googleusercontent.com/TJaUi8MB3CtRCggWPwOf9s2j-nWSEZUcR3Kn7t-8v04PKp5hA0GjPvS3FYH4ABHr1bvQ2lBK66FBh__IVyr07Yuzqw8UUi506mnGXr7nLYJ3QR7S8cCPHw8pPYDK1qiu13R2EPxY3ziXN8m55g\"/><figcaption><a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53\">Family page view for Emotet</a> in an enterprise account, showing the relevant detection opportunities</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9513f8e5>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x969a8982>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Creating good and efficient detection rules is a form of art. There could be more than one correct way to write a rule from the same indicators. But at the end of the day, our goal is to detect threats and stop them and for that we need to know which indicators are unique to a specific threat and less likely to change among the variants of the malware.",
+                    "html": "<p>Creating good and efficient detection rules is a form of art. There could be more than one \u201ccorrect\u201d way to write a rule from the same indicators. But at the end of the day, our goal is to detect threats and stop them and for that we need to know which indicators are unique to a specific threat and less likely to change among the variants of the malware.</p>"
+                },
+                {
+                    "id": "<sentence_0xa76bbb80>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x278223d>": "https://analyze.intezer.com/"
+                    },
+                    "text": "You can get IoCs, artifacts, and other detection opportunities for creating Sigma rules using Intezer. Sign up for a free account at analyze.intezer.com",
+                    "html": "<p class=\"blue-box\">You can get IoCs, artifacts, and other detection opportunities for creating Sigma rules using Intezer. Sign up for a free account at <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/\" rel=\"noreferrer noopener\" target=\"_blank\">analyze.intezer.com</a></p>"
+                },
+                {
+                    "id": "<sentence_0xded1c859>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x417b2c4>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2020/07/Screenshot_20200720-202117__01-60x60.png"
+                    },
+                    "text": "",
+                    "html": "<img class=\"user-photo\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2020/07/Screenshot_20200720-202117__01-60x60.png\"/>"
+                },
+                {
+                    "id": "<sentence_0xba67d8b4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Nicole Fishbein",
+                    "html": " Nicole Fishbein"
+                },
+                {
+                    "id": "<sentence_0x53c9426f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x46cd2aab>": "https://twitter.com/NicoleFishi19"
+                    },
+                    "text": "",
+                    "html": "<a class=\"twitter-link blog-text-link\" href=\"https://twitter.com/NicoleFishi19\" target=\"_blank\"></a>"
+                },
+                {
+                    "id": "<sentence_0x5f88bf7a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Nicole is a malware analyst and reverse engineer. Prior to Intezer she was an embedded researcher in the Israel Defense Forces (IDF) Intelligence Corps.",
+                    "html": "<p>Nicole is a malware analyst and reverse engineer. Prior to Intezer she was an embedded researcher in the Israel Defense Forces (IDF) Intelligence Corps.</p>"
+                },
+                {
+                    "id": "<sentence_0x418210d5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x58a63d6b>": "https://www.intezer.com/tag/emotet/"
+                    },
+                    "text": "Emotet",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/emotet/\" rel=\"tag\">Emotet</a>"
+                },
+                {
+                    "id": "<sentence_0x83d26437>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xfcdaadbb>": "https://www.intezer.com/tag/pyramid-of-pain/"
+                    },
+                    "text": "pyramid of pain",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/pyramid-of-pain/\" rel=\"tag\">pyramid of pain</a>"
+                },
+                {
+                    "id": "<sentence_0x479e297e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8fa823a6>": "https://www.intezer.com/tag/sigma-rules/"
+                    },
+                    "text": "sigma rules",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/sigma-rules/\" rel=\"tag\">sigma rules</a>"
+                },
+                {
+                    "id": "<sentence_0x141405fb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x26b30c22>": "https://www.intezer.com/tag/threat-hunting/"
+                    },
+                    "text": "Threat Hunting",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/threat-hunting/\" rel=\"tag\">Threat Hunting</a>"
+                }
+            ]
+        }
+    ]
+}

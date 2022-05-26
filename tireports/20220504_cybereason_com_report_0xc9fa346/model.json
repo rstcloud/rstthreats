@@ -1,0 +1,2219 @@
+{
+    "id": "<report_0xc9fa346>",
+    "url": "https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive",
+    "title": "Operation CuckooBees: A Winnti Malware Arsenal Deep-Dive",
+    "meta": [
+        {
+            "id": "<chapter_0xa5ff155>",
+            "title": "Operation CuckooBees: A Winnti Malware Arsenal Deep-Dive",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfa0458a9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Written By",
+                    "html": "\nWritten By\n"
+                },
+                {
+                    "id": "<sentence_0xbe8dbe5a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cybereason Nocturnus",
+                    "html": "<p>Cybereason Nocturnus</p>"
+                },
+                {
+                    "id": "<sentence_0x8d4db4bc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "May 4, 2022<crlf>|<crlf><crlf><crlf><crlf><crlf><crlf>19 minute read",
+                    "html": "<p class=\"date-and-duration\">\nMay 4, 2022\n |\n \n \n \n \n \n 19 minute read\n \n \n</p>"
+                },
+                {
+                    "id": "<sentence_0x7f093cbe>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x53fa2ad3>": "https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques",
+                        "<a_0xcb759a1b>": "https://www.cybereason.com/services/incident-response"
+                    },
+                    "text": "In part one of this research, the Cybereason Nocturnus Incident Response Team provided a unique glimpse into the Wintti intrusion playbook, covering the techniques that were used by the group from initial compromise to stealing the data, as observed and analyzed by the Cybereason Incident Response team.",
+                    "html": "<p>In <a href=\"/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques\" rel=\"noopener\" target=\"_blank\">part one of this research</a>, the <a href=\"/services/incident-response\" rel=\"noopener\" target=\"_blank\">Cybereason Nocturnus Incident Response Team</a> provided a unique glimpse into the Wintti intrusion playbook, covering the techniques that were used by the group from initial compromise to stealing the data, as observed and analyzed by the Cybereason Incident Response team. </p>"
+                },
+                {
+                    "id": "<sentence_0x975c04a0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This part of the research zeroes in on the Winnti malware arsenal that was discovered during the investigation conducted by the Cybereason IR and Nocturnus teams. In addition, our analysis of the observed malware provides a deeper understanding of the elaborate and multi-layered Winnti infection chain, including evasive maneuvers and stealth techniques that are baked-in to the malware code, as well as the functionality of the various malware.",
+                    "html": "<p>This part of the research zeroes in on the Winnti malware arsenal that was discovered during the investigation conducted by the Cybereason IR and Nocturnus teams. In addition, our analysis of the observed malware provides a deeper understanding of the elaborate and multi-layered Winnti infection chain, including evasive maneuvers and stealth techniques that are baked-in to the malware code, as well as the functionality of the various malware. </p>"
+                },
+                {
+                    "id": "<sentence_0xa60733e4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Perhaps one of the most interesting and striking aspects of this report is the level of sophistication introduced by the malware authors. The infection and deployment chain is long, complicated and interdependentshould one step go wrong, the entire chain collapses - making it somewhat vulnerable, yet at the same time provides an extra level of security and stealth for the operation.",
+                    "html": "<p>Perhaps one of the most interesting and striking aspects of this report is the level of sophistication introduced by the malware authors. The infection and deployment chain is long, complicated and interdependent\u2013should one step go wrong, the entire chain collapses - making it somewhat vulnerable, yet at the same time provides an extra level of security and stealth for the operation. </p>"
+                },
+                {
+                    "id": "<sentence_0x94deb9ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "These steps have proven themselves effective time and time again, as the operation remained under-the-radar for years. While there have been past reports describing some aspects of these intrusions, at the time of writing this report there was no publicly available research that discussed all of the tools and techniques and the manner in which they all fit together, as mentioned in this report.",
+                    "html": "<p>These steps have proven themselves effective time and time again, as the operation remained under-the-radar for years. While there have been past reports describing some aspects of these intrusions, at the time of writing this report there was no publicly available research that discussed all of the tools and techniques and the manner in which they all fit together, as mentioned in this report. </p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xac1e07e5>",
+            "title": "Operation CuckooBees: A Winnti Malware Arsenal Deep-Dive",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2dcbe8f1>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6439f0c1>": "https://www.cybereason.com/hubfs/blog-post-text%20%2888%29.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" src=\"https://www.cybereason.com/hubfs/blog-post-text%20%2888%29.png\"/>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb23b3f14>",
+            "title": "Key Findings",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xae863775>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x67ab48b9>": "https://attack.mitre.org/groups/G0044/"
+                    },
+                    "text": "Attribution to the Winnti APT Group: based on the analysis of the forensic artifacts, Cybereason estimates with medium-high confidence that the perpetrators of the attack are linked to the notorious Winnti APT group, a group that has existed since at least 2010 and is believed to be operating on behalf of Chinese state interests and specializes in cyberespionage and intellectual property theft.",
+                    "html": "<ul>\n<li>Attribution to the Winnti APT Group: based on the analysis of the forensic artifacts, Cybereason estimates with medium-high confidence that the perpetrators of the attack are linked to the notorious <a href=\"https://attack.mitre.org/groups/G0044/\" rel=\"noopener\" target=\"_blank\">Winnti APT group</a>, a group that has existed since at least 2010 and is believed to be operating on behalf of Chinese state interests and specializes in cyberespionage and intellectual property theft. </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x891fbbc2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Discovery of New Malware in the Winnti Arsenal: the report exposes previously undocumented malware strain called DEPLOYLOG used by the Winnti APT group and highlights new versions of known Winnti malware, including Spyder Loader, PRIVATELOG, and WINNKIT.<crlf>Rarely Seen Abuse of the Windows CLFS Feature: the attackers leveraged the Windows CLFS mechanism and NTFS transaction manipulations which provided them with the ability to conceal their payloads and evade detection by traditional security products.",
+                    "html": "<ul>\n<li>Discovery of New Malware in the Winnti Arsenal: the report exposes previously undocumented malware strain called DEPLOYLOG used by the Winnti APT group and highlights new versions of known Winnti malware, including Spyder Loader, PRIVATELOG, and WINNKIT. </li>\n<li>Rarely Seen Abuse of the Windows CLFS Feature: the attackers leveraged the Windows CLFS mechanism and NTFS transaction manipulations which provided them with the ability to conceal their payloads and evade detection by traditional security products.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x2e6f7f49>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Intricate and Interdependent Payload Delivery: the report includes an analysis of the complex infection chain that led to the deployment of the WINNKIT rootkit composed of multiple interdependent components. The attackers implemented a delicate house of cards approach, meaning that each component depends on the others to function properly, making it very difficult to analyze each component separately. The malware from the Winnti arsenal that are analyzed in this report include:",
+                    "html": "<ul>\n<li>Intricate and Interdependent Payload Delivery: the report includes an analysis of the complex infection chain that led to the deployment of the WINNKIT rootkit composed of multiple interdependent components. The attackers implemented a delicate \u201chouse of cards\u201d approach, meaning that each component depends on the others to function properly, making it very difficult to analyze each component separately. The malware from the Winnti arsenal that are analyzed in this report include: </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x68b101ae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Spyder: A sophisticated modular backdoor<crlf>Spyder: A sophisticated modular backdoor",
+                    "html": "<ul>\n<li>\n<ul>\n<li>Spyder: A sophisticated modular backdoor</li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x8b557533>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "STASHLOG: The initial deployment tool stashing payloads in Windows CLFS<crlf>STASHLOG: The initial deployment tool stashing payloads in Windows CLFS",
+                    "html": "<ul>\n<li>\n<ul>\n<li>STASHLOG: The initial deployment tool \u201cstashing\u201d payloads in Windows CLFS </li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xac2b86de>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SPARKLOG: Extracts and deploys PRIVATELOG to gain privilege escalation and achieve persistence<crlf>SPARKLOG: Extracts and deploys PRIVATELOG to gain privilege escalation and achieve persistence",
+                    "html": "<ul>\n<li>\n<ul>\n<li>SPARKLOG: Extracts and deploys PRIVATELOG to gain privilege escalation and achieve persistence</li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xa69d78e7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "PRIVATELOG: Extracts and deploys DEPLOYLOG<crlf>PRIVATELOG: Extracts and deploys DEPLOYLOG",
+                    "html": "<ul>\n<li>\n<ul>\n<li>PRIVATELOG: Extracts and deploys DEPLOYLOG</li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xcdffbd75>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DEPLOYLOG: Deploys the WINNKIT Rootkit and serves as a userland agent<crlf>DEPLOYLOG: Deploys the WINNKIT Rootkit and serves as a userland agent",
+                    "html": "<ul>\n<li>\n<ul>\n<li>DEPLOYLOG: Deploys the WINNKIT Rootkit and serves as a userland agent </li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x8a41e87f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "WINNKIT: The Winnti Kernel-level Rootkit<crlf>WINNKIT: The Winnti Kernel-level Rootkit",
+                    "html": "<ul>\n<li>\n<ul>\n<li>WINNKIT: The Winnti Kernel-level Rootkit</li>\n</ul>\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x353b962>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following graph describes the infection chain presented in this attack:",
+                    "html": "<p>The following graph describes the infection chain presented in this attack:</p>"
+                },
+                {
+                    "id": "<sentence_0xa1a569f1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6918f3c>": "https://www.cybereason.com/hs-fs/hubfs/image20-Apr-26-2022-08-16-47-67-PM.png?width=1535&name=image20-Apr-26-2022-08-16-47-67-PM.png"
+                    },
+                    "text": "Winnti infection chain as observed in Operation CuckooBees",
+                    "html": "<p><img alt=\"image20-Apr-26-2022-08-16-47-67-PM\" class=\"has-border\" src=\"https://www.cybereason.com/hs-fs/hubfs/image20-Apr-26-2022-08-16-47-67-PM.png?width=1535&amp;name=image20-Apr-26-2022-08-16-47-67-PM.png\" width=\"1535\"/>Winnti infection chain as observed in Operation CuckooBees </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6114dacc>",
+            "title": "Initial Payload: Weaving in the Spyder Loader",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x745cacfc>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6563f11d>": "https://www.cybereason.com/hs-fs/hubfs/image10-Apr-26-2022-08-17-34-41-PM.png?width=634&name=image10-Apr-26-2022-08-17-34-41-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image10-Apr-26-2022-08-17-34-41-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image10-Apr-26-2022-08-17-34-41-PM.png?width=634&amp;name=image10-Apr-26-2022-08-17-34-41-PM.png\" width=\"634\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa2611570>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5cf96aa0>": "https://st.drweb.com/static/new-www/news/2021/march/BackDoor.Spyder.1_en.pdf"
+                    },
+                    "text": "The Spyder loader is the first malicious binary the attackers execute on a targeted machine. This malware is executed from the batch files we discussed in our blogs part 1 - cc.bat or bc.bat:",
+                    "html": "<p>The <a href=\"https://st.drweb.com/static/new-www/news/2021/march/BackDoor.Spyder.1_en.pdf\">Spyder loader</a> is the first malicious binary the attackers execute on a targeted machine. This malware is executed from the batch files we discussed in our blog\u2019s part 1 - cc.bat or bc.bat:</p>"
+                },
+                {
+                    "id": "<sentence_0xb185256f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xae40b01c>": "https://www.cybereason.com/hs-fs/hubfs/image42-2.png?width=628&name=image42-2.png"
+                    },
+                    "text": "Batch file execution command",
+                    "html": "<p><img alt=\"image42-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image42-2.png?width=628&amp;name=image42-2.png\" width=\"628\"/>Batch file execution command</p>"
+                },
+                {
+                    "id": "<sentence_0x12348f19>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The loaders purpose is to decrypt and load additional payloads and is being delivered in 2 variations. The first variation, is a modified SQLite3 DLL, that uses the exports ordinal number 138 to serve malicious code, that loads and executes a file argument provided at runtime, in our case C:\\Windows\\System32\\x64.tlb:",
+                    "html": "<p>The loader\u2019s purpose is to decrypt and load additional payloads and is being delivered in 2 variations. The first variation, is a modified SQLite3 DLL, that uses the export\u2019s ordinal number 138 to serve malicious code, that loads and executes a file argument provided at runtime, in our case C:\\Windows\\System32\\x64.tlb:</p>"
+                },
+                {
+                    "id": "<sentence_0x729b253b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd965f870>": "https://www.cybereason.com/hs-fs/hubfs/image5-Apr-26-2022-08-19-42-68-PM.png?width=670&name=image5-Apr-26-2022-08-19-42-68-PM.png"
+                    },
+                    "text": "Malicious export ordinal number 138 sqlite3_profile_v2",
+                    "html": "<p><img alt=\"image5-Apr-26-2022-08-19-42-68-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image5-Apr-26-2022-08-19-42-68-PM.png?width=670&amp;name=image5-Apr-26-2022-08-19-42-68-PM.png\" width=\"670\"/>Malicious export ordinal number 138 \u201csqlite3_profile_v2\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0x2a2bd60a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As seen above, the loader is executed via the famous LOLBIN rundll32.exe, in the following manner:",
+                    "html": "<p>As seen above, the loader is executed via the famous LOLBIN rundll32.exe, in the following manner:</p>"
+                },
+                {
+                    "id": "<sentence_0x59744d2e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "rundll32.exe <modified sqlite3.dll file>,#138 C:\\Windows\\System32\\x64.tlb",
+                    "html": "<p>rundll32.exe &lt;modified sqlite3.dll file&gt;,#138 C:\\Windows\\System32\\x64.tlb</p>"
+                },
+                {
+                    "id": "<sentence_0x1a0edbbc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Interestingly, Cybereason found this loader in different names and in different locations across infected machines:",
+                    "html": "<p>Interestingly, Cybereason found this loader in different names and in different locations across infected machines:</p>"
+                },
+                {
+                    "id": "<sentence_0x49cbeff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C:\\Windows\\System32\\iumatl.dll<crlf>C:\\Windows\\System32\\msdupld.dll<crlf>C:\\Windows\\System32\\mscuplt.dll<crlf>C:\\Windows\\System32\\msdupld.dll<crlf>C:\\Windows\\System32\\netapi.dll<crlf>C:\\Windows\\System32\\rpcutl.dll<crlf>C:\\Windows\\System32\\dot3utl.dll<crlf>C:\\Windows\\System32\\nlsutl.dll<crlf>C:\\Windows\\Branding\\Basebrd\\language.dll<crlf>C:\\Program Files\\Internet Explorer\\SIGNUP\\install.dll",
+                    "html": "<ul>\n<li>C:\\Windows\\System32\\iumatl.dll</li>\n<li>C:\\Windows\\System32\\msdupld.dll</li>\n<li>C:\\Windows\\System32\\mscuplt.dll</li>\n<li>C:\\Windows\\System32\\msdupld.dll</li>\n<li>C:\\Windows\\System32\\netapi.dll</li>\n<li>C:\\Windows\\System32\\rpcutl.dll</li>\n<li>C:\\Windows\\System32\\dot3utl.dll</li>\n<li>C:\\Windows\\System32\\nlsutl.dll</li>\n<li>C:\\Windows\\Branding\\Basebrd\\language.dll</li>\n<li>C:\\Program Files\\Internet Explorer\\SIGNUP\\install.dll</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xe7e752bf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc58a50ac>": "https://docs.microsoft.com/en-us/windows/win32/midl/com-dcom-and-type-libraries"
+                    },
+                    "text": "The attackers utilized the System32 directory, which holds a multitude of TLB and DLL files, to hide their external TLB payload and DLL loader to make it harder to detect.",
+                    "html": "<p>The attackers utilized the System32 directory, which holds a multitude of <a href=\"https://docs.microsoft.com/en-us/windows/win32/midl/com-dcom-and-type-libraries\" rel=\"noopener\" target=\"_blank\">TLB</a> and DLL files, to hide their external \u201cTLB\u201d payload and DLL loader to make it harder to detect.</p>"
+                },
+                {
+                    "id": "<sentence_0x33f7dd9a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This DLL wasnt the only Spyder Loader we found, as Cybereason discovered a second variation of this malware in the form of a standalone executable called sqlite3.exe, masquerading as a SQLite3-related executable as well.",
+                    "html": "<p>This DLL wasn\u2019t the only Spyder Loader we found, as Cybereason discovered a second variation of this malware in the form of a standalone executable called sqlite3.exe, masquerading as a SQLite3-related executable as well.</p>"
+                },
+                {
+                    "id": "<sentence_0xd6af507c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This version featured some improvements, such as logging messages, which shed some light on some of its functionality and capabilities:",
+                    "html": "<p>This version featured some improvements, such as logging messages, which shed some light on some of its functionality and capabilities:</p>"
+                },
+                {
+                    "id": "<sentence_0xbaca935d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc084d06c>": "https://www.cybereason.com/hs-fs/hubfs/image12-Apr-26-2022-08-20-36-62-PM.png?width=663&name=image12-Apr-26-2022-08-20-36-62-PM.png"
+                    },
+                    "text": "Malicious export ordinal number 138 sqlite3_profile_v2",
+                    "html": "<p><img alt=\"image12-Apr-26-2022-08-20-36-62-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image12-Apr-26-2022-08-20-36-62-PM.png?width=663&amp;name=image12-Apr-26-2022-08-20-36-62-PM.png\" width=\"663\"/>Malicious export ordinal number 138 \u201csqlite3_profile_v2\u201d</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xddc5e8ec>",
+            "title": "The Spyder Loader Bag of Tricks",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa14c8044>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Throughout its execution, the Spider Loader implements a few interesting methods to evade detection and to maintain stealth:",
+                    "html": "<p>Throughout its execution, the Spider Loader implements a few interesting methods to evade detection and to maintain stealth:</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xfa8580dc>",
+            "title": "Anti Analysis/Sandboxing",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe7fe7278>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "At the beginning of execution, the loader checks if the file argument exists:",
+                    "html": "<p>At the beginning of execution, the loader checks if the file argument exists:</p>"
+                },
+                {
+                    "id": "<sentence_0x3cfc1e79>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3817d490>": "https://www.cybereason.com/hs-fs/hubfs/image29-Apr-26-2022-08-21-52-25-PM.png?width=709&name=image29-Apr-26-2022-08-21-52-25-PM.png"
+                    },
+                    "text": "File argument validation",
+                    "html": "<p><img alt=\"image29-Apr-26-2022-08-21-52-25-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image29-Apr-26-2022-08-21-52-25-PM.png?width=709&amp;name=image29-Apr-26-2022-08-21-52-25-PM.png\" width=\"709\"/>File argument validation</p>"
+                },
+                {
+                    "id": "<sentence_0xf8440d44>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe779d7e8>": "https://cryptopp.com/"
+                    },
+                    "text": "If it does, the loader checks for its size: if it is larger than 1.04 MB, it deletes it; if it is smaller than 1.04 MB or equal to it, it decrypts it in memory using the open-source CryptoPP C++ library and then deletes it from disk.",
+                    "html": "<p>If it does, the loader checks for its size: if it is larger than 1.04 MB, it deletes it; if it is smaller than 1.04 MB or equal to it, it decrypts it in memory using the open-source <a href=\"https://cryptopp.com/\" rel=\"noopener\" target=\"_blank\">CryptoPP</a> C++ library and then deletes it from disk.</p>"
+                },
+                {
+                    "id": "<sentence_0x85578e5d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x40f7745a>": "https://attack.mitre.org/techniques/T1523/",
+                        "<a_0xe83315af>": "https://attack.mitre.org/techniques/T1497/"
+                    },
+                    "text": "Cybereason assesses this condition is intended to validate that the loader wont try to decrypt the wrong file, and as a precaution against analysis environments or Sandboxes.",
+                    "html": "<p>Cybereason assesses this condition is intended to validate that the loader won\u2019t try to decrypt the wrong file, and as a precaution against <a href=\"https://attack.mitre.org/techniques/T1523/\" rel=\"noopener\" target=\"_blank\">analysis environments</a> or <a href=\"https://attack.mitre.org/techniques/T1497/\" rel=\"noopener\" target=\"_blank\">Sandboxes</a>.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x132dfcce>",
+            "title": "EDR Bypass Tricks",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x49d112a2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After decrypting the payload, the attackers copy the system ntdll.dll file to C:\\Windows\\System32\\TN{random_characters}.dll, and load it to memory:",
+                    "html": "<p>After decrypting the payload, the attackers copy the system ntdll.dll file to C:\\Windows\\System32\\TN{random_characters}.dll, and load it to memory:</p>"
+                },
+                {
+                    "id": "<sentence_0xfed5174a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xed7174e4>": "https://www.cybereason.com/hs-fs/hubfs/image25-Apr-26-2022-08-22-27-29-PM.png?width=689&name=image25-Apr-26-2022-08-22-27-29-PM.png"
+                    },
+                    "text": "Copying ntdll.dll to C:\\Windows\\System32\\TN{randoms_chars}.dll",
+                    "html": "<p><img alt=\"image25-Apr-26-2022-08-22-27-29-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image25-Apr-26-2022-08-22-27-29-PM.png?width=689&amp;name=image25-Apr-26-2022-08-22-27-29-PM.png\" width=\"689\"/>Copying ntdll.dll to C:\\Windows\\System32\\TN{randoms_chars}.dll</p>"
+                },
+                {
+                    "id": "<sentence_0xdf69072a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, they acquire the NtProtectVirtualMemory address from the copied and loaded file and call a specific routine (which we named as BypassEdrHook) multiple times using 2 arguments:",
+                    "html": "<p>Then, they acquire the NtProtectVirtualMemory address from the copied and loaded file and call a specific routine (which we named as \u201cBypassEdrHook\u201d) multiple times using 2 arguments:</p>"
+                },
+                {
+                    "id": "<sentence_0x9394615d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The acquired address of NtProtectVirtualMemory in the loaded, copied DLL.<crlf>A string representing a native api function:",
+                    "html": "<ul>\n<li>The acquired address of NtProtectVirtualMemory in the loaded, copied DLL.</li>\n<li>A string representing a native api function:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x6b934da2>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x45b9be54>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x19ad615f>": "https://www.cybereason.com/hs-fs/hubfs/image35-Apr-26-2022-08-23-37-43-PM.png?width=819&name=image35-Apr-26-2022-08-23-37-43-PM.png"
+                    },
+                    "text": "Calling for the BypassEdrHook routine",
+                    "html": "<p><img alt=\"image35-Apr-26-2022-08-23-37-43-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image35-Apr-26-2022-08-23-37-43-PM.png?width=819&amp;name=image35-Apr-26-2022-08-23-37-43-PM.png\" width=\"819\"/>Calling for the BypassEdrHook routine</p>"
+                },
+                {
+                    "id": "<sentence_0x9294f7b0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The BypassEdrHook function will compare the first bytes in memory of the native API functions in the loaded ntdll.dll image to the first bytes in memory of the same function in the loaded/copied DLL memory image.",
+                    "html": "<p>The BypassEdrHook function will compare the first bytes in memory of the native API functions in the loaded ntdll.dll image to the first bytes in memory of the same function in the loaded/copied DLL memory image.</p>"
+                },
+                {
+                    "id": "<sentence_0xf037aacd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the ntdll functions first bytes are different from the first bytes of the copied DLL in memory, the attackers will conclude that this native function is hooked by an EDR tool.",
+                    "html": "<p>If the ntdll function\u2019s first bytes are different from the first bytes of the copied DLL in memory, the attackers will conclude that this native function is hooked by an EDR tool.</p>"
+                },
+                {
+                    "id": "<sentence_0xb579796c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To override it, the attackers count the number of different bytes at the beginning of these two functions, then they change the permissions of the relevant patched bytes in the original ntdll.dll image to READWRITE_EXECUTE, copy the original bytes from the loaded/copied DLL memory, and restore the previous page protection settings:",
+                    "html": "<p>To override it, the attackers count the number of different bytes at the beginning of these two functions, then they change the permissions of the relevant patched bytes in the original ntdll.dll image to READWRITE_EXECUTE, copy the original bytes from the loaded/copied DLL memory, and restore the previous page protection settings:</p>"
+                },
+                {
+                    "id": "<sentence_0x50308c07>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x766cbb76>": "https://www.cybereason.com/hs-fs/hubfs/image33-Apr-26-2022-08-24-55-80-PM.png?width=840&name=image33-Apr-26-2022-08-24-55-80-PM.png"
+                    },
+                    "text": "Check for EDR hook and bypass if true",
+                    "html": "<p><img alt=\"image33-Apr-26-2022-08-24-55-80-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image33-Apr-26-2022-08-24-55-80-PM.png?width=840&amp;name=image33-Apr-26-2022-08-24-55-80-PM.png\" width=\"840\"/>Check for EDR hook and bypass if true</p>"
+                },
+                {
+                    "id": "<sentence_0x8e639139>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This procedure will occur for the following native API functions:",
+                    "html": "<p>This procedure will occur for the following native API functions:</p>"
+                },
+                {
+                    "id": "<sentence_0xe2a2e94c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "LdrLoadDll<crlf>KiUserApcDispatcher<crlf>NtAlpcConnectPort<crlf>NtAllocateVirtualMemory<crlf>NtFreeVirtualMemory<crlf>NtMapViewOfSection<crlf>NtQueueApcThread<crlf>NtReadVirtualMemory<crlf>NtSetContextThread<crlf>NtUnmapViewOfSection<crlf>NtWriteVirtualMemory<crlf>RtlInstallFunctionTableCallback",
+                    "html": "<ul>\n<li>LdrLoadDll</li>\n<li>KiUserApcDispatcher</li>\n<li>NtAlpcConnectPort </li>\n<li>NtAllocateVirtualMemory </li>\n<li>NtFreeVirtualMemory </li>\n<li>NtMapViewOfSection </li>\n<li>NtQueueApcThread </li>\n<li>NtReadVirtualMemory </li>\n<li>NtSetContextThread </li>\n<li>NtUnmapViewOfSection </li>\n<li>NtWriteVirtualMemory </li>\n<li>RtlInstallFunctionTableCallback </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x7f724f58>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Right afterward, the Spyder Loader will execute the payload reflectively, and lastly, will delete TN{random_characters}.dll to leave no traces.",
+                    "html": "<p>Right afterward, the Spyder Loader will execute the payload reflectively, and lastly, will delete TN{random_characters}.dll to leave no traces.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6ffbd04>",
+            "title": "Attribution of the Spyder Payloads",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x668a4870>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xebfba3a7>": "https://securitynews.sonicwall.com/xmlpost/chinas-winnti-spyder-module/"
+                    },
+                    "text": "The above-mentioned PE files share similar code with other known Spyder loaders, such as the oci.dll payload mentioned in a SonicWall blog from March 2021:",
+                    "html": "<p>The above-mentioned PE files share similar code with other known Spyder loaders, such as the oci.dll payload mentioned in a <a href=\"https://securitynews.sonicwall.com/xmlpost/chinas-winnti-spyder-module/\" rel=\"noopener\" target=\"_blank\">SonicWall</a> blog from March 2021:</p>"
+                },
+                {
+                    "id": "<sentence_0x497064cf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x84e7d831>": "https://www.cybereason.com/hs-fs/hubfs/image14-Apr-26-2022-08-25-44-50-PM.png?width=1119&name=image14-Apr-26-2022-08-25-44-50-PM.png"
+                    },
+                    "text": "Allocate memory and save WINAPI functions in array",
+                    "html": "<p><img alt=\"image14-Apr-26-2022-08-25-44-50-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image14-Apr-26-2022-08-25-44-50-PM.png?width=1119&amp;name=image14-Apr-26-2022-08-25-44-50-PM.png\" width=\"1119\"/>Allocate memory and save WINAPI functions in array</p>"
+                },
+                {
+                    "id": "<sentence_0x3b646f01>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x66abcbd8>": "https://www.cybereason.com/hs-fs/hubfs/image30-Apr-26-2022-08-26-35-37-PM.png?width=746&name=image30-Apr-26-2022-08-26-35-37-PM.png"
+                    },
+                    "text": "Jump to the payload",
+                    "html": "<p><img alt=\"image30-Apr-26-2022-08-26-35-37-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image30-Apr-26-2022-08-26-35-37-PM.png?width=746&amp;name=image30-Apr-26-2022-08-26-35-37-PM.png\" width=\"746\"/>Jump to the payload</p>"
+                },
+                {
+                    "id": "<sentence_0x9737c8cb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Moreover, our PE files also share a similar evasion technique in masquerading as a legitimate executable. In the aforementioned blog post, it disguised as D3D DLL - a Direct3D 11 runtime DLL, now it disguise as SQLite3:",
+                    "html": "<p>Moreover, our PE files also share a similar evasion technique in masquerading as a legitimate executable. In the aforementioned blog post, it disguised as D3D DLL - a Direct3D 11 runtime DLL, now it disguise as SQLite3:</p>"
+                },
+                {
+                    "id": "<sentence_0x7a5eb09c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7bffe898>": "https://www.cybereason.com/hs-fs/hubfs/image40-3.png?width=1287&name=image40-3.png"
+                    },
+                    "text": "Same method with different targeted DLLs",
+                    "html": "<p><img alt=\"image40-3\" src=\"https://www.cybereason.com/hs-fs/hubfs/image40-3.png?width=1287&amp;name=image40-3.png\" width=\"1287\"/>Same method with different targeted DLLs</p>"
+                },
+                {
+                    "id": "<sentence_0x64950673>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "These similarities, in addition to others, have led us to conclude that this file is an evolution of the Winnti Spyder Loader.",
+                    "html": "<p>These similarities, in addition to others, have led us to conclude that this file is an evolution of the Winnti Spyder Loader.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x85d5b80f>",
+            "title": "A Long and Winnti(ng) Road: The Winnti Multi-Phased Arsenal Deployment",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xde401255>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After deploying the initial payload, Winnti employs a sophisticated and unique multi-staged infection chain with numerous payloads. Each payload fulfills a unique role in the infection chain, which is successful only upon the complete deployment of all of the payloads.",
+                    "html": "<p>After deploying the initial payload, Winnti employs a sophisticated and unique multi-staged infection chain with numerous payloads. Each payload fulfills a unique role in the infection chain, which is successful only upon the complete deployment of all of the payloads.</p>"
+                },
+                {
+                    "id": "<sentence_0x5ca85175>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the upcoming sections, we will discuss the following payloads:",
+                    "html": "<p>In the upcoming sections, we will discuss the following payloads:</p>"
+                },
+                {
+                    "id": "<sentence_0xb95a2014>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "STASHLOG: Stashes encrypted data in a CLFS log<crlf>SPARKLOG: Extracts data from the CLFS log and deploys PRIVATELOG while escalating privileges<crlf>PRIVATELOG: Extracts data from the CLFS log and deploys DEPLOYLOG. This payload also enables persistence in some cases<crlf>DEPLOYLOG: Extracts data from the CLFS log, deploys the WINNKIT Rootkit driver, and acts as the user-mode agent<crlf>WINNKIT: The Winnti Kernel-level Rootkit",
+                    "html": "<ul>\n<li>STASHLOG: Stashes encrypted data in a CLFS log</li>\n<li>SPARKLOG: Extracts data from the CLFS log and deploys PRIVATELOG while escalating privileges</li>\n<li>PRIVATELOG: Extracts data from the CLFS log and deploys DEPLOYLOG. This payload also enables persistence in some cases</li>\n<li>DEPLOYLOG: Extracts data from the CLFS log, deploys the WINNKIT Rootkit driver, and acts as the user-mode agent</li>\n<li>WINNKIT: The Winnti Kernel-level Rootkit</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x47019d3b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Several unique techniques are used by the Winnti group to store data, evade detection, and thwart investigations during this infection flow. One of those techniques, which Winnti heavily uses, is the CLFS mechanism.",
+                    "html": "<p>Several unique techniques are used by the Winnti group to store data, evade detection, and thwart investigations during this infection flow. One of those techniques, which Winnti heavily uses, is the CLFS mechanism.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd5658169>",
+            "title": "Abusing the Rarely Used CLFS Mechanism for Evasion",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x3dc8d6a0>",
+            "title": "So what is CLFS?",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x707d9504>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x798e0cb8>": "https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-the-common-log-file-system"
+                    },
+                    "text": "CLFS (Common Log File System) is a logging framework that was first introduced by Microsoft in Windows Server 2003 R2, and is included in later Windows operating systems.",
+                    "html": "<p><a href=\"https://docs.microsoft.com/en-us/windows-hardware/drivers/kernel/introduction-to-the-common-log-file-system\" rel=\"noopener\" target=\"_blank\">CLFS</a> (Common Log File System) is a logging framework that was first introduced by Microsoft in Windows Server 2003 R2, and is included in later Windows operating systems.</p>"
+                },
+                {
+                    "id": "<sentence_0xb7972184>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This mechanism provides a high-performance logging system for a variety of purposes ranging from simple error logs to transactional systems and data stream collection.",
+                    "html": "<p>This mechanism provides a high-performance logging system for a variety of purposes ranging from simple error logs to transactional systems and data stream collection.</p>"
+                },
+                {
+                    "id": "<sentence_0xc9dc2d9c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "One of the main uses of CLFS in the Windows operating system is in the Windows Kernel Transaction Manager (KTM) for both Transactional NTFS (TxF) and Transactional Registry (TxR) operations. Transactional operations bring the concept of atomic transactions to Windows, allowing Windows to log different operations on those components and support the ability to roll back if needed.",
+                    "html": "<p>One of the main uses of CLFS in the Windows operating system is in the Windows Kernel Transaction Manager (KTM) for both Transactional NTFS (TxF) and Transactional Registry (TxR) operations. Transactional operations bring the concept of atomic transactions to Windows, allowing Windows to log different operations on those components and support the ability to roll back if needed.</p>"
+                },
+                {
+                    "id": "<sentence_0xbe619c62>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The high-performance aspect of this framework is based on the concept of storing the log data in memory buffers for fast writing, reading and flushing them to diskbut not continuously, according to a stated policy.",
+                    "html": "<p>The high-performance aspect of this framework is based on the concept of storing the log data in memory buffers for fast writing, reading and flushing them to disk\u2013but not continuously, according to a stated policy.</p>"
+                },
+                {
+                    "id": "<sentence_0xb94fb562>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "CLFS employs a proprietary file format that isn't documented, and can only be accessed through the CLFS API functions. As of writing this report, there is no tool which can parse the flushed logs. This is a huge benefit for attackers, as it makes it more difficult to examine and detect them while using the CLFS mechanism.",
+                    "html": "<p>CLFS employs a proprietary file format that isn't documented, and can only be accessed through the CLFS API functions. As of writing this report, there is no tool which can parse the flushed logs. This is a huge benefit for attackers, as it makes it more difficult to examine and detect them while using the CLFS mechanism.</p>"
+                },
+                {
+                    "id": "<sentence_0x5e4f4e92>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "On disk, the CLFS log store consists of:",
+                    "html": "<p>On disk, the CLFS log store consists of:</p>"
+                },
+                {
+                    "id": "<sentence_0x7dab5c16>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Base Log File (BLF file): Contains the log metadata.<crlf>One or more Container files: Contains the log data, where the container file sizes are registered in the BLF file.",
+                    "html": "<ul>\n<li>Base Log File (BLF file): Contains the log metadata.</li>\n<li>One or more Container files: Contains the log data, where the container file sizes are registered in the BLF file.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4698bad1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As will be discussed, Winnti group used this mechanism to store and hide the payload that will be extracted from the CLFS file and used by other PEs in the execution chain to build the attackers next steps.",
+                    "html": "<p>As will be discussed, Winnti group used this mechanism to store and hide the payload that will be extracted from the CLFS file and used by other PEs in the execution chain to build the attacker\u2019s next steps.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa97d3393>",
+            "title": "STASHLOG: Stashing the Winnti Arsenal via CLFS",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xee03e3d6>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x83673de2>": "https://www.cybereason.com/hs-fs/hubfs/image7-Apr-26-2022-08-29-02-84-PM.png?width=1107&name=image7-Apr-26-2022-08-29-02-84-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image7-Apr-26-2022-08-29-02-84-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image7-Apr-26-2022-08-29-02-84-PM.png?width=1107&amp;name=image7-Apr-26-2022-08-29-02-84-PM.png\" width=\"1107\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x3b71c656>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4341a28d>": "https://www.mandiant.com/resources/unknown-actor-using-clfs-log-files-for-stealth"
+                    },
+                    "text": "STASHLOG (shiver.exe / forsrv.exe) is a 32 bit executable that is being used to prepare the victim machine for further compromise, and to stash a malicious, encrypted payload to a CLFS log file. This payload will be decrypted at each phase to deliver the next phase in the infection.",
+                    "html": "<p><a href=\"https://www.mandiant.com/resources/unknown-actor-using-clfs-log-files-for-stealth\" rel=\"noopener\" target=\"_blank\">STASHLOG</a> (shiver.exe / forsrv.exe) is a 32 bit executable that is being used to prepare the victim machine for further compromise, and to \u201cstash\u201d a malicious, encrypted payload to a CLFS log file. This payload will be decrypted at each phase to deliver the next phase in the infection.</p>"
+                },
+                {
+                    "id": "<sentence_0xe5558d7c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Both STASHLOG and SPARKLOG, which will be described further in the next section, are executed using a second cc.bat file in the following form:",
+                    "html": "<p>Both STASHLOG and SPARKLOG, which will be described further in the next section, are executed using a second cc.bat file in the following form:</p>"
+                },
+                {
+                    "id": "<sentence_0x90c45bf6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd6e73622>": "https://www.cybereason.com/hs-fs/hubfs/image47-2.png?width=968&name=image47-2.png"
+                    },
+                    "text": "STASHLOG and SPARKLOG execution",
+                    "html": "<p><img alt=\"image47-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image47-2.png?width=968&amp;name=image47-2.png\" width=\"968\"/>STASHLOG and SPARKLOG execution</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xba099489>",
+            "title": "Different Modes of Execution",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x726b475>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "STASHLOG has 2 modes of execution:",
+                    "html": "<p>STASHLOG has 2 modes of execution:</p>"
+                },
+                {
+                    "id": "<sentence_0x1b2ec43c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Without arguments to initialize the environment towards infection.<crlf>With one argument to store the CLFS file for further use.",
+                    "html": "<ul>\n<li>Without arguments to initialize the environment towards infection.</li>\n<li>With one argument to store the CLFS file for further use.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x80a1c8dd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When no arguments are passed, STASHLOG prints the following output:",
+                    "html": "<p>When no arguments are passed, STASHLOG prints the following output:</p>"
+                },
+                {
+                    "id": "<sentence_0xea826e94>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf2a42b0a>": "https://www.cybereason.com/hs-fs/hubfs/image44-2.png?width=568&name=image44-2.png"
+                    },
+                    "text": "Execution example of STASHLOG without an argument",
+                    "html": "<p><img alt=\"image44-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image44-2.png?width=568&amp;name=image44-2.png\" width=\"568\"/>Execution example of STASHLOG without an argument</p>"
+                },
+                {
+                    "id": "<sentence_0x1efe9e10>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This output consists of the machine Globally Unique Identifier (GUID) along with a 56 byte string:",
+                    "html": "<p>This output consists of the machine Globally Unique Identifier (GUID) along with a 56 byte string:</p>"
+                },
+                {
+                    "id": "<sentence_0xc750873f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The machines GUID - derived from the HKLM\\SOFTWARE\\Microsoft\\Cryptography registry key.<crlf>The 56 byte string is generated from a random GUID created by the CoCreateGUID function. The string consists of the hex representation of the GUID, SHA1 hash of the hex GUID, and a SHA1 hash of the GUID + SHA1 of the GUID.",
+                    "html": "<ul>\n<li>The machine\u2019s GUID - derived from the HKLM\\SOFTWARE\\Microsoft\\Cryptography registry key.</li>\n<li>The 56 byte string is generated from a random GUID created by the CoCreateGUID function. The string consists of the hex representation of the GUID, SHA1 hash of the hex GUID, and a SHA1 hash of the GUID + SHA1 of the GUID.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x6b153e1f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This example demonstrates the process of building the 56 byte string:",
+                    "html": "<p>This example demonstrates the process of building the 56 byte string:</p>"
+                },
+                {
+                    "id": "<sentence_0x466c468c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Lets take a random GUID: {4684A5A2-942A-4DF6-AF1D-2A672F78F73E}<crlf>The random GUIDs Hex representation will be: A2A584462A94F64DAF1D2A672F78F73E<crlf>Its SHA1 will be: 12C736FE6C9165B1C1026FAAD0051FB9F51DFF35<crlf>And finally the SHA1 of (GUID + SHA1(GUID)): FAB426F085460CEFD4A65B8A4396C05BF582CB20",
+                    "html": "<ul>\n<li>Let\u2019s take a random GUID: {4684A5A2-942A-4DF6-AF1D-2A672F78F73E}</li>\n<li>The random GUID\u2019s Hex representation will be: A2A584462A94F64DAF1D2A672F78F73E</li>\n<li>Its SHA1 will be: 12C736FE6C9165B1C1026FAAD0051FB9F51DFF35</li>\n<li>And finally the SHA1 of (GUID + SHA1(GUID)): FAB426F085460CEFD4A65B8A4396C05BF582CB20</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x13e5da68>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The final string will be:",
+                    "html": "<p>The final string will be:</p>"
+                },
+                {
+                    "id": "<sentence_0xeb655112>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A2A584462A94F64DAF1D2A672F78F73E 12C736FE6C9165B1C1026FAAD0051FB9F51DFF35 FAB426F085460CEFD4A65B8A4396C05BF582CB20",
+                    "html": "<ul>\n<li>A2A584462A94F64DAF1D2A672F78F73E\n12C736FE6C9165B1C1026FAAD0051FB9F51DFF35\nFAB426F085460CEFD4A65B8A4396C05BF582CB20</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xdae20e9e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The random GUID is then registered as a global atom entry in the form of win::{GUID}:",
+                    "html": "<p>The random GUID is then registered as a global atom entry in the form of \u200b\u200bwin::{GUID}:</p>"
+                },
+                {
+                    "id": "<sentence_0x1de6a4c7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5b28faa6>": "https://www.cybereason.com/hs-fs/hubfs/image24-Apr-26-2022-08-31-57-00-PM.png?width=600&name=image24-Apr-26-2022-08-31-57-00-PM.png"
+                    },
+                    "text": "An example of added Global Atom by STASHLOG",
+                    "html": "<p><img alt=\"image24-Apr-26-2022-08-31-57-00-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image24-Apr-26-2022-08-31-57-00-PM.png?width=600&amp;name=image24-Apr-26-2022-08-31-57-00-PM.png\" width=\"600\"/>An example of added Global Atom by STASHLOG</p>"
+                },
+                {
+                    "id": "<sentence_0xb3057eb4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If an atom prefixed with win:: already exists during execution, then the existing atom will be used instead of the newly generated one.",
+                    "html": "<p>If an atom prefixed with win:: already exists during execution, then the existing atom will be used instead of the newly generated one.</p>"
+                },
+                {
+                    "id": "<sentence_0xc6b451fa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Upon execution with command line arguments, STASHLOG checks the existence of the global atom table entry win::{GUID}, and the process will quit immediately unless the value exists.",
+                    "html": "<p>Upon execution with command line arguments, STASHLOG checks the existence of the global atom table entry win::{GUID}, and the process will quit immediately unless the value exists. </p>"
+                },
+                {
+                    "id": "<sentence_0xaf450c4f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, STASHLOG loads the file found in the given argument into memory, checks its content, and stores it in a CLFS log file. STASHLOG prints log information about this process to the terminal:",
+                    "html": "<p>Then, STASHLOG loads the file found in the given argument into memory, checks its content, and stores it in a CLFS log file. STASHLOG prints log information about this process to the terminal:</p>"
+                },
+                {
+                    "id": "<sentence_0x4d9d73a3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Preparing for log format transformation<crlf>Log transform step 1 completed<crlf>Log transform step 2 completed<crlf>Log transform step 3 completed<crlf>Log data transform completed<crlf>Successful STASHLOG execution log",
+                    "html": "<ul>\n<li>Preparing for log format transformation</li>\n<li>Log transform step 1 completed</li>\n<li>Log transform step 2 completed</li>\n<li>Log transform step 3 completed</li>\n<li>Log data transform completed</li>\n<li>Successful STASHLOG execution log</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x5e1f7682>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This output in this operation was redirected to a log file, as can be seen on cc.bat. Breaking down the transformation steps from the log:",
+                    "html": "<p>This output in this operation was redirected to a log file, as can be seen on cc.bat. Breaking down the transformation steps from the log:</p>"
+                },
+                {
+                    "id": "<sentence_0x4ac6b6ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Step 1: Decrypt the given encrypted file and check the file validity by looking for the destination BLF file location: C:\\Users\\Default\\NTUSER.DAT{<GUID>}.TM.BLF. If the search yields no results, STASHLOG will create this file.<crlf>Step 2: Clear the targeted BLF file.<crlf>Step 3: Encrypt the malicious data and write it to a CLFS file.",
+                    "html": "<ul>\n<li>Step 1: Decrypt the given encrypted file and check the file validity\nby looking for the destination BLF file location: C:\\Users\\Default\\NTUSER.DAT{&lt;GUID&gt;}.TM.BLF. If the search yields no results, STASHLOG will create this file.</li>\n<li>Step 2: Clear the targeted BLF file.</li>\n<li>Step 3: Encrypt the malicious data and write it to a CLFS file.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xe45f176b>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x5c3d01e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Throughout the execution, STASHLOG uses the same string decryption technique used in other samples by XORing strings with pre-defined bytes, words or qwords, using the XMM registers. This decryption sequence is present at the beginning of every function that uses strings, where those strings are not saved globally, likely in an attempt to protect them.",
+                    "html": "<p>Throughout the execution, STASHLOG uses the same string decryption technique used in other samples by XORing strings with pre-defined bytes, words or qwords, using the XMM registers. This decryption sequence is present at the beginning of every function that uses strings, where those strings are not saved globally, likely in an attempt to protect them. </p>"
+                },
+                {
+                    "id": "<sentence_0x2bcdd3b4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As can be seen in the example below from STASHLOG, it uses it to decrypt several debug strings:",
+                    "html": "<p>As can be seen in the example below from STASHLOG, it uses it to decrypt several debug strings:</p>"
+                },
+                {
+                    "id": "<sentence_0xad12c98c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfa8eadd4>": "https://www.cybereason.com/hs-fs/hubfs/image37-3.png?width=584&name=image37-3.png"
+                    },
+                    "text": "String decryption algorithm from shiver.exe",
+                    "html": "<p><img alt=\"image37-3\" src=\"https://www.cybereason.com/hs-fs/hubfs/image37-3.png?width=584&amp;name=image37-3.png\" width=\"584\"/>String decryption algorithm from shiver.exe</p>"
+                },
+                {
+                    "id": "<sentence_0x98445ffb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This technique is also being used in other samples in the chain, including SPARKLOG, PRIVATELOG and DEPLOYLOG.",
+                    "html": "<p>This technique is also being used in other samples in the chain, including SPARKLOG, PRIVATELOG and DEPLOYLOG.</p>"
+                },
+                {
+                    "id": "<sentence_0xbc5a749c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This sample uses an interesting Anti-Disassembly technique which thwarts the disassembly process and makes the investigation job harder. Each function inside STASHLOG contains a jump list of every node in the function:",
+                    "html": "<p>This sample uses an interesting Anti-Disassembly technique which thwarts the disassembly process and makes the investigation job harder. Each function inside STASHLOG contains a jump list of every node in the function:</p>"
+                },
+                {
+                    "id": "<sentence_0x238f877a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x32a36f3d>": "https://www.cybereason.com/hs-fs/hubfs/image1-Apr-26-2022-08-34-32-88-PM.png?width=1091&name=image1-Apr-26-2022-08-34-32-88-PM.png"
+                    },
+                    "text": "Part of a Jump List from a function in STASHLOG",
+                    "html": "<p><img alt=\"image1-Apr-26-2022-08-34-32-88-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image1-Apr-26-2022-08-34-32-88-PM.png?width=1091&amp;name=image1-Apr-26-2022-08-34-32-88-PM.png\" width=\"1091\"/>Part of a Jump List from a function in STASHLOG</p>"
+                },
+                {
+                    "id": "<sentence_0x45aa900a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This jump list is then used as a flow control during the function execution. In some cases the address of the next node will be pushed to a register and then there will be a JMP to this register:",
+                    "html": "<p>This jump list is then used as a flow control during the function execution. In some cases the address of the next node will be pushed to a register and then there will be a JMP to this register:</p>"
+                },
+                {
+                    "id": "<sentence_0x939ef70f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x74e0c358>": "https://www.cybereason.com/hs-fs/hubfs/image4-Apr-26-2022-08-35-14-86-PM.png?width=625&name=image4-Apr-26-2022-08-35-14-86-PM.png"
+                    },
+                    "text": "Jump to register",
+                    "html": "<p><img alt=\"image4-Apr-26-2022-08-35-14-86-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image4-Apr-26-2022-08-35-14-86-PM.png?width=625&amp;name=image4-Apr-26-2022-08-35-14-86-PM.png\" width=\"625\"/>Jump to register</p>"
+                },
+                {
+                    "id": "<sentence_0x943c9b27>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The more interesting use of the jump list is replacing the conditional jump commands like JZ and JNZ with a SET command that changes the register given as an argument to the value of the corresponding checked flag. For example, when using SETZ eax, the EAX register will be changed to 1 if the 0 flag is checked.",
+                    "html": "<p>The more interesting use of the jump list is replacing the conditional jump commands like JZ and JNZ with a SET command that changes the register given as an argument to the value of the corresponding checked flag. For example, when using SETZ eax, the EAX register will be changed to \u201c1\u201d if the \u201c0\u201d flag is checked. </p>"
+                },
+                {
+                    "id": "<sentence_0x887fc833>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using the set register, there will be a JMP to an address on the functions jump list. This JMP is usually resolved for a switch-case mechanism, and IDA Pro disassembles it as one:",
+                    "html": "<p>Using the set register, there will be a JMP to an address on the function\u2019s jump list. This JMP is usually resolved for a switch-case mechanism, and IDA Pro disassembles it as one:</p>"
+                },
+                {
+                    "id": "<sentence_0x63fce7cc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x794ce4c9>": "https://www.cybereason.com/hs-fs/hubfs/image39-2.png?width=429&name=image39-2.png"
+                    },
+                    "text": "Example of jmp usage in IDA Pro",
+                    "html": "<p><img alt=\"image39-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image39-2.png?width=429&amp;name=image39-2.png\" width=\"429\"/>Example of jmp usage in IDA Pro</p>"
+                },
+                {
+                    "id": "<sentence_0x5629a28f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using this method, the disassembler displays all the available JMP options based on the functions jump list even though there are only two jump options - when the assigned register is either 0 or 1 (in the example above its the ECX register). These methods make the disassembled function very hard to read and investigate:",
+                    "html": "<p>Using this method, the disassembler displays all the available JMP options based on the function\u2019s jump list even though there are only two jump options - when the assigned register is either 0 or 1 (in the example above it\u2019s the ECX register). These methods make the disassembled function very hard to read and investigate:</p>"
+                },
+                {
+                    "id": "<sentence_0x9dce9a71>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd339db74>": "https://www.cybereason.com/hs-fs/hubfs/image2-Apr-26-2022-08-36-46-90-PM.png?width=542&name=image2-Apr-26-2022-08-36-46-90-PM.png"
+                    },
+                    "text": "Single function tree as could be seen in IDA Pro",
+                    "html": "<p><img alt=\"image2-Apr-26-2022-08-36-46-90-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image2-Apr-26-2022-08-36-46-90-PM.png?width=542&amp;name=image2-Apr-26-2022-08-36-46-90-PM.png\" width=\"542\"/>Single function tree as could be seen in IDA Pro</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc7fc332>",
+            "title": "SPARKLOG: Deploying PRIVATELOG, the Next Link in the Infection Chain",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1b551359>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x808e1431>": "https://www.cybereason.com/hs-fs/hubfs/image22-Apr-26-2022-08-37-25-41-PM.png?width=1134&name=image22-Apr-26-2022-08-37-25-41-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image22-Apr-26-2022-08-37-25-41-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image22-Apr-26-2022-08-37-25-41-PM.png?width=1134&amp;name=image22-Apr-26-2022-08-37-25-41-PM.png\" width=\"1134\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xc5d47e1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x979fa9f6>": "https://twitter.com/ESETresearch/status/1433819571207774209?s=20&t=vQjvuSCLkka_ZKrngChcYg",
+                        "<a_0xdfacb94a>": "https://attack.mitre.org/tactics/TA0004/",
+                        "<a_0x9f1da03f>": "https://attack.mitre.org/tactics/TA0003/"
+                    },
+                    "text": "SPARKLOG (spark.exe) is a 32 bit executable written in C++, employed in this attack to extract a DLL from the CLFS file, decrypt it and then launch it for side-loading by Windows services running as SYSTEM. Executing this phase of the attack successfully enables the attackers to gain Privilege Escalation and also Persistence in a specific case.",
+                    "html": "<p><a href=\"https://twitter.com/ESETresearch/status/1433819571207774209?s=20&amp;t=vQjvuSCLkka_ZKrngChcYg\" rel=\"noopener\" target=\"_blank\">SPARKLOG</a> (spark.exe) is a 32 bit executable written in C++, employed in this attack to extract a DLL from the CLFS file, decrypt it and then launch it for side-loading by Windows services running as SYSTEM. Executing this phase of the attack successfully enables the attackers to gain <a href=\"https://attack.mitre.org/tactics/TA0004/\" rel=\"noopener\" target=\"_blank\">Privilege Escalation</a> and also <a href=\"https://attack.mitre.org/tactics/TA0003/\" rel=\"noopener\" target=\"_blank\">Persistence</a> in a specific case.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x77b69b00>",
+            "title": "SPARKLOG Execution Flow",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5af8e477>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The execution of SPARKLOG starts by creating a non-visible window followed by a message posted to trigger the execution of the main thread:",
+                    "html": "<p>The execution of SPARKLOG starts by creating a non-visible window followed by a message posted to trigger the execution of the main thread:</p>"
+                },
+                {
+                    "id": "<sentence_0x48b50d5c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x755e041f>": "https://www.cybereason.com/hs-fs/hubfs/image34-Apr-26-2022-08-38-12-18-PM.png?width=658&name=image34-Apr-26-2022-08-38-12-18-PM.png"
+                    },
+                    "text": "Non-visible window creation",
+                    "html": "<p><img alt=\"image34-Apr-26-2022-08-38-12-18-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image34-Apr-26-2022-08-38-12-18-PM.png?width=658&amp;name=image34-Apr-26-2022-08-38-12-18-PM.png\" width=\"658\"/>Non-visible window creation</p>"
+                },
+                {
+                    "id": "<sentence_0x7e2c0a8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The PE then retrieves an encrypted DLL content from the CLFS log file, decrypts it and gets the OS version in use. This OS version will be required later to understand how to deploy the DLL in the compromised machine. Then, it decrypts the strings Global\\HVID_ and Global\\APCI#. First, it uses the GetVolumeNameForVolumeMountPointA API call to get the GUID of the operating system volume and acquires a handle to a HVID_<OS Volume GUID> event.",
+                    "html": "<p>The PE then retrieves an encrypted DLL content from the CLFS log file, decrypts it and gets the OS version in use. This OS version will be required later to understand how to deploy the DLL in the compromised machine. Then, it decrypts the strings Global\\HVID_ and Global\\APCI#. First, it uses the GetVolumeNameForVolumeMountPointA API call to get the GUID of the operating system volume and acquires a handle to a HVID_&lt;OS Volume GUID&gt; event. </p>"
+                },
+                {
+                    "id": "<sentence_0x2af40d97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, it queries the MachineGUID value from the registry HKLM\\SOFTWARE\\Microsoft\\Cryptography key and creates an event by the name of Global\\APCI#<Machine GUID>. Using these events is a means of communication between the modules in the attack, and it will be used in further modules as well:",
+                    "html": "<p>Then, it queries the MachineGUID value from the registry HKLM\\SOFTWARE\\Microsoft\\Cryptography key and creates an event by the name of Global\\APCI#&lt;Machine GUID&gt;. Using these events is a means of communication between the modules in the attack, and it will be used in further modules as well:</p>"
+                },
+                {
+                    "id": "<sentence_0x896c10a7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x98d20c6e>": "https://www.cybereason.com/hs-fs/hubfs/image41-3.png?width=648&name=image41-3.png"
+                    },
+                    "text": "Building the HVID_ and APCI# events",
+                    "html": "<p><img alt=\"image41-3\" src=\"https://www.cybereason.com/hs-fs/hubfs/image41-3.png?width=648&amp;name=image41-3.png\" width=\"648\"/>Building the HVID_ and APCI# events</p>"
+                },
+                {
+                    "id": "<sentence_0xec0944c5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5addd5b6>": "https://github.com/securycore/Ikeext-Privesc",
+                        "<a_0x72b05bdb>": "https://speakerdeck.com/aragorntseng/winnti-is-coming-evolution-after-prosecution-at-hitcon2021?slide=23"
+                    },
+                    "text": "Next, it starts to deploy PRIVATELOG based on the OS version. From Windows Vista to Windows 7, SPARKLOG uses a popular DLL side loading technique that involves dropping the DLL with the name wlbsctrl.dll to the %SYSTEM32%\\WindowsPowershell\\v1.0 directory. It then stops IKEEXT, a service that was compromised by WINNTI in the past, changes the configuration using ChangeServiceConfigA based on the argument count, then starts it again:",
+                    "html": "<p>Next, it starts to deploy PRIVATELOG based on the OS version. From Windows Vista to Windows 7, SPARKLOG uses a popular DLL side loading technique that involves dropping the DLL with the name wlbsctrl.dll to the %SYSTEM32%\\WindowsPowershell\\v1.0 directory. It then stops <a href=\"https://github.com/securycore/Ikeext-Privesc\" rel=\"noopener\" target=\"_blank\">IKEEXT</a>, a service that was compromised by WINNTI in the <a href=\"https://speakerdeck.com/aragorntseng/winnti-is-coming-evolution-after-prosecution-at-hitcon2021?slide=23\" rel=\"noopener\" target=\"_blank\">past</a>, changes the configuration using ChangeServiceConfigA based on the argument count, then starts it again:</p>"
+                },
+                {
+                    "id": "<sentence_0x6278bd7d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x72cdd05d>": "https://www.cybereason.com/hs-fs/hubfs/image6-Apr-26-2022-08-39-51-31-PM.png?width=663&name=image6-Apr-26-2022-08-39-51-31-PM.png"
+                    },
+                    "text": "Stopped IKEEXT service",
+                    "html": "<p><img alt=\"image6-Apr-26-2022-08-39-51-31-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image6-Apr-26-2022-08-39-51-31-PM.png?width=663&amp;name=image6-Apr-26-2022-08-39-51-31-PM.png\" width=\"663\"/>Stopped IKEEXT service</p>"
+                },
+                {
+                    "id": "<sentence_0xfa7b3523>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xce76ed2c>": "https://www.cybereason.com/hs-fs/hubfs/image28-Apr-26-2022-08-40-38-18-PM.png?width=784&name=image28-Apr-26-2022-08-40-38-18-PM.png"
+                    },
+                    "text": "Change IKEEXT service configuration based on argument count",
+                    "html": "<p><img alt=\"image28-Apr-26-2022-08-40-38-18-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image28-Apr-26-2022-08-40-38-18-PM.png?width=784&amp;name=image28-Apr-26-2022-08-40-38-18-PM.png\" width=\"784\"/>Change IKEEXT service configuration based on argument count</p>"
+                },
+                {
+                    "id": "<sentence_0xc5b35acd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa1c0c404>": "http://elastic.co/guide/en/security/current/suspicious-dll-loaded-for-persistence-or-privilege-escalation.html"
+                    },
+                    "text": "After a successful service start, the service executes and triggers the DLL side-loading vulnerability using SYSTEM privileges. It is interesting to note that in this case, if a command line argument is provided, the DLL will be deleted after the execution starts. This might be due to the fact that abusing wlbsctrl.dll is pretty common, and might trigger EDR vendors later on.",
+                    "html": "<p>After a successful service start, the service executes and triggers the DLL side-loading vulnerability using SYSTEM privileges. It is interesting to note that in this case, if a command line argument is provided, the DLL will be deleted after the execution starts. This might be due to the fact that <a href=\"http://elastic.co/guide/en/security/current/suspicious-dll-loaded-for-persistence-or-privilege-escalation.html\" rel=\"noopener\" target=\"_blank\">abusing wlbsctrl.dll is pretty common</a>, and might trigger EDR vendors later on.</p>"
+                },
+                {
+                    "id": "<sentence_0xabe2d238>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "From Windows Server 2012 to Windows 10, SPARKLOG acts in a similar fashion, but with a different name and location:",
+                    "html": "<p>From Windows Server 2012 to Windows 10, SPARKLOG acts in a similar fashion, but with a different name and location:</p>"
+                },
+                {
+                    "id": "<sentence_0x735ab1ca>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It drops PRIVATELOG with the name prntvpt.dll to the %SYSTEM32%\\spool\\drivers\\x64\\3 directory<crlf>It then stops, changes configuration and starts the PrintNotify service to side-load the DLL (PrintNotify is a legitimate Windows service like IKEEXT, also running as SYSTEM):",
+                    "html": "<ul>\n<li>It drops PRIVATELOG with the name prntvpt.dll to the %SYSTEM32%\\spool\\drivers\\x64\\3 directory </li>\n<li>It then stops, changes configuration and starts the PrintNotify service to side-load the DLL (PrintNotify is a legitimate Windows service like IKEEXT, also running as SYSTEM):</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x86609844>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7c23147f>": "https://www.cybereason.com/hs-fs/hubfs/image18-Apr-26-2022-08-41-21-24-PM.png?width=808&name=image18-Apr-26-2022-08-41-21-24-PM.png"
+                    },
+                    "text": "Opening and querying the PrintNotify service",
+                    "html": "<p><img alt=\"image18-Apr-26-2022-08-41-21-24-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image18-Apr-26-2022-08-41-21-24-PM.png?width=808&amp;name=image18-Apr-26-2022-08-41-21-24-PM.png\" width=\"808\"/>Opening and querying the PrintNotify service</p>"
+                },
+                {
+                    "id": "<sentence_0x91035e1b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In both cases, the attackers gain stealth by deploying PRIVATELOG while masquerading legitimate file names in privileged locations, as well as gaining persistence and privilege escalation to execute their next step as SYSTEM, the most privileged user in a local machine:",
+                    "html": "<p>In both cases, the attackers gain stealth by deploying PRIVATELOG while masquerading legitimate file names in privileged locations, as well as gaining persistence and privilege escalation to execute their next step as SYSTEM, the most privileged user in a local machine:</p>"
+                },
+                {
+                    "id": "<sentence_0xdc3fb96b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe9528e57>": "https://www.cybereason.com/hs-fs/hubfs/image8-Apr-26-2022-08-42-20-49-PM.png?width=950&name=image8-Apr-26-2022-08-42-20-49-PM.png"
+                    },
+                    "text": "Spark.exe execution as seen in Cybereasons XDR Platform",
+                    "html": "<p><img alt=\"image8-Apr-26-2022-08-42-20-49-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image8-Apr-26-2022-08-42-20-49-PM.png?width=950&amp;name=image8-Apr-26-2022-08-42-20-49-PM.png\" width=\"950\"/>Spark.exe execution as seen in Cybereason\u2019s XDR Platform</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x65409f58>",
+            "title": "PRIVATELOG: Extracting and Deploying DEPLOYLOG",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe24dfe2>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x726541b>": "https://www.cybereason.com/hs-fs/hubfs/image32-Apr-26-2022-08-43-13-74-PM.png?width=1366&name=image32-Apr-26-2022-08-43-13-74-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image32-Apr-26-2022-08-43-13-74-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image32-Apr-26-2022-08-43-13-74-PM.png?width=1366&amp;name=image32-Apr-26-2022-08-43-13-74-PM.png\" width=\"1366\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x638157de>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4341a28d>": "https://www.mandiant.com/resources/unknown-actor-using-clfs-log-files-for-stealth"
+                    },
+                    "text": "PRIVATELOG is a module that exists in 2 forms:",
+                    "html": "<p><a href=\"https://www.mandiant.com/resources/unknown-actor-using-clfs-log-files-for-stealth\" rel=\"noopener\" target=\"_blank\">PRIVATELOG</a> is a module that exists in 2 forms: </p>"
+                },
+                {
+                    "id": "<sentence_0x1888d2c8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Wlbsctrl.dll: A DLL to be side-loaded by the IKEEXT service, aiming to execute on Windows Vista to Windows 7 operating systems.<crlf>Prntvpt.dll: A DLL to be side loaded by the PrintNotify service, aiming to execute on Windows Server 2012 to Windows 10 operating systems.",
+                    "html": "<ul>\n<li>Wlbsctrl.dll: A DLL to be side-loaded by the IKEEXT service, aiming to execute on Windows Vista to Windows 7 operating systems.</li>\n<li>Prntvpt.dll: A DLL to be side loaded by the PrintNotify service, aiming to execute on Windows Server 2012 to Windows 10 operating systems.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x16b8e1f1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc0442d38>": "https://en.wikipedia.org/wiki/Svchost.exe"
+                    },
+                    "text": "As both of the DLLs are being loaded by native Windows services, they both live in the context of the svchost process, but differ in their execution flow.",
+                    "html": "<p>As both of the DLLs are being loaded by native Windows services, they both live in the context of the <a href=\"https://en.wikipedia.org/wiki/Svchost.exe\">svchost</a> process, but differ in their execution flow.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcf04321a>",
+            "title": "The IKEEXT Hijacker",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfe8b87ad>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "At the beginning of its execution, wlbsctrl.dll is loaded by the IKEEXT service and verifies similarly to prntvpt.dll that its being executed from svchost using the right command line (netsvcs). After this check, wlbsctrl.dll goes straight to dropping DEPLOYLOG.",
+                    "html": "<p>At the beginning of its execution, wlbsctrl.dll is loaded by the IKEEXT service and verifies similarly to prntvpt.dll that it\u2019s being executed from svchost using the right command line (netsvcs). After this check, wlbsctrl.dll goes straight to dropping DEPLOYLOG.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa747e21a>",
+            "title": "The PrintNotify Hijacker",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb367ba0c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "At the beginning of its execution, prntvpt.dll verifies it is being loaded by the correct process with the right command line (svchost -k print), similar to wlbsctrl.dll. This command line is the one being executed upon starting the PrintNotify service.",
+                    "html": "<p>At the beginning of its execution, prntvpt.dll verifies it is being loaded by the correct process with the right command line (svchost -k print), similar to wlbsctrl.dll. This command line is the one being executed upon starting the PrintNotify service.</p>"
+                },
+                {
+                    "id": "<sentence_0xccbcdd8c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the PrintNotify service starts, it also loads PrintConfig.dll, which is being executed from its ServiceMain function. To hijack the execution flow, prntvpt.dll loads PrintConfig.dll and acquires the address of its ServiceMain function. Then, it patches this function, and adds a jump instruction to itself, to continue its execution.",
+                    "html": "<p>When the PrintNotify service starts, it also loads PrintConfig.dll, which is being executed from its ServiceMain function. To hijack the execution flow, prntvpt.dll loads PrintConfig.dll and acquires the address of its ServiceMain function. Then, it patches this function, and adds a jump instruction to itself, to continue its execution.</p>"
+                },
+                {
+                    "id": "<sentence_0xc8703ed>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The prntvpt.dll component is different, as it is also the persistence tool for the infection, as opposed to the previous samples we discussed which execute only once to infect the machine, this tool runs every time the PrintNotify service is executed. From this point on, the different DLL files act almost the same.",
+                    "html": "<p>The prntvpt.dll component is different, as it is also the persistence tool for the infection, as opposed to the previous samples we discussed which execute only once to infect the machine, this tool runs every time the PrintNotify service is executed. From this point on, the different DLL files act almost the same.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x444c4923>",
+            "title": "Dropping DEPLOYLOG",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8e704cca>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9f7166d2>": "https://docs.microsoft.com/en-us/windows/win32/fileio/transactional-ntfs-portal"
+                    },
+                    "text": "PRIVATELOG decrypts DEPLOYLOG in memory from the CLFS log file, then it copies dbghelp.dll from its original place in C:\\Windows\\System32\\dbghelp.dll to C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll. Next, the attackers use a rather unique technique to overwrite the copied dbghelp.dll with the aforementioned decrypted buffer using Windows Transactional NTFS (TxF).",
+                    "html": "<p>PRIVATELOG decrypts DEPLOYLOG in memory from the CLFS log file, then it copies dbghelp.dll from its original place in C:\\Windows\\System32\\dbghelp.dll to C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll. Next, the attackers use a rather unique technique to overwrite the copied dbghelp.dll with the aforementioned decrypted buffer using <a href=\"https://docs.microsoft.com/en-us/windows/win32/fileio/transactional-ntfs-portal\" rel=\"noopener\" target=\"_blank\">Windows Transactional NTFS (TxF)</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0xf10ff5c3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Transactional NTFS is a component introduced in Windows Vista that allows developers to create, edit and delete files and directories while giving them the option to roll back in case of errors. This mechanism is used in major operating system components like Windows Update, Task Scheduler and System Restore.",
+                    "html": "<p>Transactional NTFS is a component introduced in Windows Vista that allows developers to create, edit and delete files and directories while giving them the option to roll back in case of errors. This mechanism is used in major operating system components like Windows Update, Task Scheduler and System Restore.</p>"
+                },
+                {
+                    "id": "<sentence_0xade0884f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using Transactional NTFS, the attackers can perform file operations using unconventional methods that can be hard to detect for some security products. They leverage it to create a new malicious dbghelp.dll using the following steps:",
+                    "html": "<p>Using Transactional NTFS, the attackers can perform file operations using unconventional methods that can be hard to detect for some security products. They leverage it to create a new malicious dbghelp.dll using the following steps:</p>"
+                },
+                {
+                    "id": "<sentence_0x8b59adbd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x864a0cc2>": "https://www.ired.team/offensive-security/code-injection-process-injection/ntcreatesection-+-ntmapviewofsection-code-injection"
+                    },
+                    "text": "A transaction handle is created for dbghelp.dll: CreateTransaction: Creates a new transaction object CreateFileTransactedA: with GENERIC_READ_WRITE access. The file is overwritten with the decrypted payload: WriteFile: On the transacted file handle. Load the file to a memory section (more about this method is covered here): NtCreateSection: with the SEC_IMAGE section attribute. NtMapViewOfSection: Mapping the file view in the created section which validates the PE header and splits the section, but doesnt build the import address table and set section permissions. Set the right section permissions and resolve the imports of the DLL: Fixing section permissions using VirtualProtect calls. Building the DLLs import address table with LoadLibrary and GetProcAddress calls. Execute the DEPLOYLOG payload entry point followed by the SvcMain.<crlf>A transaction handle is created for dbghelp.dll: CreateTransaction: Creates a new transaction object CreateFileTransactedA: with GENERIC_READ_WRITE access.<crlf>The file is overwritten with the decrypted payload: WriteFile: On the transacted file handle.<crlf>Load the file to a memory section (more about this method is covered here): NtCreateSection: with the SEC_IMAGE section attribute. NtMapViewOfSection: Mapping the file view in the created section which validates the PE header and splits the section, but doesnt build the import address table and set section permissions.<crlf>Set the right section permissions and resolve the imports of the DLL: Fixing section permissions using VirtualProtect calls. Building the DLLs import address table with LoadLibrary and GetProcAddress calls.<crlf>Execute the DEPLOYLOG payload entry point followed by the SvcMain.",
+                    "html": "<ol>\n<li>\n<ol>\n<li>A transaction handle is created for dbghelp.dll:\n<ul>\n<li>CreateTransaction: Creates a new transaction object</li>\n<li>CreateFileTransactedA: with GENERIC_READ_WRITE access. </li>\n</ul>\n</li>\n<li>The file is overwritten with the decrypted payload:\n<ul>\n<li>WriteFile: On the transacted file handle.</li>\n</ul>\n</li>\n<li>Load the file to a memory section (more about this method is covered <a href=\"https://www.ired.team/offensive-security/code-injection-process-injection/ntcreatesection-+-ntmapviewofsection-code-injection\" rel=\"noopener\" target=\"_blank\">here</a>): \n<ul>\n<li>NtCreateSection: with the SEC_IMAGE section attribute.</li>\n<li>NtMapViewOfSection: Mapping the file view in the created section which validates the PE header and splits the section, but doesn\u2019t build the import address table and set section permissions.</li>\n</ul>\n</li>\n<li>Set the right section permissions and resolve the imports of the DLL:\n<ul>\n<li>Fixing section permissions using VirtualProtect calls.</li>\n<li>Building the DLL\u2019s import address table with LoadLibrary and GetProcAddress calls.</li>\n</ul>\n</li>\n<li>Execute the DEPLOYLOG payload entry point followed by the SvcMain.</li>\n</ol>\n</li>\n</ol>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x874264e5>",
+            "title": "DEPLOYLOG: The Winnti Rootkit Deployment and A Usermode Agent",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3d205bd>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9972dd20>": "https://3354902.fs1.hubspotusercontent-na1.net/hub/3354902/hubfs/image13-May-02-2022-07-32-25-54-PM.png?width=1412&name=image13-May-02-2022-07-32-25-54-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image13-May-02-2022-07-32-25-54-PM\" src=\"https://3354902.fs1.hubspotusercontent-na1.net/hub/3354902/hubfs/image13-May-02-2022-07-32-25-54-PM.png?width=1412&amp;name=image13-May-02-2022-07-32-25-54-PM.png\" width=\"1412\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x50517d4a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DEPLOYLOG (dbghelp.dll) is a 64 bit DLL, with two purposes:",
+                    "html": "<p>DEPLOYLOG (dbghelp.dll) is a 64 bit DLL, with two purposes:</p>"
+                },
+                {
+                    "id": "<sentence_0xf50a9a82>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The first one is responsible for extracting and executing the attackers rootkit, dubbed WINNKIT, from the CLFS log file.<crlf>After a successful deployment of the WINNKIT rootkit, DEPLOYLOG switches to its second task, which is communicating both with the remote C2 and the kernel-level rootkit.",
+                    "html": "<ul>\n<li>The first one is responsible for extracting and executing the attackers\u2019 rootkit, dubbed WINNKIT, from the CLFS log file. </li>\n<li>After a successful deployment of the WINNKIT rootkit, DEPLOYLOG switches to its second task, which is communicating both with the remote C2 and the kernel-level rootkit. </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x17e52f09>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Its noteworthy to mention that to evade detection, the attackers deployed DEPLOYLOG as dbghelp.dll, a generic, widely used name leveraged to masquerade as a legitimate file at the same location as PRIVATELOG (C:\\Windows\\System32\\WindowsPowerShell\\v1.0).",
+                    "html": "<p>It\u2019s noteworthy to mention that to evade detection, the attackers deployed DEPLOYLOG as dbghelp.dll, a generic, widely used name leveraged to masquerade as a legitimate file at the same location as PRIVATELOG (C:\\Windows\\System32\\WindowsPowerShell\\v1.0). </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x352d5d11>",
+            "title": "DEPLOYLOG Initialization",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf6c884e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Once DEPLOYLOG is executed, it starts with a sleep of 7777 milliseconds:",
+                    "html": "<p>Once DEPLOYLOG is executed, it starts with a sleep of 7777 milliseconds:</p>"
+                },
+                {
+                    "id": "<sentence_0x2952b68b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xa505c9bd>": "https://www.cybereason.com/hs-fs/hubfs/image15-Apr-26-2022-08-44-59-40-PM.png?width=545&name=image15-Apr-26-2022-08-44-59-40-PM.png"
+                    },
+                    "text": "Figure #: Sleep before the main method",
+                    "html": "<p><img alt=\"image15-Apr-26-2022-08-44-59-40-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image15-Apr-26-2022-08-44-59-40-PM.png?width=545&amp;name=image15-Apr-26-2022-08-44-59-40-PM.png\" width=\"545\"/>Figure #: Sleep before the main method</p>"
+                },
+                {
+                    "id": "<sentence_0x9d90d5e9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Afterward, it tries to acquire a handle to the earlier HVID_<OS Volume GUID> event, and If it doesnt exist it creates it. Then, it initializes the communication channel with the future deployed rootkit:",
+                    "html": "<p>Afterward, it tries to acquire a handle to the earlier HVID_&lt;OS Volume GUID&gt; event, and If it doesn\u2019t exist it creates it. Then, it initializes the communication channel with the future deployed rootkit:</p>"
+                },
+                {
+                    "id": "<sentence_0x799d1043>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5fd9b342>": "https://en.wikipedia.org/wiki/Ioctl"
+                    },
+                    "text": "First, it tries to acquire a handle to the Beep device object: \\\\?\\GLOBALROOT\\Device\\Beep.<crlf>If it fails, it tries to do the same for \\\\?\\GLOBALROOT\\Device\\Null. To test if the rootkit was deployed in the past and is running, DEPLOYLOG tries to send the IOCTL 15E030 to the acquired device handle:",
+                    "html": "<ul>\n<li>First, it tries to acquire a handle to the Beep device object: \\\\?\\GLOBALROOT\\Device\\Beep. </li>\n<li>If it fails, it tries to do the same for \\\\?\\GLOBALROOT\\Device\\Null. To test if the rootkit was deployed in the past and is running, DEPLOYLOG tries to send the <a href=\"https://en.wikipedia.org/wiki/Ioctl\">IOCTL</a> 15E030 to the acquired device handle:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x6abf37a7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2509db95>": "https://www.cybereason.com/hs-fs/hubfs/image45-2.png?width=664&name=image45-2.png"
+                    },
+                    "text": "DEPLOYLOG gets handles to device objects and sends an IOCTL",
+                    "html": "<p><img alt=\"image45-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image45-2.png?width=664&amp;name=image45-2.png\" width=\"664\"/>DEPLOYLOG gets handles to device objects and sends an IOCTL</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x162a3b0f>",
+            "title": "WINNKIT Deployment",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x89e4af0a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x336bc35c>": "http://revertservice.com/7/amdk8/"
+                    },
+                    "text": "Upon succeeding the earlier steps, DEPLOYLOG extracts the rootkit from the CLFS log file, decrypts its content, then stops the amdk8 service. This service is the AMD K8 processor kernel driver service. Aiming for this specific service can tell something about the Winnti modus operandi, indicating they aim only for AMD-related machines to be infected, which could also indicate having a prior knowledge of the victim's infrastructure.",
+                    "html": "<p>Upon succeeding the earlier steps, DEPLOYLOG extracts the rootkit from the CLFS log file, decrypts its content, then <a href=\"http://revertservice.com/7/amdk8/\" rel=\"noopener\" target=\"_blank\">stops the amdk8 service</a>. This service is the AMD K8 processor kernel driver service. Aiming for this specific service can tell something about the Winnti modus operandi, indicating they aim only for AMD-related machines to be infected, which could also indicate having a prior knowledge of the victim's infrastructure.</p>"
+                },
+                {
+                    "id": "<sentence_0xed8fb91c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, DEPLOYLOG decrypts the string SystemRoot\\System32\\drivers\\bqDsp.sys and changes the amdk8 service configuration to point to this path:",
+                    "html": "<p>Then, DEPLOYLOG decrypts the string SystemRoot\\System32\\drivers\\bqDsp.sys and changes the amdk8 service configuration to point to this path:</p>"
+                },
+                {
+                    "id": "<sentence_0x80235a54>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x826912d8>": "https://www.cybereason.com/hs-fs/hubfs/image46-2.png?width=837&name=image46-2.png"
+                    },
+                    "text": "Changing amdk8 service configuration to execute WINNKIT",
+                    "html": "<p><img alt=\"image46-2\" src=\"https://www.cybereason.com/hs-fs/hubfs/image46-2.png?width=837&amp;name=image46-2.png\" width=\"837\"/>Changing amdk8 service configuration to execute WINNKIT</p>"
+                },
+                {
+                    "id": "<sentence_0x68291aa2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, DEPLOYLOG writes the bqDsp.sys rootkit driver from the CLFS log file to the C:\\WINDOWS\\system32\\drivers directory and starts the service again, this time to execute its malicious payload. By doing so, DEPLOYLOG finishes deploying the rootkit. To cover its tracks, DEPLOYLOG will then stop the service, restore its previous configuration to point to the amdk8.sys driver, and finally delete WINNKIT:",
+                    "html": "<p>Next, DEPLOYLOG writes the bqDsp.sys rootkit driver from the CLFS log file to the C:\\WINDOWS\\system32\\drivers directory and starts the service again, this time to execute its malicious payload. By doing so, DEPLOYLOG finishes deploying the rootkit. To cover its tracks, DEPLOYLOG will then stop the service, restore its previous configuration to point to the amdk8.sys driver, and finally delete WINNKIT:</p>"
+                },
+                {
+                    "id": "<sentence_0xdd8349e8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x942c8c29>": "https://www.cybereason.com/hs-fs/hubfs/image36-Apr-26-2022-08-47-35-18-PM.png?width=767&name=image36-Apr-26-2022-08-47-35-18-PM.png"
+                    },
+                    "text": "Sending WINNKIT the IOCTL 0x8000C004 using Pipe2PortCtrl",
+                    "html": "<p><img alt=\"image36-Apr-26-2022-08-47-35-18-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image36-Apr-26-2022-08-47-35-18-PM.png?width=767&amp;name=image36-Apr-26-2022-08-47-35-18-PM.png\" width=\"767\"/>Sending WINNKIT the IOCTL 0x8000C004 using Pipe2PortCtrl</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1c114cdf>",
+            "title": "DEPLOYLOG as a User-Mode Agent",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf0bf8edc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Once deployed, DEPLOYLOG turns to its second mission, effectively acting as a user-mode agent whose purpose is to bridge the newly deployed rootkit and the remote C2. The DLL will start communicating with the C2 servers which will send data that will be intercepted by the driver, as will be explained in the next section discussing WINNKIT. Using this agent, the attackers will load new modules, pop a CMD shell, drop MFSDLL.exe for credential grabbing and more:",
+                    "html": "<p>Once deployed, DEPLOYLOG turns to its second mission, effectively acting as a user-mode agent whose purpose is to bridge the newly deployed rootkit and the remote C2. The DLL will start communicating with the C2 servers which will send data that will be intercepted by the driver, as will be explained in the next section discussing WINNKIT. Using this agent, the attackers will load new modules, pop a CMD shell, drop MFSDLL.exe for credential grabbing and more:</p>"
+                },
+                {
+                    "id": "<sentence_0x16a3b7e3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x681b5186>": "https://www.cybereason.com/hs-fs/hubfs/image19-Apr-26-2022-09-01-53-69-PM.png?width=1174&name=image19-Apr-26-2022-09-01-53-69-PM.png"
+                    },
+                    "text": "DEPLOYLOG loaded by svchost.exe as seen in the Cybereason XDR Platform",
+                    "html": "<p><img alt=\"image19-Apr-26-2022-09-01-53-69-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image19-Apr-26-2022-09-01-53-69-PM.png?width=1174&amp;name=image19-Apr-26-2022-09-01-53-69-PM.png\" width=\"1174\"/>DEPLOYLOG loaded by svchost.exe as seen in the Cybereason XDR Platform</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x851952c7>",
+            "title": "Behold WINNKIT, The Evasive Winnti Rootkit",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xbc7006a4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4b879e72>": "https://www.cybereason.com/hs-fs/hubfs/image27-Apr-26-2022-08-52-01-04-PM.png?width=1403&name=image27-Apr-26-2022-08-52-01-04-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"image27-Apr-26-2022-08-52-01-04-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image27-Apr-26-2022-08-52-01-04-PM.png?width=1403&amp;name=image27-Apr-26-2022-08-52-01-04-PM.png\" width=\"1403\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xde9dc03d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd57465cd>": "https://exatrack.com/public/winnti_EN.pdf"
+                    },
+                    "text": "The final payload deployed by Winnti is also the most evasive and sophisticated: a driver acting as a rootkit, dubbed WINNKIT. WINNKITs previous version was researched in the past, and its purpose is to act as a kernel-mode agent, interacting with the user-mode agent and intercepting TCP/IP requests, by talking directly to the network card. The almost zero detection rate in VirusTotal, together with the compilation timestamp from 2019, illustrates just how evasive this rootkit really is, staying in the shadows for 3 years:",
+                    "html": "<p>The final payload deployed by Winnti is also the most evasive and sophisticated: a driver acting as a rootkit, dubbed WINNKIT. WINNKIT\u2019s previous version was <a href=\"https://exatrack.com/public/winnti_EN.pdf\" rel=\"noopener\" target=\"_blank\">researched</a> in the past, and its purpose is to act as a kernel-mode agent, interacting with the user-mode agent and intercepting TCP/IP requests, by talking directly to the network card. The almost zero detection rate in VirusTotal, together with the compilation timestamp from 2019, illustrates just how evasive this rootkit really is, staying in the shadows for 3 years:</p>"
+                },
+                {
+                    "id": "<sentence_0xe55d1877>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc0fc801b>": "https://www.cybereason.com/hs-fs/hubfs/image31-Apr-26-2022-08-52-27-83-PM.png?width=802&name=image31-Apr-26-2022-08-52-27-83-PM.png"
+                    },
+                    "text": "Low detection rate in VirusTotal",
+                    "html": "<p><img alt=\"image31-Apr-26-2022-08-52-27-83-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image31-Apr-26-2022-08-52-27-83-PM.png?width=802&amp;name=image31-Apr-26-2022-08-52-27-83-PM.png\" width=\"802\"/>Low detection rate in VirusTotal</p>"
+                },
+                {
+                    "id": "<sentence_0x5a62c7dc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3b010cfc>": "https://www.cybereason.com/hs-fs/hubfs/image21-Apr-26-2022-08-53-06-27-PM.png?width=608&name=image21-Apr-26-2022-08-53-06-27-PM.png"
+                    },
+                    "text": "The rootkits compilation timestamp",
+                    "html": "<p><img alt=\"image21-Apr-26-2022-08-53-06-27-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image21-Apr-26-2022-08-53-06-27-PM.png?width=608&amp;name=image21-Apr-26-2022-08-53-06-27-PM.png\" width=\"608\"/>The rootkit\u2019s compilation timestamp</p>"
+                },
+                {
+                    "id": "<sentence_0xca2819a7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x90ab0dec>": "https://j00ru.vexillium.org/2012/11/defeating-windows-driver-signature-enforcement-part-1-default-drivers/https://j00ru.vexillium.org/2012/11/defeating-windows-driver-signature-enforcement-part-1-default-drivers/"
+                    },
+                    "text": "WINNKIT contains an expired BenQ digital signature, which is leveraged to bypass the Driver Signature Enforcement (DSE) mechanism that requires drivers to be properly signed with digital signatures in order to be loaded successfully. This mechanism was first introduced in Windows Vista 64-bit, and is affected for all versions of Windows since then:",
+                    "html": "<p>WINNKIT contains an expired BenQ digital signature, which is leveraged to <a href=\"https://j00ru.vexillium.org/2012/11/defeating-windows-driver-signature-enforcement-part-1-default-drivers/https://j00ru.vexillium.org/2012/11/defeating-windows-driver-signature-enforcement-part-1-default-drivers/\" rel=\"noopener\" target=\"_blank\">bypass the Driver Signature Enforcement (DSE)</a> mechanism that requires drivers to be properly signed with digital signatures in order to be loaded successfully. This mechanism was first introduced in Windows Vista 64-bit, and is affected for all versions of Windows since then:</p>"
+                },
+                {
+                    "id": "<sentence_0xf787313c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x66ad80b8>": "https://www.cybereason.com/hs-fs/hubfs/image11-Apr-26-2022-08-53-36-34-PM.png?width=359&name=image11-Apr-26-2022-08-53-36-34-PM.png"
+                    },
+                    "text": "Revoked rootkit certificate and file version information as seen in VirusTotal",
+                    "html": "<p><img alt=\"image11-Apr-26-2022-08-53-36-34-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image11-Apr-26-2022-08-53-36-34-PM.png?width=359&amp;name=image11-Apr-26-2022-08-53-36-34-PM.png\" width=\"359\"/> Revoked rootkit certificate and file version information as seen in VirusTotal</p>"
+                },
+                {
+                    "id": "<sentence_0x1fbdb1ba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After successfully loading, WINNKIT hooks network communication, and operates based on custom commands that are being sent from the aforementioned user-mode agent, DEPLOYLOG.",
+                    "html": "<p>After successfully loading, WINNKIT hooks network communication, and operates based on custom commands that are being sent from the aforementioned user-mode agent, DEPLOYLOG.</p>"
+                },
+                {
+                    "id": "<sentence_0xc429a0e7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe9f30bdb>": "https://docs.microsoft.com/en-us/windows-hardware/drivers/network/ndis-drivers"
+                    },
+                    "text": "At the beginning of its execution, the driver validates the NDIS version, making sure the system is Windows Vista or above. By using the NDIS API, it communicates directly with the network card, skipping higher level communication protocols:",
+                    "html": "<p>At the beginning of its execution, the driver validates the <a href=\"https://docs.microsoft.com/en-us/windows-hardware/drivers/network/ndis-drivers\" rel=\"noopener\" target=\"_blank\">NDIS</a> version, making sure the system is Windows Vista or above. By using the NDIS API, it communicates directly with the network card, skipping higher level communication protocols:</p>"
+                },
+                {
+                    "id": "<sentence_0x8eb23d5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x547fc3dc>": "https://www.cybereason.com/hs-fs/hubfs/image43-3.png?width=649&name=image43-3.png"
+                    },
+                    "text": "WINNKITs communication with the network card",
+                    "html": "<p><img alt=\"image43-3\" src=\"https://www.cybereason.com/hs-fs/hubfs/image43-3.png?width=649&amp;name=image43-3.png\" width=\"649\"/>WINNKIT\u2019s communication with the network card</p>"
+                },
+                {
+                    "id": "<sentence_0xb60bf37>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After establishing a connection with the network card, the rootkit tries to open the event \\\\BaseNamedObjects\\\\{75F09225-CD50-460B-BF90-5743B8404D73}. In case it fails, it creates this event, and then hooks the \\\\Device\\\\Null device. Hooking this device is somehow risky, as this device is often being targeted by modern rootkit, thus making it relatively exposed to detection. Nevertheless, it enabled the authors to stay undetected for years.",
+                    "html": "<p>After establishing a connection with the network card, the rootkit tries to open the event \\\\BaseNamedObjects\\\\{75F09225-CD50-460B-BF90-5743B8404D73}. In case it fails, it creates this event, and then hooks the \\\\Device\\\\Null device. Hooking this device is somehow risky, as this device is often being targeted by modern rootkit, thus making it relatively exposed to detection. Nevertheless, it enabled the authors to stay undetected for years.</p>"
+                },
+                {
+                    "id": "<sentence_0xe9495d57>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using the above mentioned mechanisms enables WINNKIT a mean of communication with the user mode agent:",
+                    "html": "<p>Using the above mentioned mechanisms enables WINNKIT a mean of communication with the user mode agent:</p>"
+                },
+                {
+                    "id": "<sentence_0x9869582d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9f537eb4>": "https://www.cybereason.com/hs-fs/hubfs/image23-Apr-26-2022-08-55-51-86-PM.png?width=723&name=image23-Apr-26-2022-08-55-51-86-PM.png"
+                    },
+                    "text": "WINNKIT event creation",
+                    "html": "<p><img alt=\"image23-Apr-26-2022-08-55-51-86-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image23-Apr-26-2022-08-55-51-86-PM.png?width=723&amp;name=image23-Apr-26-2022-08-55-51-86-PM.png\" width=\"723\"/>WINNKIT event creation</p>"
+                },
+                {
+                    "id": "<sentence_0xaa350a6b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe5b25129>": "https://www.cybereason.com/hs-fs/hubfs/image26-Apr-26-2022-08-56-35-33-PM.png?width=654&name=image26-Apr-26-2022-08-56-35-33-PM.png"
+                    },
+                    "text": "WINNKIT hooks the \\\\Device\\\\Null device object",
+                    "html": "<p><img alt=\"image26-Apr-26-2022-08-56-35-33-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image26-Apr-26-2022-08-56-35-33-PM.png?width=654&amp;name=image26-Apr-26-2022-08-56-35-33-PM.png\" width=\"654\"/>WINNKIT hooks the \\\\Device\\\\Null device object </p>"
+                },
+                {
+                    "id": "<sentence_0xb4491e3b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc8e4484a>": "https://www.cybereason.com/hs-fs/hubfs/image3-Apr-26-2022-08-57-34-53-PM.png?width=656&name=image3-Apr-26-2022-08-57-34-53-PM.png"
+                    },
+                    "text": "The switch case that handling different commands",
+                    "html": "<p><img alt=\"image3-Apr-26-2022-08-57-34-53-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image3-Apr-26-2022-08-57-34-53-PM.png?width=656&amp;name=image3-Apr-26-2022-08-57-34-53-PM.png\" width=\"656\"/>The switch case that handling different commands</p>"
+                },
+                {
+                    "id": "<sentence_0xb027f6f4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A summary of the communication flow of DEPLOYLOG and WINNKIT, can be seen in the following diagram:",
+                    "html": "<p>A summary of the communication flow of DEPLOYLOG and WINNKIT, can be seen in the following diagram:</p>"
+                },
+                {
+                    "id": "<sentence_0xe773507d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe41b074e>": "https://www.cybereason.com/hs-fs/hubfs/image%20(67).png?width=645&name=image%20(67).png"
+                    },
+                    "text": "Rootkit high level operation diagram",
+                    "html": "<p><img alt=\"image (67)\" src=\"https://www.cybereason.com/hs-fs/hubfs/image%20(67).png?width=645&amp;name=image%20(67).png\" width=\"645\"/>Rootkit high level operation diagram</p>"
+                },
+                {
+                    "id": "<sentence_0x32766007>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below are the functionality we believe that each code represents, according to our findings and previous conducted research:",
+                    "html": "<p>Below are the functionality we believe that each code represents, according to our findings and previous conducted research:</p>"
+                },
+                {
+                    "id": "<sentence_0x376dfe6b>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x639abe8e>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "0x100",
+                                "2": "0x200",
+                                "3": "0x300",
+                                "4": "0x400",
+                                "5": "0x500",
+                                "6": "0x800"
+                            },
+                            "1": {
+                                "0": "Operation",
+                                "1": "Hide driver",
+                                "2": "Determine version",
+                                "3": "Access IRQL shared data",
+                                "4": "Map and allocate buffer",
+                                "5": "Map a buffer",
+                                "6": "Clean up"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Command</p>\n</td>\n<td>\n<p>Operation</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x100</p>\n</td>\n<td>\n<p>Hide driver</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x200</p>\n</td>\n<td>\n<p>Determine version</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x300</p>\n</td>\n<td>\n<p>Access IRQL shared data</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x400</p>\n</td>\n<td>\n<p>Map and allocate buffer</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x500</p>\n</td>\n<td>\n<p>Map a buffer</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>0x800</p>\n</td>\n<td>\n<p>Clean up</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7bd582ff>",
+            "title": "Winnti Auxiliary Plugins",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x831dfb48>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x910f5c15>": "https://securelist.com/winnti-1-0-technical-analysis/37002/"
+                    },
+                    "text": "Winnti used reflective loading injection in order to evade detection. The malicious modules are reflectively injected into the legitimate svchost processes. The following modules were detected by Cybereason and seem consistent with previously reported Winnti plugins:",
+                    "html": "<p>Winnti used reflective loading injection in order to evade detection. The malicious modules are reflectively injected into the legitimate svchost processes. The following modules were detected by Cybereason and seem consistent with <a href=\"https://securelist.com/winnti-1-0-technical-analysis/37002/\" rel=\"noopener\" target=\"_blank\">previously reported Winnti plugins</a>:</p>"
+                },
+                {
+                    "id": "<sentence_0x5673465c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cmp2.o: The plugin's purpose is to provide access to the system command line and appears to be a variant of the Winnti \"CmdPlus\" plugin.<crlf>Fmg2.o: This plugin is responsible for listing and modifying files on the targeted machine and appears to be the Winnti \"ListFileManager\" module.<crlf>Srv2.o: The purpose of the plugin is to display information about system services and is assessed to be the Winnti ListService plugin.<crlf>Sck2.o: The purpose of the plugin is to transfer data over the network using a SOCKS5 proxy server and is assessed to be the Socks5Client plugin.<crlf>Prc2.o: This plugin can list or kill running processes on the targeted machine.<crlf>Trs2.o: This plugin was also used for data transfer via Socks5 proxy.<crlf>Cme2.o: The purpose of this plugin is to enable Remote Desktop access to Winnti:",
+                    "html": "<ul>\n<li>Cmp2.o: The plugin's purpose is to provide access to the system command line and appears to be a variant of the Winnti \"CmdPlus\" plugin. </li>\n<li>Fmg2.o: This plugin is responsible for listing and modifying files on the targeted machine and appears to be the Winnti \"ListFileManager\" module.</li>\n<li>Srv2.o: The purpose of the plugin is to display information about system services and is assessed to be the Winnti \u201cListService\u201d plugin.</li>\n<li>Sck2.o: The purpose of the plugin is to transfer data over the network using a SOCKS5 proxy server and is assessed to be the \u201cSocks5Client\u201d plugin. </li>\n<li>Prc2.o: This plugin can list or kill running processes on the targeted machine. </li>\n<li>Trs2.o: This plugin was also used for data transfer via Socks5 proxy.</li>\n<li>Cme2.o: The purpose of this plugin is to enable Remote Desktop access to Winnti:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x3ec56edf>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6c01eef0>": "https://www.cybereason.com/hs-fs/hubfs/image17-Apr-26-2022-08-48-09-10-PM.png?width=1192&name=image17-Apr-26-2022-08-48-09-10-PM.png"
+                    },
+                    "text": "Example: svchost process that loaded sck2.o and trs2.o modules reflectively, as seen in the Cybereason XDR Platform",
+                    "html": "<p><img alt=\"image17-Apr-26-2022-08-48-09-10-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image17-Apr-26-2022-08-48-09-10-PM.png?width=1192&amp;name=image17-Apr-26-2022-08-48-09-10-PM.png\" width=\"1192\"/>Example: svchost process that loaded sck2.o and trs2.o modules reflectively, as seen in the Cybereason XDR Platform</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7f1ddac0>",
+            "title": "Conclusions",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa1045fd0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In part two of the research, we provided a deep dive into the Winnti malware arsenal that was observed by the Cybereason IR and Nocturnus teams. Our analysis provides a unique and holistic view of Winnti operational aspects, capabilities and modus operandi. While some of the tools mentioned in the research were previously reported on, some tools such as DEPLOYLOG were previously undocumented and first analyzed in this report. In addition, our analysis provides further insights regarding some of the known Winnti tools.",
+                    "html": "<p>In part two of the research, we provided a deep dive into the Winnti malware arsenal that was observed by the Cybereason IR and Nocturnus teams. Our analysis provides a unique and holistic view of Winnti operational aspects, capabilities and modus operandi. While some of the tools mentioned in the research were previously reported on, some tools such as DEPLOYLOG were previously undocumented and first analyzed in this report. In addition, our analysis provides further insights regarding some of the known Winnti tools. </p>"
+                },
+                {
+                    "id": "<sentence_0x94d22060>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Perhaps one of the most interesting things to notice is the elaborate and multi-phased infection chain Winnti employed. The malware authors chose to break the infection chain into multiple interdependent phases, where each phase relies on the previous one in order to execute correctly. This demonstrates the thought and effort that was put into both the malware and operational security considerations, making it almost impossible to analyze unless all pieces of the puzzle are assembled in the correct order.",
+                    "html": "<p>Perhaps one of the most interesting things to notice is the elaborate and multi-phased infection chain Winnti employed. The malware authors chose to break the infection chain into multiple interdependent phases, where each phase relies on the previous one in order to execute correctly. This demonstrates the thought and effort that was put into both the malware and operational security considerations, making it almost impossible to analyze unless all pieces of the puzzle are assembled in the correct order. </p>"
+                },
+                {
+                    "id": "<sentence_0x6824b42>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Furthermore, the rare abuse of the Windows own CLFS logging system and NTFS manipulations provided the attackers with extra stealth and the ability to remain undetected for years.",
+                    "html": "<p>Furthermore, the rare abuse of the Windows\u2019 own CLFS logging system and NTFS manipulations provided the attackers with extra stealth and the ability to remain undetected for years. </p>"
+                },
+                {
+                    "id": "<sentence_0x5a1b5ef9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We hope that this report helps to shed light on Winnti operations, tools and techniques, and that it will assist to expose further intrusions.",
+                    "html": "<p>We hope that this report helps to shed light on Winnti operations, tools and techniques, and that it will assist to expose further intrusions. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x34641d62>",
+            "title": "Acknowledgments",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa4cd36dd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This research has not been possible without the tireless effort, analysis, attention to details and contribution of the Cybereason Incident Response team. Special thanks and appreciation goes to Matt Hart, Yusuke Shimizu, Niamh OConnor, Jim Hung, and Omer Yampel.",
+                    "html": "<p>This research has not been possible without the tireless effort, analysis, attention to details and contribution of the Cybereason Incident Response team. Special thanks and appreciation goes to Matt Hart, Yusuke Shimizu, Niamh O\u2019Connor, Jim Hung, and Omer Yampel. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4e825b3d>",
+            "title": "Indicators of Compromise",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x347ebab0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x561fdc7a>": "https://www.cybereason.com/company/contact-us"
+                    },
+                    "text": "LOOKING FOR THE IOCs? CLICK ON THE CHATBOT DISPLAYED IN LOWER-RIGHT OF YOUR SCREEN FOR ACCESS. Due to the sensitive nature of the attack, not all IOCs observed by Cybereason can be shared in our public report. Please contact us for more information.",
+                    "html": "<p>LOOKING FOR THE IOCs? CLICK ON THE CHATBOT DISPLAYED IN LOWER-RIGHT OF YOUR SCREEN FOR ACCESS. Due to the sensitive nature of the attack, not all IOCs observed by Cybereason can be shared in our public report. <a href=\"/company/contact-us\" rel=\"noopener\" target=\"_blank\">Please contact us for more information</a>.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc0499bbe>",
+            "title": "MITRE ATT&CK BREAKDOWN",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7bbd245c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6e69f970>": "https://attack.mitre.org/techniques/T1589/001/",
+                        "<a_0x462dfa26>": "https://attack.mitre.org/techniques/T1190/",
+                        "<a_0x25ef5d6c>": "https://attack.mitre.org/techniques/T1053/",
+                        "<a_0x3189017d>": "https://attack.mitre.org/techniques/T1505/003/",
+                        "<a_0x9ca07eed>": "https://attack.mitre.org/techniques/T1543/003/",
+                        "<a_0xb737355>": "https://attack.mitre.org/techniques/T1574/002/",
+                        "<a_0x40b41ec6>": "https://attack.mitre.org/techniques/T1590/",
+                        "<a_0xcb9457c5>": "https://attack.mitre.org/techniques/T1195/",
+                        "<a_0xdeadbe6>": "https://attack.mitre.org/techniques/T1559/",
+                        "<a_0x8345c85a>": "https://attack.mitre.org/techniques/T1014/",
+                        "<a_0x9bc72441>": "https://attack.mitre.org/techniques/T1203/",
+                        "<a_0x35bc6e0a>": "https://attack.mitre.org/techniques/T1055/001/",
+                        "<a_0xe1e2874b>": "https://attack.mitre.org/techniques/T1036/005/",
+                        "<a_0x55c61da5>": "https://attack.mitre.org/techniques/T1059/003/",
+                        "<a_0x9213e9d7>": "https://attack.mitre.org/techniques/T1053/005/",
+                        "<a_0x99797e67>": "https://attack.mitre.org/techniques/T1059/005/",
+                        "<a_0x4c239275>": "https://attack.mitre.org/techniques/T1078/002/",
+                        "<a_0xbbab79d2>": "https://attack.mitre.org/techniques/T1620/",
+                        "<a_0xa8704bda>": "https://attack.mitre.org/techniques/T1106/",
+                        "<a_0x805cc42c>": "https://attack.mitre.org/techniques/T1078/003/",
+                        "<a_0x9dbd50f3>": "https://attack.mitre.org/techniques/T1218/011/",
+                        "<table_0xf09a083>": {
+                            "0": {
+                                "0": "Reconnaissance",
+                                "1": "Gather Victim Identity Information: Credentials",
+                                "2": "Gather Victim Network Information",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": ""
+                            },
+                            "1": {
+                                "0": "Initial Access",
+                                "1": "Exploit Public-Facing Application",
+                                "2": "Supply Chain Compromise",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": ""
+                            },
+                            "2": {
+                                "0": "Execution",
+                                "1": "Scheduled Task/Job",
+                                "2": "Inter-process communication",
+                                "3": "Exploitation for Client Execution",
+                                "4": "Command and Scripting Interpreter: Windows Command Shell",
+                                "5": "Command and Scripting Interpreter: Visual Basic",
+                                "6": "Native API",
+                                "7": "",
+                                "8": ""
+                            },
+                            "3": {
+                                "0": "Persistence",
+                                "1": "Server Software Component: Web Shell",
+                                "2": "",
+                                "3": "",
+                                "4": "Scheduled Task/Job: Scheduled Task",
+                                "5": "Valid Accounts: Domain Accounts",
+                                "6": "Valid Accounts: Local Accounts",
+                                "7": "",
+                                "8": ""
+                            },
+                            "4": {
+                                "0": "Privilege Escalation",
+                                "1": "Create or Modify System Process: Windows Service",
+                                "2": "Hijack Execution Flow: DLL Side-Loading",
+                                "3": "Process Injection: Dynamic-link Library Injection",
+                                "4": "Scheduled Task/Job: Scheduled Task",
+                                "5": "Valid Accounts: Domain Accounts",
+                                "6": "Valid Accounts: Local Accounts",
+                                "7": "",
+                                "8": ""
+                            },
+                            "5": {
+                                "0": "Defense Evasion",
+                                "1": "Hijack Execution Flow: DLL Side-Loading",
+                                "2": "Rootkit",
+                                "3": "Masquerading: Match Legitimate Name or Location",
+                                "4": "Process Injection: Dynamic-link Library Injection",
+                                "5": "Reflective Code Loading",
+                                "6": "Signed Binary Proxy Execution: Rundll32",
+                                "7": "Valid Accounts: Domain Accounts",
+                                "8": "Valid Accounts: Local Accounts"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Reconnaissance</p>\n</td>\n<td>\n<p>Initial Access</p>\n</td>\n<td>\n<p>Execution</p>\n</td>\n<td>\n<p>Persistence</p>\n</td>\n<td>\n<p>Privilege Escalation</p>\n</td>\n<td>\n<p>Defense Evasion</p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1589/001/\">Gather Victim Identity Information: Credentials</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1190/\">Exploit Public-Facing Application</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/\">Scheduled Task/Job</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1505/003/\">Server Software Component: Web Shell</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1543/003/\">Create or Modify System Process: Windows Service</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1574/002/\">Hijack Execution Flow: DLL Side-Loading</a></p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1590/\">Gather Victim Network Information</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1195/\">Supply Chain Compromise</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1559/\">Inter-process communication</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1574/002/\">Hijack Execution Flow: DLL Side-Loading</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1014/\">Rootkit</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1203/\">Exploitation for Client Execution</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1055/001/\">Process Injection: Dynamic-link Library Injection</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1036/005/\">Masquerading: Match Legitimate Name or Location</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1059/003/\">Command and Scripting Interpreter: Windows Command Shell</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/005/\">Scheduled Task/Job: Scheduled Task</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/005/\">Scheduled Task/Job: Scheduled Task</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1055/001/\">Process Injection: Dynamic-link Library Injection</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1059/005/\">Command and Scripting Interpreter: Visual Basic</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1620/\">Reflective Code Loading</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1106/\">Native API</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1218/011/\">Signed Binary Proxy Execution: Rundll32</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x85e1b0df>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc4841834>": "https://attack.mitre.org/techniques/T1003/",
+                        "<a_0x26dfde58>": "https://attack.mitre.org/techniques/T1016/",
+                        "<a_0xbc5f098e>": "https://attack.mitre.org/techniques/T1210/",
+                        "<a_0xd661f00f>": "https://attack.mitre.org/techniques/T1560/001/",
+                        "<a_0x416aa143>": "https://attack.mitre.org/techniques/T1020/",
+                        "<a_0x742680c>": "https://attack.mitre.org/techniques/T1071/001/",
+                        "<a_0xad4d00c1>": "https://attack.mitre.org/techniques/T1018/",
+                        "<a_0x21b33782>": "https://attack.mitre.org/techniques/T1021/001/",
+                        "<a_0x84423364>": "https://attack.mitre.org/techniques/T1119/",
+                        "<a_0x57d90626>": "https://attack.mitre.org/techniques/T1090/",
+                        "<a_0x5bc5d1f8>": "https://attack.mitre.org/techniques/T1201/",
+                        "<a_0x28c1be40>": "https://attack.mitre.org/techniques/T1069/",
+                        "<a_0x538bda73>": "https://attack.mitre.org/techniques/T1135/",
+                        "<a_0x135b94bf>": "https://attack.mitre.org/techniques/T1007/",
+                        "<a_0xe6e304f9>": "https://attack.mitre.org/techniques/T1124/",
+                        "<a_0x5181705b>": "https://attack.mitre.org/techniques/T1049/",
+                        "<a_0xdd055aaf>": "https://attack.mitre.org/techniques/T1087/",
+                        "<a_0xc50e3b6c>": "https://attack.mitre.org/techniques/T1033/",
+                        "<a_0xe196d2a>": "https://attack.mitre.org/techniques/T1082/",
+                        "<a_0xfd7d5519>": "https://attack.mitre.org/techniques/T1057/",
+                        "<table_0x5b037718>": {
+                            "0": {
+                                "0": "Credential Access",
+                                "1": "OS Credential Dumping",
+                                "2": "",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "1": {
+                                "0": "Discovery",
+                                "1": "System Network Configuration Discovery",
+                                "2": "Remote System Discovery",
+                                "3": "Password Policy Discovery",
+                                "4": "Permission Groups Discovery",
+                                "5": "Network Share Discovery",
+                                "6": "System Service Discovery",
+                                "7": "System Time Discovery",
+                                "8": "System Network Connections Discovery",
+                                "9": "Account Discovery",
+                                "10": "System Owner/User Discovery",
+                                "11": "System Information Discovery",
+                                "12": "Process Discovery"
+                            },
+                            "2": {
+                                "0": "Lateral movement",
+                                "1": "Exploitation of Remote Services",
+                                "2": "Remote Services: Remote Desktop Protocol",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "3": {
+                                "0": "Collection",
+                                "1": "Archive Collected Data: Archive via Utility",
+                                "2": "Automated Collection",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "4": {
+                                "0": "Exfiltration",
+                                "1": "Automated Exfiltration",
+                                "2": "",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "5": {
+                                "0": "Command and Control",
+                                "1": "Application Layer Protocol: Web Protocols",
+                                "2": "Proxy",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Credential Access</p>\n</td>\n<td>\n<p>Discovery</p>\n</td>\n<td>\n<p>Lateral movement</p>\n</td>\n<td>\n<p>Collection</p>\n</td>\n<td>\n<p>Exfiltration</p>\n</td>\n<td>\n<p>Command and Control</p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1003/\">OS Credential Dumping</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1016/\">System Network Configuration Discovery</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1210/\">Exploitation of Remote Services</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1560/001/\">Archive Collected Data: Archive via Utility</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1020/\">Automated Exfiltration</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1071/001/\">Application Layer Protocol: Web Protocols</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1018/\">Remote System Discovery</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1021/001/\">Remote Services: Remote Desktop Protocol</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1119/\">Automated Collection</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1090/\">Proxy</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1201/\">Password Policy Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1069/\">Permission Groups Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1135/\">Network Share Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1007/\">System Service Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1124/\">System Time Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1049/\">System Network Connections Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1087/\">Account Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1033/\">System Owner/User Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1082/\">System Information Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1057/\">Process Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x74922145>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd3469c47>",
+            "title": "Operation CuckooBees Indicators of Compromise (IOCs)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xae6714d5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hashes",
+                    "html": "<p>Hashes</p>"
+                },
+                {
+                    "id": "<sentence_0xa9080c57>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BB93AE0FEE817FE56C31BDC997F3F7D57A48C187 - STASHLOG<crlf>4D1B8791D0715FE316B43FC95BDC335CB31A82CA - STASHLOG<crlf>2D336978AF261E07B1ECFAF65DC903B239E287A4 - STASHLOG<crlf>F2D04FE529E2D8DAB96242305255CFB84CE81E9C - STASHLOG<crlf>F8D46895E738254238473D650D99BDC92C34EE44 - SPARKLOG<crlf>9267FE0BB6D367FC9186E89EA65B13BAA7418D87 - PRIVATELOG<crlf>A009A0F5A385683AEA74299CBE6D5429C609F2D2 - PRIVATELOG<crlf>1316F715D228AE6CC1FBA913C6CC309861F82E14 - PRIVATELOG<crlf>1275894D8231FE25DB56598DDCF869F88DF5AD8D - WINNKIT<crlf>9139C89B2B625E2CEEE2CBF72AEF6C5104707A26 - WINNKIT<crlf>082DBCA2C3CA5C5410DE9951A5C681F0C42235C8 - WINNKIT",
+                    "html": "<ul>\n<li>BB93AE0FEE817FE56C31BDC997F3F7D57A48C187 - STASHLOG</li>\n<li>4D1B8791D0715FE316B43FC95BDC335CB31A82CA - STASHLOG</li>\n<li>2D336978AF261E07B1ECFAF65DC903B239E287A4 - STASHLOG</li>\n<li>F2D04FE529E2D8DAB96242305255CFB84CE81E9C - STASHLOG</li>\n<li>F8D46895E738254238473D650D99BDC92C34EE44 - SPARKLOG</li>\n<li>9267FE0BB6D367FC9186E89EA65B13BAA7418D87 - PRIVATELOG</li>\n<li>A009A0F5A385683AEA74299CBE6D5429C609F2D2 - PRIVATELOG</li>\n<li>1316F715D228AE6CC1FBA913C6CC309861F82E14 - PRIVATELOG</li>\n<li>1275894D8231FE25DB56598DDCF869F88DF5AD8D - WINNKIT</li>\n<li>9139C89B2B625E2CEEE2CBF72AEF6C5104707A26 - WINNKIT</li>\n<li>082DBCA2C3CA5C5410DE9951A5C681F0C42235C8 - WINNKIT</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x2e07d0e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "File Names & Paths",
+                    "html": "<p>File Names &amp; Paths</p>"
+                },
+                {
+                    "id": "<sentence_0xaca25a82>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C:\\Windows\\temp\\bc.bat<crlf>C:\\Windows\\AppPatch\\Custom\\Custom64\\cc.bat<crlf>C:\\Windows\\temp\\cc.log<crlf>C:\\Windows\\AppPatch\\Custom\\Custom64\\log.dat<crlf>C:\\Windows\\Branding\\Basebrd\\x64.tlb<crlf>C:\\Windows\\Branding\\Basebrd\\language.dll<crlf>C:\\Windows\\System32\\mscuplt.dll<crlf>C:\\Windows\\System32\\rpcutl.dll<crlf>C:\\Windows\\System32\\dot3utl.dll<crlf>C:\\Windows\\System32\\iumatl.dll<crlf>C:\\Windows\\System32\\Nlsutl.dll<crlf>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll<crlf>C:\\Windows\\System32\\drivers\\bqDsp.sys<crlf>C:\\Windows\\apppatch\\en-us\\MFSDLL.exe<crlf>C:\\Windows\\System32\\spool\\drivers\\x64\\3\\prntvpt.dll<crlf>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\wlbsctrl.dll<crlf>C:\\Windows\\assembly\\gac_msil\\dfsvc\\foserv.exe<crlf>C:\\Windows\\assembly\\temp\\foserv.exe<crlf>C:\\Windows\\apppatch\\custom\\custom64\\shiver.exe<crlf>C:\\Windows\\apppatch\\custom\\custom64\\spark.exe<crlf>mktzx64.dll",
+                    "html": "<ul>\n<li>C:\\Windows\\temp\\bc.bat</li>\n<li>C:\\Windows\\AppPatch\\Custom\\Custom64\\cc.bat</li>\n<li>C:\\Windows\\temp\\cc.log</li>\n<li>C:\\Windows\\AppPatch\\Custom\\Custom64\\log.dat</li>\n<li>C:\\Windows\\Branding\\Basebrd\\x64.tlb</li>\n<li>C:\\Windows\\Branding\\Basebrd\\language.dll</li>\n<li>C:\\Windows\\System32\\mscuplt.dll</li>\n<li>C:\\Windows\\System32\\rpcutl.dll</li>\n<li>C:\\Windows\\System32\\dot3utl.dll</li>\n<li>C:\\Windows\\System32\\iumatl.dll</li>\n<li>C:\\Windows\\System32\\Nlsutl.dll</li>\n<li>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll</li>\n<li>C:\\Windows\\System32\\drivers\\bqDsp.sys</li>\n<li>C:\\Windows\\apppatch\\en-us\\MFSDLL.exe</li>\n<li>C:\\Windows\\System32\\spool\\drivers\\x64\\3\\prntvpt.dll</li>\n<li>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\wlbsctrl.dll</li>\n<li>C:\\Windows\\assembly\\gac_msil\\dfsvc\\foserv.exe</li>\n<li>C:\\Windows\\assembly\\temp\\foserv.exe</li>\n<li>C:\\Windows\\apppatch\\custom\\custom64\\shiver.exe</li>\n<li>C:\\Windows\\apppatch\\custom\\custom64\\spark.exe</li>\n<li>mktzx64.dll</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xd0f700bc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Winnti Malware Modules Names",
+                    "html": "<p>Winnti Malware Modules Names</p>"
+                },
+                {
+                    "id": "<sentence_0xc8841ad0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cmp2.o<crlf>Fmg2.o<crlf>Srv2.o<crlf>Sck2.o<crlf>Prc2.o<crlf>Trs2.o<crlf>Cme2.o",
+                    "html": "<ul>\n<li>Cmp2.o</li>\n<li>Fmg2.o</li>\n<li>Srv2.o</li>\n<li>Sck2.o</li>\n<li>Prc2.o</li>\n<li>Trs2.o</li>\n<li>Cme2.o</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x99c1f963>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Events",
+                    "html": "<p>Events</p>"
+                },
+                {
+                    "id": "<sentence_0x1ba8b4d3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "\\BaseNamedObjects\\{75F09225-CD50-460B-BF90-5743B8404D73}<crlf>\\BaseNamedObjects\\{7D0DF5FC-3991-4047-921F-32308B1A0459}<crlf>\\BaseNamedObjects\\{B73AB0F4-A1D0-4406-9066-41E00BA78E9F}<crlf>Global\\APCI#<GUID><crlf>Global\\HVID_<GUID>",
+                    "html": "<ul>\n<li>\\BaseNamedObjects\\{75F09225-CD50-460B-BF90-5743B8404D73}</li>\n<li>\\BaseNamedObjects\\{7D0DF5FC-3991-4047-921F-32308B1A0459}</li>\n<li>\\BaseNamedObjects\\{B73AB0F4-A1D0-4406-9066-41E00BA78E9F}</li>\n<li>Global\\APCI#&lt;GUID&gt;</li>\n<li>Global\\HVID_&lt;GUID&gt;</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x61582ed2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Named Pipes",
+                    "html": "<p>Named Pipes</p>"
+                },
+                {
+                    "id": "<sentence_0xe34e5911>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pipe2PortCtrl",
+                    "html": "<ul>\n<li>Pipe2PortCtrl</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x62953c55>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Scheduled Task Name",
+                    "html": "<p>Scheduled Task Name</p>"
+                },
+                {
+                    "id": "<sentence_0xa72b6ed0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "test",
+                    "html": "<ul>\n<li>test</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x338ec11e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Share",
+                    "html": "\nShare\n"
+                },
+                {
+                    "id": "<sentence_0x289b373f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x3e76e251>": "https://twitter.com/intent/tweet?original_referer=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&utm_medium=social&utm_source=twitter&url=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&utm_medium=social&utm_source=twitter&source=tweetbutton&text=",
+                        "<img_0xbaa4ba0c>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/twitter-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"https://twitter.com/intent/tweet?original_referer=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&amp;utm_medium=social&amp;utm_source=twitter&amp;url=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&amp;utm_medium=social&amp;utm_source=twitter&amp;source=tweetbutton&amp;text=\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on twitter\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/twitter-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x9f3bd34b>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8a9e4f77>": "http://www.facebook.com/share.php?u=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&utm_medium=social&utm_source=facebook",
+                        "<img_0x231dc0e>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/facebook-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"http://www.facebook.com/share.php?u=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&amp;utm_medium=social&amp;utm_source=facebook\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on facebook\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/facebook-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x1916b1bb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x463c4746>": "http://www.linkedin.com/shareArticle?mini=true&url=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&utm_medium=social&utm_source=linkedin",
+                        "<img_0x92538807>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/linkedin-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"http://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive&amp;utm_medium=social&amp;utm_source=linkedin\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on linkedin\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/linkedin-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x62d2a4a8>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf7595c3>": "https://www.cybereason.com/hubfs/CR_Owl_Web_Mono@3x%202.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"Cybereason Nocturnus\" class=\"cr-speaker-headshot\" src=\"https://www.cybereason.com/hubfs/CR_Owl_Web_Mono@3x%202.png\"/>"
+                },
+                {
+                    "id": "<sentence_0xe5f3bf98>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "About the Author",
+                    "html": "\nAbout the Author\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcadfd24c>",
+            "title": "Cybereason Nocturnus",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2fb38b47>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe5567450>": "https://www.linkedin.com/company/cybereason",
+                        "<img_0xbb570f23>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-linkedin.png"
+                    },
+                    "text": "",
+                    "html": "<a class=\"social\" href=\"https://www.linkedin.com/company/cybereason\" target=\"_blank\">\n<img src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-linkedin.png\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x39447572>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2ea59e83>": "https://twitter.com/cr_nocturnus",
+                        "<img_0xc105defc>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-twitter.svg"
+                    },
+                    "text": "",
+                    "html": "<a class=\"social\" href=\"https://twitter.com/cr_nocturnus\" target=\"_blank\">\n<img src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-twitter.svg\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x97147c64>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Cybereason Nocturnus Team has brought the worlds brightest minds from the military, government intelligence, and enterprise security to uncover emerging threats across the globe. They specialize in analyzing new attack methodologies, reverse-engineering malware, and exposing unknown system vulnerabilities. The Cybereason Nocturnus Team was the first to release a vaccination for the 2017 NotPetya and Bad Rabbit cyberattacks.",
+                    "html": "<p>The Cybereason Nocturnus Team has brought the world\u2019s brightest minds from the military, government intelligence, and enterprise security to uncover emerging threats across the globe. They specialize in analyzing new attack methodologies, reverse-engineering malware, and exposing unknown system vulnerabilities. The Cybereason Nocturnus Team was the first to release a vaccination for the 2017 NotPetya and Bad Rabbit cyberattacks.</p>"
+                },
+                {
+                    "id": "<sentence_0xab27bc9c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x538f5e9f>": "https://www.cybereason.com/blog/authors/cybereason-nocturnus"
+                    },
+                    "text": "All Posts by Cybereason Nocturnus",
+                    "html": "<a class=\"cr-button cr-button__min\" href=\"https://www.cybereason.com/blog/authors/cybereason-nocturnus\">All Posts by Cybereason Nocturnus</a>"
+                },
+                {
+                    "id": "<sentence_0x750d74>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "NEWSLETTER",
+                    "html": "\nNEWSLETTER\n"
+                }
+            ]
+        }
+    ]
+}

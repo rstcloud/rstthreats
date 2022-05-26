@@ -1,0 +1,1045 @@
+{
+    "id": "<report_0xa7908a47>",
+    "url": "https://www.mandiant.com/resources/cloud-metadata-abuse-unc2903",
+    "title": "Old Services, New Tricks: Cloud Metadata Abuse by UNC2903",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0x3910b8af>",
+            "title": "Old Services, New Tricks: Cloud Metadata Abuse by UNC2903",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x18a269b1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Brandan Schondorfer, Nader Zaveri, Tyler McLellan, Jennifer Brito<crlf>May 04, 2022<crlf><crlf>14 mins read<crlf><crlf>Threat Intelligence<crlf>Uncategorized Groups (UNC Groups)<crlf>Cloud",
+                    "html": "\nBrandan Schondorfer, Nader Zaveri, Tyler McLellan, Jennifer Brito\n May 04, 2022\n \n 14 mins read\n \nThreat Intelligence\nUncategorized Groups (UNC Groups)\nCloud\n"
+                },
+                {
+                    "id": "<sentence_0x52068a76>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Since July 2021, Mandiant identified exploitation of public-facing web applications by UNC2903 to harvest and abuse credentials using Amazons Instance Metadata Service (IMDS). Mandiant tracked access attempts by UNC2903 to access S3 buckets and additional cloud resources using the stolen credentials. This blog post covers how UNC2903 performed exploitation and IMDS abuse, as well as related best practices on cloud hardening techniques.",
+                    "html": "<p>Since July 2021, Mandiant identified exploitation of public-facing web applications by UNC2903 to harvest and abuse credentials using Amazon\u2019s Instance Metadata Service (IMDS). Mandiant tracked access attempts by UNC2903 to access S3 buckets and additional cloud resources using the stolen credentials. This blog post covers how UNC2903 performed exploitation and IMDS abuse, as well as related best practices on cloud hardening techniques.</p>"
+                },
+                {
+                    "id": "<sentence_0xe6630654>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Although UNC2903 targeted Amazon Web Services (AWS) environments, many other cloud platforms offer similar metadata services that could be at risk of similar attacks. Similar threat actor motives and operations are gaining prominence as enterprises continue their migration to cloud hosting services. This article also describes potential risks and considerations for security and information technology teams using hosted services.",
+                    "html": "<p>Although UNC2903 targeted Amazon Web Services (AWS) environments, many other cloud platforms offer similar metadata services that could be at risk of similar attacks. Similar threat actor motives and operations are gaining prominence as enterprises continue their migration to cloud hosting services. This article also describes potential risks and considerations for security and information technology teams using hosted services.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcce7b585>",
+            "title": "Old Services, New Tricks: Cloud Metadata Abuse by UNC2903",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf4bad21a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Blog",
+                    "html": "\nBlog\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd2c884d>",
+            "title": "Timeline",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe4d6d3ca>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiants Incident Response, Intelligence, and Transformational Services teams collected information described in this blog post to help better detect, prevent, and respond to similar opportunistic intrusions. The following timeline describes UNC2903 activity performed during their earliest observed campaigns.",
+                    "html": "<p>Mandiant\u2019s Incident Response, Intelligence, and Transformational Services teams collected information described in this blog post to help better detect, prevent, and respond to similar opportunistic intrusions. The following timeline describes UNC2903 activity performed during their earliest observed campaigns. </p>"
+                },
+                {
+                    "id": "<sentence_0xf81aa353>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf3b80319>": "https://advantage.mandiant.com/cve/vulnerability--5a1fbe9b-f51e-5cdb-8e5f-25681276b02f",
+                        "<a_0xbe035442>": "https://github.com/vrana/adminer/security/advisories/GHSA-x5r2-hj5c-8jx6"
+                    },
+                    "text": "February 2021, CVE-2021-21311 was published describing vulnerable database administration software called Adminer<crlf>February 2021, proof-of-concept code (PoC) was published to show how to leverage the exploit and obtain credentials in AWS applications hosting vulnerable versions<crlf>June 2021, UNC2903 exploited a server-side request forgery vulnerability, gaining access to victim Amazon Web Services secret keys and subsequently steal data",
+                    "html": "<ul><li>February 2021, <a href=\"https://advantage.mandiant.com/cve/vulnerability--5a1fbe9b-f51e-5cdb-8e5f-25681276b02f\">CVE-2021-21311</a> was <a href=\"https://github.com/vrana/adminer/security/advisories/GHSA-x5r2-hj5c-8jx6\">published</a> describing vulnerable database administration software called Adminer</li>\n<li>February 2021, proof-of-concept code (PoC) was published to show how to leverage the exploit and obtain credentials in AWS applications hosting vulnerable versions</li>\n<li>June 2021, UNC2903 exploited a server-side request forgery vulnerability, gaining access to victim Amazon Web Services secret keys and subsequently steal data </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xd78b91b5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Although this blog post discusses a now patched version of Adminer software, any web-application vulnerable to request forgery or remote code execution may also open avenues for similar metadata service attacks.",
+                    "html": "<p>Although this blog post discusses a now patched version of Adminer software, any web-application vulnerable to request forgery or remote code execution may also open avenues for similar metadata service attacks. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5a1da087>",
+            "title": "Usage in the Wild and Evidence of Exploitation",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xd1ed7258>",
+            "title": "The Threat Landscape for Cloud Metadata",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x13560f0d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiants analysts identified recent upticks in the abuse and exploitation of services hosted in AWS and similar cloud platforms. The threats identified in campaigns carried out by UNC2903 were multi-phased attacks, which involved infrastructure scanning, reconnaissance and further abuse of the underlying abstraction layers offered by cloud-hosted platforms. Once exploitation and abuse of the underlying systems occurred, stolen credentials are leveraged for data exfiltration in other AWS services in the compromised tenant.",
+                    "html": "<p>Mandiant\u2019s analysts identified recent upticks in the abuse and exploitation of services hosted in AWS and similar cloud platforms. The threats identified in campaigns carried out by UNC2903 were multi-phased attacks, which involved infrastructure scanning, reconnaissance and further abuse of the underlying abstraction layers offered by cloud-hosted platforms. Once exploitation and abuse of the underlying systems occurred, stolen credentials are leveraged for data exfiltration in other AWS services in the compromised tenant. </p>"
+                },
+                {
+                    "id": "<sentence_0xe2e2da54>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdabfe250>": "https://www.mandiant.com/services/incident-response"
+                    },
+                    "text": "Namely, for events leading up to UNC2903 stealing data, Mandiants Incident Response team identified:",
+                    "html": "<p>Namely, for events leading up to UNC2903 stealing data, Mandiant\u2019s <a href=\"https://www.mandiant.com/services/incident-response\">Incident Response</a> team identified:</p>"
+                },
+                {
+                    "id": "<sentence_0x5b9f10d0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Network scanning attempts on externally facing AWS web infrastructure hosting Adminer software<crlf>Additional web navigation and reconnaissance performed, once infrastructure is identified<crlf>Attempts of multiple web application exploits which may exist on the hosted web server<crlf>Further attempts indicative of manual exploitation and testing using the identified exploit",
+                    "html": "<ol><li>Network scanning attempts on externally facing AWS web infrastructure hosting Adminer software</li>\n<li>Additional web navigation and reconnaissance performed, once infrastructure is identified</li>\n<li>Attempts of multiple web application exploits which may exist on the hosted web server </li>\n<li>Further attempts indicative of manual exploitation and testing using the identified exploit</li>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x539dfbf5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Given that the infrastructure is hosted within Amazon Web Services cloud, IMDS is an attractive target for threat actors like UNC2903. In UNC2903s case, the threat actor was observed targeting exploitable web applications which were also running IMDSv1. Amazons IMDSv1 permits web requests to a specialized URL against the link local IP address (169.254.169.254) which was designed to enhance internal service communication and troubleshooting within the overall hosting platform. The retrievable metadata includes information to understand configuration, topology, and even obtain user role and credentialing.",
+                    "html": "<p>Given that the infrastructure is hosted within Amazon Web Services cloud, IMDS is an attractive target for threat actors like UNC2903. In UNC2903\u2019s case, the threat actor was observed targeting exploitable web applications which were also running IMDSv1. Amazon\u2019s IMDSv1 permits web requests to a specialized URL against the link local IP address (169.254.169.254) which was designed to enhance internal service communication and troubleshooting within the overall hosting platform. The retrievable metadata includes information to understand configuration, topology, and even obtain user role and credentialing. </p>"
+                },
+                {
+                    "id": "<sentence_0x9b58b735>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x30cfb3c4>": "https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/",
+                        "<a_0x7088d6e3>": "https://aws.amazon.com/guardduty/",
+                        "<code_0xb135acb9>": "x-aws-ec2-metadata-token"
+                    },
+                    "text": "Amazon released IMDSv2 to add additional layers of protection and alerting through AWS security features such as GuardDuty. The way IMDSv2 remediates this type of attack is by a user obtaining a token via a PUT from http://169.254.169[.]254/latest/api/token, then that token is used and repeated for all requests to the IMDS via a special header (x-aws-ec2-metadata-token).",
+                    "html": "<p>Amazon <a href=\"https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/\">released IMDSv2</a> to add additional layers of protection and alerting through AWS security features such as <a href=\"https://aws.amazon.com/guardduty/\">GuardDuty</a>. The way IMDSv2 remediates this type of attack is by a user obtaining a token via a PUT from http://169.254.169[.]254/latest/api/token, then that token is used and repeated for all requests to the IMDS via a special header (<code>x-aws-ec2-metadata-token</code>). </p>"
+                },
+                {
+                    "id": "<sentence_0x2cc27e3c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Although Amazon recommends implementing the IMDSv2 with GuardDuty enhancements, EC2 instances created by Amazon customers that instead use IMDSv1 may be at risk when combined with also running unpatched vulnerable third party software. As the adoption of cloud technology expands, so does the threat surface and targeting for vulnerable web infrastructure with underlying dated or deprecated metadata services with limited security capabilities. The level of risk related to web application vulnerabilities should be evaluated and paired with the understanding that underlying metadata services in cloud environments could increase the possibility of advanced or continued threats.",
+                    "html": "<p>Although Amazon recommends implementing the IMDSv2 with GuardDuty enhancements, EC2 instances created by Amazon customers that instead use IMDSv1 may be at risk when combined with also running unpatched vulnerable third party software. As the adoption of cloud technology expands, so does the threat surface and targeting for vulnerable web infrastructure with underlying dated or deprecated metadata services with limited security capabilities. The level of risk related to web application vulnerabilities should be evaluated and paired with the understanding that underlying metadata services in cloud environments could increase the possibility of advanced or continued threats.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5c086759>",
+            "title": "Clever Techniques, Some SSRF, and Easy Access",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf7ec5e0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant has observed in campaigns that UNC2903 utilized a dedicated operational relay box to perform web scanning and carry out exploitation and related IMDSv1 abuse. The threat actor carries out a series of web scans and activity consistent with manual reconnaissance of the identified application prior to the attack. The attack observed by UNC2903 utilized a Server-Side Request Forgery (SSRF) vulnerability to return the temporary access keys used for AWS S3 bucket storage access.",
+                    "html": "<p>Mandiant has observed in campaigns that UNC2903 utilized a dedicated operational relay box to perform web scanning and carry out exploitation and related IMDSv1 abuse. The threat actor carries out a series of web scans and activity consistent with manual reconnaissance of the identified application prior to the attack. The attack observed by UNC2903 utilized a Server-Side Request Forgery (\u201cSSRF\u201d) vulnerability to return the temporary access keys used for AWS S3 bucket storage access. </p>"
+                },
+                {
+                    "id": "<sentence_0x7792aa73>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1 provides the critical attack path identified during UNC2903 using CVE-2021-21311.",
+                    "html": "<p>Figure 1 provides the critical attack path identified during UNC2903 using CVE-2021-21311.</p>"
+                },
+                {
+                    "id": "<sentence_0xe847775>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8fb060a7>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig1.png"
+                    },
+                    "text": "Figure 1: UNC2903 attack leveraged CVE-2021-21311 and IMDSv1 abuse",
+                    "html": "<figure><img alt=\"UNC2903 Attack Leveraged CVE-2021-21311 and IMDSv1 Abuse\" height=\"954\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig1.png\" width=\"1750\"/><figcaption>Figure 1: UNC2903 attack leveraged CVE-2021-21311 and IMDSv1 abuse</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xdc74619e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the observed campaign, UNC2903 utilized CVE-2021-21311 to perform the following attack:",
+                    "html": "<p>In the observed campaign, UNC2903 utilized CVE-2021-21311 to perform the following attack:</p>"
+                },
+                {
+                    "id": "<sentence_0xabae892e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Threat actor hosts a web server on their operational relay box with a script configured to 301 redirect to http://169.254.169[.]254/latest/meta-data/iam/security-credentials/.",
+                    "html": "<ul><li>Threat actor hosts a web server on their operational relay box with a script configured to 301 redirect to http://169.254.169[.]254/latest/meta-data/iam/security-credentials/.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x2873d8c8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfeb8405f>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig2.png"
+                    },
+                    "text": "Figure 2: Mandiant test environment",
+                    "html": "<figure><img alt=\"Mandiant Test Environment\" height=\"160\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig2.png\" width=\"1728\"/><figcaption>Figure 2: Mandiant test environment</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x4e3064ae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, the threat actor navigates to the Adminer page versioned between 4.0.0 and before 4.7.9, of which theyre trying to perform the SSRF vulnerability.",
+                    "html": "<ul><li>Next, the threat actor navigates to the Adminer page versioned between 4.0.0 and before 4.7.9, of which they\u2019re trying to perform the SSRF vulnerability.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xf6aeb3d2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x58d82d63>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig3.png"
+                    },
+                    "text": "Figure 3: Adminer",
+                    "html": "<figure><img alt=\"Adminer\" height=\"852\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig3.png\" width=\"1380\"/><figcaption>Figure 3: Adminer</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x45e2fc85>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The IP address and port for the operational relay box hosting the malicious redirection script is typed into the victim Adminers server dialogue box, and the login button is pressed.",
+                    "html": "<ul><li>The IP address and port for the operational relay box hosting the malicious redirection script is typed into the victim Adminer\u2019s server dialogue box, and the login button is pressed.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4f6f907f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x664d6f08>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig4.png"
+                    },
+                    "text": "Figure 4: Exploiting Adminer",
+                    "html": "<figure><img alt=\"Exploiting adminer\" height=\"802\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig4.png\" width=\"1314\"/><figcaption>Figure 4: Exploiting Adminer</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x393bfe8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The victim server with Adminer is fooled into making a web request to the operational relay box, then the victim server requests and follows the 301 redirect which completes the SSRF.",
+                    "html": "<ul><li>The victim server with Adminer is fooled into making a web request to the operational relay box, then the victim server requests and follows the 301 redirect which completes the SSRF.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xf9176d99>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdb886295>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig5.png"
+                    },
+                    "text": "Figure 5: Web log",
+                    "html": "<figure><img alt=\"Web log\" height=\"296\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig5.png\" width=\"1730\"/><figcaption>Figure 5: Web log</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6c49bea9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The victim server returns an error to the threat actor, but since the IMDS returns the results from the service, the metadata credentials are displayed directly in the response in an error message.",
+                    "html": "<ul><li>The victim server returns an error to the threat actor, but since the IMDS returns the results from the service, the metadata credentials are displayed directly in the response in an error message.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x235800ed>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc5005340>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig6.png"
+                    },
+                    "text": "Figure 6: Credential theft",
+                    "html": "<figure><img alt=\"Credential theft\" height=\"854\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig6.png\" width=\"1896\"/><figcaption>Figure 6: Credential theft</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xcc30c96d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Note that the while these steps do not reflect the exact threat actor commands used to perform an attack, this highlights the methods used by UNC2903. Since the attack involves exploitation and SSRF abuse through CVE-2021-21311, limited artifacts are available based on default cloud-based system and tenant configurations.",
+                    "html": "<p>Note that the while these steps do not reflect the exact threat actor commands used to perform an attack, this highlights the methods used by UNC2903. Since the attack involves exploitation and SSRF abuse through CVE-2021-21311, limited artifacts are available based on default cloud-based system and tenant configurations.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe60b77bf>",
+            "title": "Artifacts and Notable Observations",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd3916d90>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant Incident Response identified and collected artifacts of the related exploitation and IMDS abuse carried out by UNC2903. The activity recorded from initial scanning and exploitation, as well as the AWS metadata service and credential abuse may be subject to the configuration of the hosted infrastructure and cloud logs available in the tenant. Without a security operators keen eye on event logs, even with increased levels of logging enabled, similar attacks carried out by UNC2903or other threat actorsmay go undetected.",
+                    "html": "<p>Mandiant Incident Response identified and collected artifacts of the related exploitation and IMDS abuse carried out by UNC2903. The activity recorded from initial scanning and exploitation, as well as the AWS metadata service and credential abuse may be subject to the configuration of the hosted infrastructure and cloud logs available in the tenant. Without a security operator\u2019s keen eye on event logs, even with increased levels of logging enabled, similar attacks carried out by UNC2903\u2014or other threat actors\u2014may go undetected.</p>"
+                },
+                {
+                    "id": "<sentence_0xb927de2e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Since the attack leverages an exploit of the Adminer PHP application page, the malicious navigation and interaction may be easily overlooked by investigators. The activity identified is characteristically unique compared to some exploits which return a standard successful web response to the screen or within recorded event logs.",
+                    "html": "<p>Since the attack leverages an exploit of the Adminer PHP application page, the malicious navigation and interaction may be easily overlooked by investigators. The activity identified is characteristically unique compared to some exploits which return a standard successful web response to the screen or within recorded event logs. </p>"
+                },
+                {
+                    "id": "<sentence_0x3e307c33>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The few sources which evidenced the exploitation and abuse included:",
+                    "html": "<p>The few sources which evidenced the exploitation and abuse included:</p>"
+                },
+                {
+                    "id": "<sentence_0x787e0390>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Web access and error logs<crlf>GuardDuty events<crlf>VPC Flow Logs<crlf>S3 Data and Access Events",
+                    "html": "<ul><li>Web access and error logs</li>\n<li>GuardDuty events</li>\n<li>VPC Flow Logs</li>\n<li>S3 Data and Access Events</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4d801942>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 7 provides an example of the initial access and web application scanning activity identified for the Adminer web page. Note that the web response shows a 302 redirect or other 403 error as the web response in the available log although the exploit was successful.",
+                    "html": "<p>Figure 7 provides an example of the initial access and web application scanning activity identified for the Adminer web page. Note that the web response shows a 302 redirect or other 403 error as the web response in the available log although the exploit was successful.</p>"
+                },
+                {
+                    "id": "<sentence_0xd97662f1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5f0cc9c4>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig7.png"
+                    },
+                    "text": "Figure 7: Web access logs generated after a simulated attacker types in their server information and performs CVE-2021-21311",
+                    "html": "<figure><img alt=\"Web access logs generated after a simulated attacker types in their server information and performs CVE-2021-21311\" height=\"632\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig7.png\" width=\"1894\"/><figcaption>Figure 7: Web access logs generated after a simulated attacker types in their server information and performs CVE-2021-21311</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x7e8f4348>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 8 provides an example of a VPC flow which represents the web server when the SSRF completes. Note that the victim server which made the outbound request is suspicious to an external IP address. However, the port could be configured to any desired, or more discrete, port chosen for an attack.",
+                    "html": "<p>Figure 8 provides an example of a VPC flow which represents the web server when the SSRF completes. Note that the victim server which made the outbound request is suspicious to an external IP address. However, the port could be configured to any desired, or more discrete, port chosen for an attack. </p>"
+                },
+                {
+                    "id": "<sentence_0x98ebc589>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe1ef5f0>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig8.png"
+                    },
+                    "text": "Figure 8: AWS VPC flow logs noting that the simulated victim server made a web request outbound over a malicious port 1337",
+                    "html": "<figure><img alt=\"AWS VPC flow logs noting that the simulated victim server made a web request outbound over a malicious port 1337\" height=\"432\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig8.png\" width=\"1886\"/><figcaption>Figure 8: AWS VPC flow logs noting that the simulated victim server made a web request outbound over a malicious port 1337</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x64bc009d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 9 provides an example of a GuardDuty event after credentials are stolen and leveraged. Note that GuardDuty in our testing alerted after data theft was complete from the S3 bucket.",
+                    "html": "<p>Figure 9 provides an example of a GuardDuty event after credentials are stolen and leveraged. Note that GuardDuty in our testing alerted after data theft was complete from the S3 bucket.</p>"
+                },
+                {
+                    "id": "<sentence_0xd34a24ff>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9a625b4e>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig9.png"
+                    },
+                    "text": "Figure 9: AWS GuardDuty event showing data theft from S3 using the stolen metadata credential",
+                    "html": "<figure><img alt=\"AWS GuardDuty event showing data theft from S3 using the stolen metadata credential\" height=\"1180\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig9.png\" width=\"1894\"/><figcaption>Figure 9: AWS GuardDuty event showing data theft from S3 using the stolen metadata credential</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1bfa9779>",
+            "title": "Mission Completion and Future Implications",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x399a3f53>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Final phases of attacks carried out by UNC2903, and similar threat actors, have involved data exfiltration or interaction with the AWS tenant. The information stolen through application exploitation and metadata service abuse could allow threat actors to manipulate or steal data from an organizations cloud environments. Abuse of similar cloud-oriented metadata services show how threat actors can further exploit environments beyond the original application targets. When architecting cloud services and solutions, configurations for prevention and response should be evaluated and considered by the technology teams. Later, we cover potential strategies to mitigate, limit, and aid in unauthorized metadata service usage detection.",
+                    "html": "<p>Final phases of attacks carried out by UNC2903, and similar threat actors, have involved data exfiltration or interaction with the AWS tenant. The information stolen through application exploitation and metadata service abuse could allow threat actors to manipulate or steal data from an organization\u2019s cloud environments. Abuse of similar cloud-oriented metadata services show how threat actors can further exploit environments beyond the original application targets. When architecting cloud services and solutions, configurations for prevention and response should be evaluated and considered by the technology teams. Later, we cover potential strategies to mitigate, limit, and aid in unauthorized metadata service usage detection. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x386c7ad1>",
+            "title": "Mandiant Intelligence Findings",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x7939bdc1>",
+            "title": "Attribution",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf6fa63fc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "UNC2903 is a group whose motivations are unknown and tracked by Mandiant since July 2021. UNC2903 is opportunistic, hunting for vulnerable systems on the internet, and has been observed stealing data from at least one victim, however, Mandiant did not observe any monetization of the stolen data such as extortion or sale. Analysis of web logs showed that the actors were specifically scanning for adminer.php and testing for CVE-2019-0211, an Apache Root Privilege Escalation to install the WSO webshell, directly from GitHub.",
+                    "html": "<p>UNC2903 is a group whose motivations are unknown and tracked by Mandiant since July 2021. UNC2903 is opportunistic, hunting for vulnerable systems on the internet, and has been observed stealing data from at least one victim, however, Mandiant did not observe any monetization of the stolen data such as extortion or sale. Analysis of web logs showed that the actors were specifically scanning for adminer.php and testing for CVE-2019-0211, an Apache Root Privilege Escalation to install the WSO webshell, directly from GitHub.</p>"
+                },
+                {
+                    "id": "<sentence_0xe5c0b984>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Eighteen minutes after the CVE-2021-21311 vulnerable adminer.php was discovered by the threat actor through automated scanning, Mandiant observed indexing of the adminer.php by Telegram bot, indicating that the link to the adminer.php was shared in a Telegram chat group. A few minutes later, an automated session from a free VPN service also scanned the adminer.php. The same automated process was executed from different a different IP a few hours later, followed by interactive activity and successful access of the IMDS service 3 hours and 15 minutes after the initial access.",
+                    "html": "<p>Eighteen minutes after the CVE-2021-21311 vulnerable adminer.php was discovered by the threat actor through automated scanning, Mandiant observed indexing of the adminer.php by Telegram bot, indicating that the link to the adminer.php was shared in a Telegram chat group. A few minutes later, an automated session from a free VPN service also scanned the adminer.php. The same automated process was executed from different a different IP a few hours later, followed by interactive activity and successful access of the IMDS service 3 hours and 15 minutes after the initial access.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8665f500>",
+            "title": "Scanning Activity",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x89585853>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant observed indications that the UNC2903 infrastructure was used to scan over 2,100 IP addresses in late June 2021. Scanning focused on web services such as port 80 or 443 and did not focus on any specific service provider suggesting the actor may have been operating from a list of targets with open HTTP ports from prior research and not targeting any specific service provider.",
+                    "html": "<p>Mandiant observed indications that the UNC2903 infrastructure was used to scan over 2,100 IP addresses in late June 2021. Scanning focused on web services such as port 80 or 443 and did not focus on any specific service provider suggesting the actor may have been operating from a list of targets with open HTTP ports from prior research and not targeting any specific service provider.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9506181f>",
+            "title": "User Agent Strings",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1d056a8b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "User agent strings used by UNC2903 observed by Mandiant:",
+                    "html": "<p>User agent strings used by UNC2903 observed by Mandiant:</p>"
+                },
+                {
+                    "id": "<sentence_0xfa32dde1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48<crlf>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36<crlf>Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0",
+                    "html": "<ul><li>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36 Edg/91.0.864.48</li>\n<li>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36</li>\n<li>Mozilla/5.0 (X11; Linux x86_64; rv:84.0) Gecko/20100101 Firefox/84.0</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9a6a2de7>",
+            "title": "Transform Security and Mitigate Similar Threats",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x12828549>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Mandiant recommends organizations detect, remediate, and prevent EC2 Instances from having IMDSv1 enabled. Before remediating and converting EC2 Instances to use IMDSv2, the organization should test all instances/application to ensure the operations will not be impacted by such remediation measures.",
+                    "html": "<p>Mandiant recommends organizations detect, remediate, and prevent EC2 Instances from having IMDSv1 enabled. Before remediating and converting EC2 Instances to use IMDSv2, the organization should test all instances/application to ensure the operations will not be impacted by such remediation measures.</p>"
+                },
+                {
+                    "id": "<sentence_0xf8d996a5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using our vulnerable Adminer web application, once the EC2 Instance running the application has IMDSv2 enabled, the secrets/credentials are no longer able to be obtained by the threat actor (see Figure 10).",
+                    "html": "<p>Using our vulnerable Adminer web application, once the EC2 Instance running the application has IMDSv2 enabled, the secrets/credentials are no longer able to be obtained by the threat actor (see Figure 10).</p>"
+                },
+                {
+                    "id": "<sentence_0xa61fc0ed>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8eb884>": "https://www.mandiant.com/sites/default/files/inline-images/cloud-metadata-unc2903-fig10.png"
+                    },
+                    "text": "Figure 10: Error message received when attempted to obtain credentials from an EC2 Instance with IMDSv2 enforced",
+                    "html": "<figure><img alt=\"Error message received when attempted to obtain credentials from an EC2 Instance with IMDSv2 enforced\" height=\"766\" src=\"/sites/default/files/inline-images/cloud-metadata-unc2903-fig10.png\" width=\"1918\"/><figcaption>Figure 10: Error message received when attempted to obtain credentials from an EC2 Instance with IMDSv2 enforced</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xbfd84ded>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next we will provide multiple ways an organization can detect, remediate, and prevent IMDSv1 from their environment.",
+                    "html": "<p>Next we will provide multiple ways an organization can detect, remediate, and prevent IMDSv1 from their environment. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2209f28d>",
+            "title": "Detections, Remediations, and Preventions",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x48ea35c3>",
+            "title": "Detecting EC2 Instances with IMDSv1",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xda0f8dcf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Audit currently deployed EC2 Instance to verify if IMDSv1 or IMDSv2 is being used in the environment.",
+                    "html": "<p>Audit currently deployed EC2 Instance to verify if IMDSv1 or IMDSv2 is being used in the environment.</p>"
+                },
+                {
+                    "id": "<sentence_0x928e549>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe45215a6>": "https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html",
+                        "<a_0xe7055314>": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html"
+                    },
+                    "text": "Native AWS Services: AWS Security Hub Check [EC2.8] EC2 instances should use IMDS v2 CloudWatch MetadataNoToken (Counts the number of times the Instance Metadata service was successfully access without a token (i.e., IMDSv1)) AWS Config A Config rule that checks if the organizations EC2 Instance is set to require HTTPTokens (see the following).<crlf>AWS Security Hub Check [EC2.8] EC2 instances should use IMDS v2<crlf>CloudWatch MetadataNoToken (Counts the number of times the Instance Metadata service was successfully access without a token (i.e., IMDSv1))<crlf>AWS Config A Config rule that checks if the organizations EC2 Instance is set to require HTTPTokens (see the following).",
+                    "html": "<ul><li>Native AWS Services: \n<ul><li><a href=\"https://docs.aws.amazon.com/securityhub/latest/userguide/securityhub-standards-fsbp-controls.html\">AWS Security Hub</a> \u2013 Check <code>[EC2.8] EC2 instances should use IMDS v2</code></li>\n<li><a href=\"https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/viewing_metrics_with_cloudwatch.html\">CloudWatch</a> \u2013 <code>MetadataNoToken</code> (Counts the number of times the Instance Metadata service was successfully access without a token (i.e., IMDSv1))</li>\n<li>AWS Config \u2013 A Config rule that checks if the organization\u2019s EC2 Instance is set to require HTTPTokens (see the following).</li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x8acef857>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x5e48f82f>": {
+                            "0": {
+                                "0": "AWSTemplateFormatVersion: \"2010-09-09\"  Description: \"\"  Resources:  ConfigRule:  Type: \"AWS::Config::ConfigRule\"  Properties:  ConfigRuleName: \"ec2-imdsv2-check\"  Scope:  ComplianceResourceTypes:  - \"AWS::EC2::Instance\"  Description: \"A Config rule that checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is COMPLIANT if the HttpTokens is set to required and is NON_COMPLIANT ...\"  Source:  Owner: \"AWS\"  SourceIdentifier: \"EC2_IMDSV2_CHECK\"  Parameters: {}  Metadata: {}  Conditions: {}"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>AWSTemplateFormatVersion: \"2010-09-09\"</code></p>\n<p><code>Description: \"\"</code></p>\n<p><code>Resources:</code></p>\n<p><code> ConfigRule:</code></p>\n<p><code> Type: \"AWS::Config::ConfigRule\"</code></p>\n<p><code> Properties:</code></p>\n<p><code> ConfigRuleName: \"ec2-imdsv2-check\"</code></p>\n<p><code> Scope:</code></p>\n<p><code> ComplianceResourceTypes:</code></p>\n<p><code> - \"AWS::EC2::Instance\"</code></p>\n<p><code> Description: \"A Config rule that checks whether your Amazon Elastic Compute Cloud (Amazon EC2) instance metadata version is configured with Instance Metadata Service Version 2 (IMDSv2). The rule is COMPLIANT if the HttpTokens is set to required and is NON_COMPLIANT ...\"</code></p>\n<p><code> Source:</code></p>\n<p><code> Owner: \"AWS\"</code></p>\n<p><code> SourceIdentifier: \"EC2_IMDSV2_CHECK\"</code></p>\n<p><code>Parameters: {}</code></p>\n<p><code>Metadata: {}</code></p>\n<code>Conditions: {}</code></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xf36f5b22>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x505c0ab0>": "https://github.com/prowler-cloud/prowler/blob/master/checks/check_extra786",
+                        "<a_0xe29452c9>": "https://github.com/salesforce/metabadger",
+                        "<a_0xcacc1f78>": "https://github.com/duo-labs/cloudmapper"
+                    },
+                    "text": "Open-Source Tools: Prowler - Check 7.86 Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required ./prowler -c check786 Metabadger ./metabadger discover-metadata CloudMapper EC2_IMDSV2_NOT_ENFORCED<crlf>Prowler - Check 7.86 Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required ./prowler -c check786<crlf>Metabadger ./metabadger discover-metadata<crlf>CloudMapper EC2_IMDSV2_NOT_ENFORCED<crlf>AWS CLI:",
+                    "html": "<ul><li>Open-Source Tools:\n<ul><li><a href=\"https://github.com/prowler-cloud/prowler/blob/master/checks/check_extra786\">Prowler - Check 7.86</a> \u2013 Check if EC2 Instance Metadata Service Version 2 (IMDSv2) is Enabled and Required\n<table><tbody><tr><td><code>./prowler -c check786</code></td>\n</tr></tbody></table></li>\n<li><a href=\"https://github.com/salesforce/metabadger\">Metabadger</a>\n<table><tbody><tr><td><code>./metabadger discover-metadata</code></td>\n</tr></tbody></table></li>\n<li><a href=\"https://github.com/duo-labs/cloudmapper\">CloudMapper</a> \u2013 EC2_IMDSV2_NOT_ENFORCED</li>\n</ul></li>\n<li>AWS CLI: </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x84188ad5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x53043eaa>": {
+                            "0": {
+                                "0": "aws ec2 describe-instances --filters Name=metadata-options.http-tokens,Values=optional --query \"Reservations[*].Instances[*].{Instance:InstanceId}\" --region [EnterRegionHere]"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>aws ec2 describe-instances --filters Name=metadata-options.http-tokens,Values=optional --query \"Reservations[*].Instances[*].{Instance:InstanceId}\" --region [EnterRegionHere]</code></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x5e84c924>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GuardDuty alert for use of EC2 instance credential from outside of current account.",
+                    "html": "<p>GuardDuty alert for use of EC2 instance credential from outside of current account.</p>"
+                },
+                {
+                    "id": "<sentence_0x4be07e5f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd635df27>": "https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-iam.html#unauthorizedaccess-iam-instancecredentialexfiltrationinsideaws"
+                    },
+                    "text": "InstanceCredentialExfiltration.InsideAWS - High: If EC2 Instance Credential is used by another AWS Account (see Figure 9 ).<crlf>InstanceCredentialExfiltration.OutsideAWS - High: If EC2 Instance Credential is used by an external IP Address.<crlf>Restrict access to IMDS to a limited set of users or EC2 role Execute the following command to limit the IMDS service to bobuser:<crlf>Execute the following command to limit the IMDS service to bobuser:",
+                    "html": "<ul><li><a href=\"https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-iam.html#unauthorizedaccess-iam-instancecredentialexfiltrationinsideaws\">InstanceCredentialExfiltration.InsideAWS - High</a>: If EC2 Instance Credential is used by another AWS Account (see Figure 9 ).</li>\n<li><a href=\"https://docs.aws.amazon.com/guardduty/latest/ug/guardduty_finding-types-iam.html#unauthorizedaccess-iam-instancecredentialexfiltrationinsideaws\">InstanceCredentialExfiltration.OutsideAWS - High</a>: If EC2 Instance Credential is used by an external IP Address. </li>\n<li>Restrict access to IMDS to a limited set of users or EC2 role\n<ul><li>Execute the following command to limit the IMDS service to bobuser:</li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xf0706ed7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x4a0aff72>": {
+                            "0": {
+                                "0": "ip-lockdown 169.254.169.254 bobuser"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>ip-lockdown 169.254.169.254 bobuser</code></td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xed34328d>",
+            "title": "Remediating IDMSv1",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe2af35f1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Note: Before proceeding to disable IMDSv1 from an organizations EC2 Instance, there must be extensive testing performed prior to the remediation actions.",
+                    "html": "<p>Note: Before proceeding to disable IMDSv1 from an organization\u2019s EC2 Instance, there must be extensive testing performed prior to the remediation actions.</p>"
+                },
+                {
+                    "id": "<sentence_0x2cf415bd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Disable IMDS completely on infrastructure that does not require the metadata service.",
+                    "html": "<ul><li>Disable IMDS completely on infrastructure that does not require the metadata service.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x5527d0c2>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xd54baccb>": {
+                            "0": {
+                                "0": "aws ec2 modify-instance-metadata-options \u2013instance-id <instance-id> \u2013http-endpoint disabled"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>aws ec2 modify-instance-metadata-options \u2013instance-id &lt;instance-id&gt; \u2013http-endpoint disabled</code></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x38945a0b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If IMDS is needed, then an organization can enforce an EC2 Instance to run only IMDSv2:",
+                    "html": "<ul><li>If IMDS is needed, then an organization can enforce an EC2 Instance to run only IMDSv2:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x1bb68668>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x7b003dd9>": {
+                            "0": {
+                                "0": "aws ec2 modify-instance-metadata-options \u2013instance-id <INSTANCE-ID> \u2013http-endpoint enabled \u2013http-token required"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>aws ec2 modify-instance-metadata-options \u2013instance-id &lt;INSTANCE-ID&gt; \u2013http-endpoint enabled \u2013http-token required</code></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xe7d5d3cd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x72ca46a6>": "https://github.com/latacora/remediate-AWS-IMDSv1"
+                    },
+                    "text": "Utilize an open-source tool, such as Remediate AWS-IMDSv1, to detect and remediate all EC2 instances that have IMDSv1 enabled.",
+                    "html": "<ul><li>Utilize an open-source tool, such as <a href=\"https://github.com/latacora/remediate-AWS-IMDSv1\">Remediate AWS-IMDSv1</a>, to detect and remediate all EC2 instances that have IMDSv1 enabled.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x58d7eeb3>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xfb5268b1>": {
+                            "0": {
+                                "0": "python remediate-imdsv1.py --profile <AWS_PROFILE> --remediate \u2013debug"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>python remediate-imdsv1.py --profile &lt;AWS_PROFILE&gt; --remediate \u2013debug</code></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xf746d742>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Set iptables rules to DENY access to the metadata service",
+                    "html": "<ul><li>Set iptables rules to DENY access to the metadata service</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x82d903bd>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x6da3a2b0>": {
+                            "0": {
+                                "0": "iptables -A OUTPUT \u2013proto tcp -m owner --uid-owner root -d 169.254.169.254 -j REJECT"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td><code>iptables -A OUTPUT \u2013proto tcp -m owner --uid-owner root -d 169.254.169.254 -j REJECT</code></td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa582c0c9>",
+            "title": "Preventing IMDSv1 from the Environment",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6f32e8b2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "An organization can create a Service Control Policy (SCP) to require API Calls to utilize IMDSv2 if there are role credentials for an EC2. See the following Sample SCP:",
+                    "html": "<ul><li>An organization can create a Service Control Policy (SCP) to require API Calls to utilize IMDSv2 if there are role credentials for an EC2. See the following Sample SCP:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x8262ba8e>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xaf6dc942>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": [  {  \"Sid\": \"RequireAllEc2RolesToUseV2\",  \"Effect\": \"Deny\",  \"Action\": \"*\",  \"Resource\": \"*\",  \"Condition\": {  \"NumericLessThan\": {  \"ec2:RoleDelivery\": \"2.0\"  }  }  }  ]  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": [</code></p>\n<p><code> {</code></p>\n<p><code> \"Sid\": \"RequireAllEc2RolesToUseV2\",</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Action\": \"*\",</code></p>\n<p><code> \"Resource\": \"*\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"NumericLessThan\": {</code></p>\n<p><code> \"ec2:RoleDelivery\": \"2.0\"</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> ]</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x4e815d1d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x38beb0bf>": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-launchconfiguration-metadataoptions.html",
+                        "<a_0x8d7e1395>": "https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-launchtemplate-launchtemplatedata-metadataoptions.html"
+                    },
+                    "text": "An organization should utilize Infrastructure-as-Code (IaC) to disallow and/or disable the use of IMDSv1. There are several ways to enforce IMDSv2, here are a few via CloudFormation: EC2 AutoScaling Launch Configuration: { \"HttpTokens\" : required } EC2 Launch Template: { \"HttpTokens\" : required }<crlf>EC2 AutoScaling Launch Configuration: { \"HttpTokens\" : required }<crlf>EC2 Launch Template: { \"HttpTokens\" : required }",
+                    "html": "<ul><li>An organization should utilize Infrastructure-as-Code (IaC) to disallow and/or disable the use of IMDSv1. There are several ways to enforce IMDSv2, here are a few via CloudFormation:\n<ul><li><a href=\"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-launchconfiguration-metadataoptions.html\">EC2 AutoScaling Launch Configuration</a>:\n<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"HttpTokens\" : required</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table></li>\n<li><a href=\"https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-ec2-launchtemplate-launchtemplatedata-metadataoptions.html\">EC2 Launch Template</a>:\n<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"HttpTokens\" : required</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table></li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x6ac9e1e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Create a custom CloudFormation or Terraform template that prevents users from launching EC2 instances that are not configured for IMDSv2 CloudFormation AWSTemplateFormatVersion: \"2010-09-09\" Description: \"\" Resources: IamPolicy: Type: \"AWS::IAM::ManagedPolicy\" Properties: PolicyDocument: Version: \"2012-10-17\" Statement: - Action: - \"ec2:RunInstances\" Resource: - \"arn:aws:ec2:*:*:instance/*\" Effect: \"Deny\" Condition: StringNotEquals: ec2:MetadataHttpTokens: \"required\" Description: \"An IAM policy that prevents users from launching new EC2 Instances if they are not configured to use the new Instance Metadata Service (IMDSv2)\" Parameters: {} Metadata: {} Conditions: {} Terraform provider \"aws\" { } resource \"aws_iam_policy\" \"IamPolicy\" { name = \"Require_IMDSv2\" description = \"IAM Policy that requires IMDSv2\" policy = <<POLICY { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Action\": [ \"ec2:RunInstances\" ], \"Resource\": [ \"arn:aws:ec2:*:*:instance/*\" ], \"Effect\": \"Deny\", \"Condition\": { \"StringNotEquals\": { \"ec2:MetadataHttpTokens\": \"required\" } } } ] } POLICY }<crlf>CloudFormation AWSTemplateFormatVersion: \"2010-09-09\" Description: \"\" Resources: IamPolicy: Type: \"AWS::IAM::ManagedPolicy\" Properties: PolicyDocument: Version: \"2012-10-17\" Statement: - Action: - \"ec2:RunInstances\" Resource: - \"arn:aws:ec2:*:*:instance/*\" Effect: \"Deny\" Condition: StringNotEquals: ec2:MetadataHttpTokens: \"required\" Description: \"An IAM policy that prevents users from launching new EC2 Instances if they are not configured to use the new Instance Metadata Service (IMDSv2)\" Parameters: {} Metadata: {} Conditions: {}<crlf>Terraform provider \"aws\" { } resource \"aws_iam_policy\" \"IamPolicy\" { name = \"Require_IMDSv2\" description = \"IAM Policy that requires IMDSv2\" policy = <<POLICY { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Action\": [ \"ec2:RunInstances\" ], \"Resource\": [ \"arn:aws:ec2:*:*:instance/*\" ], \"Effect\": \"Deny\", \"Condition\": { \"StringNotEquals\": { \"ec2:MetadataHttpTokens\": \"required\" } } } ] } POLICY }",
+                    "html": "<ul><li>Create a custom CloudFormation or Terraform template that prevents users from launching EC2 instances that are not configured for IMDSv2\n<ul><li>CloudFormation\n<table><tbody><tr><td>\n<p><code>AWSTemplateFormatVersion: \"2010-09-09\"</code></p>\n<p><code>Description: \"\"</code></p>\n<p><code>Resources:</code></p>\n<p><code> IamPolicy:</code></p>\n<p><code> Type: \"AWS::IAM::ManagedPolicy\"</code></p>\n<p><code> Properties:</code></p>\n<p><code> PolicyDocument:</code></p>\n<p><code> Version: \"2012-10-17\"</code></p>\n<p><code> Statement:</code></p>\n<p><code> - Action:</code></p>\n<p><code> - \"ec2:RunInstances\"</code></p>\n<p><code> Resource:</code></p>\n<p><code> - \"arn:aws:ec2:*:*:instance/*\"</code></p>\n<p><code> Effect: \"Deny\"</code></p>\n<p><code> Condition:</code></p>\n<p><code> StringNotEquals:</code></p>\n<p><code> ec2:MetadataHttpTokens: \"required\"</code></p>\n<p><code> Description: \"An IAM policy that prevents users from launching new EC2 Instances if they are not configured to use the new Instance Metadata Service (IMDSv2)\"</code></p>\n<p><code>Parameters: {}</code></p>\n<p><code>Metadata: {}</code></p>\n<p><code>Conditions: {}</code></p>\n</td>\n</tr></tbody></table></li>\n<li>Terraform\n\t\t<table><tbody><tr><td>\n<p><code>provider \"aws\" {</code></p>\n<p><code>}</code></p>\n<p> </p>\n<p><code>resource \"aws_iam_policy\" \"IamPolicy\" {</code></p>\n<p><code> name = \"Require_IMDSv2\"</code></p>\n<p><code> description = \"IAM Policy that requires IMDSv2\"</code></p>\n<p><code> policy = &lt;&lt;POLICY</code></p>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": [</code></p>\n<p><code> {</code></p>\n<p><code> \"Action\": [</code></p>\n<p><code> \"ec2:RunInstances\"</code></p>\n<p><code> ],</code></p>\n<p><code> \"Resource\": [</code></p>\n<p><code> \"arn:aws:ec2:*:*:instance/*\"</code></p>\n<p><code> ],</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"StringNotEquals\": {</code></p>\n<p><code> \"ec2:MetadataHttpTokens\": \"required\"</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> ]</code></p>\n<p><code>}</code></p>\n<p><code>POLICY</code></p>\n<p> </p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table></li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x2442b134>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Create an IAM Policy that prevents users from launching an EC2 Instance if the EC2 instance is not configured for using IMDSv2.",
+                    "html": "<ul><li>Create an IAM Policy that prevents users from launching an EC2 Instance if the EC2 instance is not configured for using IMDSv2.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xc3ccb04d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xbb2006f7>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": [  {  \"Action\": [  \"ec2:RunInstances\"  ],  \"Resource\": [  \"arn:aws:ec2:*:*:instance/*\"  ],  \"Effect\": \"Deny\",  \"Condition\": {  \"StringNotEquals\": {  \"ec2:MetadataHttpTokens\": \"required\"  }  }  }  ]  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": [</code></p>\n<p><code> {</code></p>\n<p><code> \"Action\": [</code></p>\n<p><code> \"ec2:RunInstances\"</code></p>\n<p><code> ],</code></p>\n<p><code> \"Resource\": [</code></p>\n<p><code> \"arn:aws:ec2:*:*:instance/*\"</code></p>\n<p><code> ],</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"StringNotEquals\": {</code></p>\n<p><code> \"ec2:MetadataHttpTokens\": \"required\"</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> ]</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xd2eb6689>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Create an IAM Policy that enforces all newly created EC2 Instances are configured to use IMDSv2 (note: existing EC2 Instances will not be impacted by this IAM Policy).",
+                    "html": "<ul><li>Create an IAM Policy that enforces all newly created EC2 Instances are configured to use IMDSv2 (note: existing EC2 Instances will not be impacted by this IAM Policy).</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x6a44deed>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x34b455c6>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": {  \"Sid\": \"RequireImdsV2\",  \"Effect\": \"Deny\",  \"Action\": \"ec2:RunInstances\",  \"Resource\": \"arn:aws:ec2:*:*:instance/*\",  \"Condition\": {  \"StringNotEquals\": {  \"ec2:MetadataHttpTokens\": \"required\"  }  }  }  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": {</code></p>\n<p><code> \"Sid\": \"RequireImdsV2\",</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Action\": \"ec2:RunInstances\",</code></p>\n<p><code> \"Resource\": \"arn:aws:ec2:*:*:instance/*\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"StringNotEquals\": {</code></p>\n<p><code> \"ec2:MetadataHttpTokens\": \"required\"</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code>}</code></p>\n</td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe6297f37>",
+            "title": "Additional Preventions and Hardening",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xca24adeb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Review all EC2 Instances, and ensure User Data Scripts for EC2s do not contain cleartext secrets or sensitive data User Data Scripts are a set of commands that you provide during the launch of the EC2. The User Data Scripts are performed using root permissions, and it can be viewed via IMDS. An attacker can read the script being ran by a simple curl command.<crlf>User Data Scripts are a set of commands that you provide during the launch of the EC2. The User Data Scripts are performed using root permissions, and it can be viewed via IMDS. An attacker can read the script being ran by a simple curl command.",
+                    "html": "<ul><li>Review all EC2 Instances, and ensure User Data Scripts for EC2s do not contain cleartext secrets or sensitive data\n<ul><li>User Data Scripts are a set of commands that you provide during the launch of the EC2. The User Data Scripts are performed using root permissions, and it can be viewed via IMDS. An attacker can read the script being ran by a simple curl command.</li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x7b24f292>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x4079fdb4>": {
+                            "0": {
+                                "0": "curl http://169.254.169.254/latest/user-data"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>curl http://169.254.169.254/latest/user-data</code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0x79aaf84b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Limit the number of HTTP Put Response Hops (minimum value is defaulted to 1 and the maximum is 64). The following example limits the maximum number of hops that occurs to 1:<crlf>The following example limits the maximum number of hops that occurs to 1:",
+                    "html": "<ul><li>Limit the number of HTTP Put Response Hops (minimum value is defaulted to 1 and the maximum is 64).\n<ul><li>The following example limits the maximum number of hops that occurs to 1:</li>\n</ul></li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xfb1be27a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x505dee74>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": {  \"Sid\": \"MaxImdsHopLimit\",  \"Effect\": \"Deny\",  \"Action\": \"ec2:RunInstances\",  \"Resource\": \"arn:aws:ec2:*:*:instance/*\",  \"Condition\": {  \"NumericLessThanEquals\":  {\"ec2:MetadataHttpPutResponseHopLimit\": \"1\"}  }  }  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": {</code></p>\n<p><code> \"Sid\": \"MaxImdsHopLimit\",</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Action\": \"ec2:RunInstances\",</code></p>\n<p><code> \"Resource\": \"arn:aws:ec2:*:*:instance/*\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"NumericLessThanEquals\":\n\t\t\t {\"ec2:MetadataHttpPutResponseHopLimit\": \"1\"}</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code>} </code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xedadd01f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Limit API Calls to use IMDSv2 to deliver the Amazon EC2 Role credentials via an IAM Policy",
+                    "html": "<ul><li>Limit API Calls to use IMDSv2 to deliver the Amazon EC2 Role credentials via an IAM Policy</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x8df32249>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xcb75c11f>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": {  \"Sid\": \"RequireAllEc2RolesToUseV2\",  \"Effect\": \"Deny\",  \"Action\": \"*\",  \"Resource\": \"*\",  \"Condition\": {  \"NumericLessThan\":  {\"ec2:RoleDelivery\": \"2.0\"}  }  }  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": {</code></p>\n<p><code> \"Sid\": \"RequireAllEc2RolesToUseV2\",</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Action\": \"*\",</code></p>\n<p><code> \"Resource\": \"*\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"NumericLessThan\":\n\t\t\t {\"ec2:RoleDelivery\": \"2.0\"}</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code>} </code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xcdea22d6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Limit access to be able to modify the EC2 Instance metadata service",
+                    "html": "<ul><li>Limit access to be able to modify the EC2 Instance metadata service</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x66fa2e4a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xea593914>": {
+                            "0": {
+                                "0": "{  \"Version\": \"2012-10-17\",  \"Statement\": {  \"Sid\": \"LimitModifyInstanceMetadataService\",  \"Effect\": \"Deny\",  \"Action\": \"ec2:ModifyInstanceMetadataOptions\",  \"Resource\": \"*\",  \"Condition\": {  \"StringNotLike\":  {\"aws:PrincipalARN\u201d: \u201carn:aws:iam:*:role/ec2-imds-admin\"}  }  }  }"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table><tbody><tr><td>\n<p><code>{</code></p>\n<p><code> \"Version\": \"2012-10-17\",</code></p>\n<p><code> \"Statement\": {</code></p>\n<p><code> \"Sid\": \"LimitModifyInstanceMetadataService\",</code></p>\n<p><code> \"Effect\": \"Deny\",</code></p>\n<p><code> \"Action\": \"ec2:ModifyInstanceMetadataOptions\",</code></p>\n<p><code> \"Resource\": \"*\",</code></p>\n<p><code> \"Condition\": {</code></p>\n<p><code> \"StringNotLike\":\n\t\t\t {\"aws:PrincipalARN\u201d: \u201carn:aws:iam:*:role/ec2-imds-admin\"}</code></p>\n<p><code> }</code></p>\n<p><code> }</code></p>\n<p><code>} </code></p>\n</td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xa9ec0a24>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Restrict the scope of IAM role / credential access to S3 buckets<crlf>Block or reduce of IAM role / credential usage ability from the public Internet<crlf>Limit server Internet egress to prevent outbound server traffic<crlf>Implement S3 Bucket Policies to further restrict access to the S3 Bucket<crlf>Enable VPC flows and S3 bucket / object level access data events<crlf>Proxy or monitor web requests for possible exploitation<crlf>Limit service ports allowed inbound or outbound to the server<crlf>Sanitize or limit unnecessary HTTP headers to the web server<crlf>Log all the things, and prioritize alerting for possible credential abuse<crlf>Follow Amazon Web Services best practices for solutions, and regularly test security controls",
+                    "html": "<ul><li>Restrict the scope of IAM role / credential access to S3 buckets</li>\n<li>Block or reduce of IAM role / credential usage ability from the public Internet</li>\n<li>Limit server Internet egress to prevent outbound server traffic</li>\n<li>Implement S3 Bucket Policies to further restrict access to the S3 Bucket</li>\n<li>Enable VPC flows and S3 bucket / object level access data events</li>\n<li>Proxy or monitor web requests for possible exploitation</li>\n<li>Limit service ports allowed inbound or outbound to the server</li>\n<li>Sanitize or limit unnecessary HTTP headers to the web server</li>\n<li>Log all the things, and prioritize alerting for possible credential abuse</li>\n<li>Follow Amazon Web Services best practices for solutions, and regularly test security controls </li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x885af71c>",
+            "title": "Key Takeaways",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xca77851a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As organizations move further into cloud environments, additional complexities of default settings can offer opportunities for an attacker to leverage access from one system, to pivot to many others similar. Data stored in cloud systems can be stolen, tampered, or deleted just like any other environment. Mandiants expertise in responding to intrusions extends to cloud environments which continue to be targeted both by espionage and financially motivated groups.",
+                    "html": "<p>As organizations move further into cloud environments, additional complexities of default settings can offer opportunities for an attacker to leverage access from one system, to pivot to many others similar. Data stored in cloud systems can be stolen, tampered, or deleted just like any other environment. Mandiant\u2019s expertise in responding to intrusions extends to cloud environments which continue to be targeted both by espionage and financially motivated groups.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x92646c0c>",
+            "title": "Acknowledgements",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x628c6cd2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "With thanks to Nick Richard for technical review and Justin Moore for MITRE D3FEND mapping.",
+                    "html": "<p>With thanks to Nick Richard for technical review and Justin Moore for MITRE D3FEND mapping.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9907898d>",
+            "title": "Indicators",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa0a1cdc3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "141.94.43.37<crlf>37.59.152.171<crlf>191.96.108.227<crlf>191.96.108.8<crlf>hxxps://raw.githubusercontent[.]com/wso3/wso3/master/wso.php<crlf>35b03c6bc21d140201670005923333de",
+                    "html": "<ul><li>141.94.43.37</li>\n<li>37.59.152.171</li>\n<li>191.96.108.227</li>\n<li>191.96.108.8</li>\n<li>hxxps://raw.githubusercontent[.]com/wso3/wso3/master/wso.php</li>\n<li>35b03c6bc21d140201670005923333de</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x998a89d5>",
+            "title": "MITRE Mappings",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xc3314585>",
+            "title": "MITRE ATT&CK UNC2903",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4dd5843d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xc432c413>": {
+                            "0": {
+                                "0": "Tactic",
+                                "1": "Discovery",
+                                "2": "Initial Access",
+                                "3": "Persistence",
+                                "4": "Credential Access",
+                                "5": "Collection"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "T1580: Cloud Infrastructure Discovery",
+                                "2": "T1190: Exploit Public-Facing Application",
+                                "3": "T1505.003: Web Shell",
+                                "4": "T1552.004: Private Keys  T1552.005: Cloud Instance Metadata API",
+                                "5": "T1530: Data from Cloud Storage Object"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"Table\"><tbody><tr><td>\n<p>Tactic </p>\n</td>\n<td>\n<p>Description</p>\n</td>\n</tr><tr><td>\n<p>Discovery</p>\n</td>\n<td>\n<p> T1580: Cloud Infrastructure Discovery</p>\n</td>\n</tr><tr><td>\n<p>Initial Access</p>\n</td>\n<td>\n<p> T1190: Exploit Public-Facing Application</p>\n</td>\n</tr><tr><td>\n<p>Persistence</p>\n</td>\n<td>\n<p> T1505.003: Web Shell</p>\n</td>\n</tr><tr><td>\n<p>Credential Access</p>\n</td>\n<td>\n<p> T1552.004: Private Keys\n\t\t\t T1552.005: Cloud Instance Metadata API</p>\n</td>\n</tr><tr><td>\n<p>Collection</p>\n</td>\n<td>\n<p> T1530: Data from Cloud Storage Object</p>\n</td>\n</tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x52a2d71b>",
+            "title": "MITRE D3FEND UNC2903",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe73b1e74>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xa30418a8>": {
+                            "0": {
+                                "0": "Tactic",
+                                "1": "Harden",
+                                "2": "Detect",
+                                "3": "Detect",
+                                "4": "Isolate",
+                                "5": "Isolate",
+                                "6": "Deceive",
+                                "7": "Evict"
+                            },
+                            "1": {
+                                "0": "Description",
+                                "1": "Application Hardening  D3-PSEP: Process Segment Execution Prevention D3-SAOR: Segment Address Offset Randomization",
+                                "2": "File Analysis  D3-DA: Dynamic Analysis D3-EFA: Emulated File Analysis D3-FCR: File Content Rules D3-FH: File Hashing  Network Traffic Analysis  D3-CSPP: Client-Server Payload Profiling D3-NTCD: Network Traffic Community Deviation D3-PHDURA: Per Host Download-Upload Ratio Analysis D3-PMAD: Protocol Metadata Anomaly Detection D3-RTSD: Remote Terminal Session Detection D3-UGLPA: User Geolocation Logon Pattern Analysis D3-ISVA: Inbound Session Volume Analysis",
+                                "3": "Process Analysis  D3-DQSA: Database Query String Analysis D3-PSMD: Process Self-Modification Detection D3-PSA: Process Spawn Analysis D3-PLA: Process Lineage Analysis",
+                                "4": "Network Isolation  D3-ITF: Inbound Traffic Filtering D3-OTF: Outbound Traffic Filtering",
+                                "5": "Execution Isolation  D3-HBPI: Hardware-based Process Isolation D3-MAC: Mandatory Access Control D3-EDL: Executable Denylisting",
+                                "6": "Decoy Object  D3-DF: Decoy File D3-DNR: Decoy Network Resource D3-DUC: Decoy User Credential",
+                                "7": "Credential Invalidation  D3-ACI: Authentication Cache Invalidation  Process Eviction  D3-PT: Process Termination"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table class=\"Table\"><tbody><tr><td>\n<p>Tactic </p>\n</td>\n<td>\n<p>Description</p>\n</td>\n</tr><tr><td>\n<p>Harden </p>\n</td>\n<td>\n<p>Application Hardening</p>\n<ul><li>D3-PSEP: Process Segment Execution Prevention</li>\n<li>D3-SAOR: Segment Address Offset Randomization</li>\n</ul></td>\n</tr><tr><td rowspan=\"2\">\n<p>Detect </p>\n</td>\n<td>\n<p>File Analysis</p>\n<ul><li>D3-DA: Dynamic Analysis</li>\n<li>D3-EFA: Emulated File Analysis</li>\n<li>D3-FCR: File Content Rules</li>\n<li>D3-FH: File Hashing</li>\n</ul><p>Network Traffic Analysis</p>\n<ul><li>D3-CSPP: Client-Server Payload Profiling</li>\n<li>D3-NTCD: Network Traffic Community Deviation</li>\n<li>D3-PHDURA: Per Host Download-Upload Ratio Analysis</li>\n<li>D3-PMAD: Protocol Metadata Anomaly Detection</li>\n<li>D3-RTSD: Remote Terminal Session Detection</li>\n<li>D3-UGLPA: User Geolocation Logon Pattern Analysis</li>\n<li>D3-ISVA: Inbound Session Volume Analysis</li>\n</ul></td>\n</tr><tr><td>\n<p>Process Analysis</p>\n<ul><li>D3-DQSA: Database Query String Analysis</li>\n<li>D3-PSMD: Process Self-Modification Detection</li>\n<li>D3-PSA: Process Spawn Analysis</li>\n<li>D3-PLA: Process Lineage Analysis</li>\n</ul></td>\n</tr><tr><td rowspan=\"2\">\n<p>Isolate</p>\n</td>\n<td>\n<p>Network Isolation</p>\n<ul><li>D3-ITF: Inbound Traffic Filtering</li>\n<li>D3-OTF: Outbound Traffic Filtering</li>\n</ul></td>\n</tr><tr><td>\n<p>Execution Isolation</p>\n<ul><li>D3-HBPI: Hardware-based Process Isolation</li>\n<li>D3-MAC: Mandatory Access Control</li>\n<li>D3-EDL: Executable Denylisting</li>\n</ul></td>\n</tr><tr><td>\n<p>Deceive</p>\n</td>\n<td>\n<p>Decoy Object</p>\n<ul><li>D3-DF: Decoy File</li>\n<li>D3-DNR: Decoy Network Resource</li>\n<li>D3-DUC: Decoy User Credential</li>\n</ul></td>\n</tr><tr><td>\n<p>Evict</p>\n</td>\n<td>\n<p>Credential Invalidation</p>\n<ul><li>D3-ACI: Authentication Cache Invalidation</li>\n</ul><p>Process Eviction</p>\n<ul><li>D3-PT: Process Termination</li>\n</ul></td>\n</tr></tbody></table>"
+                },
+                {
+                    "id": "<sentence_0xb7c2293>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p>\n</p>"
+                }
+            ]
+        }
+    ]
+}

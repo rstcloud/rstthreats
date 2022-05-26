@@ -1,0 +1,82 @@
+<div>
+<a name="662037295567096882"></a>
+<h1 class="post-title entry-title">
+Threat Advisory: CaddyWiper
+</h1>
+<img border="0" src="https://blogger.googleusercontent.com/img/a/AVvXsEgbo15ex41UNG6BmeVMXLIp3knR3d1K5mXmKmF2T9Fe1SHZznAHgkurkdUtSGl2pGb6IR-CXm5TrP7XFXcxQmdVUrE7FHY4Vnfiw8FoCVL3FNQosVVx9OzTRjXaYmyU9dLFOfjSma9lMI5YxtErCguEXSR2RD4jP3PuXFg0HIeb7mu9RiIKTlhasV5Y0g=s16000" style="max-width:80%;height:auto;width:auto;"/>
+<h2 id="h.z3em7c6sk55i">Overview</h2>
+Cybersecurity company ESET <a href="https://twitter.com/ESETresearch/status/1503436420886712321">disclosed</a> another Ukraine-focused wiper dubbed "CaddyWiper" on March 14. This wiper is relatively smaller than previous wiper attacks we've seen in Ukraine such as "<a href="https://blog.talosintelligence.com/2022/02/threat-advisory-hermeticwiper.html">HermeticWiper</a>" and "<a href="https://blog.talosintelligence.com/2022/01/ukraine-campaign-delivers-defacement.html">WhisperGate</a>," with a compiled size of just 9KB. 
+The wiper discovered has the same compilation timestamp day (March 14) and initial reports suggest that it was deployed via GPO.
+Cisco Talos is actively conducting analysis to confirm the details included in these reports.
+<a name="more"></a>
+<h2 id="h.2u34o5sdj2yd">Analysis</h2>
+The wiper is relatively small in size and dynamically resolves most of the APIs it uses. Our analysis didn't show any indications of persistency, self-propagation or exploitation code. 
+Before starting any file destruction, it checks to ensure that the machine is not a domain controller. If the machine is a domain controller, it stops execution.
+<img border="0" src="https://blogger.googleusercontent.com/img/a/AVvXsEhUGlHeMmj0CX7ce-Mq6zgFVSF5HwjXmhBNWjL2SzUAeimO-AGkWSphgfPZmCcK6WMnqWSyknzi-eorQAb2sInnlqtVfYAVUb8EsYJRHYQC4MFZlppOrdPrGGcq6rBjPIV8o8NltBj_U-tFDFnqoUNKvZmsg6bPoneyVPPb8ShL60FH-F9DqJ0rDroEFg=s16000" style="max-width:80%;height:auto;width:auto;"/>
+Pseudo-code: CaddyWiper checking for the Domain Controller role of the machine.
+If the system is not a domain controller, the wiper will destroy files on "C:\Users," followed by wiping of all files in the next drive letter until it reaches the "Z" drive. This means that the wiper will also attempt to wipe any network mapped drive attached to the system.
+<img border="0" src="https://blogger.googleusercontent.com/img/a/AVvXsEgrGWD0nCH5xBybspMWeffXFQoBPccvX3Z8McbR7Tb4qIJ7IGQlQe2g4T-RjQFwR40sQRPFvH2Vgqk5nV527IhPU46WHqJ8n-hNY_0zM9jT7DPA5oKpyEiqMWxwmr9qYXec3ZiIDfrTQL0P9GiR9O4nw20UfelsxD90Yd8CWYKZs1ubqY2_8CMQYvI-CA=s16000" style="max-width:80%;height:auto;width:auto;"/>
+File in drives with letters from D:\ overwritten with zeros.
+This ensures that the system will not crash due to the wipe of system files.
+<h3 id="h.px1y8pp14kl6">File wiping algorithm </h3>
+The file destruction algorithm is composed of two stages: a first stage to overwrite files and another to destroy the physical disk layout and the partition tables along with it. For the file destruction, it takes ownership of the files by modifying their ACL entries after it has obtained the '<a href="https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants">SeTakeOwnershipPrivilege</a>'. A file found will then simply be overwritten with zeros. 
+A file that is larger than 10,485,760 bytes (0xA00000) in size will simply have the first 10,485,760 bytes overwritten with zeros.
+<img border="0" src="https://blogger.googleusercontent.com/img/a/AVvXsEhiLxl0D7Tpq0Fpbd2WFcd07p6cuE3OXqfT46uPIIYAudCE7A3gYN6KPaioKxXOMDfdBzqgXnacDn_MT1pXN-eKxOdDY45T9LWplX8yc5gP8pSoeYhJ9eTF-2YE6A9G4mySrojZopwbkdAX10NZ-anRwPZ74W_CyDShrrGfmynMa2jzUT1tFEid35c1JA=s16000" style="max-width:80%;height:auto;width:auto;"/>
+File overwritten with a buffer consisting of zeros.
+The wiper will then move on to the next drive on the system beginning with the "D" drive. It will recursively gain rights to files on a drive and overwrite them with zeros. This is done for the next 23 drives alphabetically (through "Z:\").
+On the second stage, the wiper attempts to set the drive layout of all the physical drives on the system numbered 9 to 0. This will wipe out all <a href="https://docs.microsoft.com/en-us/windows/win32/api/winioctl/ns-winioctl-drive_layout_information_ex">extended information</a> about the physical drive's partitions including MBR, GPT and partition entries.
+<img border="0" src="https://blogger.googleusercontent.com/img/a/AVvXsEg7RerKuKuq3vwdOkwzUUQ1bsy9xsm9B89F9xGKncsUi8kx2cgb5obpeDFUiAGEWZFDZ67c_nKE5G9z2jBKHhDilBQmD5OX0GR22kKYl4OG-lzgyxrkpeRKQ1kZT90SKXKvPalpmWMqA8QugnCFCY1ph55axB40eOIP0_kSxnFmab73OxUBjFcZLR6fhQ=s16000" style="max-width:80%;height:auto;width:auto;"/>
+Wiper recursively performing IOCTL_DISK_SET_DRIVE_LAYOUT_EX requests with a zeroed out buffer.
+Destroying the start of the files and the partitions tables is a common technique seen on other wipers, and its highly effective in preventing the file recovery.
+<h2 id="h.cppg99goporo">Coverage</h2>
+Ways our customers can detect and block this threat are listed below.
+<img border="0" height="622" src="https://blogger.googleusercontent.com/img/a/AVvXsEg1Q05XtWerC-l2uuO2T9kESFJqnXQ6dvYzfvDkpZGsn9FECE8m0C9s2s0xmJ81Mi--URguB4ImJa-FMSfQuXnYn-Ur35dJOInXC7vXorwDj8aW0wJYSuwVbK0ncHdoUavh9q3dALYDo49U7uU5jZyENVTcs-4n7scDJzSzhWn5JC9S5zUrxk9Ny8sb2A=w640-h622" width="640"/>
+<a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/index.html">Cisco Secure Endpoint</a> (formerly AMP for Endpoints) is ideally suited to prevent the execution of the malware detailed in this post. Try Secure Endpoint for free <a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/free-trial.html?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Damp-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Damp-free-trial">here.</a>
+<a href="https://www.cisco.com/c/en/us/products/security/web-security-appliance/index.html">Cisco Secure Web Appliance</a> web scanning prevents access to malicious websites and detects malware used in these attacks.
+<a href="https://www.cisco.com/c/en/us/products/security/email-security/index.html">Cisco Secure Email</a> (formerly Cisco Email Security) can block malicious emails sent by threat actors as part of their campaign. You can try Secure Email for free <a href="https://www.cisco.com/c/en/us/products/security/cloud-mailbox-defense?utm_medium%3Dweb-referral%26utm_source%3Dcisco%26utm_campaign%3Dcmd-free-trial-request%26utm_term%3Dpgm-talos-trial">here</a>.
+<a href="https://www.cisco.com/c/en/us/products/security/firewalls/index.html">Cisco Secure Firewall</a> (formerly Next-Generation Firewall and Firepower NGFW) appliances such as Firepower Threat Defense (FTD), <a href="https://www.cisco.com/c/en/us/products/security/security-management/firepower-device-manager.html">Firepower Device Manager (FDM)</a>, <a href="https://www.cisco.com/c/en/us/products/collateral/security/firepower-ngfw-virtual/datasheet-c78-742858.html">Threat Defense Virtual</a>, <a href="https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html">Adaptive Security Appliance</a> can detect malicious activity associated with this threat.
+<a href="https://www.cisco.com/c/en/us/products/security/threat-grid/index.html">Cisco Secure Malware Analytics</a> (formerly Threat Grid) identifies malicious binaries and builds protection into all Cisco Secure products.
+<a href="https://www.cisco.com/c/en/us/products/security/stealthwatch/index.html">Cisco Secure Network/Cloud Analytics</a> (Stealthwatch/Stealthwatch Cloud) analyzes network traffic automatically and alerts users of potentially unwanted activity on every connected device.
+For guidance on using Cisco Secure Analytics to respond to this threat, please click <a href="https://blogs.cisco.com/security/how-to-respond-to-apache-log4j-using-cisco-secure-analytics">here</a>.
+<a href="https://meraki.cisco.com/products/appliances">Meraki MX</a> appliances can detect malicious activity associated with this threat.
+<a href="https://umbrella.cisco.com/">Umbrella</a>, Secure Internet Gateway (SIG), blocks users from connecting to malicious domains, IPs and URLs, whether users are on or off the corporate network. Sign up for a free trial of Umbrella <a href="https://signup.umbrella.com/?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Dumbrella-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Dautomated-free-trial">here</a>.
+Additional protections with context to your specific environment and threat data are available from the <a href="https://www.cisco.com/c/en/us/products/security/firepower-management-center/index.html">Firewall Management Center</a>.
+<a href="https://signup.duo.com/?utm_source%3Dtalos%26utm_medium%3Dreferral%26utm_campaign%3Dduo-free-trial">Cisco Duo</a> provides multi-factor authentication for users to ensure only those authorized are accessing your network. 
+Open-source Snort Subscriber Rule Set customers can stay up to date by downloading the latest rule pack available for purchase on <a href="https://www.snort.org/products">Snort.org</a>.
+Snort SIDs: 59268-59269
+The following ClamAV signatures available for protection against this threat:
+<ul>
+<li>
+Win.Malware.CaddyWiper-9941573-1</li>
+</ul>
+<h2 id="h.3khko8xxtqvd">IOCs</h2>
+a294620543334a721a2ae8eaaf9680a0786f4b9a216d75b55cfd28f39e9430ea1e87e9b5ee7597bdce796490f3ee09211df48ba1d11f6e2f5b255f05cc0ba176ea6a416b320f32261da8dafcf2faf088924f99a3a84f7b43b964637ea87aef72f1e8844dbfc812d39f369e7670545a29efef6764d673038b1c3edd11561d6902
+Posted by
+Asheer Malhotra
+at
+<a class="timestamp-link" href="http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html" rel="bookmark" title="permanent link">12:48 PM</a>
+<a href="https://www.blogger.com/post-edit.g?blogID=1029833275466591797&amp;postID=662037295567096882&amp;from=pencil" title="Edit Post">
+<img alt="" class="icon-action" height="18" src="https://img2.blogblog.com/img/icon18_edit_allbkg.gif" width="18"/>
+</a>
+Labels:
+<a href="http://blog.talosintelligence.com/search/label/Malware" rel="tag">Malware</a>,
+<a href="http://blog.talosintelligence.com/search/label/SecureX" rel="tag">SecureX</a>,
+<a href="http://blog.talosintelligence.com/search/label/Ukraine" rel="tag">Ukraine</a>,
+<a href="http://blog.talosintelligence.com/search/label/wiper" rel="tag">wiper</a>
+Share This Post
+<a class="facebook" href="https://www.facebook.com/sharer.php?u=http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html&amp;text=Threat%20Advisory:%20CaddyWiper" rel="nofollow" target="_blank" title="Share This On Facebook">
+<img alt="Facebook share" border="0" src="https://www.talosintelligence.com/assets/icon_fb-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="twitter" href="https://twitter.com/share?url=http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html&amp;text=Threat%20Advisory:%20CaddyWiper" rel="nofollow" target="_blank" title="Tweet This">
+<img alt="Twitter share" border="0" src="https://www.talosintelligence.com/assets/icon_tw-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html&amp;text=Threat%20Advisory:%20CaddyWiper" rel="nofollow" target="_blank" title="Share This On Linkedin">
+<img alt="Linkedin share" border="0" src="https://www.talosintelligence.com/assets/icon_li-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="reddit" href="https://www.reddit.com/submit?url=http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html&amp;title=Threat%20Advisory:%20CaddyWiper" rel="nofollow" target="_blank" title="Reddit This">
+<img alt="Reddit share" border="0" src="https://www.talosintelligence.com/assets/icon_re-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a href="mailto:?body=http://blog.talosintelligence.com/2022/03/threat-advisory-caddywiper.html&amp;subject=Threat%20Advisory:%20CaddyWiper">
+<img alt="Email This" border="0" src="https://www.talosintelligence.com/assets/icon_em-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+</div>

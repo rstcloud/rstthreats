@@ -1,0 +1,373 @@
+<div>
+<h2><a href="https://www.fortinet.com/fortiguard/labs.html?utm_source=blog&amp;utm_medium=campaign&amp;utm_campaign=FortiGuardLabs">FortiGuard Labs</a> Research</h2>
+<p>Affected platforms: Microsoft Windows
+Impacted parties: Microsoft Windows Users
+Impact: Controls victim’s device and collects sensitive information
+Severity level: Critical</p>
+<p>Remcos RAT (Remote Access Trojan) was originally designed as a professional tool to remotely control computers. Remcos RAT is recognized as a malware family because it has been abused by hackers to secretly control victims’ devices since its first version was published on July 21, 2016. Remcos RAT is commercial software that is sold online.</p>
+<img alt="Figure 1: Example of Remcos RAT being sold online" class="" src="https://www.fortinet.com/blog/threat-research/latest-remcos-rat-phishing/_jcr_content/root/responsivegrid/image.img.png/1649207001819/imggg.png" style="max-width:80%;height:auto;width:auto;"/>
+Figure 1: Example of Remcos RAT being sold online
+<p>On this webpage, it provides two versions: professional edition (with all features included) and free edition (with restricted features).</p>
+<p>This analysis is based on Remcos RAT being used by hackers to control victims’ devices delivered by a phishing campaign, which was caught by Fortinet’s FortiGuard Labs recently.</p>
+<p>In this analysis, you will learn:</p>
+<ul>
+<li>How the phishing campaign delivers Remcos RAT onto the victim’s device</li>
+<li>How Remcos executes on the device</li>
+<li>What sensitive information it could steal from a victim</li>
+<li>How Remcos connects to its C2 server</li>
+<li>What commands this Remcos provides to control the victim’s device</li>
+</ul>
+<h2>The Phishing Email</h2>
+<img alt="Figure 2: Screenshot of the phishing email content" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 2: Screenshot of the phishing email content
+<p>As you can see from the email content shown in Figure 2, the hacker disguised the phishing email as a payment notification from a trusted bank and asked the recipient to open the attached Excel file that is protected by a password.</p>
+<h3>Excel File Leads to Download of Remcos via VBS and PowerShell</h3>
+<p>Once the attached Excel document is opened in the Excel program, it asks for a password to view the document, which has already been provided in the email. It then shows the document in the Excel program like Figure 3. Because the file contains Macro code, it shows a yellow security warning bar to warn the victim of the danger. </p>
+<img alt="Figure 3: Screen shown when the Excel document is opened in the Excel program" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 3: Screen shown when the Excel document is opened in the Excel program
+<p>The file message lures the victim into clicking the Enable Content button to bypass the warning and execute the malicious macro code.</p>
+<p>The macro has a function called “Wookbook_Active()” that is called automatically when it opens. Its task is to extract VBS code from the cells into a file “%AppData%\HobYQ.vbs” and then execute it.</p>
+<p>To protect the Remcos payload file, it uses a super sophisticated way to download it. In this way, it executes both VBS and PowerShell script codes.</p>
+<p>“HobYQ.vbs” runs a segment of dynamically spliced PowerShell code to download another VBS file (“flip.vbs”) from the attacker’s server and run it. Next, “flip.vbs” continues to download a file (called “mem.txt”) from the server, which is a piece of encoded VBS code that will be executed later in “flip.vbs” to download the final file from the same server, which is called “faze.jpg”. In Figure 4, it shows the captured traffic for the three downloaded files, “flip.vbs,” “mem.txt,” and “faze.jpg.”</p>
+<img alt="Figure 4: “HobYQ.vbs” leads to downloading three files" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 4: “HobYQ.vbs” leads to downloading three files
+<p>The bottom of Figure 4 shows part of the response packet of “faze.jpg”. Of course, it is not image file, but an obfuscated PowerShell code file. There are three pieces of encoded data defined in three array variables, which have been simplified in Figure 5 in three red boxes. The PowerShell code that is carried in “faze.jpg” is executed by “flip.vbs”.</p>
+<img alt=" Figure 5: The simplified PowerShell code of “faze.jpg”" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+ Figure 5: The simplified PowerShell code of “faze.jpg”
+<p>Let me then explain how the PowerShell code works here.</p>
+<p>The values for the two variables, $MNB and $IRjR, are both encoded GZIP compression payloads (they start with “1F 8B…”). After decompression, $MNB is .Net Framework Dll file and $IRjR is the Remcos payload file.</p>
+<p>The binary value that is set to variable “$qgRf” is a dynamic method called tMCfkSD() for decompression.</p>
+<p>It calls tMCfkSD() to decompress the .Net Dll from $MNB into $byUsWxe. At last, it loads the .Net Dll into current PowerShell execution environment by calling “Load” and the function “Black()” from class “toooyou” is called with “RegAsm.exe” and compressed Remcos Payload ($IRjR).</p>
+<h3>.Net Framework Dll File Performs Process Hollowing</h3>
+<img alt="Figure 6: Break on .Net Dll toooyou.Black()" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 6: Break on .Net Dll toooyou.Black()
+<p>The .Net Dll is named GC.dll as you can see in Figure 6. The two passed parameters are shown in “Locals”. Its code is obfuscated. According to my analysis, it first dynamically extracts another Dll from its resource section named lime.dll. Next, it decompresses the Remcos payload, which will be passed to a function called "k78er0sdfffff.o70sdaf45gfg(System.String, Byte[])" that is from lime.dll at the time the function is called. Actually, this Dll is used to perform the process hollowing that is injecting the Remcos payload into a newly-created “RegAsm.exe” process. Once the function (k78er0sdfffff.o70sdaf45gfg()) is invoked, it finds “RegAsm.exe” from below locations on the victim’s device. In case that it fails to find the file, it exits from PowerShell without running the Remcos.</p>
+<p>The hardcoded location list:</p>
+<p>array[&lt;Module&gt;.C1790263187] = "C:\\WINDOWS\\syswow64\\";
+ array[&lt;Module&gt;.C2710025604] = "C:\\WINDOWS\\system32\\";
+ array[&lt;Module&gt;.C3326009313] = "C:\\WINDOWS\\";
+ array[&lt;Module&gt;.C931285936] = "C:\\WINDOWS\\syswow64\\WindowsPowerShell\\v1.0\\";
+ array[&lt;Module&gt;.const_4] = "C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\";
+ array[&lt;Module&gt;.C3873335087] = "C:\\Windows\\Microsoft.NET\\Framework\\v4.0.30319\\";</p>
+<p>In my testing environment, it has this file at "C:\Windows\\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe".</p>
+<p>As you may know, it needs to call several APIs to finish the process hollowing, which are: CreateProcess() with CREATE_SUSPENDED flag, WriteProcessMemory(), GetThreadContext(), SetThreadContext() and so on. As shown in Figure 7, it is about to call API CreateProcessA() to create a suspended RegAsm.exe process from Lime.dll.</p>
+<img alt="Figure 7 Call CreateProcessA() with CREATE_SUSPENDED flag" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 7: Call CreateProcessA() with CREATE_SUSPENDED flag
+<p>When the Remcos payload is injected and deployed onto the RegAsm.exe, API ResumeThread() will be called to have RegAsm.exe resume to run the Remcos RAT on the victim’s device.</p>
+<h3>Dive into Remcos Payload</h3>
+<p>Per my analysis, Remcos was written in C++ language with templates. What we already captured is the latest version, 3.4.0 Pro, which was published on February 10, 2022. I dissected the Remcos payload file from this section to learn how it controls the victim’s device.</p>
+<p>From the analysis of its previous versions in the past years, Remcos used RC4 encryption to encrypt or decrypt both the local data and the traffic data between Remcos and C2 servers. From the version 3.0.0 Pro on, it has changed the encryption algorithm to AES-128 bit for encrypting or decrypting the traffic data. Therefore, it is now using both encryption algorithms, RC4 for local data and AES for traffic data in this variant.</p>
+<img alt="Figure 8: Remcos configuration block encrypted in “SETTINGS” resource" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 8: Remcos configuration block encrypted in “SETTINGS” resource
+<p>Every Remcos contains an RC4 encrypted configuration block in its PE resource section, named “SETTINGS” as shown in Figure 8, where the first byte “B1” is the size of the following RC4 key that is in a red box and the rest data is the encrypted Remcos configuration block.</p>
+<p>The first thing Remcos does is to decrypt the configuration block, which will be referred to throughout Remcos lifetime. It contains but not limited to the C2’s server information, Remcos assigned name for attacker to recognize the victim, Remcos sub-key name in registry, the name of log file for recording victim’s keylogger and clipboard data, many flags telling Remcos how to start its features in the victim’s device, as well as the authentication data used to establish connection to the C2 server.</p>
+<p>The workflow of Remcos is very clear that it starts many threads to perform auto-start work according to the flags defined in the configuration block. It includes:</p>
+<ul>
+<li>Adding Remcos to the auto-run group in the system registry</li>
+<li>Starting a watchdog program (Remcos’ daemon program)</li>
+<li>Recording the victim’s audio input from an input device ( microphone)</li>
+<li>Capturing victim’s screenshots at startup</li>
+<li>Disabling UAC (User Account Control) on the victim’s device</li>
+<li>And so on</li>
+</ul>
+<p>Remcos is able to record the victim’s sensitive information in a log file (file name is from the configuration block) from time to time, like keyboard inputs (keylogger), data on the system clipboard, and the title of the topmost program that the victim’s typing in. In order to do so, it needs to set a keyboard hook by calling API SetWindowsHookExA() and starts a thread to check every 500 microseconds. Figure 9 shows the ASM code snippet of setting such hook.</p>
+<img alt="Figure 9 Set keyboard Windows Hook" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 9: Set keyboard Windows Hook
+<p>Below is an example of “logs.dat” with what Remcos has obtained from my test environment, such as recording date and time, topmost program titles, victim’s idle time, and clipboard data.</p>
+<img alt="Figure: 10 Example of information saved in “log.dat”" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure: 10: Example of information saved in “log.dat”
+<p>The next step in the Remcos workflow is to connect to its C2 server per the information from the configuration block.</p>
+<h3>Communicating with the C2 Server</h3>
+<p>Remcos uses TLS v1.3 protocol to communicate with the C2 server, which is implemented by itself (not using Windows APIs) on the TLS handshake and authentication as I mentioned before.</p>
+<p>Remcos then collects the basic information from the victim’s system and submits it in the first packet to the C2 server. The packet number for the first packet is 4BH. The packet to go through AES encryption is shown below.</p>
+<img alt="Figure 11 4BH packet plaintext content before AES encryption" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 11: 4BH packet plaintext content before AES encryption
+<p>The victim’s basic information is enclosed in this packet. Let’s take a look at the packet structure.</p>
+<p>The first “24 04 FF 00” is the packet magic ID that comes from the decrypted configuration block, the subsequent dword “A1 02 00 00” (21AH) is the size of following data, the next dword “4B 00 00 00” (4BH) is the packet number. The entire rest data are the collected basic information of the victim’s device, which includes but not limited to:</p>
+<ul>
+<li>Remcos assigned name “Shiesty” (from configuration block)</li>
+<li>Victim’s user name and computer name</li>
+<li>Windows edition information, total RAM (3757629400) in bytes</li>
+<li>Remcos version (3.4.0 Pro)</li>
+<li>The full path of current RegAsm.exe, the title of the currently active program (the victim’s using)</li>
+<li>Victim’s idle time</li>
+<li>The system’s uptime</li>
+<li>CPU information</li>
+<li>C2 server host</li>
+<li>Remcos payload type (EXE or DLL)</li>
+</ul>
+<p>All above value fields are split by a separator - “7C 1E 1E 1F 7C” (shown as “|…|” in string).</p>
+<p>As long as the C2 server receives this 4BH packet, it shows the victim in the “Connection” subtab, as shown in Figure 12. Since then the attacker can control the victim’s device by just right clicking on the item (red box) and selecting the commands they wanted.</p>
+<img alt="Figure 12: How C2 server looks when receiving a 4BH packet" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 12: How C2 server looks when receiving a 4BH packet
+<p>Meanwhile, Remcos registers a callback function that parses the C2’s commands and goes to an infinite loop to wait for the upcoming control commands from the attacker’s C2 server.</p>
+<h2>Control Commands</h2>
+<p>From the registered callback function, we learned that this Remcos variant provides 87 control commands, which have been categorized in below groups:</p>
+<ul>
+<li>System: Screen Capture, File Manager, File Search, Process Manager, etc.</li>
+<li>Surveillance: Webcam, Microphone, Keylogger, Screenlogger, etc.</li>
+<li>Network: Proxy, Downloader, Open Webpage, etc.</li>
+<li>Extra: Dll Loader, Logins Cleaner, Audio Player, etc.</li>
+<li>Remcos: Reconnect, Restart, Show, Update, Close, Uninstall, etc.</li>
+<li>Heartbeat packet</li>
+</ul>
+<p>The C2 server sends a heartbeat packet to Remcos every 40 seconds. Once Remcos has connected to the C2 server, the heartbeat makes sure this Remcos is alive. The C2’s command packet has same format. I’ll take the heartbeat packet as an instance to explain, which looks like:</p>
+<p>24 04 FF 00 0C 00 00 00 01 00 00 00 30 7C 1E 1E 1F 7C 32 30</p>
+<p>After the packet magic ID (“24 04 FF 00”) and packet size (0x0C), “01 00 00 00” is heartbeat command number (0x01), and rest is command data being split by “7C 1E 1E 1F 7C” that are 30 (ASCII “0”) and 32 30 (ASCII “20”). Remcos then obtains the title of currently active window as well as a time value and sends them to the C2 server in packet number 4CH.</p>
+<p>The following is a control command list:</p>
+<p> </p>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td valign="top" width="143"><p>Name</p>
+</td>
+<td valign="top" width="110"><p>C&amp;C Number</p>
+</td>
+<td valign="top" width="337"><p>Description</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>HeartBeat</p>
+</td>
+<td valign="top" width="110"><p>01H</p>
+</td>
+<td valign="top" width="337"><p>HeartBeat packet.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Screen Capture</p>
+</td>
+<td valign="top" width="110"><p>10H</p>
+</td>
+<td valign="top" width="337"><p>Control the victim’s device in a remote desktop.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>File Manager</p>
+</td>
+<td valign="top" width="110"><p>98H</p>
+</td>
+<td valign="top" width="337"><p>Manager file system on victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>File Search</p>
+</td>
+<td valign="top" width="110"><p>8FH</p>
+</td>
+<td valign="top" width="337"><p>Search file on victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Process Manager</p>
+</td>
+<td valign="top" width="110"><p>06H</p>
+</td>
+<td valign="top" width="337"><p>Manager running process.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Service Manager</p>
+</td>
+<td valign="top" width="110"><p>34H</p>
+</td>
+<td valign="top" width="337"><p>Manager victim’s system service.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Registry Editor</p>
+</td>
+<td valign="top" width="110"><p>2FH</p>
+</td>
+<td valign="top" width="337"><p>View, Edit victim’s system registry.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Installed Program</p>
+</td>
+<td valign="top" width="110"><p>03H</p>
+</td>
+<td valign="top" width="337"><p>List all installed software.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Windows Manager</p>
+</td>
+<td valign="top" width="110"><p>08H</p>
+</td>
+<td valign="top" width="337"><p>Open a Task Manager similar interface.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Clipboard Manager</p>
+</td>
+<td valign="top" width="110"><p>28H</p>
+</td>
+<td valign="top" width="337"><p>View, Set, and Empty victim’s system clipboard.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Command Line</p>
+</td>
+<td valign="top" width="110"><p>0EH</p>
+</td>
+<td valign="top" width="337"><p>Start a shell (cmd.exe) with command.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Execute Command</p>
+</td>
+<td valign="top" width="110"><p>0DH</p>
+</td>
+<td valign="top" width="337"><p>Execute a command in the victim’s device, like Notepad.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Remote Scripting</p>
+</td>
+<td valign="top" width="110"><p>2EH</p>
+</td>
+<td valign="top" width="337"><p>Execute JS, VBS, and Batch on the victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Set Wallpaper</p>
+</td>
+<td valign="top" width="110"><p>92H</p>
+</td>
+<td valign="top" width="337"><p>Set the victim’s desktop wallpaper with a picture.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Power Manager</p>
+</td>
+<td valign="top" width="110"><p>27H</p>
+</td>
+<td valign="top" width="337"><p>Log off, Sleep, Hibernate, Shut down, and Restart.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Webcam</p>
+</td>
+<td valign="top" width="110"><p>1BH</p>
+</td>
+<td valign="top" width="337"><p>Control victim’s camera to work</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Microphone</p>
+</td>
+<td valign="top" width="110"><p>1DH</p>
+</td>
+<td valign="top" width="337"><p>Turn on the victim’s audio input device, like Microphone.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Keylogger</p>
+</td>
+<td valign="top" width="110"><p>13H</p>
+</td>
+<td valign="top" width="337"><p>Start Keylogger.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Screenlogger</p>
+</td>
+<td valign="top" width="110"><p>10H</p>
+</td>
+<td valign="top" width="337"><p>Start Screenlogger.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Browser history</p>
+</td>
+<td valign="top" width="110"><p>18H</p>
+</td>
+<td valign="top" width="337"><p>Clear browser’s history.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Proxy</p>
+</td>
+<td valign="top" width="110"><p>32H</p>
+</td>
+<td valign="top" width="337"><p>Set proxy to victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Open Webpage</p>
+</td>
+<td valign="top" width="110"><p>0FH</p>
+</td>
+<td valign="top" width="337"><p>Open a URL with the victim’s default browser.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Chat</p>
+</td>
+<td valign="top" width="110"><p>30H</p>
+</td>
+<td valign="top" width="337"><p>Pop up a chatting box to chat with the victim.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>MessageBox</p>
+</td>
+<td valign="top" width="110"><p>26H</p>
+</td>
+<td valign="top" width="337"><p>Pop up a message to the victim.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Downloader</p>
+</td>
+<td valign="top" width="110"><p>B2H</p>
+</td>
+<td valign="top" width="337"><p>Download and execute a file on the victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Dll Loader</p>
+</td>
+<td valign="top" width="110"><p>2CH</p>
+</td>
+<td valign="top" width="337"><p>Execute a Dll module on the victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Audio Player</p>
+</td>
+<td valign="top" width="110"><p>A3H</p>
+</td>
+<td valign="top" width="337"><p>Play an audio sound to the victim.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Logins Cleaner</p>
+</td>
+<td valign="top" width="110"><p>18H</p>
+</td>
+<td valign="top" width="337"><p>Clear browser’s logins and cookies.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Update</p>
+</td>
+<td valign="top" width="110"><p>24H</p>
+</td>
+<td valign="top" width="337"><p>Update Remcos.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Uninstall</p>
+</td>
+<td valign="top" width="110"><p>22H</p>
+</td>
+<td valign="top" width="337"><p>Uninstall Remcos from the victim’s device.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Close</p>
+</td>
+<td valign="top" width="110"><p>21H</p>
+</td>
+<td valign="top" width="337"><p>Kill currently running Remcos.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Restart</p>
+</td>
+<td valign="top" width="110"><p>23H</p>
+</td>
+<td valign="top" width="337"><p>Restart Remcos.</p>
+</td>
+</tr><tr><td valign="top" width="143"><p>Elevate</p>
+</td>
+<td valign="top" width="110"><p>27H</p>
+</td>
+<td valign="top" width="337"><p>Elevate Remcos’ privileges.</p>
+</td>
+</tr></tbody></table>
+<p>Besides the listed control commands, Remcos also has many sub-commands to support some of the control commands in sub-connections, like Service Manager command 34H with sub-commands: 03H to stop a service, 04H to pause a service, 01H to restart a service.</p>
+<h2>Conclusion</h2>
+<p>In this analysis blog, I explained how a phishing email delivers an Excel document with malicious Macro into the victim’s device.</p>
+<p>Next, we went through how it executes multiple VBS and Powershell scripts to download the Remcos payload as well as how the Remcos payload is deployed by a .Net Dll into the “RegAsm.exe” process via Process Hollowing.</p>
+<p>Then, I dissected Remcos’s workflow according to its code and how a configuration block is decrypted from the PE resource section. I also explained how Remcos established connection to its C2 server.</p>
+<p>Finally, through several examples, I elaborated the structure of the control and command packets in plaintext as well as what commands Remcos is able to use to control the victim’s device and the control command list.</p>
+<h2>Fortinet Protections</h2>
+<p>Fortinet customers are already protected from this malware by FortiGuard’s Web Filtering, Antivirus, FortiMail, FortiClient, FortiEDR services, IPS services, and CDR (Content Disarm and Reconstruction) services, as follows:</p>
+<p>All relevant URLs have been rated as "Malicious Websites" by the FortiGuard Web Filtering service.</p>
+<p>The captured Excel sample and the downloaded Remcos payload files are detected as "VBA/Remcos.REM!tr " and "W32/Rescoms.M!tr" and are blocked by the FortiGuard Antivirus service.</p>
+<p>FortiEDR detects both the Excel file and Remcos payload file as malicious based on its behavior.</p>
+<p>Fortinet also released IPS signature “Remcos.Botnet” to detect and block Remcos’ C&amp;C traffic to protect our customers.</p>
+<p>FortiGuard Content, Disarm, and Reconstruction (CDR) can protect users from this attack by enabling the following option:</p>
+<ul>
+<li>Enable/disable stripping of linked objects in Microsoft Office documents.</li>
+</ul>
+<p>In addition to these protections, Fortinet has multiple solutions designed to help train users to understand and detect phishing threats:</p>
+<p>The <a href="https://www.fortinet.com/products/phishing-simulation">FortiPhish Phishing Simulation Service</a> uses real-world simulations to help organizations test user awareness and vigilance to phishing threats and to train and reinforce proper practices when users encounter targeted phishing attacks.</p>
+<p>In addition to these protections, we suggest that organizations also have their end users go through our FREE NSE training: <a href="https://www.fortinet.com/products/phishing-simulation">NSE 1 – Information Security Awareness</a>. It includes a module on Internet threats that is designed to help end users learn how to identify and protect themselves from various types of phishing attacks.</p>
+<h2>IOCs</h2>
+<h3>URLs:</h3>
+<p>hxxp://209[.]127[.]19[.]101/flip.vbs</p>
+<p>hxxp://209[.]127[.]19[.]101/mem.txt</p>
+<p>hxxp://209[.]127[.]19[.]101/faze.jpg</p>
+<p>shiestynerd[.]dvrlists[.]com:10174</p>
+<p>mimi44[.]ddns[.]net:2405</p>
+<p>harveyautos110[.]ddns[.]net:2404</p>
+<p>harveyautos111[.]hopto[.]org:2404</p>
+<p>harveyautos112[.]ddns[.]net:2404</p>
+<p>harvey205[.]camdvr[.]org:2404</p>
+<p>harvey206[.]casacam[.]net:2404</p>
+<p>harvey207[.]accesscam[.]org:2404</p>
+<p>23[.]226[.]128[.]197:2404</p>
+<p>achimumuazi[.]hopto[.]org:2311</p>
+<p>xhangzhi[.]duckdns[.]org:2404</p>
+<h3>Sample SHA-256 Involved in the Campaign:</h3>
+<p>[Excel Document]</p>
+<p>FBB0575DFD7C1CFE48FB3AA895FBE6C8A554F06899A7152D04CFC39D1D4744AD</p>
+<p>[Captured Remcos samples]</p>
+<p>8F6DD0DB9E799393A61D6C9CF6495C164E1B13CB8E6B153B32359D5F07E793D2
+DA609D3211D60D5B11FEAEAA717834CBE86E18103A1ED4FC09C2EE3E1CFF9442
+737E11913EFB64ACCF1B88532C7CE8606676684D8364DDD027926F9FFC6ECFFB
+B263876EBC01B310A8BFC58477523981184EB7E8F2DC955F0CF8E62124EB679A
+2C8B78FC6C4FE463DAC9D39FDE2871F1BB2605453BC0F2D57C7549CF5D07AA86
+A1A1395D0602A473FCC81BA7D1D90C3FB154321D1721E0069722B902B1057CB0
+6B816D84ACCC3E1EBCE3EF55B64B0C5E0485228790DF903E68466690E58B5009
+</p>
+<p>Learn more about Fortinet’s <a href="https://www.fortinet.com/fortiguard/labs?utm_source=blog&amp;utm_campaign=fortiguard-labs">FortiGuard Labs</a> threat research and intelligence organization and the FortiGuard Security Subscriptions and Services <a href="https://www.fortinet.com/fortiguard/labs?tab=security-bundles&amp;utm_source=blog&amp;utm_campaign=security-bundles">portfolio</a>.</p>
+</div>

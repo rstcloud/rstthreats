@@ -1,0 +1,1759 @@
+{
+    "id": "<report_0x6e62dc62>",
+    "url": "https://decoded.avast.io/luigicamastra/operation-dragon-castling-apt-group-targeting-betting-companies/?utm_source=rss&utm_medium=rss&utm_campaign=operation-dragon-castling-apt-group-targeting-betting-companies",
+    "title": "Operation Dragon Castling: APT group targeting betting companies.Introduction.Infrastructure and toolset.Conclusion.Core module mutexes:.Operation Dragon Castling: APT group targeting betting companies",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0x5a54f291>",
+            "title": "Introduction",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x21bf983f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x9377d398>": "APT",
+                        "<code_0x6cd10870>": "Operation Dragon Castling",
+                        "<code_0x34880f71>": "South East Asia",
+                        "<code_0x63943c0>": "Taiwan",
+                        "<code_0xf46af2f9>": "Philippines",
+                        "<code_0xc59c4b3f>": "Hong Kong",
+                        "<code_0x8062c69d>": "Chinese speaking APT group"
+                    },
+                    "text": "We recently discovered an APT campaign we are calling Operation Dragon Castling. The campaign is targeting what appears to be betting companies in South East Asia, more specifically companies located in Taiwan, the Philippines, and Hong Kong. With moderate confidence, we can attribute the campaign to a Chinese speaking APT group, but unfortunately cannot attribute the attack to a specific group and are not sure what the attackers are after.",
+                    "html": "<p>We recently discovered an <code>APT</code> campaign we are calling <code>Operation Dragon Castling</code>. The campaign is targeting what appears to be betting companies in <code>South East Asia</code>, more specifically companies located in <code>Taiwan</code>, the <code>Philippines</code>, and <code>Hong Kong</code>. With moderate confidence, we can attribute the campaign to a <code>Chinese speaking APT group</code>, but unfortunately cannot attribute the attack to a specific group and are not sure what the attackers are after.</p>"
+                },
+                {
+                    "id": "<sentence_0xd0f5b01d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd72dd475>": "https://blogs.blackberry.com/en/2017/06/breaking-down-ff-rat-malware",
+                        "<a_0x44c03ce9>": "https://researchcenter.paloaltonetworks.com/2015/04/unit-42-identifies-new-dragonok-backdoor-malware-deployed-against-japanese-targets/",
+                        "<code_0xba385032>": "MulCom backdoor",
+                        "<code_0xb1dea5c4>": "FFRat",
+                        "<code_0x970abbcd>": "BlackBerry Cylance Threat Research Team",
+                        "<code_0xc27d87e1>": "2017",
+                        "<code_0xe2008d4f>": "Palo Alto Networks",
+                        "<code_0xbbc1477b>": "2015"
+                    },
+                    "text": "We found notable code similarity between one of the modules used by this APT group (the MulCom backdoor) and the FFRat samples described by the BlackBerry Cylance Threat Research Team in their 2017 report and Palo Alto Networks in their 2015 report. Based on this, we suspect that the FFRat codebase is being shared between several Chinese adversary groups. Unfortunately, this is not sufficient for attribution as FFRat itself was never reliably attributed.",
+                    "html": "<p>We found notable code similarity between one of the modules used by this APT group (the <code>MulCom backdoor</code>) and the <code>FFRat</code> samples described by the <code>BlackBerry Cylance Threat Research Team</code> in their <code>2017</code> <a href=\"https://blogs.blackberry.com/en/2017/06/breaking-down-ff-rat-malware\" rel=\"noreferrer noopener\" target=\"_blank\">report</a> and <code>Palo Alto Networks</code> in their <code>2015</code> <a href=\"https://researchcenter.paloaltonetworks.com/2015/04/unit-42-identifies-new-dragonok-backdoor-malware-deployed-against-japanese-targets/\" rel=\"noreferrer noopener\" target=\"_blank\">report</a>. Based on this, we suspect that the FFRat codebase is being shared between several Chinese adversary groups. Unfortunately, this is not sufficient for attribution as FFRat itself was never reliably attributed.</p>"
+                },
+                {
+                    "id": "<sentence_0xcac733af>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x6bdb0508>": "WPS",
+                        "<code_0x564b3566>": "Office"
+                    },
+                    "text": "In this blogpost we will describe the malware used in these attacks and the backdoor planted by the APT group, as well as other malicious files used to gain persistence and access to the infected machines. We will also discuss the two infection vectors we saw being used to deliver the malware: an infected installer and exploitation of a vulnerable legitimate application, WPS Office.",
+                    "html": "<p>In this blogpost we will describe the malware used in these attacks and the backdoor planted by the APT group, as well as other malicious files used to gain persistence and access to the infected machines. We will also discuss the two infection vectors we saw being used to deliver the malware: an infected installer and exploitation of a vulnerable legitimate application, <code>WPS</code> <code>Office</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0x43082542>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7fbcf360>": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24934"
+                    },
+                    "text": "We identified a new vulnerability (CVE-2022-24934) in the WPS Office updater wpsupdate.exe, which we suspect that the attackers abused.",
+                    "html": "<p>We identified a new vulnerability (<a href=\"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24934\" rel=\"noreferrer noopener\" target=\"_blank\">CVE-2022-24934</a>) in the WPS Office updater wpsupdate.exe, which we suspect that the attackers abused.</p>"
+                },
+                {
+                    "id": "<sentence_0xee2f79ef>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xbb128135>": "https://teamt5.org/en/",
+                        "<code_0xf9dd2ec7>": "TeamT5"
+                    },
+                    "text": "We would like to thank Taiwans TeamT5 for providing us with IoCs related to the infection vector.",
+                    "html": "<p>We would like to thank Taiwan\u2019s <code><a href=\"https://teamt5.org/en/\" rel=\"noreferrer noopener\" target=\"_blank\">TeamT5</a></code> for providing us with IoCs related to the infection vector.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf3338322>",
+            "title": "Infrastructure and toolset",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1527a444>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x50dbe590>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/final.drawio.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/final.drawio.png\"><img alt=\"\" class=\"wp-image-5539\" height=\"571\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/final.drawio.png\" width=\"850\"/></a></figure>"
+                },
+                {
+                    "id": "<sentence_0xc090d8df>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xd702db66>": "CorePlugin"
+                    },
+                    "text": "In the diagram above, we describe the relations between the malicious files. Some of the relations might not be accurate, e.g. we are not entirely sure if the MulCom backdoor is loaded by the CorePlugin. However, we strongly believe that it is one of the malicious files used in this campaign.",
+                    "html": "<p>In the diagram above, we describe the relations between the malicious files. Some of the relations might not be accurate, e.g. we are not entirely sure if the MulCom backdoor is loaded by the <code>CorePlugin</code>. However, we strongly believe that it is one of the malicious files used in this campaign. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc7264e9>",
+            "title": "Conclusion",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdae94f0d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xa3468215>": "FFRat ",
+                        "<code_0x396d3707>": "MulCom ",
+                        "<code_0x6d774db2>": "FFRat ",
+                        "<code_0x91f482cb>": "\"FormerFirstRAT''",
+                        "<code_0xf992ed37>": " DragonOK group",
+                        "<code_0xf253f412>": "PoisonIvy",
+                        "<code_0x41f1020a>": "PlugX "
+                    },
+                    "text": "We have described a robust and modular toolset used most likely by a Chinese speaking APT group targeting gambling-related companies in South East Asia. As we mentioned in this blogpost, there are notable code similarities between FFRat samples and the MulCom backdoor. FFRat or \"FormerFirstRAT'' has been publicly associated with the DragonOK group according to the Palo Alto Network report, which has in turn been associated with backdoors like PoisonIvy and PlugX tools commonly used by Chinese speaking attackers.",
+                    "html": "<p>We have described a robust and modular toolset used most likely by a Chinese speaking APT group targeting gambling-related companies in South East Asia. As we mentioned in this blogpost, there are notable code similarities between <code>FFRat </code>samples and the <code>MulCom </code>backdoor. <code>FFRat </code>or <code>\"FormerFirstRAT''</code> has been publicly associated with the<code> DragonOK group</code> according to the Palo Alto Network report, which has in turn been associated with backdoors like <code>PoisonIvy</code> and <code>PlugX </code>\u2013 tools commonly used by Chinese speaking attackers.</p>"
+                },
+                {
+                    "id": "<sentence_0xd883d02e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6be09850>": "https://www.wps.com/about-us/"
+                    },
+                    "text": "We also described two different infection vectors, one of which weaponized a vulnerable WPS Office updater. We rate the threat this infection vector represents as very high, as WPS Office claims to have 1.2 billion installations worldwide, and this vulnerability potentially allows a simple way to execute arbitrary code on any of these devices. We have contacted WPS Office about the vulnerability we discovered and it has since been fixed.",
+                    "html": "<p>We also described two different infection vectors, one of which weaponized a vulnerable WPS Office updater. We rate the threat this infection vector represents as very high, as WPS Office claims to have <a href=\"https://www.wps.com/about-us/\" rel=\"noreferrer noopener\" target=\"_blank\">1.2 billion installations worldwide</a>, and this vulnerability potentially allows a simple way to execute arbitrary code on any of these devices. We have contacted WPS Office about the vulnerability we discovered and it has since been fixed.</p>"
+                },
+                {
+                    "id": "<sentence_0xd4930d11>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Our research points to some unanswered questions, such as reliable attribution and the attackers motivation.",
+                    "html": "<p>Our research points to some unanswered questions, such as reliable attribution and the attackers\u2019 motivation.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2a67381d>",
+            "title": "Core module mutexes:",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1042dd12>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xbbdce6a5>": "Global\\sysmon-windows-%x"
+                    },
+                    "text": "Global\\sysmon-windows-%x (%x is a CRC32 of an MD5 hash of the victims username)",
+                    "html": "<p><code>Global\\sysmon-windows-%x</code> (%x is a CRC32 of an MD5 hash of the victim\u2019s username)</p>"
+                },
+                {
+                    "id": "<sentence_0x28855e2f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x253ebac1>": "Global\\IntelGameSpeed-%x"
+                    },
+                    "text": "Global\\IntelGameSpeed-%x (%x is a CRC32 of an MD5 hash of the victims username",
+                    "html": "<p><code>Global\\IntelGameSpeed-%x</code> (%x is a CRC32 of an MD5 hash of the victim\u2019s username</p>"
+                },
+                {
+                    "id": "<sentence_0xd1f4027c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x85a7bc32>": "Global\\TencentSecuriryAgent-P01-%s "
+                    },
+                    "text": "Global\\TencentSecuriryAgent-P01-%s (%s is the victims username)",
+                    "html": "<p><code>Global\\TencentSecuriryAgent-P01-%s </code>(%s is the victim\u2019s username)</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x80bfc578>",
+            "title": "Operation Dragon Castling: APT group targeting betting companies",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xb7f82c21>",
+            "title": "Infection Vector",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x60c9380>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7fbcf360>": "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24934",
+                        "<code_0x7bd5d227>": "WPS Office",
+                        "<code_0xaefb6df5>": " wpsupdate.exe",
+                        "<code_0xc0b76e98>": "CVE-2022-24934"
+                    },
+                    "text": "Weve seen multiple infection vectors used in this campaign. Among others, an attacker sent an email with an infected installer to the support team of one of the targeted companies asking to check for a bug in their software. In this post, we are going to describe another vector weve seen: a fake WPS Office update package. We suspect an attacker exploited a bug in the WPS updater wpsupdate.exe, which is a part of the WPS Office installation package. We have contacted WPS Office team about the vulnerability (CVE-2022-24934), which we discovered, and it has since been fixed.",
+                    "html": "<p>We\u2019ve seen multiple infection vectors used in this campaign. Among others, an attacker sent an email with an infected installer to the support team of one of the targeted companies asking to check for a bug in their software. In this post, we are going to describe another vector we\u2019ve seen: a fake <code>WPS Office</code> update package. We suspect an attacker exploited a bug in the WPS updater<code> wpsupdate.exe</code>, which is a part of the WPS Office installation package. We have contacted WPS Office team about the vulnerability (<code><a href=\"https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-24934\" rel=\"noreferrer noopener\" target=\"_blank\">CVE-2022-24934</a></code>), which we discovered, and it has since been fixed.</p>"
+                },
+                {
+                    "id": "<sentence_0xf42ee558>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x869586b3>": "HKEY_CURRENT_USER ",
+                        "<code_0x7aa7ddc6>": "update.wps[.]cn",
+                        "<code_0x1ea05124>": "Kingsoft",
+                        "<code_0x3eb3636a>": "103.140.187.16",
+                        "<code_0x8c3dff86>": "setup_CN_2052_11.1.0.8830_PersonalDownload_Triale.exe - B9BEA7D1822D9996E0F04CB5BF5103C48828C5121B82E3EB9860E7C4577E2954",
+                        "<code_0x94741b68>": "QMSpeedupRocketTrayInjectHelper64.exe - Tencent Technology (a3f3bc958107258b3aa6e9e959377dfa607534cc6a426ee8ae193b463483c341)",
+                        "<code_0xb0f1a543>": " QMSpeedupRocketTrayStub64.dll."
+                    },
+                    "text": "During our investigation we saw suspicious behavior in the WPS updater process. When analyzing the binary we discovered a potential security issue that allows an attacker to use the updater to communicate with a server controlled by the attacker to perform actions on the victims system, including downloading and running arbitrary executables. To exploit the vulnerability, a registry key under HKEY_CURRENT_USER needs to be modified, and by doing this an attacker gains persistence on the system and control over the update process. In the case we analyzed, the malicious binary was downloaded from the domain update.wps[.]cn, which is a domain belonging to Kingsoft, but the serving IP (103.140.187.16) has no relationship to the company, so we assume that it is a fake update server used by the attackers. <crlf>The downloaded binary (setup_CN_2052_11.1.0.8830_PersonalDownload_Triale.exe - B9BEA7D1822D9996E0F04CB5BF5103C48828C5121B82E3EB9860E7C4577E2954) drops two files for sideloading: a signed QMSpeedupRocketTrayInjectHelper64.exe - Tencent Technology (a3f3bc958107258b3aa6e9e959377dfa607534cc6a426ee8ae193b463483c341) and a malicious DLL",
+                    "html": "<p>During our investigation we saw suspicious behavior in the WPS updater process. When analyzing the binary we discovered a potential security issue that allows an attacker to use the updater to communicate with a server controlled by the attacker to perform actions on the victim\u2019s system, including downloading and running arbitrary executables. To exploit the vulnerability, a registry key under <code>HKEY_CURRENT_USER </code>needs to be modified, and by doing this an attacker gains persistence on the system and control over the update process. In the case we analyzed, the malicious binary was downloaded from the domain <code>update.wps[.]cn</code>, which is a domain belonging to <code>Kingsoft</code>, but the serving IP (<code>103.140.187.16</code>) has no relationship to the company, so we assume that it is a fake update server used by the attackers. \nThe downloaded binary (<code>setup_CN_2052_11.1.0.8830_PersonalDownload_Triale.exe - B9BEA7D1822D9996E0F04CB5BF5103C48828C5121B82E3EB9860E7C4577E2954</code>) drops two files for sideloading: a signed <code>QMSpeedupRocketTrayInjectHelper64.exe - Tencent Technology (a3f3bc958107258b3aa6e9e959377dfa607534cc6a426ee8ae193b463483c341)</code> and a malicious DLL<code> QMSpeedupRocketTrayStub64.dll.</code></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x57481ec4>",
+            "title": "Dropper 1 (QMSpeedupRocketTrayStub64.dll)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x709ff96d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "76adf4fd93b70c4dece4b536b4fae76793d9aa7d8d6ee1750c1ad1f0ffa75491",
+                    "html": "<p>76adf4fd93b70c4dece4b536b4fae76793d9aa7d8d6ee1750c1ad1f0ffa75491</p>"
+                },
+                {
+                    "id": "<sentence_0xa8065d3c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xc80aaeaf>": "mirrors.centos.8788912[.]com",
+                        "<code_0x7a5584f8>": "GetProcAddress",
+                        "<code_0xe48d10c3>": "FreeLibrary",
+                        "<code_0x383edef9>": "LdrUnloadDll",
+                        "<code_0xf3bf34d6>": "1064 "
+                    },
+                    "text": "The first stage is a backdoor communicating with a C&C (mirrors.centos.8788912[.]com). Before contacting the C&C server, the backdoor performs several preparational operations. It hooks three functions: GetProcAddress, FreeLibrary, LdrUnloadDll. To get the C&C domain, it maps itself to the memory and reads data starting at the offset 1064 from the end. The domain name is not encrypted in any way and is stored as a wide string in clear text in the binary.",
+                    "html": "<p>The first stage is a backdoor communicating with a C&amp;C (<code>mirrors.centos.8788912[.]com</code>). Before contacting the C&amp;C server, the backdoor performs several preparational operations. It hooks three functions: <code>GetProcAddress</code>, <code>FreeLibrary</code>, <code>LdrUnloadDll</code>. To get the C&amp;C domain, it maps itself to the memory and reads data starting at the offset <code>1064 </code>from the end. The domain name is not encrypted in any way and is stored as a wide string in clear text in the binary. </p>"
+                },
+                {
+                    "id": "<sentence_0x2c395cfa>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x5223ecc9>": "JScript",
+                        "<code_0x2b0442c1>": "ScriptHelper",
+                        "<code_0xa3cc7f40>": "ImpersonateLoggedOnUser ",
+                        "<code_0x9cbf4416>": "explorer.exe",
+                        "<code_0xae1f2d67>": "RegOverridePredefKey ",
+                        "<code_0xce6d280e>": "HKEY_CURRENT_USER ",
+                        "<code_0xb5400c7>": "HKEY_CURRENT_USER ",
+                        "<code_0x9a802131>": "Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1;.NET CLR 2.0). The information that is exfiltrated is: Internet Explorer version, Windows version, the value of the \u201cUser Agent\\Post Platform\u201d"
+                    },
+                    "text": "Then it initializes an object for a JScript class with the named item ScriptHelper. The dropper uses the ImpersonateLoggedOnUser API Call to re-use a token from explorer.exe so it effectively runs under the same user. Additionally, it uses RegOverridePredefKey to redirect the current HKEY_CURRENT_USER to HKEY_CURRENT_USER of an impersonated user. For communication with C&C it constructs a UserAgent string with some system information e.g. Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1;.NET CLR 2.0). The information that is exfiltrated is: Internet Explorer version, Windows version, the value of the User Agent\\Post Platform registry values.",
+                    "html": "<p>Then it initializes an object for a <code>JScript</code> class with the named item <code>ScriptHelper</code>. The dropper uses the <code>ImpersonateLoggedOnUser </code>API Call to re-use a token from <code>explorer.exe</code> so it effectively runs under the same user. Additionally, it uses <code>RegOverridePredefKey </code>to redirect the current <code>HKEY_CURRENT_USER </code>to <code>HKEY_CURRENT_USER </code>of an impersonated user. For communication with C&amp;C it constructs a UserAgent string with some system information e.g. <code>Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1;.NET CLR 2.0). The information that is exfiltrated is: Internet Explorer version, Windows version, the value of the \u201cUser Agent\\Post Platform\u201d</code> registry values.</p>"
+                },
+                {
+                    "id": "<sentence_0x34373668>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7f689873>": "JScript ",
+                        "<code_0xde63f79d>": "server",
+                        "<code_0x3170b41b>": "key",
+                        "<code_0x3ae675ac>": "GET ",
+                        "<code_0x273f6330>": "/api/connect,",
+                        "<code_0x43464f8d>": "JScript ",
+                        "<code_0x17a9ddfc>": "JScript "
+                    },
+                    "text": "After that, the sample constructs JScript code to execute. The header of the code contains definitions of two variables: server with the C&C domain name and a hardcoded key. Then it sends the HTTP GET request to /api/connect, the response should be encrypted JScript code that is decrypted, appended to the constructed header and executed using the JScript class created previously.",
+                    "html": "<p>After that, the sample constructs <code>JScript </code>code to execute. The header of the code contains definitions of two variables: <code>server</code> with the C&amp;C domain name and a hardcoded <code>key</code>. Then it sends the HTTP <code>GET </code>request to <code>/api/connect,</code> the response should be encrypted <code>JScript </code>code that is decrypted, appended to the constructed header and executed using the <code>JScript </code>class created previously.</p>"
+                },
+                {
+                    "id": "<sentence_0xed12742a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1030e26a>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/Untitled.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/Untitled.png\"><img alt=\"\" class=\"wp-image-5560\" height=\"74\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/Untitled.png\" width=\"652\"/></a></figure>"
+                },
+                {
+                    "id": "<sentence_0x342509f2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x8dd4747f>": "hxxp://mirrors.centos.8788912.com/upload/ea76ad28a3916f52a748a4f475700987.exe",
+                        "<code_0x894523ef>": "%ProgramData%\\icbc_logtmp.exe"
+                    },
+                    "text": "At the time of analysis, the C&C was not responding, but from the telemetry data we can conclude that it was downloading the next stage from hxxp://mirrors.centos.8788912.com/upload/ea76ad28a3916f52a748a4f475700987.exe to %ProgramData%\\icbc_logtmp.exe and executing it.",
+                    "html": "<p>At the time of analysis, the C&amp;C was not responding, but from the telemetry data we can conclude that it was downloading the next stage from <code>hxxp://mirrors.centos.8788912.com/upload/ea76ad28a3916f52a748a4f475700987.exe</code> to <code>%ProgramData%\\icbc_logtmp.exe</code> and executing it.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe3294916>",
+            "title": "Dropper 2 (IcbcLog)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd04dae50>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "a428351dcb235b16dc5190c108e6734b09c3b7be93c0ef3d838cf91641b328b3",
+                    "html": "<p>a428351dcb235b16dc5190c108e6734b09c3b7be93c0ef3d838cf91641b328b3</p>"
+                },
+                {
+                    "id": "<sentence_0xec254b95>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9089247b>": "https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-012",
+                        "<code_0x4f386add>": "COM Session Moniker Privilege ",
+                        "<code_0xba19775>": "(MS17-012)"
+                    },
+                    "text": "The second dropper is a runner that, when executed, tries to escalate privileges via the COM Session Moniker Privilege Escalation (MS17-012), then dropping a few binaries, which are stored with the following resource IDs:",
+                    "html": "<p>The second dropper is a runner that, when executed, tries to escalate privileges via the <code>COM Session Moniker Privilege </code>Escalation <code>(<a href=\"https://docs.microsoft.com/en-us/security-updates/securitybulletins/2017/ms17-012\" rel=\"noreferrer noopener\" target=\"_blank\">MS17-012</a>)</code>, then dropping a few binaries, which are stored with the following resource IDs:</p>"
+                },
+                {
+                    "id": "<sentence_0x44027f54>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xe13ca421>": {
+                            "0": {
+                                "0": "Resource ID",
+                                "1": "1825",
+                                "2": "1832",
+                                "3": "1840",
+                                "4": "1841",
+                                "5": "1817",
+                                "6": "1816",
+                                "7": "1833",
+                                "8": "1831"
+                            },
+                            "1": {
+                                "0": "Filename",
+                                "1": "smcache.dat",
+                                "2": "log.dll",
+                                "3": "bdservicehost.exe",
+                                "4": "",
+                                "5": "inst.dat",
+                                "6": "hostcfg.dat",
+                                "7": "bdservicehost.exe",
+                                "8": "log.dll"
+                            },
+                            "2": {
+                                "0": "Description",
+                                "1": "List of C&C domains",
+                                "2": "Loader (CoreX) 64bit",
+                                "3": "Signed PE for sideloading 64bit",
+                                "4": "Filenames for sideloading",
+                                "5": "Working path",
+                                "6": "Used in the Host header, in C&C communication",
+                                "7": "Signed PE for sideloading 32bit \u2013 N/A",
+                                "8": "Loader (32bit) \u2013 N/A"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Resource ID</td><td>Filename</td><td>Description</td></tr><tr><td>1825</td><td>smcache.dat</td><td>List of C&amp;C domains</td></tr><tr><td>1832</td><td>log.dll</td><td>Loader (CoreX) 64bit</td></tr><tr><td>1840</td><td>bdservicehost.exe</td><td>Signed PE for sideloading 64bit</td></tr><tr><td>1841</td><td>N/A</td><td>Filenames for sideloading</td></tr><tr><td>1817</td><td>inst.dat</td><td>Working path</td></tr><tr><td>1816</td><td>hostcfg.dat</td><td>Used in the Host header, in C&amp;C communication</td></tr><tr><td>1833</td><td>bdservicehost.exe</td><td>Signed PE for sideloading 32bit \u2013 N/A</td></tr><tr><td>1831</td><td>log.dll</td><td>Loader (32bit) \u2013 N/A</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0xc10bbd51>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The encrypted payloads have the following structure:",
+                    "html": "<p>The encrypted payloads have the following structure:</p>"
+                },
+                {
+                    "id": "<sentence_0x37b6e372>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x71f04a66>": "0x8",
+                        "<code_0x3662d68b>": "0x528",
+                        "<code_0xacba10ea>": "CryptHashData ",
+                        "<code_0xea29cc56>": " 0123456789abcde",
+                        "<code_0x379e8da7>": "CryptDecrypt ",
+                        "<code_0x51bd6aa4>": "AES256",
+                        "<code_0xbb32a13b>": "RtlDecompressBuffer",
+                        "<code_0x37637c4a>": "CRC32",
+                        "<code_0x16dceb0d>": "0x4 ",
+                        "<code_0x7fc70835>": "bdservicehost.exe "
+                    },
+                    "text": "The encryption key is a wide string starting from offset 0x8. The encrypted data starts at the offset 0x528. To decrypt the data, a SHA256 hash of the key is created using CryptHashData API, and is then used with a hard-coded IV 0123456789abcde to decrypt the data using CryptDecrypt API with the AES256 algorithm. After that, the decrypted data is decompressed with RtlDecompressBuffer. To verify that the decryption went well, the CRC32 of the data is computed and compared to the value at the offset 0x4 of the original resource data. When all the payloads are dropped to the disk, bdservicehost.exe is executed to run the next stage.",
+                    "html": "<p>The encryption key is a wide string starting from offset <code>0x8</code>. The encrypted data starts at the offset <code>0x528</code>. To decrypt the data, a SHA256 hash of the key is created using <code>CryptHashData </code>API, and is then used with a hard-coded IV<code> 0123456789abcde</code> to decrypt the data using <code>CryptDecrypt </code>API with the <code>AES256</code> algorithm. After that, the decrypted data is decompressed with <code>RtlDecompressBuffer</code>. To verify that the decryption went well, the <code>CRC32</code> of the data is computed and compared to the value at the offset <code>0x4 </code>of the original resource data. When all the payloads are dropped to the disk, <code>bdservicehost.exe </code>is executed to run the next stage.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x581193fa>",
+            "title": "Loader (CoreX)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xced2389>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "97c392ca71d11de76b69d8bf6caf06fa3802d0157257764a0e3d6f0159436c42",
+                    "html": "<p>97c392ca71d11de76b69d8bf6caf06fa3802d0157257764a0e3d6f0159436c42</p>"
+                },
+                {
+                    "id": "<sentence_0x72a5ae60>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x80ba549e>": "Loader (CoreX) ",
+                        "<code_0x64593d15>": "(Dropper 2)",
+                        "<code_0x274cdebd>": "Dropper 1",
+                        "<code_0x34c222c0>": "GetProcAddress ",
+                        "<code_0x830ab8b8>": "FreeLibrary ",
+                        "<code_0xe78352f1>": "regsvr32.exe",
+                        "<code_0xeb65ebfb>": "syscfg.dat"
+                    },
+                    "text": "The Loader (CoreX) DLL is sideloaded during the previous stage (Dropper 2) and acts as a dropper. Similarly to Dropper 1, it hooks the GetProcAddress and FreeLibrary API functions. These hooks execute the main code of this library. The main code first checks whether it was loaded by regsvr32.exe and then it retrieves encrypted data from its resources. This data is dropped into the same folder as syscfg.dat. The file is then loaded and decrypted using AES-256 with the following options for setup:",
+                    "html": "<p>The <code>Loader (CoreX) </code>DLL is sideloaded during the previous stage <code>(Dropper 2)</code> and acts as a dropper. Similarly to <code>Dropper 1</code>, it hooks the <code>GetProcAddress </code>and <code>FreeLibrary </code>API functions. These hooks execute the main code of this library. The main code first checks whether it was loaded by <code>regsvr32.exe</code> and then it retrieves encrypted data from its resources. This data is dropped into the same folder as <code>syscfg.dat</code>. The file is then loaded and decrypted using AES-256 with the following options for setup:</p>"
+                },
+                {
+                    "id": "<sentence_0xea9d3eeb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Key is the computer name and IV is qwertyui12345678<crlf>AES-256 setup parameters are embedded in the resource in the format <key>#<IV>. So you may e.g. see cbfc2vyuzckloknf#8o3yfn0uee429m8d",
+                    "html": "<ul><li>Key is the computer name and IV is <code>qwertyui12345678</code></li><li>AES-256 setup parameters are embedded in the resource in the format <code>&lt;key&gt;#&lt;IV&gt;</code>. So you may e.g. see <code>cbfc2vyuzckloknf#8o3yfn0uee429m8d</code></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x6776983c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfa0f49d5>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/hex.png"
+                    },
+                    "text": "AES-256 setup parameters",
+                    "html": "<figure class=\"aligncenter size-full\"><img alt=\"\" class=\"wp-image-5546\" height=\"97\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/hex.png\" width=\"644\"/><figcaption>AES-256 setup parameters</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x607a0c4f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x4b00f756>": "ekrn.exe",
+                        "<code_0x24257b2>": "ekrn.exe",
+                        "<code_0xa1b334f0>": "ntdll.dll",
+                        "<code_0x2cdfdf5e>": "ntdll.dll"
+                    },
+                    "text": "The main code continues to check if the process ekrn.exe is running. ekrn.exe is an ESET Kernel service. If the ESET Kernel service is running, it will try to remap ntdll.dll. We assume that this is used to bypass ntdll.dll hooking.",
+                    "html": "<p>The main code continues to check if the process <code>ekrn.exe</code> is running. <code>ekrn.exe</code> is an ESET Kernel service. If the ESET Kernel service is running, it will try to remap <code>ntdll.dll</code>. We assume that this is used to bypass <code>ntdll.dll</code> hooking. </p>"
+                },
+                {
+                    "id": "<sentence_0xba0db0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xa78daac>": "ntdll.dll ",
+                        "<code_0xcd1b5dba>": "Zw*",
+                        "<code_0xc5df6f24>": "Zw*",
+                        "<code_0x8a7b4b3d>": "Zw*"
+                    },
+                    "text": "After a service check, it will decompress and execute shellcode, which in turn loads a DLL with the next stage. The DLL is stored, unencrypted, as part of the shellcode. The shellcode enumerates exports of ntdll.dll and builds an array with hashes of names of all Zw* functions (windows native API system calls) then sorts them by their RVA. By doing this, the shellcode exploits the fact that the order of RVAs of Zw* functions equals the order of the corresponding syscalls, so an index of the Zw* function in this array is a syscall number, which can be called using the syscall instruction. Security solutions can therefore be bypassed based on the hooking of the API in userspace. Finally, the embedded core module DLL is loaded and executed.",
+                    "html": "<p>After a service check, it will decompress and execute shellcode, which in turn loads a DLL with the next stage. The DLL is stored, unencrypted, as part of the shellcode. The shellcode enumerates exports of <code>ntdll.dll </code>and builds an array with hashes of names of all <code>Zw*</code> functions (windows native API system calls) then sorts them by their RVA. By doing this, the shellcode exploits the fact that the order of RVAs of <code>Zw*</code> functions equals the order of the corresponding syscalls, so an index of the <code>Zw*</code> function in this array is a syscall number, which can be called using the syscall instruction. Security solutions can therefore be bypassed based on the hooking of the API in userspace. Finally, the embedded core module DLL is loaded and executed.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb4293969>",
+            "title": "Proto8 (Core module)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x63f1e9f8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "f3ed09ee3fe869e76f34eee1ef974d1b24297a13a58ebff20ea4541b9a2d86c7",
+                    "html": "<p>f3ed09ee3fe869e76f34eee1ef974d1b24297a13a58ebff20ea4541b9a2d86c7</p>"
+                },
+                {
+                    "id": "<sentence_0xc7f1607d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The core module is a single DLL that is responsible for setting up the malwares working directory, loading configuration files, updating its code, loading plugins, beaconing to C&C servers and waiting for commands.",
+                    "html": "<p>The core module is a single DLL that is responsible for setting up the malware\u2019s working directory, loading configuration files, updating its code, loading plugins, beaconing to C&amp;C servers and waiting for commands.</p>"
+                },
+                {
+                    "id": "<sentence_0x154d5a82>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It has a cascading structure with four steps:",
+                    "html": "<p>It has a cascading structure with four steps:</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe134e7cc>",
+            "title": "Step 1",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xac1afe1e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x5fcb57a8>": "spdlogd.exe",
+                        "<code_0x3fae167>": "rundll32.exe.",
+                        "<code_0xff77381e>": "GetProcAddress ",
+                        "<code_0xe07e3bbb>": "FreeLibrary "
+                    },
+                    "text": "The first part is dedicated to initial checks and a few evasion techniques. At first, the core module verifies that the DLL is being run by spdlogd.exe (an executable used for persistence, see below) or that it is not being run by rundll32.exe. If this check fails, the execution terminates. The DLL proceeds by hooking the GetProcAddress and FreeLibrary functions in order to execute the main function, similarly to the previous infection stages.",
+                    "html": "<p>The first part is dedicated to initial checks and a few evasion techniques. At first, the core module verifies that the DLL is being run by <code>spdlogd.exe</code> (an executable used for persistence, see below) or that it is not being run by <code>rundll32.exe.</code> If this check fails, the execution terminates. The DLL proceeds by hooking the <code>GetProcAddress </code>and <code>FreeLibrary </code>functions in order to execute the main function, similarly to the previous infection stages.</p>"
+                },
+                {
+                    "id": "<sentence_0x1e7bf11c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x9b4ea756>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/in-googo.png"
+                    },
+                    "text": "The GetProcAddress hook contains an interesting debug output in googo.",
+                    "html": "<figure class=\"aligncenter size-full is-resized\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/in-googo.png\"><img alt=\"\" class=\"wp-image-5547\" height=\"180\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/in-googo.png\" width=\"526\"/></a><figcaption>The GetProcAddress hook contains an interesting debug output \u201cin googo\u201d.\n</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xd31ccfa>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xeecedcb3>": "Sample",
+                        "<code_0x9698bbf2>": "0x411 ",
+                        "<code_0x83836322>": "SendMessageW",
+                        "<code_0x917d7789>": "0x412 "
+                    },
+                    "text": "The malware then creates a new window (named Sample) with a custom callback function. A message with the ID 0x411 is sent to the window via SendMessageW which causes the aforementioned callback to execute the main function. The callback function can also process the 0x412 message ID, even though no specific functionality is tied to it.",
+                    "html": "<p>The malware then creates a new window (named <code>Sample</code>) with a custom callback function. A message with the ID <code>0x411 </code>is sent to the window via <code>SendMessageW</code> which causes the aforementioned callback to execute the main function. The callback function can also process the <code>0x412 </code>message ID, even though no specific functionality is tied to it.</p>"
+                },
+                {
+                    "id": "<sentence_0xa28f8d7e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x58b0bea1>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/411.png"
+                    },
+                    "text": "Exported function Core2 sends message 0x411",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/411.png\"><img alt=\"\" class=\"wp-image-5548\" height=\"225\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/411.png\" width=\"474\"/></a><figcaption>Exported function Core2 sends message 0x411\n</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x91c0a8db>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf225f87e>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/412.png"
+                    },
+                    "text": "Exported function Ldr2 sends message 0x412",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/412.png\"><img alt=\"\" class=\"wp-image-5549\" height=\"206\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/412.png\" width=\"462\"/></a><figcaption>Exported function Ldr2 sends message 0x412\n</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x89b8d5dc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8faa9bac>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/window-msg.png"
+                    },
+                    "text": "The window callback only contains implementation for message 0x411 but there is a check for 0x412 as well",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/window-msg.png\"><img alt=\"\" class=\"wp-image-5550\" height=\"209\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/window-msg.png\" width=\"452\"/></a><figcaption>The window callback only contains implementation for message 0x411 but there is a check for 0x412 as well\n</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x587ac918>",
+            "title": "Step 2",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x96da1244>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the second step, the module tries to self-update, load configuration files and set up its working directory (WD).",
+                    "html": "<p>In the second step, the module tries to self-update, load configuration files and set up its working directory (WD).</p>"
+                },
+                {
+                    "id": "<sentence_0xf7724584>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd2a0b80f>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/step-2-dark-w-logo.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/step-2-dark-w-logo.png\"><img alt=\"\" class=\"wp-image-5551\" height=\"426\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/step-2-dark-w-logo.png\" width=\"573\"/></a></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xcc1f3ef6>",
+            "title": "Self-update",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2e5fe5b6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xdb2e9bdc>": "new_version.dat",
+                        "<code_0xd0eda947>": "\u201crun code ok\u201d"
+                    },
+                    "text": "The malware first looks for a file called new_version.dat if it exists, its content is loaded into memory, executed in a new thread and a debug string run code ok is printed out. We did not come across this file, but based on its name and context, this is most likely a self update functionality.",
+                    "html": "<p>The malware first looks for a file called <code>new_version.dat</code> \u2013 if it exists, its content is loaded into memory, executed in a new thread and a debug string <code>\u201crun code ok\u201d</code> is printed out. We did not come across this file, but based on its name and context, this is most likely a self update functionality.</p>"
+                },
+                {
+                    "id": "<sentence_0x6f97e4b1>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x94a3916c>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/run-code-ok.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/run-code-ok.png\"><img alt=\"\" class=\"wp-image-5552\" height=\"71\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/run-code-ok.png\" width=\"549\"/></a></figure>"
+                },
+                {
+                    "id": "<sentence_0x8f8f5897>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xdaf2892a>": "inst.dat "
+                    },
+                    "text": "Load configuration file inst.dat and set up working directory. First, the core module configuration file inst.dat is searched for in the following three locations:",
+                    "html": "<p>Load configuration file <code>inst.dat </code>and set up working directory. First, the core module configuration file inst.dat is searched for in the following three locations:</p>"
+                },
+                {
+                    "id": "<sentence_0xf600fe85>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "the directory where the core module DLL is located<crlf>the directory where the EXE that loaded the core module DLL it is located<crlf>C:\\ProgramData\\",
+                    "html": "<ul><li>the directory where the core module DLL is located</li><li>the directory where the EXE that loaded the core module DLL it is located</li><li><code>C:\\ProgramData\\</code></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x65e27269>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It contains the path to the malwares working directory in plaintext. If it is not found, a hard-coded directory name is used and the directory is created. The working directory is a location the malware uses to drop or read any files it uses in subsequent execution phases.",
+                    "html": "<p>It contains the path to the malware\u2019s working directory in plaintext. If it is not found, a hard-coded directory name is used and the directory is created. The working directory is a location the malware uses to drop or read any files it uses in subsequent execution phases.</p>"
+                },
+                {
+                    "id": "<sentence_0xc4d176b2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7bdd6888>": "smcache.dat"
+                    },
+                    "text": "Load configuration file smcache.dat.",
+                    "html": "<p>Load configuration file <code>smcache.dat</code>. </p>"
+                },
+                {
+                    "id": "<sentence_0xb31c4b21>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7563e170>": "smcache.dat",
+                        "<code_0xb7978e88>": "\u201ccomment\u201d",
+                        "<code_0xc72b2ba1>": " \u201ccomment string\u201d",
+                        "<code_0x988d02a3>": " \u201cthe comment string here\u201d",
+                        "<code_0x2ac6f2d4>": "comment.dat"
+                    },
+                    "text": "After the working directory is set up, the sample will load the configuration file smcache.dat from it. This file contains the domains, protocols and port numbers used to communicate with C&C servers (details in Step 4) plus a comment string. This string is likely used to identify the campaign or individual victims. It is used to create an empty file on the victims computer (see below) and its also sent as a part of the initial beacon when communicating with C&C servers. We refer to it as the comment string because we have seen a few versions of smcache.dat where the content of the string was the comment string here and it is also present in another configuration file with the name comment.dat which has the INI file format and contains this string under the key COMMENT.",
+                    "html": "<p>After the working directory is set up, the sample will load the configuration file <code>smcache.dat</code> from it. This file contains the domains, protocols and port numbers used to communicate with C&amp;C servers (details in Step 4) plus a <code>\u201ccomment\u201d</code> string. This string is likely used to identify the campaign or individual victims. It is used to create an empty file on the victim\u2019s computer (see below) and it\u2019s also sent as a part of the initial beacon when communicating with C&amp;C servers. We refer to it as the<code> \u201ccomment string\u201d</code> because we have seen a few versions of smcache.dat where the content of the string was<code> \u201cthe comment string here\u201d</code> and it is also present in another configuration file with the name <code>comment.dat</code> which has the INI file format and contains this string under the key COMMENT.</p>"
+                },
+                {
+                    "id": "<sentence_0x51c0ea74>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x6df1d91>": "log "
+                    },
+                    "text": "Create a log file",
+                    "html": "<p>Create a <code>log </code>file</p>"
+                },
+                {
+                    "id": "<sentence_0x882cfbec>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7457dda1>": "M86_99.lck"
+                    },
+                    "text": "Right after the sample finds and reads smcache.dat, it creates a file based on the victims username and the comment string from smcache.dat. If the comment string is not present, it will use a default hard-coded value (for example M86_99.lck). Based on the extension it could be a log of some sort, but we havent seen any part of the malware writing into it so it could just serve as a lockfile. After the file is successfully created, the malware creates a mutex and goes on to the next step.",
+                    "html": "<p>Right after the sample finds and reads smcache.dat, it creates a file based on the victim\u2019s username and the comment string from smcache.dat. If the comment string is not present, it will use a default hard-coded value (for example <code>M86_99.lck</code>). Based on the extension it could be a log of some sort, but we haven\u2019t seen any part of the malware writing into it so it could just serve as a lockfile. After the file is successfully created, the malware creates a mutex and goes on to the next step.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc7c269f>",
+            "title": "Step 3",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa5a73b1e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xe98b700c>": " \u201ccall objects\u201d",
+                        "<code_0x386a8adb>": "\u201cdispatcher\u201d"
+                    },
+                    "text": "Next, the malware collects information about the infected environment (such as username, DNS and NetBios computer names as well as OS version and architecture) and sets up its internal structures, most notably a list of call objects. Call objects are structures each associated with a particular function and saved into a dispatcher structure in a map with hard-coded 4-byte keys. These keys are later used to call the functions based on commands from C&C servers.",
+                    "html": "<p>Next, the malware collects information about the infected environment (such as username, DNS and NetBios computer names as well as OS version and architecture) and sets up its internal structures, most notably a list of <code> \u201ccall objects\u201d</code>. Call objects are structures each associated with a particular function and saved into a <code>\u201cdispatcher\u201d</code> structure in a map with hard-coded 4-byte keys. These keys are later used to call the functions based on commands from C&amp;C servers. </p>"
+                },
+                {
+                    "id": "<sentence_0x2f617f8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xd9a01dba>": "RevertToSelf ",
+                        "<code_0xdcf4eb08>": "0x20210326 ",
+                        "<code_0x45206cc4>": " 0x19181726 "
+                    },
+                    "text": "The key values (IDs) seem to be structured, where the first three bytes are always the same within a given sample, while the last byte is always the same for a given usage across all the core module samples that weve seen. For example, the function that calls the RevertToSelf function is identified by the number 0x20210326 in some versions of the core module that weve seen and 0x19181726 in others. This suggests that the first three bytes of the ID number are tied to the core module version, or more likely the infrastructure version, while the last byte is the actual ID of a function.",
+                    "html": "<p>The key values (IDs) seem to be structured, where the first three bytes are always the same within a given sample, while the last byte is always the same for a given usage across all the core module samples that we\u2019ve seen. For example, the function that calls the <code>RevertToSelf </code>function is identified by the number <code>0x20210326 </code>in some versions of the core module that we\u2019ve seen and<code> 0x19181726 </code>in others. This suggests that the first three bytes of the ID number are tied to the core module version, or more likely the infrastructure version, while the last byte is the actual ID of a function. </p>"
+                },
+                {
+                    "id": "<sentence_0x3bdf9111>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x7bd34f0c>": {
+                            "0": {
+                                "0": "ID (last byte)",
+                                "1": "0x02",
+                                "2": "0x19",
+                                "3": "0x1A",
+                                "4": "0x25",
+                                "5": "0x26",
+                                "6": "0x31",
+                                "7": "0x33",
+                                "8": "0x56"
+                            },
+                            "1": {
+                                "0": "Function description",
+                                "1": "unimplemented function",
+                                "2": "retrieves content of smcache.dat and sends it to the C&C server",
+                                "3": "writes data to smcache.dat",
+                                "4": "impersonates the logged on user or the explorer.exe process",
+                                "5": "function that calls RevertToSelf",
+                                "6": "receives data and copies it into a newly allocated executable buffer",
+                                "7": "receives core plugin code, drops it on disk and then loads and calls it",
+                                "8": "writes a value into comment.dat"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>ID (last byte)</td><td>Function description</td></tr><tr><td>0x02</td><td>unimplemented function</td></tr><tr><td>0x19</td><td>retrieves content of <code>smcache.dat</code> and sends it to the C&amp;C server</td></tr><tr><td>0x1A</td><td>writes data to <code>smcache.dat</code></td></tr><tr><td>0x25</td><td>impersonates the logged on user or the explorer.exe process</td></tr><tr><td>0x26</td><td>function that calls <code>RevertToSelf</code></td></tr><tr><td>0x31</td><td>receives data and copies it into a newly allocated executable buffer</td></tr><tr><td>0x33</td><td>receives core plugin code, drops it on disk and then loads and calls it</td></tr><tr><td>0x56</td><td>writes a value into <code>comment.dat</code></td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x90aa3977>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Webdav",
+                    "html": "<p>Webdav </p>"
+                },
+                {
+                    "id": "<sentence_0x6c186eb3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xab94e1f1>": "hxxps://dav.jianguoyun.com/dav/",
+                        "<code_0xe886e75a>": "12121jhksdf ",
+                        "<code_0x87840876>": "121121212 ",
+                        "<code_0xa7a7eb3f>": "WNetAddConnection3W",
+                        "<code_0xa86374f4>": "jianguoyun[.]com"
+                    },
+                    "text": "While initializing the call objects the core module also tries to connect to the URL hxxps://dav.jianguoyun.com/dav/ with the username 12121jhksdf and password 121121212 by calling WNetAddConnection3W. This address was not responsive at the time of analysis but jianguoyun[.]com is a Chinese file sharing service. Our hypothesis is that this is either a way to get plugin code or an updated version of the core module itself.",
+                    "html": "<p>While initializing the call objects the core module also tries to connect to the URL <code>hxxps://dav.jianguoyun.com/dav/</code> with the username <code>12121jhksdf </code>and password <code>121121212 </code>by calling <code>WNetAddConnection3W</code>. This address was not responsive at the time of analysis but <code>jianguoyun[.]com</code> is a Chinese file sharing service. Our hypothesis is that this is either a way to get plugin code or an updated version of the core module itself.</p>"
+                },
+                {
+                    "id": "<sentence_0x4cbfbf63>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Plugins",
+                    "html": "<p>Plugins</p>"
+                },
+                {
+                    "id": "<sentence_0x8a8b6895>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x895f4ee>": "kbg<tick_count>.dat",
+                        "<code_0x19b7b177>": "InitCorePlug",
+                        "<code_0x6d986f0d>": "MoveFileExW ",
+                        "<code_0xf9db835f>": "MOVEFILE_DELAY_UNTIL_REBOOT"
+                    },
+                    "text": "The core module contains a function that receives a buffer with plugin DLL data, saves it into a file with the name kbg<tick_count>.dat in the malware working directory, loads it into memory and then calls its exported function InitCorePlug. The plugin file on disk is set to be deleted on reboot by calling MoveFileExW with the parameter MOVEFILE_DELAY_UNTIL_REBOOT. For more information about the plugins, see the dedicated Plugins section.",
+                    "html": "<p>The core module contains a function that receives a buffer with plugin DLL data, saves it into a file with the name <code>kbg&lt;tick_count&gt;.dat</code> in the malware working directory, loads it into memory and then calls its exported function <code>InitCorePlug</code>. The plugin file on disk is set to be deleted on reboot by calling <code>MoveFileExW </code>with the parameter <code>MOVEFILE_DELAY_UNTIL_REBOOT</code>. For more information about the plugins, see the dedicated Plugins section.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x34279e7c>",
+            "title": "Step 4",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xcbcb164e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x66c3c179>": "smcache.dat"
+                    },
+                    "text": "In the final step, the malware will iterate over C&C servers contained in the smcache.dat configuration file and will try to reach each one. The structure of the smcache.dat config file is as follows:",
+                    "html": "<p>In the final step, the malware will iterate over C&amp;C servers contained in the smcache.dat configuration file and will try to reach each one. The structure of the <code>smcache.dat</code> config file is as follows:</p>"
+                },
+                {
+                    "id": "<sentence_0xf0c97eaa>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x73205862>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/struct.png",
+                        "<code_0x879d51ae>": "smcache.dat"
+                    },
+                    "text": "The structure of the smcache.dat config file",
+                    "html": "<figure class=\"aligncenter size-full is-resized\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/struct.png\"><img alt=\"\" class=\"wp-image-5580\" height=\"343\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/struct.png\" width=\"278\"/></a><figcaption>The structure of the <code>smcache.dat</code> config file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x13318911>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The protocol string can have one of nine possible values:",
+                    "html": "<p>The protocol string can have one of nine possible values: </p>"
+                },
+                {
+                    "id": "<sentence_0x686c2846>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "TCP<crlf>HTTPS<crlf>UDP<crlf>DNS<crlf>ICMP<crlf>HTTPSIPV6<crlf>WEB<crlf>SSH<crlf>HTTP",
+                    "html": "<ul><li><code>TCP</code></li><li><code>HTTPS</code></li><li><code>UDP</code></li><li><code>DNS</code></li><li><code>ICMP</code></li><li><code>HTTPSIPV6</code></li><li><code>WEB</code></li><li><code>SSH</code></li><li><code>HTTP</code></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x2731b2f1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Depending on the protocol tied to the particular C&C domain, the malware sets up the connection, sends a beacon to the C&C and waits for commands.",
+                    "html": "<p>Depending on the protocol tied to the particular C&amp;C domain, the malware sets up the connection, sends a beacon to the C&amp;C and waits for commands.</p>"
+                },
+                {
+                    "id": "<sentence_0x2686eded>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blogpost, we will mainly focus on the HTTP protocol option as weve seen it being used by the attackers.",
+                    "html": "<p>In this blogpost, we will mainly focus on the HTTP protocol option as we\u2019ve seen it being used by the attackers.</p>"
+                },
+                {
+                    "id": "<sentence_0x4e32d8fb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdb21804a>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/HTTP-vftable-1024x242.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-large\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/HTTP-vftable.png\"><img alt=\"\" class=\"wp-image-5554\" height=\"242\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/HTTP-vftable-1024x242.png\" width=\"1024\"/></a></figure>"
+                },
+                {
+                    "id": "<sentence_0x32716c49>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x3d8b6388>": "POST ",
+                        "<code_0xb481bb99>": "GET ",
+                        "<code_0xee3243d6>": "\u201c/connect\u201d",
+                        "<code_0x219fb7b>": "POST ",
+                        "<code_0x13a5e4>": "GET ",
+                        "<code_0x122d5db4>": "InternetWriteFile ",
+                        "<code_0xab4f3a36>": "POST ",
+                        "<code_0xa7069e1d>": "GET ",
+                        "<code_0x561c04de>": "InternetReadFile"
+                    },
+                    "text": "When using the HTTP protocol, the core module first opens two persistent request handles one for POST and one for GET requests, both to /connect. These handles are tested by sending an empty buffer in the POST request and checking the HTTP status code of the GET request. Following this, the malware sends the initial beacon to the C&C server by calling the InternetWriteFile API with the previously opened POST request handle and reads data from the GET request handle by calling InternetReadFile.",
+                    "html": "<p>When using the HTTP protocol, the core module first opens two persistent request handles \u2013 one for <code>POST </code>and one for <code>GET </code>requests, both to <code>\u201c/connect\u201d</code>. These handles are tested by sending an empty buffer in the <code>POST </code>request and checking the HTTP status code of the <code>GET </code>request. Following this, the malware sends the initial beacon to the C&amp;C server by calling the <code>InternetWriteFile </code>API with the previously opened <code>POST </code>request handle and reads data from the <code>GET </code>request handle by calling <code>InternetReadFile</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0x2f850a49>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x44dabc8b>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-1.png"
+                    },
+                    "text": "HTTP packet order",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-1.png\"><img alt=\"\" class=\"wp-image-5555\" height=\"112\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-1.png\" width=\"571\"/></a><figcaption>HTTP packet order</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xfdc513d1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x59f9ea47>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-2-1024x358.png"
+                    },
+                    "text": "HTTP POST beacon",
+                    "html": "<figure class=\"aligncenter size-large\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-2.png\"><img alt=\"\" class=\"wp-image-5556\" height=\"358\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/wireshark-2-1024x358.png\" width=\"1024\"/></a><figcaption>HTTP POST beacon</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x60563173>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The core module uses the following (mostly hard-coded) HTTP headers:",
+                    "html": "<p>The core module uses the following (mostly hard-coded) HTTP headers:</p>"
+                },
+                {
+                    "id": "<sentence_0x5ac41375>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Accept: */*<crlf>x-cid: {<uuid>} new uuid is generated for each GET/POST request pair<crlf>Pragma: no-cache<crlf>Cache-control: no-transform<crlf>User-Agent: <user_agent> generated from registry or hard-coded (see below)<crlf>Host: <host_value> C&C server domain or the value from hostcfg.dat (see below)<crlf>Connection: Keep-Alive<crlf>Content-Length: 4294967295 (max uint, only in the POST request)",
+                    "html": "<ul><li><code>Accept: */*</code></li><li><code>x-cid: {&lt;uuid&gt;}</code> \u2013 new uuid is generated for each <code>GET/POST </code>request pair</li><li><code>Pragma: no-cache</code></li><li><code>Cache-control: no-transform</code></li><li><code>User-Agent: &lt;user_agent&gt;</code> \u2013 generated from registry or hard-coded (see below)</li><li><code>Host: &lt;host_value&gt;</code> \u2013 C&amp;C server domain or the value from hostcfg.dat (see below)</li><li><code>Connection: Keep-Alive</code></li><li><code>Content-Length: 4294967295</code> (max uint, only in the POST request)</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xf285678b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "User-Agent header",
+                    "html": "<p>User-Agent header</p>"
+                },
+                {
+                    "id": "<sentence_0x87f941ae>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xc201fe30>": "Dropper 1",
+                        "<code_0x81159837>": "\u201cMozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)\u201d"
+                    },
+                    "text": "The User-Agent string is constructed from the registry the same way as in the Dropper 1 module (including the logged-on user impersonation when accessing registry) or a hard-coded string is used if the registry access fails: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0).",
+                    "html": "<p>The User-Agent string is constructed from the registry the same way as in the <code>Dropper 1</code> module (including the logged-on user impersonation when accessing registry) or a hard-coded string is used if the registry access fails: <code>\u201cMozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)\u201d</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0xe0ea71e7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Host header",
+                    "html": "<p>Host header</p>"
+                },
+                {
+                    "id": "<sentence_0xf1e013d3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x47323684>": " ID 1816",
+                        "<code_0x3d1ee909>": "hostcfg.dat",
+                        "<code_0x96e14ed0>": "Host ",
+                        "<code_0x28764c87>": "smcache.dat"
+                    },
+                    "text": "When setting up this header, the malware looks for either a resource with the ID 1816 or a file called hostcfg.dat if the resource is not found. If the resource or file is found, the content is used as the value in the Host HTTP header for all C&C communication instead of the C&C domain found in smcache.dat. It does not change the actual C&C domain to which the request is made this suggests the possibility of the C&C server being behind a reverse proxy.",
+                    "html": "<p>When setting up this header, the malware looks for either a resource with the<code> ID 1816</code> or a file called <code>hostcfg.dat</code> if the resource is not found. If the resource or file is found, the content is used as the value in the <code>Host </code>HTTP header for all C&amp;C communication instead of the C&amp;C domain found in <code>smcache.dat</code>. It does not change the actual C&amp;C domain to which the request is made \u2013 this suggests the possibility of the C&amp;C server being behind a reverse proxy.</p>"
+                },
+                {
+                    "id": "<sentence_0x736a69d9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Initial beacon",
+                    "html": "<p>Initial beacon</p>"
+                },
+                {
+                    "id": "<sentence_0x3b38d977>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x11ab98ab>": "smcache.dat ",
+                        "<code_0xdfa9e5fe>": " comment.dat",
+                        "<code_0xfafb4875>": "comment.dat"
+                    },
+                    "text": "The first data packet the malware sends to a C&C server contains a base64 encoded LZNT1-compressed buffer, including a newly generated uuid (different from the uuid used in the x-cid header), the victims username, OS version and architecture, computer DNS and BIOS names and the comment string found in smcache.dat or comment.dat. The value from comment.dat takes precedence if this file exists.",
+                    "html": "<p>The first data packet the malware sends to a C&amp;C server contains a base64 encoded LZNT1-compressed buffer, including a newly generated uuid (different from the uuid used in the x-cid header), the victim\u2019s username, OS version and architecture, computer DNS and BIOS names and the comment string found in <code>smcache.dat </code>or<code> comment.dat</code>. The value from <code>comment.dat</code> takes precedence if this file exists. </p>"
+                },
+                {
+                    "id": "<sentence_0x4f5828b1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x69585dad>": " comment.dat ",
+                        "<code_0xfcec33e>": " \u201cCOMMNET\u201d",
+                        "<code_0x28fa5f01>": "\u201cCOMMENT\u201d"
+                    },
+                    "text": "In the core module sample we analyzed, there was actually a typo in the function that reads the value from comment.dat it looks for the key COMMNET instead of COMMENT.",
+                    "html": "<p>In the core module sample we analyzed, there was actually a typo in the function that reads the value from<code> comment.dat </code>\u2013 it looks for the key<code> \u201cCOMMNET\u201d</code> instead of <code>\u201cCOMMENT\u201d</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0x2d532396>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After this, the malware enters a loop waiting for commands from the C&C server in the form of the ID value of one of the call objects.<crlf>Each message sent to the C&C server contains a hard-coded four byte number value with the same structure as the values used as keys in the call-object map. The ID numbers associated with messages sent to C&C servers that weve seen are:",
+                    "html": "<p>After this, the malware enters a loop waiting for commands from the C&amp;C server in the form of the ID value of one of the call objects.\nEach message sent to the C&amp;C server contains a hard-coded four byte number value with the same structure as the values used as keys in the call-object map. The ID numbers associated with messages sent to C&amp;C servers that we\u2019ve seen are:</p>"
+                },
+                {
+                    "id": "<sentence_0xc6238129>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9d2c79e1>": {
+                            "0": {
+                                "0": "ID (last byte)",
+                                "1": "0x1B",
+                                "2": "0x24",
+                                "3": "0x2F",
+                                "4": "0x30",
+                                "5": "0x32",
+                                "6": "0x80"
+                            },
+                            "1": {
+                                "0": "Usage",
+                                "1": "message to C&C which contains smcache.dat content",
+                                "2": "message to C&C which contains a debug string",
+                                "3": "general message to C&C",
+                                "4": "message to C&C, unknown specific purpose",
+                                "5": "message to C&C related to plugins",
+                                "6": "initial beacon to a C&C server"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>ID (last byte)</td><td>Usage</td></tr><tr><td>0x1B</td><td>message to C&amp;C which contains <code>smcache.dat </code>content</td></tr><tr><td>0x24</td><td>message to C&amp;C which contains a debug string</td></tr><tr><td>0x2F</td><td>general message to C&amp;C</td></tr><tr><td>0x30</td><td>message to C&amp;C, unknown specific purpose</td></tr><tr><td>0x32</td><td>message to C&amp;C related to plugins</td></tr><tr><td>0x80</td><td>initial beacon to a C&amp;C server</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x75688682>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Interesting observations about the protocols, other than the HTTP protocol:",
+                    "html": "<p>Interesting observations about the protocols, other than the HTTP protocol:</p>"
+                },
+                {
+                    "id": "<sentence_0xf144d267>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "HTTPS does not use persistent request handles<crlf>HTTPS uses HTTP GET request with data Base64-encoded in the cookie header to send the initial beacon<crlf>HTTPS, TCP and UDP use a custom magic header: Magic-Code: hhjjdfgh",
+                    "html": "<ul><li>HTTPS does not use persistent request handles</li><li>HTTPS uses HTTP <code>GET </code>request with data Base64-encoded in the cookie header to send the initial beacon</li><li>HTTPS, TCP and UDP use a custom \u201cmagic\u201d header: <code>Magic-Code: hhjjdfgh</code></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdcdbb48c>",
+            "title": "General observations on the core module",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x924c0931>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xa10ae035>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/nothing.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/nothing.png\"><img alt=\"\" class=\"wp-image-5557\" height=\"105\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/nothing.png\" width=\"516\"/></a></figure>"
+                },
+                {
+                    "id": "<sentence_0x149077dd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xa39e99df>": "OutputDebugStringA ",
+                        "<code_0x587fb03f>": "OutputDebugStringW ",
+                        "<code_0x88ec00ee>": "\u201crun code ok\u201d",
+                        "<code_0x17617952>": "\u201cIn googo\u201d",
+                        "<code_0x431a757a>": "GetProcAddress",
+                        "<code_0xad7a52fa>": "\u201crecv bomb\u201d",
+                        "<code_0x943196f0>": "\u201csent bomb\u201d"
+                    },
+                    "text": "The core samples we observed often output debug strings via OutputDebugStringA and OutputDebugStringW or by sending them to the C&C server. Examples of debug strings used by the core module are: its filepath at the beginning of execution, run code ok after self-update, In googo in the hook of GetProcAddress, recv bomb and sent bomb in the main C&C communicating function, etc.",
+                    "html": "<p>The core samples we observed often output debug strings via <code>OutputDebugStringA </code>and <code>OutputDebugStringW </code>or by sending them to the C&amp;C server. Examples of debug strings used by the core module are: its filepath at the beginning of execution, <code>\u201crun code ok\u201d</code> after self-update, <code>\u201cIn googo\u201d</code> in the hook of <code>GetProcAddress</code>, <code>\u201crecv bomb\u201d</code> and <code>\u201csent bomb\u201d</code> in the main C&amp;C communicating function, etc.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x211911df>",
+            "title": "String obfuscation",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7ca428a4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We came across samples of the core module with only cleartext strings but also samples with certain strings obfuscated by XORing them with a unique (per sample) hard-coded key.",
+                    "html": "<p>We came across samples of the core module with only cleartext strings but also samples with certain strings obfuscated by XORing them with a unique (per sample) hard-coded key. </p>"
+                },
+                {
+                    "id": "<sentence_0xe2050ff1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Even within the samples that contain obfuscated strings, there are many cleartext strings present and there seems to be no logic in deciding which string will be obfuscated and which wont. For example, most format strings are obfuscated, but important IoCs such as credentials or filenames are not.",
+                    "html": "<p>Even within the samples that contain obfuscated strings, there are many cleartext strings present and there seems to be no logic in deciding which string will be obfuscated and which won\u2019t. For example, most format strings are obfuscated, but important IoCs such as credentials or filenames are not. </p>"
+                },
+                {
+                    "id": "<sentence_0xeb8fbd80>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xf187ac80>": "GetPrivateProfileStringW ",
+                        "<code_0x24e7edfd>": "GetProcAddress ",
+                        "<code_0xcf78174f>": "WritePrivateProfileStringW"
+                    },
+                    "text": "To illustrate this: most strings in the function that retrieves a value from the comment.dat file are obfuscated and the call to GetPrivateProfileStringW is dynamically resolved by the GetProcAddress API, but all the strings in the function that writes into the same config file are in cleartext and there is a direct call to WritePrivateProfileStringW.",
+                    "html": "<p>To illustrate this: most strings in the function that retrieves a value from the comment.dat file are obfuscated and the call to <code>GetPrivateProfileStringW </code>is dynamically resolved by the <code>GetProcAddress </code>API, but all the strings in the function that writes into the same config file are in cleartext and there is a direct call to <code>WritePrivateProfileStringW</code>. </p>"
+                },
+                {
+                    "id": "<sentence_0x435f9c31>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Overall, the core module code is quite robust and contains many failsafes and options for different scenarios (for example, the amount of possible protocols used for C&C communication), however, we probably only saw samples of this malware that are still in active development as there are many functions that are not yet implemented and only serve as placeholders.",
+                    "html": "<p>Overall, the core module code is quite robust and contains many failsafes and options for different scenarios (for example, the amount of possible protocols used for C&amp;C communication), however, we probably only saw samples of this malware that are still in active development as there are many functions that are not yet implemented and only serve as placeholders.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe88d3685>",
+            "title": "Plugins",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x274d4cdd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xee0d40e9>": "Core Module (Proto8)"
+                    },
+                    "text": "In the section below, we will describe the functionality of the plugins used by the Core Module (Proto8) to extend its functionality.",
+                    "html": "<p>In the section below, we will describe the functionality of the plugins used by the <code>Core Module (Proto8)</code> to extend its functionality. </p>"
+                },
+                {
+                    "id": "<sentence_0xb94b4eb9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We are going to describe three plugins with various functionalities, such as:",
+                    "html": "<p>We are going to describe three plugins with various functionalities, such as:</p>"
+                },
+                {
+                    "id": "<sentence_0x6de85500>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Achieving persistence<crlf>Bypassing UAC<crlf>Registering an RPC interface<crlf>Creating a new account<crlf>Backdoor capabilities",
+                    "html": "<ul><li>Achieving persistence</li><li>Bypassing UAC</li><li>Registering an RPC interface</li><li>Creating a new account</li><li>Backdoor capabilities</li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5a5ebc1c>",
+            "title": "Core Plugin",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa756402d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "0985D65FA981ABD57A4929D8ECD866FC72CE8C286BA9EB252CA180E280BD8755",
+                    "html": "<p>0985D65FA981ABD57A4929D8ECD866FC72CE8C286BA9EB252CA180E280BD8755</p>"
+                },
+                {
+                    "id": "<sentence_0xf39d874>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xd9d4246d>": "Proto8",
+                        "<code_0x3b51e9fa>": "\"GetPlugin\""
+                    },
+                    "text": "This plugin is a DLL binary loaded by the fileless core module (Proto8) as mentioned above. It extends the malwares functionality by adding methods for managing additional plugins. These additional plugins export the function \"GetPlugin\" which the core plugin executes.",
+                    "html": "<p>This plugin is a DLL binary loaded by the fileless core module (<code>Proto8</code>) as mentioned above. It extends the malware\u2019s functionality by adding methods for managing additional plugins. These additional plugins export the function <code>\"GetPlugin\"</code> which the core plugin executes.</p>"
+                },
+                {
+                    "id": "<sentence_0x87e50323>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This part uses the same command ID based calling convention as the core module (see above), adding three new methods:",
+                    "html": "<p>This part uses the same command ID based calling convention as the core module (see above), adding three new methods:</p>"
+                },
+                {
+                    "id": "<sentence_0x3a3e88a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xaab7f65a>": {
+                            "0": {
+                                "0": "ID (last byte)",
+                                "1": "0x2B",
+                                "2": "0x2C",
+                                "3": "0x2A"
+                            },
+                            "1": {
+                                "0": "Function description",
+                                "1": "send information about plugin location to the to C&C server",
+                                "2": "remove a plugin",
+                                "3": "load a plugin"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>ID (last byte)</td><td>Function description</td></tr><tr><td>0x2B</td><td>send information about plugin location to the to C&amp;C server</td></tr><tr><td>0x2C</td><td>remove a plugin</td></tr><tr><td>0x2A</td><td>load a plugin</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x1e4b7623>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x1ac3b4f5>": " kbg<tick_count>.dat",
+                        "<code_0xcbbe5bd1>": "Core Plugin"
+                    },
+                    "text": "All plugin binaries used by the core module are stored in the working directory under the name kbg<tick_count>.dat. After the Core Plugin is loaded, it first removes all plugins from the working directory see the image below.",
+                    "html": "<p>All plugin binaries used by the core module are stored in the working directory under the name<code> kbg&lt;tick_count&gt;.dat</code>. After the <code>Core Plugin</code> is loaded, it first removes all plugins from the working directory \u2013 see the image below.</p>"
+                },
+                {
+                    "id": "<sentence_0xfd571df8>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x84ea8a47>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/search_for_file_and_push_path_to_vector.png"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter size-full is-resized\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/search_for_file_and_push_path_to_vector.png\"><img alt=\"\" class=\"wp-image-5558\" height=\"417\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/search_for_file_and_push_path_to_vector.png\" width=\"672\"/></a></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x81d04394>",
+            "title": "Zload(Atomx.dll,xps1.dll)",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xba1a61d0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "2ABC43865E49F8835844D30372697FDA55992E5A6A13808CFEED1C37BA8F7876",
+                    "html": "<p>2ABC43865E49F8835844D30372697FDA55992E5A6A13808CFEED1C37BA8F7876</p>"
+                },
+                {
+                    "id": "<sentence_0x8980a5f5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x9b92990d>": "Zload ",
+                        "<code_0x84e77f90>": "Core Plugin",
+                        "<code_0x8d44c2ba>": "\u201cGetPlugin\u201d",
+                        "<code_0x7e42e1a>": "\u201cInstall\u201d",
+                        "<code_0xfc4c39e5>": "\u201ccore_zload\u201d",
+                        "<code_0xf087a0aa>": "\u201dzload\u201d",
+                        "<code_0x24c5e6d9>": "zload",
+                        "<code_0xd398c95b>": "core_zload",
+                        "<code_0x9f85cfbb>": "DllMain "
+                    },
+                    "text": "The DLL we call Zload is an example of a plugin loaded by the Core Plugin. It exports four functions: GetPlugin, Install, core_zload and zload. The main functionality of this plugin is setting up persistence, creating a backdoor user account, and concealing itself on the infected system. We will focus on the exported functions zload, core_zload and the default DllMain function, as they contain the most interesting functionality.",
+                    "html": "<p>The DLL we call <code>Zload </code>is an example of a plugin loaded by the <code>Core Plugin</code>. It exports four functions: <code>\u201cGetPlugin\u201d</code>, <code>\u201cInstall\u201d</code>, <code>\u201ccore_zload\u201d</code> and <code>\u201dzload\u201d</code>. The main functionality of this plugin is setting up persistence, creating a backdoor user account, and concealing itself on the infected system. We will focus on the exported functions <code>zload</code>, <code>core_zload</code> and the default <code>DllMain </code>function, as they contain the most interesting functionality.</p>"
+                },
+                {
+                    "id": "<sentence_0x552a85fc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xa0d08251>": "Zload ",
+                        "<code_0xd4362a39>": "(<root_folder>)",
+                        "<code_0x22756edd>": " \"mec\" "
+                    },
+                    "text": "This function is fairly simple, its main objective is to execute another binary. It first retrieves the path to the directory where the Zload plugin binary is located (<root_folder>) and creates a new subfolder called \"mec\" in it. After this it renames and moves three files into it:",
+                    "html": "<p>This function is fairly simple, its main objective is to execute another binary. It first retrieves the path to the directory where the <code>Zload </code>plugin binary is located <code>(&lt;root_folder&gt;)</code> and creates a new subfolder called<code> \"mec\" </code>in it. After this it renames and moves three files into it:</p>"
+                },
+                {
+                    "id": "<sentence_0x4c896ce6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "the Zload plugin binary itself as <root_folder>\\mec\\logexts.dll,<crlf><root_folder>\\spdlogd.exe as <root_folder>\\mec\\spdagent.exe and<crlf><root_folder>\\kb.ini as <root_folder>\\mec\\kb.ini",
+                    "html": "<ul><li>the <code>Zload </code>plugin binary itself as<code> &lt;root_folder&gt;\\mec\\logexts.dll</code>,</li><li><code>&lt;root_folder&gt;\\spdlogd.exe</code> as <code>&lt;root_folder&gt;\\mec\\spdagent.exe</code> and</li><li><code>&lt;root_folder&gt;\\kb.ini</code> as<code> &lt;root_folder&gt;\\mec\\kb.ini</code></li></ul>"
+                },
+                {
+                    "id": "<sentence_0xe53f4209>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x9c471124>": "<root_folder>\\mec\\spdagent.exe",
+                        "<code_0x48a63aef>": "<root_folder>\\spdlogd.exe"
+                    },
+                    "text": "After the files are renamed and moved, it creates a new process by executing the binary <root_folder>\\mec\\spdagent.exe (originally <root_folder>\\spdlogd.exe).",
+                    "html": "<p>After the files are renamed and moved, it creates a new process by executing the binary <code>&lt;root_folder&gt;\\mec\\spdagent.exe</code> (originally <code>&lt;root_folder&gt;\\spdlogd.exe</code>).</p>"
+                },
+                {
+                    "id": "<sentence_0x9feb0994>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe248eb31>": "https://github.com/jas502n/mimikat_ssp/blob/master/AddSecurityPackage_RawRPC.cpp",
+                        "<code_0xa49d4943>": "Local Security Authority (LSA)",
+                        "<code_0x8691263e>": "mimikat_ssp/AddSecurityPackage_RawRPC"
+                    },
+                    "text": "This function is responsible for persistence which it achieves by registering itself into the list of security support providers (SSPs). Windows SSP DLLs are loaded into the Local Security Authority (LSA) process when the system boots. The code of this function is notably similar to the mimikat_ssp/AddSecurityPackage_RawRPC source code found on github.",
+                    "html": "<p>This function is responsible for persistence which it achieves by registering itself into the list of security support providers (SSPs). Windows SSP DLLs are loaded into the <code>Local Security Authority (LSA)</code> process when the system boots. The code of this function is notably similar to the <code>mimikat_ssp/AddSecurityPackage_RawRPC</code> <a href=\"https://github.com/jas502n/mimikat_ssp/blob/master/AddSecurityPackage_RawRPC.cpp\" rel=\"noreferrer noopener\" target=\"_blank\">source code found on github</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0xa06aeffe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The default DllMain function leverages several persistence and evasion techniques. It also allows the attacker to create a backdoor account on the infected system and lower the overall system security.",
+                    "html": "<p>The default DllMain function leverages several persistence and evasion techniques. It also allows the attacker to create a backdoor account on the infected system and lower the overall system security.</p>"
+                },
+                {
+                    "id": "<sentence_0x4e68b039>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x49baff57>": "\u201clsass.exe\u201d",
+                        "<code_0x3e984772>": " \u201cspdagent.exe\u201d",
+                        "<code_0x7811b11b>": "\u201cspdagent.exe\u201d"
+                    },
+                    "text": "The plugin first checks if its DLL was loaded either by the processes lsass.exe or spdagent.exe. If the DLL was loaded by spdagent.exe, it will adjust the token privileges of the current process.",
+                    "html": "<p>The plugin first checks if its DLL was loaded either by the processes <code>\u201clsass.exe\u201d</code> or<code> \u201cspdagent.exe\u201d</code>. If the DLL was loaded by <code>\u201cspdagent.exe\u201d</code>, it will adjust the token privileges of the current process.</p>"
+                },
+                {
+                    "id": "<sentence_0xd5d6c727>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x723ef612>": "\u201clsass.exe\u201d",
+                        "<code_0xcc8f325f>": "\u201ckb<num>.dll\u201d",
+                        "<code_0x8624487d>": "\u201ckb.ini\u201d",
+                        "<code_0xc00fd378>": "HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\WinSock2\\\\Parameters",
+                        "<code_0x6100efa>": "AutodialDLL",
+                        "<code_0xc07a26ce>": "\u201ckb<num>.dll\u201d",
+                        "<code_0x60ce89c1>": "ws2_32.dll"
+                    },
+                    "text": "If it was loaded by lsass.exe, it will retrieve the path kb<num>.dll from the configuration file kb.ini and write it under the registry key HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\WinSock2\\\\Parameters AutodialDLL. This ensures persistence, as it causes the DLL kb<num>.dll to be loaded each time the Winsock 2 library (ws2_32.dll) is invoked.",
+                    "html": "<p>If it was loaded by <code>\u201clsass.exe\u201d</code>, it will retrieve the path <code>\u201ckb&lt;num&gt;.dll\u201d</code> from the configuration file <code>\u201ckb.ini\u201d</code> and write it under the registry key <code>HKEY_LOCAL_MACHINE\\\\SYSTEM\\\\CurrentControlSet\\\\Services\\\\WinSock2\\\\Parameters</code> <code>AutodialDLL</code>. This ensures persistence, as it causes the DLL <code>\u201ckb&lt;num&gt;.dll\u201d</code> to be loaded each time the Winsock 2 library (<code>ws2_32.dll</code>) is invoked.</p>"
+                },
+                {
+                    "id": "<sentence_0x6764a57>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xac42b6f4>": "\u201cavp.exe\u201d",
+                        "<code_0x8c5814ff>": "\u201cNortonSecurity.exe\u201d",
+                        "<code_0x714603f1>": "\u201cexplorer.exe\u201d"
+                    },
+                    "text": "To avoid detection, the plugin first checks the list of running processes for avp.exe (Kaspersky Antivirus) or NortonSecurity.exe and exits if either of them is found. If these processes are not found on the system, it goes on to conceal itself by changing its own process name to explorer.exe.",
+                    "html": "<p>To avoid detection, the plugin first checks the list of running processes for <code>\u201cavp.exe\u201d</code> (Kaspersky Antivirus) or <code>\u201cNortonSecurity.exe\u201d</code> and exits if either of them is found. If these processes are not found on the system, it goes on to conceal itself by changing its own process name to <code>\u201cexplorer.exe\u201d</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0xf4c3e36c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7ee5779>": "CMSTP COM",
+                        "<code_0xe2a4e50e>": "CMSTPLUA {3E5FC7F9-9A51-4367-9063-A120244FBEC7}"
+                    },
+                    "text": "The plugin also has the capability to bypass the UAC mechanisms and to elevate its process privileges through CMSTP COM interfaces, such as CMSTPLUA {3E5FC7F9-9A51-4367-9063-A120244FBEC7}.",
+                    "html": "<p>The plugin also has the capability to bypass the UAC mechanisms and to elevate its process privileges through <code>CMSTP COM</code> interfaces, such as <code>CMSTPLUA {3E5FC7F9-9A51-4367-9063-A120244FBEC7}</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0x444396ff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, the plugin carries out registry manipulation (details can be found in the appendix), that lowers the systems protection by:",
+                    "html": "<p>Next, the plugin carries out registry manipulation (details can be found in the appendix), that lowers the system\u2019s protection by:</p>"
+                },
+                {
+                    "id": "<sentence_0xe6a8644d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Allowing local accounts to have full admin rights when they are authenticating via network logon<crlf>Enabling RDP connections to the machine without the user password<crlf>Disabling admin approval on an administrator account, which means that all applications run with full administrative privileges<crlf>Enabling anonymous SID to be part of the everyone group in Windows<crlf>Allowing Null Session users to list users and groups in the domain<crlf>Allowing Null Session users to access shared folders<crlf>Setting the name of the pipe that will be accessible to Null Session users",
+                    "html": "<ul><li>Allowing local accounts to have full admin rights when they are authenticating via network logon</li><li>Enabling RDP connections to the machine without the user password</li><li>Disabling admin approval on an administrator account, which means that all applications run with full administrative privileges</li><li>Enabling anonymous SID to be part of the everyone group in Windows</li><li>Allowing <code>\u201cNull Session\u201d</code> users to list users and groups in the domain</li><li>Allowing <code>\u201cNull Session\u201d</code> users to access shared folders</li><li>Setting the name of the pipe that will be accessible to \u201cNull Session\u201d users</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x1e0b7f8>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xc69fb546>": "WebClient ",
+                        "<code_0xa2f6c154>": "\u201cAutomatic\u201d",
+                        "<code_0x843c0b5d>": "\u201cDefaultAccount\u201d",
+                        "<code_0xa3cf95d6>": "\u201cAdmin@1999!\u201d",
+                        "<code_0x4929a8e>": "\u201cAdministrator\u201d",
+                        "<code_0xa201003c>": "\u201cRemote Desktop Users\u201d"
+                    },
+                    "text": "After this step, the plugin changes the WebClient service startup type to Automatic. It creates a new user with the name DefaultAccount and the password Admin@1999! which is then added to the Administrator and Remote Desktop Users groups. It also hides the new account on the logon screen.",
+                    "html": "<p>After this step, the plugin changes the <code>WebClient </code>service startup type to <code>\u201cAutomatic\u201d</code>. It creates a new user with the name <code>\u201cDefaultAccount\u201d</code> and the password <code>\u201cAdmin@1999!\u201d</code> which is then added to the <code>\u201cAdministrator\u201d</code> and <code>\u201cRemote Desktop Users\u201d</code> groups. It also hides the new account on the logon screen.</p>"
+                },
+                {
+                    "id": "<sentence_0xac3f060e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xe1d7a738>": "\u201c360tray.exe\u201d",
+                        "<code_0x351ce935>": "\u201c360sd.exe\u201d",
+                        "<code_0x67c52fd4>": "\"spdlogd.exe\""
+                    },
+                    "text": "As the last step, the plugin checks the list of running processes for process names 360tray.exe and 360sd.exe and executes the file \"spdlogd.exe\" if neither of them is found.",
+                    "html": "<p>As the last step, the plugin checks the list of running processes for process names <code>\u201c360tray.exe\u201d</code> and <code>\u201c360sd.exe\u201d</code> and executes the file <code>\"spdlogd.exe\"</code> if neither of them is found.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5e9f27f2>",
+            "title": "MecGame(kb%num%.dll)",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd3337e6e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "4C73A62A9F19EEBB4FEFF4FDB88E4682EF852E37FFF957C9E1CFF27C5E5D47AD",
+                    "html": "<p>4C73A62A9F19EEBB4FEFF4FDB88E4682EF852E37FFF957C9E1CFF27C5E5D47AD</p>"
+                },
+                {
+                    "id": "<sentence_0x468be01d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x1ea0a568>": "Core Plugin",
+                        "<code_0x3184a630>": "Zload",
+                        "<code_0xda5f0869>": "\u201cspdlogd.exe\u201d",
+                        "<code_0xc0e229d0>": "UUID {1052E375-2CE2-458E-AA80-F3B7D6EA23AF}"
+                    },
+                    "text": "MecGame is another example of a plugin that can be loaded by the Core Plugin. Its main purpose is similar to the previously described Zload plugin it executes the binary spdlogd.exe and achieves persistence by registering an RPC interface with UUID {1052E375-2CE2-458E-AA80-F3B7D6EA23AF}. This RPC interface represents a function that decodes and executes a base64 encoded shellcode.",
+                    "html": "<p>MecGame is another example of a plugin that can be loaded by the <code>Core Plugin</code>. Its main purpose is similar to the previously described <code>Zload</code> plugin \u2013 it executes the binary <code>\u201cspdlogd.exe\u201d</code> and achieves persistence by registering an RPC interface with <code>UUID {1052E375-2CE2-458E-AA80-F3B7D6EA23AF}</code>. This RPC interface represents a function that decodes and executes a base64 encoded shellcode.</p>"
+                },
+                {
+                    "id": "<sentence_0x3f0ed1c0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x73fad5c9>": "MecGame ",
+                        "<code_0xe596133c>": "MSSYS.lck",
+                        "<code_0x8e92a9f5>": "<UserName>-XPS.lck",
+                        "<code_0xd6473e6f>": "atomxd.dll ",
+                        "<code_0x18a9e10e>": " logexts.dll"
+                    },
+                    "text": "The MecGame plugin has several methods for executing spdlogd.exe depending on the level of available privileges. It also creates a lockfile with the name MSSYS.lck or <UserName>-XPS.lck depending on the name of the process that loaded it, and deletes the files atomxd.dll and logexts.dll.",
+                    "html": "<p>The <code>MecGame </code>plugin has several methods for executing spdlogd.exe depending on the level of available privileges. It also creates a lockfile with the name <code>MSSYS.lck</code> or <code>&lt;UserName&gt;-XPS.lck</code> depending on the name of the process that loaded it, and deletes the files <code>atomxd.dll </code>and<code> logexts.dll</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0x26832a17>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xeb2286be>": "\u201cinteloem\u201d",
+                        "<code_0x9762117>": "Winsock2"
+                    },
+                    "text": "It can be installed as a service with the service name inteloem or can be loaded by any executable that connects to the internet via the Winsock2 library.",
+                    "html": "<p>It can be installed as a service with the service name <code>\u201cinteloem\u201d</code> or can be loaded by any executable that connects to the internet via the <code>Winsock2</code> library.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x91537e2c>",
+            "title": "MulCom",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9f94ab74>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ABA89668C6E9681671A95B3D7A08AAE2A067DEED2D835BA6F6FD18556C88A5F2",
+                    "html": "<p>ABA89668C6E9681671A95B3D7A08AAE2A067DEED2D835BA6F6FD18556C88A5F2</p>"
+                },
+                {
+                    "id": "<sentence_0x915ae260>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xbcdae257>": "\u201cOperateRoutineW\u201d",
+                        "<code_0x726e01bc>": "\u201cStartRoutineW\u201d",
+                        "<code_0xa9168b86>": "\u201cStopRoutineW\u201d",
+                        "<code_0x34972d6f>": "\u201dWorkRoutineW\u201d",
+                        "<code_0x8efb2433>": "\u201cStartRoutineW\u201d"
+                    },
+                    "text": "This DLL is a backdoor module which exports four functions: OperateRoutineW, StartRoutineW, StopRoutineW and WorkRoutineW; the main malicious function being StartRoutineW.",
+                    "html": "<p>This DLL is a backdoor module which exports four functions: <code>\u201cOperateRoutineW\u201d</code>, <code>\u201cStartRoutineW\u201d</code>, <code>\u201cStopRoutineW\u201d</code> and <code>\u201dWorkRoutineW\u201d</code>; the main malicious function being <code>\u201cStartRoutineW\u201d</code>.</p>"
+                },
+                {
+                    "id": "<sentence_0xca302fdc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x77bb0f30>": "\u201cGlobal\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB\u201d",
+                        "<code_0x6c3fa74b>": "\"Local\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB\u201d"
+                    },
+                    "text": "For proper execution, the backdoor needs configuration data accessed through a shared object with the file mapping name either Global\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB or \"Local\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB. Unfortunately we didnt come across the configuration data, so we are missing some information such as the C&C server domains this module uses.",
+                    "html": "<p>For proper execution, the backdoor needs configuration data accessed through a shared object with the file mapping name either <code>\u201cGlobal\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB\u201d</code> or <code>\"Local\\\\4ED8FD41-2D1B-4CC3-B874-02F0C60FF9CB\u201d</code>. Unfortunately we didn\u2019t come across the configuration data, so we are missing some information such as the C&amp;C server domains this module uses.</p>"
+                },
+                {
+                    "id": "<sentence_0xbaa40523>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "There are 15 commands supported by this backdoor (although some of them are not implemented) referred to by the following numerical identifiers:",
+                    "html": "<p>There are 15 commands supported by this backdoor (although some of them are not implemented) referred to by the following numerical identifiers:</p>"
+                },
+                {
+                    "id": "<sentence_0xe2d2e72>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x81bb5d00>": {
+                            "0": {
+                                "0": "Command ID",
+                                "1": "1",
+                                "2": "2",
+                                "3": "3",
+                                "4": "4",
+                                "5": "5",
+                                "6": "6",
+                                "7": "7",
+                                "8": "8",
+                                "9": "9",
+                                "10": "101",
+                                "11": "102",
+                                "12": "103",
+                                "13": "104",
+                                "14": "Combination of 105/106/107"
+                            },
+                            "1": {
+                                "0": "Function description",
+                                "1": "Sends collected data from executed commands. It is used only if the authentication with a proxy is done through NTLM",
+                                "2": "Finds out information about the domain name, user name and security identifier of the process explorer.exe. It finds out the user name, domain name, and computer name of all Remote Desktop sessions.",
+                                "3": "Enumerates root disks",
+                                "4": "Enumerates files and finds out their creation time, last access time and last write time",
+                                "5": "Creates a process with a duplicated token. The token is obtained from one of the processes in the list (see Appendix).",
+                                "6": "Enumerates files and finds out creation time, last time access, last write time",
+                                "7": "Renames files",
+                                "8": "Deletes files",
+                                "9": "Creates a directory",
+                                "10": "Sends an error code obtained via GetLastError API function",
+                                "11": "Enumerates files in a specific folder and finds out their creation time, last access time and last write time",
+                                "12": "Uploads a file to the C&C server",
+                                "13": "Not implemented (reserved)",
+                                "14": "Creates a directory and downloads files from the C&C server"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Command ID</td><td>Function description</td></tr><tr><td>1</td><td>Sends collected data from executed commands. It is used only if the authentication with a proxy is done through NTLM</td></tr><tr><td>2</td><td>Finds out information about the domain name, user name and security identifier of the process <code>explorer.exe</code>. It finds out the user name, domain name, and computer name of all Remote Desktop sessions.</td></tr><tr><td>3</td><td>Enumerates root disks</td></tr><tr><td>4</td><td>Enumerates files and finds out their creation time, last access time and last write time</td></tr><tr><td>5</td><td>Creates a process with a duplicated token. The token is obtained from one of the processes in the list (see Appendix).</td></tr><tr><td>6</td><td>Enumerates files and finds out creation time, last time access, last write time</td></tr><tr><td>7</td><td>Renames files</td></tr><tr><td>8</td><td>Deletes files</td></tr><tr><td>9</td><td>Creates a directory</td></tr><tr><td>101</td><td>Sends an error code obtained via <code>GetLastError </code>API function</td></tr><tr><td>102</td><td>Enumerates files in a specific folder and finds out their creation time, last access time and last write time</td></tr><tr><td>103</td><td>Uploads a file to the C&amp;C server</td></tr><tr><td>104</td><td>Not implemented (reserved)</td></tr><tr><td>Combination of 105/106/107</td><td>Creates a directory and downloads files from the C&amp;C server</td></tr></tbody></table></figure>"
+                },
+                {
+                    "id": "<sentence_0x762a4025>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xc92176ff>": "MulCom "
+                    },
+                    "text": "The MulCom backdoor is capable of communicating via HTTP and TCP protocols. The data it exchanges with the C&C servers is encrypted and compressed by the RC4 and aPack algorithms respectively, using the RC4 key loaded from the configuration data object.",
+                    "html": "<p>The <code>MulCom </code>backdoor is capable of communicating via HTTP and TCP protocols. The data it exchanges with the C&amp;C servers is encrypted and compressed by the RC4 and aPack algorithms respectively, using the RC4 key loaded from the configuration data object.</p>"
+                },
+                {
+                    "id": "<sentence_0x852b351f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It is also capable of proxy server authentication using schemes such as Basic, NTLM, Negotiate or to authenticate via either the SOCKS4 and SOCKS5 protocols.",
+                    "html": "<p>It is also capable of proxy server authentication using schemes such as Basic, NTLM, Negotiate or to authenticate via either the SOCKS4 and SOCKS5 protocols.</p>"
+                },
+                {
+                    "id": "<sentence_0x964b3007>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x27462df>": "0xBC"
+                    },
+                    "text": "After successful authentication with a proxy server, the backdoor sends data xorred by the constant 0xBC. This data is a set with the following structure:",
+                    "html": "<p>After successful authentication with a proxy server, the backdoor sends data xorred by the constant <code>0xBC</code>. This data is a set with the following structure:</p>"
+                },
+                {
+                    "id": "<sentence_0x4eff9fd6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x87fc8b65>": "https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/getacp-1024x177.png"
+                    },
+                    "text": "Data structure",
+                    "html": "<figure class=\"aligncenter size-large\"><a href=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/getacp.png\"><img alt=\"\" class=\"wp-image-5559\" height=\"177\" src=\"https://decoded.avast.io/wp-content/uploads/sites/2/2022/03/getacp-1024x177.png\" width=\"1024\"/></a><figcaption>Data structure</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xafb6596a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Another interesting capability of this backdoor is the usage of layered C&C servers. If this option is enabled in the configuration object (it is not the default option), the first request goes to the first layer C&C server, which returns the IP address of the second layer. Any subsequent communication goes to the second layer directly.",
+                    "html": "<p>Another interesting capability of this backdoor is the usage of layered C&amp;C servers. If this option is enabled in the configuration object (it is not the default option), the first request goes to the first layer C&amp;C server, which returns the IP address of the second layer. Any subsequent communication goes to the second layer directly.</p>"
+                },
+                {
+                    "id": "<sentence_0x5e5d2b73>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x77c72157>": "MulCom ",
+                        "<code_0xe86e95e9>": "FFRat ",
+                        "<code_0xd608c5a3>": "FormerFirstRAT"
+                    },
+                    "text": "As previously stated, we found several code similarities between the MulCom DLL and the FFRat (a.k.a. FormerFirstRAT).",
+                    "html": "<p>As previously stated, we found several code similarities between the <code>MulCom </code>DLL and the <code>FFRat </code>(a.k.a. <code>FormerFirstRAT</code>).</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf4f1eb3>",
+            "title": "Appendix",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x12f80f82>",
+            "title": "List of processes:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6c8a67c9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "360sd.exe<crlf>360rp.exe<crlf>360Tray.exe<crlf>360Safe.exe<crlf>360rps.exe<crlf>ZhuDongFangYu.exe<crlf>kxetray.exe<crlf>kxescore.exe<crlf>KSafeTray.exe<crlf>KSafe.exe<crlf>audiodg.exe<crlf>iexplore.exe<crlf>MicrosoftEdge.exe<crlf>MicrosoftEdgeCP.exe<crlf>chrome.exe",
+                    "html": "<ul><li><code>360sd.exe</code></li><li><code>360rp.exe</code></li><li><code>360Tray.exe</code></li><li><code>360Safe.exe</code></li><li><code>360rps.exe</code></li><li><code>ZhuDongFangYu.exe</code></li><li><code>kxetray.exe</code></li><li><code>kxescore.exe</code></li><li><code>KSafeTray.exe</code></li><li><code>KSafe.exe</code></li><li><code>audiodg.exe</code></li><li><code>iexplore.exe</code></li><li><code>MicrosoftEdge.exe</code></li><li><code>MicrosoftEdgeCP.exe</code></li><li><code>chrome.exe</code></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x78320e9f>",
+            "title": "Registry values changed by the Zload plugin:",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7590a11>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xb90050aa>": {
+                            "0": {
+                                "0": "Registry path in HKEY_LOCAL_MACHINE",
+                                "1": "SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System",
+                                "2": "SYSTEM\\\\CurrentControlSet\\\\Control\\\\Lsa",
+                                "3": "System\\\\CurrentControlSet\\\\Services\\\\LanManServer\\\\Parameters"
+                            },
+                            "1": {
+                                "0": "Registry key",
+                                "1": "LocalAccountTokenFilterPolicy = 1 FilterAdministratorToken = 0",
+                                "2": "LimitBlankPasswordUse = 0 EveryoneIncludesAnonymous = 1 RestrictAnonymous = 0",
+                                "3": "RestrictNullSessAccess = 0 NullSessionPipes = RpcServices"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Registry path in <code>HKEY_LOCAL_MACHINE</code></td><td>Registry key</td></tr><tr><td><code>SOFTWARE\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Policies\\\\System</code></td><td>LocalAccountTokenFilterPolicy = 1 FilterAdministratorToken = 0</td></tr><tr><td><code>SYSTEM\\\\CurrentControlSet\\\\Control\\\\Lsa</code></td><td>LimitBlankPasswordUse = 0 EveryoneIncludesAnonymous = 1 RestrictAnonymous = 0</td></tr><tr><td><code>System\\\\CurrentControlSet\\\\Services\\\\LanManServer\\\\Parameters</code></td><td>RestrictNullSessAccess = 0 NullSessionPipes = RpcServices</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe4547d67>",
+            "title": "Core module working directory (WD)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xcba6c38a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x8f987184>": " C:\\ProgramData\\",
+                        "<code_0xa220192>": "%TEMP%"
+                    },
+                    "text": "Default hard-coded WD names (created either in C:\\ProgramData\\ or in %TEMP%):",
+                    "html": "<p>Default hard-coded WD names (created either in<code> C:\\ProgramData\\</code> or in <code>%TEMP%</code>):</p>"
+                },
+                {
+                    "id": "<sentence_0x61babadd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "spptools<crlf>NewGame<crlf>TspSoft<crlf>InstallAtomx",
+                    "html": "<ul><li><code>spptools</code></li><li><code>NewGame</code></li><li><code>TspSoft</code></li><li><code>InstallAtomx</code></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x55661bd5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x8e802ca3>": "game_<tick_count>.log"
+                    },
+                    "text": "File used to test permissions: game_<tick_count>.log the WD path is written into it and then the file is deleted.",
+                    "html": "<p>File used to test permissions: <code>game_&lt;tick_count&gt;.log</code> \u2013 the WD path is written into it and then the file is deleted.</p>"
+                },
+                {
+                    "id": "<sentence_0xdc264236>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x955c9ad9>": "\u201cD:(A;;GA;;;WD)(A;OICIIO;GA;;;WD)\u201d"
+                    },
+                    "text": "Hard-coded security descriptor used for WD access: D:(A;;GA;;;WD)(A;OICIIO;GA;;;WD).",
+                    "html": "<p>Hard-coded security descriptor used for WD access: <code>\u201cD:(A;;GA;;;WD)(A;OICIIO;GA;;;WD)\u201d</code>. </p>"
+                },
+                {
+                    "id": "<sentence_0x3890a6c1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xb418d3b7>": "\u201c<working_dir>\\<victim_username>-<comment_string>.log\u201d"
+                    },
+                    "text": "Lockfile name format:",
+                    "html": "<p>Lockfile name format: <code>\u201c&lt;working_dir&gt;\\&lt;victim_username&gt;-&lt;comment_string&gt;.log\u201d</code></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6e6ce7ea>",
+            "title": "Indicators of Compromise (IoC)",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5d176dcc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x30f81460>": "https://github.com/avast/ioc/tree/master/OperationDragonCastling",
+                        "<a_0x67b68b2f>": "https://github.com/avast/ioc/blob/master/OperationDragonCastling/samples.sha256"
+                    },
+                    "text": "Repository: https://github.com/avast/ioc/tree/master/OperationDragonCastling<crlf>List of SHA-256:",
+                    "html": "<ul><li> Repository: <a href=\"https://github.com/avast/ioc/tree/master/OperationDragonCastling\" rel=\"noreferrer noopener\" target=\"_blank\">https://github.com/avast/ioc/tree/master/OperationDragonCastling</a></li><li> List of SHA-256: <a href=\"https://github.com/avast/ioc/blob/master/OperationDragonCastling/samples.sha256\" rel=\"noreferrer noopener\" target=\"_blank\">https://github.com/avast/ioc/blob/master/OperationDragonCastling/samples.sha256</a></li></ul>"
+                }
+            ]
+        }
+    ]
+}

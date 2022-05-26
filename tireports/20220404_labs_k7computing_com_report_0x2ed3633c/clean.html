@@ -1,0 +1,82 @@
+<div>
+<img alt="" class="hidden-social-img" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Discord-Stealer.png" style="max-width:80%;height:auto;width:auto;"/>
+<a class="uncategorized" href="https://labs.k7computing.com/index.php/category/social-networking-apps/">Social Networking Apps</a><a class="uncategorized" href="https://labs.k7computing.com/index.php/category/stealer-trojan/">Stealer Trojan</a>
+<h1 class="entry-title">The Discord Token Grab</h1>
+By Rahul RApril 4, 2022
+ 
+<p></p><p>Recently we came across a Twitter feed that described a malware sample coded in Python and fairly new to have many detections (at the time of writing this blog) which attracted our interest in diving deeper into the sample.</p>
+<p> Upon analyzing the sample we found some interesting technique that describes how threat actors steal your credentials/any personal information stored in Discord; a popular social networking app, by grabbing Discord’s authtokens.</p>
+<h3>Let’s now look at the analysis </h3>
+<p>As the first step of analysis , we used “Detect It Easy” to identify the compiler and its Microsoft Visual C++. Further investigation showed that the malware’s source python script is compiled using PyInstaller to create a Microsoft Visual C payload.</p>
+<figure class="wp-caption aligncenter" id="attachment_23739"><img alt="" class="wp-image-23739 size-full" height="287" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure1.png" width="635"/><figcaption class="wp-caption-text" id="caption-attachment-23739">Figure 1: Compiler details</figcaption></figure>
+<p>The compiled sample has the actual malicious python script 333.py in the overlay. </p>
+<p>We used <a href="https://github.com/extremecoders-re/pyinstxtractor" rel="noopener" target="_blank">pyinstxtractor</a> to extract the .pyc files (including 333.pyc) from the zlib archive (overlay).</p>
+<figure class="wp-caption aligncenter" id="attachment_23740"><img alt="" class="wp-image-23740 size-full" height="407" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure2.png" style="max-width:800px;height:auto;width:auto;" width="1124"/><figcaption class="wp-caption-text" id="caption-attachment-23740">Figure 2: Extracted files from binary</figcaption></figure>
+<h3>Behavioral Analysis</h3>
+<figure class="wp-caption aligncenter" id="attachment_23742"><img alt="" class="wp-image-23742 size-full" height="322" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure3.png" width="489"/><figcaption class="wp-caption-text" id="caption-attachment-23742">Figure 3: Startup logo</figcaption></figure>
+<p>When the original malware sample is executed, it verifies and downloads the required python modules through pip if not found in the user’s PC.</p>
+<figure class="wp-caption aligncenter" id="attachment_23743"><img alt="" class="wp-image-23743 size-full" height="230" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure4.png" width="442"/><figcaption class="wp-caption-text" id="caption-attachment-23743">Figure 4: Imported Modules</figcaption></figure>
+<p>After downloading the required modules, it searches for all the processes running in the system and kills if the process name has any one of the strings “http, wireshark, fiddler, packet” in their name.</p>
+<p>For ease of understanding, images shown below are from the extracted 333.pyc file. </p>
+<figure class="wp-caption aligncenter" id="attachment_23745"><img alt="" class="wp-image-23745 size-full" height="294" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure5.png" style="max-width:800px;height:auto;width:auto;" width="804"/><figcaption class="wp-caption-text" id="caption-attachment-23745">Figure 5: Procedure for killing monitoring apps</figcaption></figure>
+<p>After killing the identified network monitoring application, it sends a POST request with the following JSON containing “ready to log” message to the Discord webhook url “hxxps[:]//discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G”</p>
+<figure class="wp-caption aligncenter" id="attachment_23746"><img alt="" class="wp-image-23746 size-full" height="465" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure6.png" style="max-width:800px;height:auto;width:auto;" width="951"/><figcaption class="wp-caption-text" id="caption-attachment-23746">Figure 6: JSON payload sent during the start of malware activity</figcaption></figure>
+<p>After the initial network request, it starts the activity to steal cookies and tokens of Discord. </p>
+<figure class="wp-caption aligncenter" id="attachment_23748"><img alt="" class="wp-image-23748 size-full" height="244" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure7.png" style="max-width:800px;height:auto;width:auto;" width="747"/><figcaption class="wp-caption-text" id="caption-attachment-23748">Figure 7: Default location of browsers local storage</figcaption></figure>
+<p>The malware steals the token from the below mentioned browsers and apps</p>
+<ol>
+<li>Discord app</li>
+<li>Google Chrome</li>
+<li>Opera Browser</li>
+<li>Brave </li>
+<li>Yandex</li>
+</ol>
+<p>Then for each of the obtained paths, it creates a full path using string operation and points to the leveldb directory.</p>
+<p>For example, the full path to the leveldb directory in Chrome would look like “C:\Users\*******\AppData\Local\Google\Chrome\User Data\Default\Local Storage\leveldb\”</p>
+<figure class="wp-caption aligncenter" id="attachment_23749"><img alt="" class="wp-image-23749 size-full" height="398" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure8.png" style="max-width:800px;height:auto;width:auto;" width="1187"/><figcaption class="wp-caption-text" id="caption-attachment-23749">Figure 8: Parsing files to steal Discord token</figcaption></figure>
+<p>It then iterates through all the files inside the obtained directory and searches for files ending with .log or .ldb extension. Once a log file is obtained it reads the content into memory and searches for the Discord token/MFA pattern through the below regex r”[\w-]{24}\.[\w-]{6}\.[\w-]{27}”, r”mfa\.[\w-]{84}”. Each token found is then appended to a Python List.</p>
+<p>Using the stolen token, the malware sends an API request to the Discord server “/billing/payment-sources” route, to check if the user has any saved payment sources like credit/debit cards.</p>
+<figure class="wp-caption aligncenter" id="attachment_23750"><img alt="" class="wp-image-23750 size-full" height="183" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure9.png" style="max-width:800px;height:auto;width:auto;" width="1091"/><figcaption class="wp-caption-text" id="caption-attachment-23750">Figure 9: Checks if the user has any payment info saved</figcaption></figure>
+<p>The following information is collected by the malware by sending a request to the URL with the stolen token in the Authorization Header. </p>
+<ol>
+<li>User data saved in Discord</li>
+<li>Public IP address of the user obtained through a GET request to “ipinfo.io/json”</li>
+<li>Username</li>
+<li>Discord user_id</li>
+<li>Avatar_id</li>
+<li>Avatar_url</li>
+<li>Email</li>
+<li>Phone Number</li>
+<li>MFA_Enabled status</li>
+<li>Premium user status</li>
+<li>Is Email verified</li>
+<li>Billing Information</li>
+</ol>
+<figure class="wp-caption aligncenter" id="attachment_23751"><img alt="" class="wp-image-23751 size-full" height="345" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure10.png" width="501"/><figcaption class="wp-caption-text" id="caption-attachment-23751">Figure 10: User data response from Discord Server</figcaption></figure>
+<p>After collecting all the information, it creates a JSON payload for sending it to the webhook URL.</p>
+<p>The JSON payload structure in this malware is as follows</p>
+<figure class="wp-caption aligncenter" id="attachment_23752"><img alt="" class="wp-image-23752 size-full" height="583" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure11.png" style="max-width:800px;height:auto;width:auto;" width="989"/><figcaption class="wp-caption-text" id="caption-attachment-23752">Figure 11: Stolen Information sent to C2 as JSON payload</figcaption></figure>
+<p>The process then continues to run in the background and maintains all the tokens sent to the C2 in its local memory. If a user changes their Discord credentials, a new token would get generated and this would trigger the malware again to send the details to its C2 server.</p>
+<p>The malware also has the capability to steal the browser cookies and send them to C2.</p>
+<figure class="wp-caption aligncenter" id="attachment_23753"><img alt="" class="wp-image-23753 size-full" height="480" src="https://labs.k7computing.com/wp-content/uploads/2022/04/Figure12.png" style="max-width:800px;height:auto;width:auto;" width="979"/><figcaption class="wp-caption-text" id="caption-attachment-23753">Figure 12: Browser cookie stealing capability</figcaption></figure>
+<h2>Indicators of Compromise (IOCs)</h2>
+<p>Hash: CBA0E7DEBB118110852F7F2B1F0C9C2A</p>
+<p>Detection Name: Trojan ( 0001140e1 )</p>
+<p>C2 (Discord Webhook URL): <a href="">hxxps://discord[.]com/api/webhooks/954910299654328380/SKmJo86TbjSj905A8TODrBL2vC5uwsmlXWNzGsphdrRfvC_aAwwTfl02Pcrv2LW2oC8G</a></p>
+<p>References: </p>
+<p>https://twitter.com/struppigel/status/1506613766804357128</p>
+<p></p>
+<h3 class="comment-reply-title">Like what you're reading? Subscribe to our top stories.</h3>
+<p>If you want to subscribe to our monthly newsletter, please submit the form below.</p> Email* : 
+<ul class="controls">
+<li class="previous-post mouse-leaving">
+<h3>Previous Post« <a href="https://labs.k7computing.com/index.php/dissecting-the-kazy-crypter/" rel="prev">Dissecting the Kazy Crypter </a>
+</h3>
+</li>
+<li class="next-post mouse-leaving">
+<h3>Next Post
+</h3>
+</li>
+</ul>
+<h3 class="related-title">More Posts</h3>
+</div>

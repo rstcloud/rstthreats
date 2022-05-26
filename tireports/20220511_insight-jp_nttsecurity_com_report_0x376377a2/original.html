@@ -1,0 +1,647 @@
+<html lang="en" style="font-size: 10px; font-family: sans-serif;" class="translated-ltr"><head>
+  <base href="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"> 
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge"> 
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"> 
+  <meta charset="utf-8"> 
+  <title>Operation RestyLink: Targeted threat campaign targeting Japanese companies, Ryu Hiyoshi</title> 
+  <meta name="description" content="本日の記事は、SOC アナリスト 小池 倫太郎の記事です。---2022年4月中旬から日本企業を狙った標的型攻撃キャンペーンを複数の組織で観測しています。この攻撃キャンペーンは2022年3月にも活動していたと考えられ、また2021年10月にも関連した攻撃が行われていた可能性があります。このことから、短期..."> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5, minimum-scale=1"> 
+  <meta name="twitter:dnt" content="on"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:image" content="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:image:secure_url" content="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:image:width" content="800"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:image:height" content="800"> 
+  <meta name="author" content="Ryu Hiyoshi"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:title" content="Operation RestyLink: 日本企業を狙った標的型攻撃キャンペーン (via Passle)"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:site_name" content="Passle"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:url" content="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:description" content="本日の記事は、SOC アナリスト 小池 倫太郎の記事です。---2022年4月中旬から日本企業を狙った標的型攻撃キャンペーンを複数の組織で観測しています。この攻撃キャンペーンは2022年3月にも活動していたと考えられ、また2021年10月にも関連した攻撃が行われていた可能性があります。このことから、短期..."> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:type" content="article"> 
+  <meta prefix="og: http://ogp.me/ns#" property="og:locale" content="en_GB"> 
+  <meta property="fb:app_id" content="291505782785530"> 
+  <meta property="fb:admins" content="736991176"> 
+  <meta name="twitter:card" content="summary_large_image"> 
+  <meta name="twitter:site" content="@passle"> 
+  <meta name="twitter:url" content="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"> 
+  <meta name="twitter:title" content="Operation RestyLink: 日本企業を狙った標的型攻撃キャンペーン (via Passle)"> 
+  <meta name="twitter:description" content="本日の記事は、SOC アナリスト 小池 倫太郎の記事です。---2022年4月中旬から日本企業を狙った標的型攻撃キャンペーンを複数の組織で観測しています。この攻撃キャンペーンは2022年3月にも活動していたと考えられ、また2021年10月にも関連した攻撃が行われていた可能性があります。このことから、短期..."> 
+  <meta property="twitter:image" content="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png"> 
+  <link rel="canonical" href="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"> 
+  <link rel="shortcut icon" href="https://passle-net.s3.amazonaws.com/CustomDesign/585a639fb00e810748563fbf/2017-09-13-2-05-24-011-59b93b24b00e8011c0a37fd8.ico" id="favicon" type="image/x-icon"> 
+  <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/Content/bootstrap/ico/apple-touch-icon-114-precomposed.png"> 
+  <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/Content/bootstrap/ico/apple-touch-icon-72-precomposed.png"> 
+  <link rel="apple-touch-icon-precomposed" href="/Content/bootstrap/ico/apple-touch-icon-72-precomposed.png"> 
+  <script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js" nonce=""></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=G-V8EW6BCLCH&amp;l=dataLayer&amp;cx=c" nonce=""></script><script id="twitter-wjs-passle" src="https://platform.twitter.com/widgets.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-M5DDHT6"></script><script nonce="">
+        // Define dataLayer and the gtag function.
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+    </script> 
+  <script nonce="">
+                     gtag('consent', 'default', {
+                        'ad_storage': 'denied',
+                        'analytics_storage': 'granted',
+                        'functionality_storage': 'denied',
+                        'personalization_storage': 'denied',
+                        'security_storage': 'denied',
+                        'wait_for_update': 2000 //allow 2 seconds for the cookie control to load and update settings
+                    });
+        </script> 
+  <style>*{border:0;margin:0;padding:0;-webkit-margin-before:0;-webkit-margin-after:0;-webkit-box-sizing:border-box;box-sizing:border-box}h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,address,cit,code,del,dfn,em,ins,q,samp,small,strong,sub,sup,b,i,hr,dl,dt,dd,ol,ul,li,fieldset,legend,label{vertical-align:baseline}article,aside,canvas,figure,figure img,figcaption,hgroup,footer,header,main,nav,section,audio,video{display:block}table{border-collapse:separate;border-spacing:0}table caption,table th,table td{text-align:left;vertical-align:middle}:focus{outline:0}.small_text{font-size:12px;line-height:17px}.medium_text{font-size:14px;line-height:20px}.large_text{font-size:16px;line-height:23px}.x_large_text{font-size:18px;line-height:28px}.x_x_l_text{font-size:23px;line-height:32px}.small_title{font-size:20px;line-height:27px}.subheader_text{font-size:32px;line-height:45px}.header_text{font-size:40px;line-height:56px}.weight_light{font-weight:300}.weight_regular{font-weight:400}.weight_semi_bold{font-weight:600}.weight_bold{font-weight:700}.hide{display:none}.clearfix:before,.clearfix:after{display:table;content:"";line-height:0}.clearfix:after{clear:both}.ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.inset-button:hover{text-decoration:none;text-shadow:-1px -1px 0 rgba(255,255,255,.4),1px 1px rgba(0,0,0,.3);-webkit-box-shadow:inset 1px 1px 0 rgba(0,0,0,.3),inset -1px -1px rgba(255,255,255,.4);box-shadow:inset 1px 1px 0 rgba(0,0,0,.3),inset -1px -1px rgba(255,255,255,.4)}.transform-centre{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}.open-button,.closed-button{border-radius:4px;white-space:nowrap;font-weight:600}.open-button:hover,.closed-button:hover{text-decoration:none}.open-button:hover span,.closed-button:hover span{text-decoration:underline}.closed-button{padding:5px 10px;background-color:#198dc6;color:#fff}.open-button{padding:4px 9px;background-color:#fff;color:#198dc6;border:1px solid #198dc6}#passleweb-iframe-container{height:720px;width:100%;background-color:#fff}.passle-web-iframe{height:100%;width:100%;overflow-x:hidden}@media(min-width:985px){#passleweb-iframe-container{width:900px;background-color:unset}}html,body,.passle-post-block{color:#333;font-family:"Open Sans",sans-serif;font-size:14px;line-height:20px}button,input,select,textarea{font-family:inherit}button:focus,input:focus,select:focus,textarea:focus{outline:none}a{color:#f9653b;text-decoration:none}a:hover{text-decoration:underline}h1{font-size:40px;line-height:56px}h2{font-size:32px;line-height:45px;font-weight:300}h3,h4{font-size:20px;line-height:27px}h1,h3{font-weight:600}h1 a:hover,h3 a:hover{text-decoration:none}h4{font-weight:400}.client-content:before,.client-content:after{display:table;content:"";line-height:0}.client-content:after{clear:both}.passle-content{font-size:14px;line-height:20px}.passle-content p{margin:0}.share-message{padding:30px}</style> 
+  <link rel="stylesheet" href="https://dukb55syzud3u.cloudfront.net/Content/googlefonts/all.min.css?v=0.0.2"> 
+  <link rel="stylesheet" href="https://dukb55syzud3u.cloudfront.net/Content/fontawesome/all.min.css?v=5.14.0"> 
+  <link href="https://dukb55syzud3u.cloudfront.net/PostBundle?v=SfsXoAB6IhFvUHYGDB2UEsc9yrcJDHbNhmATL_4Yi1s1" rel="stylesheet" media="all"> 
+  <link href="https://dukb55syzud3u.cloudfront.net/CustomCSS/CustomPassleCSS?passleShortcode=102f18u&amp;version=8" rel="stylesheet" type="text/css" media="screen"> 
+  <link href="https://dukb55syzud3u.cloudfront.net/CustomCSS/CustomDesignCSS?passleShortcode=102f18u&amp;version=8" rel="stylesheet" type="text/css" media="screen"> 
+  <!--[if lte IE 8]>
+        <script>for(var e,l='article aside footer header main nav section time'.split(' ');e=l.pop();document.createElement(e))</script>
+        <script type="text/javascript" src="https://dukb55syzud3u.cloudfront.net/Scripts/Plugins/html5shiv.js"   ></script>
+    <![endif]--> 
+  <!-- Google Tag Manager (Passle) --> 
+  <script nonce="">
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-M5DDHT6');
+</script> 
+  <!-- End Google Tag Manager --> 
+  <meta http-equiv="X-Translated-By" content="Google">
+  <meta http-equiv="X-Translated-To" content="en">
+  <script type="text/javascript" src="https://www.gstatic.com/_/translate_http/_/js/k=translate_http.tr.ru.z-bPAlGej9I.O/d=1/rs=AN8SPfpeiGq0TAdkP7n3OTEHufHmoC6fow/m=ajaxproxy" data-sourceurl="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"></script>
+  <meta name="robots" content="none">
+ <script async="" src="https://www.gstatic.com/feedback/js/help/prod/service/lazy.min.js" nonce=""></script><link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css"><script type="text/javascript" charset="UTF-8" src="https://translate.googleapis.com/_/translate_http/_/js/k=translate_http.tr.ru.z-bPAlGej9I.O/am=Ag/d=1/exm=el_conf/ed=1/rs=AN8SPfrBt3GOK1yKmp4C9nbYPHCAxJ-ZDw/m=el_main" nonce=""></script><style type="text/css"></style></head> 
+ <body class="passle-body" style="margin-top: 56px;"><iframe title="Google Translate navigation" frameborder="0" id="gt-nvframe" role="navigation" aria-label="Google Translate navigation" src="https://translate.google.com/websitetranslationui?parent=https%3A%2F%2Finsight--jp-nttsecurity-com.translate.goog&amp;pfu=https%3A%2F%2Finsight--jp-nttsecurity-com.translate.goog%2Fpost%2F102ho8o%2Foperation-restylink%3F_x_tr_sl%3Dauto%26_x_tr_tl%3Den%26_x_tr_hl%3Dru%26_x_tr_pto%3Dwapp&amp;u=https%3A%2F%2Finsight-jp.nttsecurity.com%2Fpost%2F102ho8o%2Foperation-restylink&amp;sl=auto&amp;tl=en&amp;opu=https%3A%2F%2Ftranslate.google.com%2Fwebsite%3Fsl%3Dauto%26tl%3Den%26hl%3Dru%26client%3Dwebapp%26u%3Dhttps%3A%2F%2Finsight-jp.nttsecurity.com%2Fpost%2F102ho8o%2Foperation-restylink%26anno%3D2&amp;hl=ru&amp;lang=ja" style="border: none; border-radius: 0px; box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px; height: 56px; left: 0px; right: auto; position: fixed; top: 0px; transition: none 0s ease 0s; width: 100%; z-index: 2147483646;"></iframe>
+  <script type="text/javascript" src="https://www.gstatic.com/_/translate_http/_/js/k=translate_http.tr.ru.z-bPAlGej9I.O/d=1/exm=ajaxproxy,el_conf/ed=1/rs=AN8SPfpeiGq0TAdkP7n3OTEHufHmoC6fow/m=navigationui" data-environment="prod" data-proxy-url="https://insight--jp-nttsecurity-com.translate.goog" data-proxy-full-url="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" data-source-url="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink" data-source-language="auto" data-target-language="en" data-display-language="ru" data-detected-source-language="ja" data-is-source-untranslated="false" data-source-untranslated-url="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink&amp;anno=2"></script> 
+  <!-- Google Tag Manager Passle (noscript) --> 
+  <noscript> 
+   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M5DDHT6" height="0" width="0" style="display:none;visibility:hidden"></iframe> 
+  </noscript> 
+  <!-- End Google Tag Manager Passle (noscript) --> 
+  <input type="hidden" name="InMobileApp" id="InMobileApp" value="false"> 
+  <div id="user-cookie-options" class="hide"></div> 
+  <!-- b/_Layout --> 
+  <div id="passleweb-iframe-container" class="hide"></div> 
+  <div id="passle-page-wrapper" class="fixed-width-cd"> 
+   <div class="client-content"> 
+    <!-- Begin DigiCert site seal JavaScript code --> 
+    <script type="tet/javascript">
+var __dcid = __dcid || [];__dcid.push(["DigiCertClickID_GWPGD61P", "10", "m", "black", "GWPGD61P"]);(function(){var cid=document.createElement("script");cid.async=true;cid.src="//seal.digicert.com/seals/cascade/seal.min.js";var s = document.getElementsByTagName("script");var ls = s[(s.length - 1)];ls.parentNode.insertBefore(cid, ls.nextSibling);}());
+</script> 
+    <!-- End DigiCert site seal JavaScript code --> 
+    <style>
+[id^="DigiCertClickID"] {
+    display: block;
+    max-width: 100px;
+    padding-left: 10px;
+}
+[id^=DigiCertClickID] > span a {
+    color: #fff !important;
+    font-size: 12px !important;
+}
+</style> 
+    <div id="Contentplaceholder1_TC2147C68001_Col00" class="sf_colsIn header masthead clearfix"> 
+     <div class="" data-sf-element="Row"> 
+      <div id="Contentplaceholder1_T82E01FA5002_Col00" class="sf_colsIn col-md-4 col-sm-4"> 
+       <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://jp.security.ntt/"><img alt="NTT Security" class="logo" data-displaymode="Original" src="https://passle-net.s3.amazonaws.com/CustomDesign/5b867b1c2a1ea202080db5cc/2022-04-19-10-24-40-558-625e8de8f636e9107cc21ecb.png" title="NTT Security Logo" sfref="[images|librariesProvider3]d967ec26-1b46-42c5-9d26-75c8a6201a57" style="width: 195px;"></a> 
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+   <div class="passle-content" style="min-height: 442.1px;"> 
+    <div class="passle-102f18u"> 
+     <div class="responsive-container clearfix"> 
+      <div class="public-header "> 
+       <div class="client-content client-content-subheader"> 
+       </div> 
+       <div class="passle-nav-container"> 
+        <div class="nav__first-line"> 
+         <div class="nav__first-line__mobile-buttons clearfix"> 
+          <div class="follow-button-container"> 
+          </div> 
+          <button class="header-nav-mobile-button"><i class="fas fa-bars fa-2x"></i><span class="sr-only"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Passle Menu</font></font></span></button> 
+         </div> 
+        </div> 
+        <div class="nav__second-line"> 
+         <div class="nav__second-line__actions"> 
+          <ul class="header-nav"> 
+           <li class="follow-button-container"> </li> 
+           <li class="edit-button-container" style="display: none"> <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.passle.net/passle/102f18u/editpost/102ho8o" class="passle-edit edit-post button button--tertiary button--squared"> <i class="fas fa-pencil-alt"></i><span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Edit this post</font></font></span> </a> </li> 
+           <li> <a class="all-posts button button--link button--squared" href="https://insight--jp-nttsecurity-com.translate.goog/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><i class="fas fa-th"></i><span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">All Posts</font></font></span></a> </li> 
+           <li> <button class="about button button--link button--squared"> <i class="fas fa-users"></i><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Contributors</font></font></button> </li> 
+           <li> <button class="archive button button--link button--squared"><i class="fas fa-calendar-alt"></i><span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Archive</font></font></span></button> </li> 
+          </ul> 
+         </div> 
+        </div> 
+       </div> 
+       <div class="info-container"> 
+        <!--<div class='responsive-container clearfix'>--> 
+        <div class="about-container clearfix" itemscope="" itemtype="http://schema.org/Organization"> 
+         <div class="about-inner"> 
+          <div class="contributors-container no-about"> 
+           <div class="about-item"> 
+            <h4><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Contributors</font></font></h4> 
+            <ul class="contributors-list"> 
+             <li class="contributor clearfix" itemprop="member" itemscope="" itemtype="http://schema.org/Person"> <img src="https://images.passle.net/35x35/Person/5bdc3aab98fcca089453eaa7/Avatar/2019-05-16-01-21-05-319-5cdcbb01989b6e0cdca73965.jpg" class="avatar avatar-small" itemprop="image"> 
+              <div class="contributor-details"> 
+               <div class="contributor-name" itemprop="name">
+                <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102f554/hiroki-hada?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Hiroki Hada</font></font></a>
+               </div> 
+               <div class="contributor-title" itemprop="jobTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                Senior Manager of Security Operation Center
+               </font></font></div> 
+              </div> </li> 
+             <li class="contributor clearfix" itemprop="member" itemscope="" itemtype="http://schema.org/Person"> <img src="https://images.passle.net/35x35/assets/images/no_avatar.png" class="avatar avatar-small" itemprop="image"> 
+              <div class="contributor-details"> 
+               <div class="contributor-name" itemprop="name">
+                <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102f0yi/kazuhiro-yamada?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Kazuhiro Yamada</font></font></a>
+               </div> 
+               <div class="contributor-title" itemprop="jobTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                Senior Manager
+               </font></font></div> 
+              </div> </li> 
+             <li class="contributor clearfix" itemprop="member" itemscope="" itemtype="http://schema.org/Person"> <img src="https://images.passle.net/35x35/assets/images/no_avatar.png" class="avatar avatar-small" itemprop="image"> 
+              <div class="contributor-details"> 
+               <div class="contributor-name" itemprop="name">
+                <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102hmk8/ryu-hiyoshi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ryu Hiyoshi</font></font></a>
+               </div> 
+               <div class="contributor-title" itemprop="jobTitle"></div> 
+              </div> </li> 
+             <li class="contributor clearfix" itemprop="member" itemscope="" itemtype="http://schema.org/Person"> <img src="https://images.passle.net/35x35/Person/5d0231fcabdfe90398cefe49/Avatar/2019-06-14-06-20-38-320-5d033cb6989b6e07a836d881.jpg" class="avatar avatar-small" itemprop="image"> 
+              <div class="contributor-details"> 
+               <div class="contributor-name" itemprop="name">
+                <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102flze/shogo-hayashi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Shogo Hayashi</font></font></a>
+               </div> 
+               <div class="contributor-title" itemprop="jobTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                Senior Analyst of Security Operation Center at NTT Security
+               </font></font></div> 
+              </div> </li> 
+             <li class="contributor clearfix" itemprop="member" itemscope="" itemtype="http://schema.org/Person"> <img src="https://images.passle.net/35x35/Person/5b7d05e92a1ea204e0ef3834/Avatar/2019-12-17-07-49-34-140-5df8888eabdfeb128c2ac279.png" class="avatar avatar-small" itemprop="image"> 
+              <div class="contributor-details"> 
+               <div class="contributor-name" itemprop="name">
+                <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102f0yj/yohei-tanaka?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Yohei Tanaka</font></font></a>
+               </div> 
+               <div class="contributor-title" itemprop="jobTitle"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+                ICS Security Engineer
+               </font></font></div> 
+              </div> </li> 
+            </ul> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="archive-container clearfix"> 
+         <h4><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">NTT Security Japan Archive</font></font></h4> 
+         <ul class="archive-list"> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2022/5?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">May 2022 (2)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2022/4?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">April 2022 (2)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/12?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">December 2021 (19)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/11?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">November 2021 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/10?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">October 2021 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/9?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">September 2021 (2)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/3?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">March 2021 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2021/2?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">February 2021 (2)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/12?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">December 2020 (2)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/11?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">November 2020 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/10?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">October 2020 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/7?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">July 2020 (4)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/3?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">March 2020 (3)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2020/2?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">February 2020 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/12?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">December 2019 (21)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/10?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">October 2019 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/9?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">September 2019 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/7?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">July 2019 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/6?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">June 2019 (3)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/5?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">May 2019 (1)</font></font></a> </li> 
+          <li> <a href="https://insight--jp-nttsecurity-com.translate.goog/archive/2019/4?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">April 2019 (1)</font></font></a> </li> 
+         </ul> 
+        </div> 
+        <!--</div>--> 
+       </div> 
+      </div> 
+     </div> 
+     <div class="post-container" data-post-shortcode="102ho8o"> 
+      <main class="responsive-container"> 
+       <article class="passle-article" itemscope="" itemtype="http://schema.org/Article" itemprop="mainEntity"> 
+        <link href="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink" itemprop="mainEntityOfPage"> 
+        <header class="passle-article-header clearfix"> 
+         <div class="action-container clearfix"> 
+          <p class="action-buttons" style="display: block;"> <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="action-button action-like " data-post-shortcode="102ho8o" title="Like" aria-label="Like" data-click-event-action="Click" data-click-event-category="ShareButton" data-click-event-label="LikePostButtonClicked"> <i class="far fa-star"></i> <span class="like-button__counter action-button-number"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0</font></font></span> </a> <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="action-button action-repost " data-postshortcode="102ho8o" data-passleshortcode="102f18u" title="Repost" aria-label="Repost"> <i class="fas fa-retweet-alt"></i> <span id="repost-counter-102ho8o" class="action-button-number"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">0</font></font></span> </a> </p>&nbsp; 
+          <div class="repost-form-container"></div> 
+         </div> 
+         <h1 class="passle-headline" itemprop="headline"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Operation RestyLink: Targeted attack campaign targeting Japanese companies</font></font></h1> 
+        </header> 
+        <div class="post-dateline clearfix"> 
+         <div class="publish-info clearfix"> 
+          <div class="post-byline-mobile"> 
+           <div class="post-authors"> 
+            <span class="post-author" itemscope="" itemtype="http://schema.org/Person" itemprop="author"><a href="https://insight--jp-nttsecurity-com.translate.goog/u/102hmk8/ryu-hiyoshi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ryu Hiyoshi</font></font></a></span> 
+           </div> 
+          </div> 
+          <div class="publish-info--dates"> 
+           <div class="publish-date" itemprop="datePublished"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+            May 11, 2022 
+           </font></font></div> 
+          </div> 
+          <span class="article-publisher" itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization"> <span itemprop="logo" itemscope="" itemtype="http://schema.org/ImageObject"> <span itemprop="url"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://www.passle.net/Content/Images/passle_logo-186px.png</font></font></span> </span> <span itemprop="name"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> Passle </font></font></span> <span itemprop="url"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">https://passle.net</font></font></span> </span> 
+         </div> 
+         <div class="share-container"> 
+          <div class="share-buttons-container clearfix"> 
+           <div class="data-container" data-authorfullname="Ryu Hiyoshi" data-postshortcode="102ho8o" data-title="Operation RestyLink: 日本企業を狙った標的型攻撃キャンペーン (via Passle)" data-twitterscreenname="" data-tags="" data-url="https://insight-jp.nttsecurity.com/post/102ho8o/operation-restylink"> 
+            <div class="social-sharing-buttons"> 
+             <a href="#" class="istatoy-button web-istatoy" data-postshortcode="102ho8o" data-istatoysource="ClientWeb"><i class="istatoy-icon"></i></a> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="social-sharing-button linkedin" data-click-event-action="Click" data-click-event-category="ShareButton" data-click-event-label="linkedin" data-network="linkedin"><i class="fab fa-linkedin-in" title="LinkedIn"></i></a> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="social-sharing-button twitter has-count" data-click-event-action="Click" data-click-event-category="ShareButton" data-click-event-label="twitter" data-network="twitter"><i class="fab fa-twitter" title="Twitter"></i></a><span class="share-counter share-counter_twitter"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1298</font></font></span> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="social-sharing-button facebook has-count" data-click-event-action="Click" data-click-event-category="ShareButton" data-click-event-label="facebook" data-network="facebook"><i class="fab fa-facebook-f" title="Facebook"></i></a><span class="share-counter share-counter_facebook"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">47 47</font></font></span> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+        <div class="post-text"> 
+         <div class="clearfix"> 
+          <div class="post-byline"> 
+           <div class="post-author clearfix" itemprop="author" itemscope="" itemtype="http://schema.org/Person"> 
+            <img src="https://images.passle.net/200x200/assets/images/no_avatar.png" class="avatar avatar-medium" itemprop="image" alt="Post contributor: Ryu Hiyoshi, NTT Security"> 
+            <div class="author-name" itemprop="name"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/u/102hmk8/ryu-hiyoshi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ryu Hiyoshi</font></font></a> 
+            </div> 
+           </div> 
+           <meta itemprop="keywords" content=""> 
+           <ul class="tags"> 
+           </ul> 
+          </div> 
+          <section class="post-body" itemprop="articleBody"> 
+           <div class="post-content clearfix" itemprop="text"> 
+            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Today's article is from SOC analyst Rintaro Koike.</font></font></p>
+            <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">---</font></font></p>
+            <p><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><font style="vertical-align: inherit;"><span lang="EN-US"><font style="vertical-align: inherit;">Since mid- April </font></span><span lang="EN-US"><font style="vertical-align: inherit;">2022 </font></span></font><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">, </font></font></span><font style="vertical-align: inherit;"><span lang="JA-JP"><font style="vertical-align: inherit;">multiple organizations have been observing targeted attack campaigns targeting Japanese companies. </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">This attack campaign is </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">believed to have been active in </font></span><span lang="EN-US"><font style="vertical-align: inherit;">March </font></span><span lang="EN-US"><font style="vertical-align: inherit;">2022 </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">, </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">and it is possible that a related attack was also underway in </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">October </font></span><span lang="EN-US"><font style="vertical-align: inherit;">2021 </font></span><span lang="EN-US"><font style="vertical-align: inherit;">. </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">For this reason, it is possible that attacks will continue in the future, rather than short-term, one-off attack campaigns.</font></span></font><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">In this article, we will analyze this attack campaign in detail and consider the attribution of the attacking subject.</font></font></span><span>&nbsp;</span></p>
+            <h2><span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Attack summary</font></font></span></span></h2>
+            <p><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The flow of attacks observed in mid- </font></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">April </font></font></span><font style="vertical-align: inherit;"><span lang="EN-US"><font style="vertical-align: inherit;">2022 </font></span></font><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">is as follows.</font></font></span><span>&nbsp;</span>&nbsp;</p>
+            <p><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-00-54-708-627a1bb6f636e91ba432eac6.png" class="fr-fic fr-dii"><span lang="JA-JP"><br>&nbsp;</span></p>
+            <p><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">When you access the URL </font></font></span><font style="vertical-align: inherit;"><span lang="JA-JP"><font style="vertical-align: inherit;">written in the spear phishing email, the </font></span><span lang="EN-US"><font style="vertical-align: inherit;">ZIP </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">file is downloaded </font></span></font><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">from the server managed by the attacker . </font></font></span><font style="vertical-align: inherit;"><span lang="JA-JP"><font style="vertical-align: inherit;">When the user </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">executes the </font></span><span lang="EN-US"><font style="vertical-align: inherit;">LNK file in the </font></span><span lang="EN-US"><font style="vertical-align: inherit;">ZIP </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">file, they use </font></span><span lang="EN-US"><font style="vertical-align: inherit;">Windows commands </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">to download the </font></span><span lang="EN-US"><font style="vertical-align: inherit;">DOT file </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">from the attacker server and place it in the </font></span><span lang="EN-US"><font style="vertical-align: inherit;">Microsoft Word </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">startup directory. </font></span><span lang="EN-US"><font style="vertical-align: inherit;">At that time, the user will be shown the PDF </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">file that </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">will be the decoy .</font></span></font><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">From the next time onwards, the next time the user opens the </font></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Word file, the </font></font></span><font style="vertical-align: inherit;"><span lang="EN-US"><font style="vertical-align: inherit;">DOT file </font></span></font><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">located in the startup directory will </font></font></span><font style="vertical-align: inherit;"><span lang="JA-JP"><font style="vertical-align: inherit;">be loaded and the loaded macro will fire. </font></span><span lang="EN-US"><font style="vertical-align: inherit;">The macro also downloads and executes the DOT file </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">from the attacker server , but this </font></span><span lang="EN-US"><font style="vertical-align: inherit;">DOT </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">file was not available </font></span><span lang="JA-JP"><font style="vertical-align: inherit;">at the time of our investigation .</font></span></font><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"></font></span><span>&nbsp;</span></p>
+            <h2><span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Detailed analysis</font></font></span></span></h2>
+            <h3><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">LNK </font></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">file</font></font></span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US"><font style="vertical-align: inherit;"></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The icon of the </font></font></span><font style="vertical-align: inherit;"><span lang="EN-US"><font style="vertical-align: inherit;">LNK file is a </font></span></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">PDF </font></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">file, but in reality, </font></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ScriptRunner.exe </font></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">is used and </font></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">two </font></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">main processes are performed.</font></font></span><span>&nbsp;</span></p>
+            <ol start="1">
+             <li><p><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">View decoy </font></font></span><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">PDF </font></font></span><span lang="JA-JP"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">file</font></font></span><span>&nbsp;</span></p></li>
+            </ol>
+            <ol start="2">
+             <li><p><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルをダウンロードし、</span><span lang="EN-US">Microsoft Word</span><span lang="JA-JP">のスタートアップディレクトリへ配置</span><span>&nbsp;</span></p></li>
+            </ol>
+            <p><span lang="JA-JP">表示されるデコイの</span><span lang="EN-US">PDF</span><span lang="JA-JP">ファイルは</span><span lang="EN-US">2</span><span lang="JA-JP">種類ありますが、ともに日韓関係に関するものでした。</span><span><span lang="JA-JP">黒塗りしているところには実在する人物の名前が書かれていました。</span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-11-00-55-14-361-627b0972f636e919e0fa65ff.png" class="fr-fic fr-dib"><span lang="JA-JP"><br></span></span></p>
+            <h3><span lang="EN-US">DOT</span><span lang="JA-JP">ファイル</span><span>&nbsp;</span></h3>
+            <p><span lang="JA-JP">ユーザが</span><span lang="EN-US">Word</span><span lang="JA-JP">ファイルを開くと、スタートアップディレクトリに配置された</span><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルが読み込まれます。</span><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルには以下のようなマクロが仕込まれていました。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-03-49-478-627a1c65f636e908302c0895.png" class="fr-fic fr-dii"></span></p>
+            <p><span lang="JA-JP">マクロは更に</span><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルを読み込み、実行します。この際、ファイル名にユーザ名を含んでおり、攻撃者が被害ユーザの環境を把握していたことが分かります。調査時点で、追加の</span><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルは入手できませんでした。</span><span>&nbsp;</span>&nbsp;</p>
+            <h2><span lang="JA-JP">関連した攻撃</span><span>&nbsp;</span></h2>
+            <h3><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月下旬の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月下旬、今回の攻撃キャンペーンと同一のインフラから</span><span lang="EN-US">ISO</span><span lang="JA-JP">ファイルがダウンロードできたことを確認しています。攻撃の流れは以下のようになっています。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-04-45-382-627a1c9df636e919e0f90fd0.png" class="fr-fic fr-dii"></span></p>
+            <p><span lang="JA-JP">その</span><span lang="EN-US">ISO</span><span lang="JA-JP">ファイルにはデコイファイルの他に、正規の</span><span lang="EN-US">Microsoft Word</span><span lang="JA-JP">の</span><span lang="EN-US">EXE</span><span lang="JA-JP">ファイルと、悪意のある</span><span lang="EN-US">DLL</span><span lang="JA-JP">ファイルが含まれていました。</span><span lang="EN-US">DLL</span><span lang="JA-JP">ファイルは</span><span lang="EN-US">EXE</span><span lang="JA-JP">ファイルを実行時にサイドロードされ、実行されます。</span><span>&nbsp;</span></p>
+            <p><span lang="EN-US">DLL</span><span lang="JA-JP">ファイルは</span><span lang="EN-US">UPX</span><span lang="JA-JP">でパックされていますが、</span><span lang="EN-US">Golang</span><span lang="JA-JP">で書かれたダウンローダでした。</span><span lang="EN-US">DLL</span><span lang="JA-JP">ファイルはサーバ上から</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">の</span><span lang="EN-US">Stager</span><span lang="JA-JP">をダウンロードし、実行します。攻撃者は</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">を使用して様々なコマンドを実行し、環境の調査などを行いました</span><span lang="JA-JP">。</span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP">実行された</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike Stager</span><span lang="JA-JP">の</span><span lang="EN-US">Config</span><span lang="JA-JP">は以下のとおりです。</span><span>&nbsp;</span></p>
+            <p><span><img alt="Text Automatically generated description" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-06-09-753-627a1cf1f636e91ba432ebef.png" class="fr-fic fr-dii"></span></p>
+            <h3><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月上旬の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月上旬、日本企業において、本攻撃キャンペーンのインフラ（</span><span lang="EN-US">IP</span><span lang="JA-JP">アドレス）に対するアクセスを確認しました。詳細は不明ですが、標的・時期・インフラの重複から、同一の攻撃キャンペーンである可能性が高いと考えられます。</span><span>&nbsp;</span></p>
+            <h3><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">3</span><span lang="JA-JP">月の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">VirusTotal</span><span lang="JA-JP">上には今回の攻撃と極めて類似した</span><span lang="EN-US">LNK</span><span lang="JA-JP">ファイルが</span><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">3</span><span lang="JA-JP">月時点で日本から投稿されています。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-07-39-205-627a1d4bf636e91ba432ec38.png" class="fr-fic fr-dii"></span></p>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">3</span><span lang="JA-JP">月の検体は</span><span lang="EN-US">ScriptRunner.exe</span><span lang="JA-JP">ではなく</span><span lang="EN-US">cmd.exe</span><span lang="JA-JP">を使用していますが、実行されるコマンドや攻撃インフラは重複しており、これらは高い確度で同一の攻撃キャンペーンであると言えます。</span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP">調査時点で</span><span lang="EN-US">1</span><span lang="JA-JP">段階目の</span><span lang="EN-US">DOT</span><span lang="JA-JP">ファイルは入手できませんでした。デコイとして表示される</span><span lang="EN-US">PDF</span><span lang="JA-JP">ファイルは以下のように、東アジアにおける日本の外交に関する文書でした。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-11-01-34-28-442-627b12a4f636e90888113d95.png" class="fr-fic fr-dib"></span><br></p>
+            <h3><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">1</span><span lang="JA-JP">月の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月下旬の事例で使用された</span><span lang="EN-US">Golang</span><span lang="JA-JP">製のダウンローダは奇妙な</span><span lang="EN-US">User-Agent</span><span lang="JA-JP">を使用し、</span><span lang="JA-JP"> </span><span lang="EN-US">/Events</span><span lang="JA-JP"> </span><span lang="JA-JP">というパスから</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike Stager</span><span lang="JA-JP">をダウンロードします。この</span><span lang="EN-US">User-Agent</span><span lang="JA-JP">はロシアの</span><span lang="EN-US">Yandex Browser</span><span lang="JA-JP">のもので、日本では一般的な値ではありません。これと同様の特徴を持つサンプルが</span><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">1</span><span lang="JA-JP">月に日本から</span><span lang="EN-US">VirusTotal</span><span lang="JA-JP">へ投稿されました。インフラも近く、本攻撃キャンペーンと関連している可能性があります。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-09-28-367-627a1db8f636e908302c09f4.png" class="fr-fic fr-dii"></span></p>
+            <p><span><span lang="JA-JP"><span lang="JA-JP">また、異なるサブドメインに紐づく</span><span lang="EN-US">IP</span><span lang="JA-JP">アドレスを調査した結果、オープンソースの</span><span lang="EN-US">C2</span><span lang="JA-JP">フレームワークである</span><span lang="EN-US">Covenant</span><span lang="JA-JP">の痕跡を発見しました。攻撃者は</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">以外にも、</span><span lang="EN-US">Covenant</span><span lang="JA-JP">を使用していた可能性があります。</span><span>&nbsp;</span>&nbsp;</span></span></p>
+            <p><span><span lang="JA-JP"><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-09-47-167-627a1dcbf636e91ba432ecc5.png" class="fr-fic fr-dii"></span></span></p>
+            <p><br></p>
+            <h3><span lang="EN-US">2021</span><span lang="JA-JP">年</span><span lang="EN-US">11</span><span lang="JA-JP">月の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">1</span><span lang="JA-JP">月と</span><span lang="EN-US">4</span><span lang="JA-JP">月下旬の</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">の事例に関連して、</span><span lang="EN-US">2021</span><span lang="JA-JP">年</span><span lang="EN-US">11</span><span lang="JA-JP">月に取得された</span><span lang="JA-JP"> </span><span lang="EN-US">differentfor[.]com</span><span lang="JA-JP"> </span><span lang="JA-JP">というドメインが挙げられます。インフラやドメイン、ファイルパス、</span><span lang="EN-US">HTTP</span><span lang="JA-JP">ヘッダ、</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">の</span><span lang="EN-US">Config</span><span lang="JA-JP">などが重複しており、本攻撃キャンペーンと関連している可能性があります。</span><span>&nbsp;</span></p>
+            <p><span><img alt="Text Automatically generated description" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-10-16-954-627a1de8f636e91ba432ece5.png" class="fr-fic fr-dii"></span></p>
+            <h3><span lang="EN-US">2021</span><span lang="JA-JP">年</span><span lang="EN-US">10</span><span lang="JA-JP">月の事例</span><span>&nbsp;</span></h3>
+            <p><span lang="JA-JP">本攻撃キャンペーンについて調査を行った結果、今回と類似した攻撃インフラを使用した攻撃が</span><span lang="EN-US">2021</span><span lang="JA-JP">年</span><span lang="EN-US">10</span><span lang="JA-JP">月下旬に行われていた可能性があることを発見しました。</span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP">調査時点では攻撃ファイルを入手することはできませんでしたが、笹川平和財団の</span><span lang="EN-US">Web</span><span lang="JA-JP">サイトのように見せかけた</span><span lang="EN-US">Web</span><span lang="JA-JP">サイトから悪性ファイルがダウンロードされた可能性があります。</span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP"><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-10-53-328-627a1e0df636e91ba432ed07.png" class="fr-fic fr-dii"></span></p>
+            <h2><span lang="JA-JP">帰属</span><span>&nbsp;</span></h2>
+            <p><span lang="JA-JP">本攻撃キャンペーンについて、その特徴を整理します。</span><span>&nbsp;</span></p>
+            <p><span><img src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-11-23-944-627a1e2bf636e908302c0a72.png" class="fr-fic fr-dii"></span></p>
+            <p><span lang="JA-JP">様々な特徴がありますが、特に注目すべきは明確に日本を標的としていることです。標的ユーザを絞り込み、自然な日本語を扱い、日本の</span><span lang="EN-US">IP</span><span lang="JA-JP">アドレスを使用するなど、単なる流れ弾的な攻撃ではなく、日本を標的とすべきモチベーションが高いと考えられます。また、本攻撃キャンペーンで使用される</span><span lang="EN-US">Web</span><span lang="JA-JP">サーバは地理的情報によってアクセス制御を行っている可能性があり、攻撃者の慎重さ、狡猾さを感じます。日本に対する高い攻撃モチベーションと能力を兼ね備えた攻撃グループは少なく、候補は限られてきます。</span><span>&nbsp;</span></p>
+            <p><span lang="JA-JP">これらのことから、私達が関連性を疑っている標的型攻撃グループを</span><span lang="EN-US">4</span><span lang="JA-JP">つ挙げます。本稿では言及していない様々な要素を考慮した上で、私達は</span><span lang="EN-US">DarkHotel</span><span lang="JA-JP">である可能性を他の候補よりも検討していますが、どの場合でも決定的な要素はないため確度は低く</span><span lang="JA-JP">、</span><span lang="JA-JP">今後のリサーチで大きく変化する可能性があります。</span><span>&nbsp;</span></p>
+            <h3><span lang="EN-US">DarkHotel</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">DarkHotel</span><span lang="JA-JP">は韓国に帰属すると言われている標的型攻撃グループ</span><span lang="EN-US">[1]</span><span lang="JA-JP">で、日本でも度々攻撃を観測しています</span><span lang="EN-US">[2][3][4][5][6]</span><span lang="JA-JP">。</span><span lang="EN-US">DarkHotel</span><span lang="JA-JP">は日本のメディア企業やシンクタンクを執拗に攻撃し続けており、日本語のメールとデコイファイルを用いてスピアフィッシングを行い、</span><span lang="EN-US">LNK</span><span lang="JA-JP">ファイルを用いて多段のダウンローダ・ローダを実行します。これらの特徴は本攻撃キャンペーンと近しく、関連性が疑われます。</span><span>&nbsp;</span></p>
+            <h3><span lang="EN-US">Kimsuky</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">Kimsuky</span><span lang="JA-JP">は北朝鮮に帰属すると言われている攻撃グループ</span><span lang="EN-US">[7]</span><span lang="JA-JP">で、日本でも時折攻撃を観測しています</span><span lang="EN-US">[8][9]</span><span lang="JA-JP">。</span><span lang="EN-US">Kimsuky</span><span lang="JA-JP">は脱北者やそれに関わる組織を標的としているとされ、日本のメディア企業が標的となったこともあります。</span><span lang="JA-JP">&nbsp;</span><span lang="JA-JP">また、直近では</span><span lang="EN-US">LNK</span><span lang="JA-JP">ファイルを用いた攻撃も報告</span><span lang="EN-US">[10]</span><span lang="JA-JP">されており、これらの特徴は本攻撃キャンペーンと類似しています</span><span lang="JA-JP">。</span><span>&nbsp;</span></p>
+            <h3><span lang="EN-US">APT29</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">APT29</span><span lang="JA-JP">はロシアに帰属すると言われている標的型攻撃グループ</span><span lang="EN-US">[11]</span><span lang="JA-JP">で、日本ではほとんどその攻撃について報告されることはありません。しかし、昨今のウクライナ情勢から攻撃の動機となりうると考えられます。</span><span lang="JA-JP">&nbsp;</span><span lang="JA-JP">また、</span><span lang="EN-US">APT29</span><span lang="JA-JP">は</span><span lang="EN-US">LNK</span><span lang="JA-JP">ファイル</span><span lang="EN-US">[12]</span><span lang="JA-JP">や</span><span lang="EN-US">ISO</span><span lang="JA-JP">ファイル</span><span lang="EN-US">[13]</span><span lang="JA-JP">を用いた攻撃が既に報告されており、さらに</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike[14]</span><span lang="JA-JP">や</span><span lang="EN-US">Golang</span><span lang="JA-JP">マルウェア</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">[15]</span><span lang="JA-JP">を使用することも知られています。これらは本攻撃キャンペーンと類似しています</span><span lang="JA-JP">。</span><span>&nbsp;</span></p>
+            <h3><span lang="EN-US">TA416</span><span>&nbsp;</span></h3>
+            <p><span lang="EN-US">TA416</span><span lang="JA-JP">は中国に帰属すると言われている標的型攻撃グループ</span><span lang="JA-JP">[</span><span lang="EN-US">16]</span><span lang="JA-JP">で、日本では時折攻撃を観測しています。</span><span lang="EN-US">TA416</span><span lang="JA-JP">は</span><span lang="EN-US">LNK</span><span lang="JA-JP">ファイルや</span><span lang="EN-US">Cobalt</span><span lang="JA-JP">&nbsp;</span><span lang="EN-US">Strike</span><span lang="JA-JP">を使用して攻撃</span><span lang="JA-JP">[</span><span lang="EN-US">17][18]</span><span lang="JA-JP">を行いますが、これらは本攻撃キャンペーンと類似しています。</span><span>&nbsp;</span></p>
+            <h2><span lang="JA-JP">おわりに</span><span>&nbsp;</span></h2>
+            <p><span lang="EN-US">2022</span><span lang="JA-JP">年</span><span lang="EN-US">4</span><span lang="JA-JP">月現在、日本企業を狙った標的型攻撃キャンペーンが観測されています。本攻撃キャンペーンはいくつかの帰属が考えられますが、明確な要素は発見できていません。類似した攻撃は数ヶ月前から行われていた可能性があり、今後も継続的に注視していく必要があります。</span><span>&nbsp;</span></p>
+            <p><br></p>
+            <h2><span lang="EN-US">IoCs</span><span>&nbsp;</span></h2>
+            <ul>
+             <li><p><span lang="EN-US">*.disknxt[.]com</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.officehoster[.]com</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.youmiuri[.]com</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.spffusa[.]org</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.sseekk[.]xyz</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.mbusabc</span><span lang="JA-JP">[.]</span><span lang="EN-US">com</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">*.differentfor</span><span lang="JA-JP">[.]</span><span lang="EN-US">com</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">103[.]29.69.155</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">149[.]28.16.63</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">172[.]104.122.93</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">172[.]105.229.93</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">172[.]105.229.216</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">207[.]148.91.243</span><span>&nbsp;</span></p></li>
+             <li><p><span lang="EN-US">45[.]77.179.110</span><span>&nbsp;</span></p></li>
+            </ul>
+            <h2><span lang="EN-US">References</span><span>&nbsp;</span></h2>
+            <p><span lang="EN-US">[1] MITRE ATT&amp;CK, "Darkhotel", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://attack.mitre.org/groups/G0012/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://attack.mitre.org/groups/G0012/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[2] NTT</span><span lang="JA-JP">セキュリティ・ジャパン</span><span lang="JA-JP">, "</span><span lang="JA-JP">マルウエアが含まれたショートカットファイルをダウンロードさせる攻撃のさらにその先</span><span lang="JA-JP">", </span><a href="https://insight--jp-nttsecurity-com.translate.goog/post/102fmlc/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://insight-jp.nttsecurity.com/post/102fmlc/untitled</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[3] JPCERT/CC, "</span><span lang="JA-JP">マルウエアが含まれたショートカットファイルをダウンロードさせる攻撃</span><span lang="JA-JP">", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blogs.jpcert.or.jp/ja/2019/05/darkhotel_lnk.html" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://blogs.jpcert.or.jp/ja/2019/05/darkhotel_lnk.html</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[4]&nbsp;</span><span lang="JA-JP">マクニカ</span><span lang="JA-JP">, "</span><span lang="JA-JP">標的型攻撃の実態と対策アプローチ</span><span lang="JA-JP">&nbsp;</span><span lang="JA-JP">第</span><span lang="EN-US">3</span><span lang="JA-JP">版</span><span lang="JA-JP">", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2019_2_nopw.pdf" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2019_2_nopw.pdf</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[5]&nbsp;</span><span lang="JA-JP">マクニカ</span><span lang="JA-JP">, "</span><span lang="JA-JP">標的型攻撃の実態と対策アプローチ</span><span lang="JA-JP">&nbsp;</span><span lang="JA-JP">第</span><span lang="EN-US">5</span><span lang="JA-JP">版</span><span lang="JA-JP">", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2020_5.pdf" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2020_5.pdf</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[6] IPA, "</span><span lang="JA-JP">サイバーレスキュー隊（</span><span lang="EN-US">J-CRAT</span><span lang="JA-JP">）&nbsp;</span><span lang="JA-JP">活動状況</span><span lang="EN-US">&nbsp;[2019&nbsp;</span><span lang="JA-JP">年度下半期</span><span lang="JA-JP">]", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.ipa.go.jp/files/000083013.pdf" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.ipa.go.jp/files/000083013.pdf</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[7] Mandiant, "Not So Lazarus: Mapping DPRK Cyber Threat Groups to Government Organizations", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.mandiant.com/resources/mapping-dprk-groups-to-government" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.mandiant.com/resources/mapping-dprk-groups-to-government</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[8] IPA, "</span><span lang="JA-JP">サイバーレスキュー隊（</span><span lang="EN-US">J-CRAT</span><span lang="JA-JP">）&nbsp;</span><span lang="JA-JP">活動状況</span><span lang="EN-US">&nbsp;[2021&nbsp;</span><span lang="JA-JP">年度上半期</span><span lang="JA-JP">]", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.ipa.go.jp/files/000094548.pdf" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.ipa.go.jp/files/000094548.pdf</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[9] Cybereason, "Kimsuky</span><span lang="JA-JP">が利用している</span><span lang="EN-US">KGH</span><span lang="JA-JP">スパイウェアスイートの内部解析</span><span lang="JA-JP">", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.cybereason.co.jp/blog/cyberattack/5373/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.cybereason.co.jp/blog/cyberattack/5373/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[10] Stairwell, "The ink-stained trail of GOLDBACKDOOR", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://stairwell.com/news/threat-research-the-ink-stained-trail-of-goldbackdoor/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://stairwell.com/news/threat-research-the-ink-stained-trail-of-goldbackdoor/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[11] MITRE ATT&amp;CK, "APT29", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://attack.mitre.org/groups/G0016/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://attack.mitre.org/groups/G0016/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[12]&nbsp;Volexity, "Suspected APT29 Operation Launches Election Fraud Themed Phishing Campaigns", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.volexity.com/blog/2021/05/27/suspected-apt29-operation-launches-election-fraud-themed-phishing-campaigns/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.volexity.com/blog/2021/05/27/suspected-apt29-operation-launches-election-fraud-themed-phishing-campaigns/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[13] Microsoft, "Breaking down NOBELIUM’s latest early-stage toolset", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.microsoft.com/security/blog/2021/05/28/breaking-down-nobeliums-latest-early-stage-toolset/" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.microsoft.com/security/blog/2021/05/28/breaking-down-nobeliums-latest-early-stage-toolset/</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[14] Mandiant, "Not So Cozy: An Uncomfortable Examination of a Suspected APT29 Phishing Campaign", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.mandiant.com/resources/not-so-cozy-an-uncomfortable-examination-of-a-suspected-apt29-phishing-campaign" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://www.mandiant.com/resources/not-so-cozy-an-uncomfortable-examination-of-a-suspected-apt29-phishing-campaign</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[15] JPCERT/CC, "Linux</span><span lang="JA-JP">と</span><span lang="EN-US">Windows</span><span lang="JA-JP">を狙うマルウエア</span><span lang="EN-US">WellMess(2018-06-28)", </span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blogs.jpcert.or.jp/ja/2018/06/wellmess.html" rel="noreferrer noopener" target="_blank"><span lang="EN-US">https://blogs.jpcert.or.jp/ja/2018/06/wellmess.html</span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[16] Proofpoint, “The Good, the Bad, and the Web Bug: TA416 Increases Operational Tempo Against European Governments as Conflict in Ukraine Escalates</span><span lang="JA-JP">”,&nbsp;</span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.proofpoint.com/us/blog/threat-insight/good-bad-and-web-bug-ta416-increases-operational-tempo-against-european" rel="noreferrer noopener" target="_blank"><span lang="EN-US"><span>https://www.proofpoint.com/us/blog/threat-insight/good-bad-and-web-bug-ta416-increases-operational-tempo-against-european</span></span></a><span>&nbsp;</span></p>
+            <p><span lang="EN-US">[17</span><span lang="JA-JP">]&nbsp;</span><span lang="EN-US">CrowdStrike, “Meet CrowdStrike’s Adversary of the Month for June: MUSTANG PANDA</span><span lang="JA-JP">”,&nbsp;</span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.crowdstrike.com/blog/meet-crowdstrikes-adversary-of-the-month-for-june-mustang-panda/" rel="noreferrer noopener" target="_blank"><span lang="EN-US"><span>https://www.crowdstrike.com/blog/meet-crowdstrikes-adversary-of-the-month-for-june-mustang-panda/</span></span></a><span>&nbsp;</span></p>
+            <p><span lang="JA-JP">[</span><span lang="EN-US">18] Cisco, “Mustang Panda deploys a new wave of malware targeting Europe</span><span lang="JA-JP">”,&nbsp;</span><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blog.talosintelligence.com/2022/05/mustang-panda-targets-europe.html" rel="noreferrer noopener" target="_blank"><span lang="EN-US"><span>https://blog.talosintelligence.com/2022/05/mustang-panda-targets-europe.html</span></span></a><span>&nbsp;</span></p> 
+           </div> 
+           <div class="featured-item"> 
+            <div class="post-block-featured-media post-block-feature-media-none"> 
+            </div> 
+           </div> 
+          </section> 
+          <aside class="sidebar"> 
+          </aside> 
+         </div> 
+         <div class="recent-posts-container recent-posts-none"> 
+          <div class="recent-posts-title">
+            More posts by Ryu Hiyoshi 
+          </div> 
+          <div class="recent-posts-list" data-recent-posts=""> 
+           <div class="recent-post" data-postshortcode="102hojk"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hojk/operation-restylink-apt-campaign-targeting-japanese-companies?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt="featured image"> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hojk/operation-restylink-apt-campaign-targeting-japanese-companies?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Operation RestyLink: APT campaign targeting Japanese companies</a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Ryu Hiyoshi 
+             </font></font></div> 
+            </div> 
+           </div> 
+           <div class="recent-post" data-postshortcode="102hncg"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hncg/ratthailand-pass?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt="featured image"> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hncg/ratthailand-pass?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Spearfishing of Thailand Pass application system to spread RAT</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Ryu Hiyoshi 
+             </font></font></div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+         <div class="recent-posts-container recent-posts-none"> 
+          <div class="recent-posts-title"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+            Recent posts from NTT Security Japan 
+          </font></font></div> 
+          <div class="recent-posts-list" data-recent-posts=""> 
+           <div class="recent-post" data-postshortcode="102hmhv"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hmhv/edr?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none" aria-label="Image for recent post, title below"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt=""> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hmhv/edr?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Things to watch out for when analyzing EDR logs</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Shogo Hayashi 
+             </font></font></div> 
+            </div> 
+           </div> 
+           <div class="recent-post" data-postshortcode="102hf3q"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hf3q/flagpro-the-new-malware-used-by-blacktech?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none" aria-label="Image for recent post, title below"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt=""> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hf3q/flagpro-the-new-malware-used-by-blacktech?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Flagpro: The new malware used by BlackTech</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Hiroki Hada 
+             </font></font></div> 
+            </div> 
+           </div> 
+           <div class="recent-post" data-postshortcode="102heu1"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu1/ntt-2021?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none" aria-label="Image for recent post, title below"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt=""> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu1/ntt-2021?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">NTT Security Japan 2021 Advent Calendar Closing</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Shinji Abe 
+             </font></font></div> 
+            </div> 
+           </div> 
+           <div class="recent-post" data-postshortcode="102hez7"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hez7/hack-the-boxhard?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none" aria-label="Image for recent post, title below"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt=""> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hez7/hack-the-boxhard?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Problem explanation of Hack The Box (Hard)</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Hiroki Hada 
+             </font></font></div> 
+            </div> 
+           </div> 
+           <div class="recent-post" data-postshortcode="102heu4"> 
+            <div class="recent-post-image "> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu4/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" class="post-block__image-container post-block__none post-block__none-none" aria-label="Image for recent post, title below"> <img src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" alt=""> </a> 
+            </div> 
+            <div class="recent-post-title"> 
+             <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu4/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The morning of the editor-in-chief of the e-mail magazine is early</font></font></a> 
+             <div class="recent-post-author"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">
+               Hiroki Hada 
+             </font></font></div> 
+            </div> 
+           </div> 
+          </div> 
+         </div> 
+        </div> 
+       </article> 
+       <div class="repost-container passle-102f18u"> 
+        <div class="repost-form" id="repost-form"> 
+         <div class="repost-dropdown"> 
+          <select id="repost-passleid" name="repost-passleid"></select> 
+         </div> 
+         <div class="repost-buttons"> 
+          <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="repost-button confirm"><i class="fas fa-retweet-alt"></i><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> repost</font></font></a> 
+          <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="repost-button cancel"><i class="far fa-times-circle"></i><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> cancel cancel</font></font></a> 
+         </div> 
+        </div> 
+        <div class="repost-form" id="upgrade-form"> 
+         <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">As a free user, you can follow Passle and like posts.</font></font></p> 
+         <p>To repost this post to your own Passle blog, you will need to upgrade your account.</p> 
+         <p>For plans and pricing, please contact our sales team at <a href="mailto:sales@passle.net?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">sales@passle.net</a></p> 
+        </div> 
+        <div class="repost-form" id="not-allowed-message"> 
+         <p class="repost-warning-message">Sorry, you don't have permission to repost or create posts.</p> 
+         <div class="repost-buttons buttons-right"> 
+          <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" class="repost-button cancel"><i class="far fa-times-circle"></i> cancel</a> 
+         </div> 
+        </div> 
+       </div> 
+       <div id="repost-success-message-modal" class="repost-modal"> 
+        <div class="repost-success-message"> 
+         <p><strong>Repost successful!</strong></p> 
+         <p><a class="view-repost-link" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" target="_blank">View the repost</a></p> 
+        </div> 
+       </div> 
+       <div id="repost-success-approval-message-modal" class="repost-modal"> 
+        <div class="repost-success-message"> 
+         <p><strong>Repost successful!</strong></p> 
+         <p>Your repost is currently a draft. <a class="view-approval-link" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" target="_blank">Review your repost and request approval</a>.</p> 
+        </div> 
+       </div> 
+       <div id="repost-failed-message-modal" class="repost-modal"> 
+        <div class="repost-success-message"> 
+         <p><strong>Something went wrong whilst reposting - please try again.</strong></p> 
+        </div> 
+       </div> 
+       <div id="repost-failed-self-message-modal" class="repost-modal"> 
+        <div class="repost-success-message"> 
+         <p><strong>Sorry - this is not an option. This post already exists in the Passle you have selected.</strong></p> 
+         <p><strong>Try reposting to another Passle.</strong></p> 
+        </div> 
+       </div> 
+      </main> 
+     </div> 
+    </div> 
+    <input data-val="true" data-val-required="The IsPreview field is required." id="IsPreview" name="IsPreview" type="hidden" value="False"> 
+    <input id="post-shortcode" name="post-shortcode" type="hidden" value="102ho8o"> 
+    <input id="person-shortcode" name="person-shortcode" type="hidden" value=""> 
+    <input length="31" data-val="true" data-val-date="The field LastPublishedDate must be a date." data-val-required="The LastPublishedDate field is required." id="Post_LastPublishedDate" name="Post.LastPublishedDate" type="hidden" value="5/11/2022 1:52:22 AM"> 
+    <input type="hidden" id="facebook-share-count" value="47"> 
+    <input type="hidden" id="linkedin-share-count" value="0"> 
+    <input type="hidden" id="twitter-share-count" value="1298"> 
+    <input type="hidden" id="email-share-count" value="0"> 
+   </div> 
+   <div class="client-content"> 
+    <div id="Contentplaceholder1_TC2147C68003_Col00" class="sf_colsIn footer" data-sf-element="Container" data-placeholder-label="Footer">
+     <div class="row" data-sf-element="Row"> 
+      <div id="Contentplaceholder1_T82E01FA5004_Col00" class="sf_colsIn col-md-4 col-sm-12" data-sf-element="Column 1" data-placeholder-label="Column 1"> 
+       <div> 
+        <div>
+         <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">© </font></font><span class="year"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2022</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> NTT Security Holdings. All Rights Reserved.</font></font></p> 
+        </div> 
+       </div> 
+       <div> 
+        <div>
+         <div data-language="en" id="DigiCertClickID_b5hUwoL8"><div id="DigiCertClickID_b5hUwoL8Seal" style="text-decoration: none; text-align: center; display: block; vertical-align: baseline; font-size: 100%; font-style: normal; text-indent: 0px; line-height: 1; width: auto; margin: 0px auto; padding: 0px; border: 0px; background: transparent; position: relative; inset: 0px; clear: both; float: none; cursor: default;"><img src="//seal.digicert.com/seals/cascade/?tag=b5hUwoL8&amp;referer=insight--jp-nttsecurity-com.translate.goog&amp;format=png&amp;lang=en&amp;seal_number=10&amp;seal_size=m&amp;an=min" alt="DigiCert Seal" tabindex="0" style="text-decoration: none; text-align: center; display: block; vertical-align: baseline; font-size: 100%; font-style: normal; text-indent: 0px; line-height: 1; width: auto; margin: 0px auto; padding: 0px; border: 0px; background: transparent; position: relative; inset: 0px; clear: both; float: none; cursor: pointer;"></div><span style="text-decoration: none; text-align: center; display: block; vertical-align: baseline; font-size: 100%; font-style: normal; text-indent: 0px; line-height: 1; width: auto; margin: 0px auto; padding: 0px; border: 0px; background: transparent; position: relative; inset: 0px; clear: both; float: none; cursor: default; color: black;">
+          <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.digicert.com/ev-multi-domain-ssl.htm" style="text-decoration: none; text-align: center; display: inline; vertical-align: baseline; font-size: 100%; font-style: normal; text-indent: 0px; line-height: 1; width: auto; margin: 0px auto; padding: 0px; border: 0px; background: transparent; position: relative; inset: 0px; clear: both; float: none; cursor: pointer; color: black;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">SSL Certificate</font></font></a> 
+         </span></div>
+        </div> 
+       </div> 
+       <script type="text/javascript">
+        var __dcid = __dcid || [];__dcid.push(["DigiCertClickID_b5hUwoL8", "10", "m", "black", "b5hUwoL8"]);
+        (function(){var cid=document.createElement("script");
+        cid.async=true;
+        cid.src="//seal.digicert.com/seals/cascade/seal.min.js";
+        var s = document.getElementsByTagName("script");
+        var ls = s[(s.length - 1)];ls.parentNode.insertBefore(cid, ls.nextSibling);
+     }());
+</script><script async="" src="//seal.digicert.com/seals/cascade/seal.min.js"></script> 
+       <!-- End DigiCert site seal HTML and JavaScript --> 
+      </div> 
+      <div id="Contentplaceholder1_T82E01FA5004_Col01" class="sf_colsIn col-md-8 col-sm-12" data-sf-element="Column 2" data-placeholder-label="Column 2"> 
+       <ul class="list-inline pull-right"> 
+        <div class="follow-us-content pull-right"> 
+         <ul class="list-inline "> 
+          <li><strong><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Follow us</font></font></strong></li> 
+          <li><a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://twitter.com/nttsec_jp" target="_blank" title="Twitter"><em aria-hidden="true" class="fa fa-twitter-square"></em></a> </li> 
+         </ul> 
+        </div> 
+       </ul>
+      </div> 
+     </div> 
+    </div> 
+   </div> 
+  </div> 
+  <input id="PreviewVersion" name="PreviewVersion" type="hidden" value="8"> 
+  <div id="authentication-container"></div> 
+  <input id="PASSLEWEB_ROOT" name="PASSLEWEB_ROOT" type="hidden" value="https://www.passle.net"> 
+  <input id="passle-shortcode" name="passle-shortcode" type="hidden" value="102f18u"> 
+  <input id="EnvironmentSiteRoot" type="hidden" value="https://www.passle.net%2F"> 
+  <input id="page-request-id" name="page-request-id" type="hidden" value=""> 
+  <script type="text/javascript" src="https://dukb55syzud3u.cloudfront.net/Scripts/Plugins/jquery-3.6.0.min.js"></script> 
+  <script type="text/javascript" src="https://dukb55syzud3u.cloudfront.net//CustomCSS/CustomDesignJavascript?version=8&amp;passleShortcode=102f18u" defer=""></script> 
+  <script type="text/javascript" src="https://dukb55syzud3u.cloudfront.net/PostView?v=3bcdZrgSZuOehoGFCrKSvi3_5gFB7A70PJTOtOzUmqs1" defer=""></script> 
+  <!--[if lte IE 8]>
+        <script type="text/javascript" src="https://dukb55syzud3u.cloudfront.net/Scripts/Plugins/passle-mediaqueries.js" defer  ></script>
+    <![endif]--> 
+  <div id="stats-logging" style="display:none;"> 
+   <iframe src="https://www.passle.net/ClientWebAPIStatistics/LogPageRequestAndPostViews?c=Passle&amp;a=PostView&amp;passleId=102f18u&amp;userId=&amp;wallPostIds=102ho8o&amp;userAgent=Mozilla%2f5.0+(Windows+NT+10.0%3b+Win64%3b+x64)+AppleWebKit%2f537.36+(KHTML%2c+like+Gecko)+Chrome%2f101.0.4951.54+Safari%2f537.36%2cgzip(gfe)&amp;referrer=&amp;ipAddress=77.220.136.153&amp;parameterString=passleShortcode%3d102f18u%2cuserShortcode%3d%2cpostShortcodes%3dSystem.String%5b%5d%2cpostViewType%3dSinglePost%2caction%3d_LogPageRequestAndPostViews%2ccontroller%3dStatistics%2cparameterString%3d%2cipAddress%3d%2creferrer%3d%2cuserAgent%3d%2curl%3d%2cpageRequestId%3d&amp;url=http%3a%2f%2finsight-jp.nttsecurity.com%2fpost%2f102ho8o%2foperation-restylink&amp;type=SinglePost&amp;pageRequestId=" name="passle-web-iframe" class="hide"> </iframe> 
+  </div> 
+  <input type="hidden" id="GoogleAnalyticsId" value="UA-35515402-1"> 
+  <input type="hidden" id="passle-cookie-control-status" value="3"> 
+  <script type="text/javascript" src="https://sdk.passle.net/CookieControl/v1/jquery.passlecookiecontrol.min.js">
+
+</script>   
+  <script>function gtElInit() {var lib = new google.translate.TranslateService();lib.translatePage('ja', 'en', function () {});}</script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=gtElInit&amp;hl=ru&amp;client=wt" type="text/javascript"></script>
+ 
+<div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="20" height="20" alt="Google Переводчик"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">Исходный текст</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">Предложить лучший вариант перевода</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div><div id="passle-cookie-control-container" class="passle-102f18u">
+<div id="cookie-control-minimised">
+    <a href="#" rel="nofollow" title="minimise" class="cookie-control_icon"><i class="fas fa-cookie-bite"></i></a>
+</div>
+
+<div id="cookie-control">
+    <div class="cookie-control_widget">
+        <div class="cookie-control_widget-content">
+            <p class="cookie-control_widget-header">
+                <label>Cookie Control</label>
+            </p>
+            <div class="cookie-control_widget-content-standard">
+                <p>
+                    This site uses cookies. Some of these cookies are essential, while others help us to improve your experience by providing insights into how the site is being used, including - in some instances - sharing data with other customers. You can use this tool to <a href="#" class="cookie-control--expand cookie-control--expand-only">change your cookie settings</a>. Otherwise, we’ll assume you’re OK to continue.
+                </p>
+            </div>
+            <div class="cookie-control_widget--extension cookie-control__extended-only">
+                <p>
+                    Some of the <a target="_blank" rel="nofollow noopener" href="https://home.passle.net/cookie-policy/">cookies we use</a> are essential for the site to work.
+                </p>
+                <p>
+                    We also use some non-essential cookies to collect information for making reports and to help us improve the site. Most cookies collect information in an anonymous form. Some of our non-essential cookies will allow us to share tracking data regarding the performance of emails and post views with other customers. If you do not wish us to share data relating to your use of this Website, please turn your cookies off using this Cookie Control tool.
+                </p>
+                <p>
+                    You can find out more, including how to control our third-party cookies and how to adjust your browser settings by viewing our <a target="_blank" href="https://home.passle.net/cookie-policy/" rel="nofollow noopener">Cookie Policy</a>.
+                </p>
+            </div>
+        </div>
+        <div class="cookie-control_widget-buttons">
+            <button class="cookie-control_button cookie-control--accept selected"> I'm fine with this</button>
+            <button class="cookie-control_button cookie-control--decline cookie-control__extended-only"> Turn cookies off</button>
+        </div>
+
+        <a href="#" rel="nofollow" class="cookie-control--details cookie-control--expand">More details <i class="far fa-chevron-double-down"></i></a>
+    </div>
+    <input type="hidden" name="current-cookie-policy-version" id="current-cookie-policy-version" value="1">
+</div>
+
+<link href="https://dukb55syzud3u.cloudfront.net/PluginBundles/v1.2/css/CookieControlCSS?v=9bvUxe7zl9tPWjH1gNIJ4o1-6dSExRJxYbcgO0VgM4M1" rel="preload" as="style" media="all">
+<link href="https://dukb55syzud3u.cloudfront.net/PluginBundles/v1.2/css/CookieControlCSS?v=9bvUxe7zl9tPWjH1gNIJ4o1-6dSExRJxYbcgO0VgM4M1" rel="stylesheet" media="all">
+
+</div><div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div><div id="passle-web-iframe-container" style="display:none;"><iframe class="hide" name="passle-web-post-message-receiver" id="passleweb-message-dispatcher" src="https://www.passle.net/Porthole/ClientWebMessageReceiver"></iframe></div><iframe scrolling="no" frameborder="0" allowtransparency="true" src="https://platform.twitter.com/widgets/widget_iframe.bbd13993eb53d3a11ac08f5e8cf9d6a4.html?origin=https%3A%2F%2Finsight--jp-nttsecurity-com.translate.goog" title="Twitter settings iframe" style="display: none;"></iframe><iframe id="rufous-sandbox" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" style="position: absolute; visibility: hidden; display: none; width: 0px; height: 0px; padding: 0px; border: none;" title="Twitter analytics iframe"></iframe></body></html>

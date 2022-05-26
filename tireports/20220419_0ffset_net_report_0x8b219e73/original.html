@@ -1,0 +1,1403 @@
+
+<!doctype html>
+<html dir="ltr" lang="en-GB"
+	prefix="og: https://ogp.me/ns#" ><head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="profile" href="https://gmpg.org/xfn/11">
+
+	<title>BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions</title>
+
+		<!-- All in One SEO 4.1.10 -->
+		<meta name="description" content="BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution" />
+		<meta name="robots" content="max-image-preview:large" />
+		<link rel="canonical" href="https://www.0ffset.net/reverse-engineering/bazarloader-iso-file-infection/" />
+		<meta property="og:locale" content="en_GB" />
+		<meta property="og:site_name" content="0ffset Training Solutions | Practical and Affordable Cyber Security Training" />
+		<meta property="og:type" content="article" />
+		<meta property="og:title" content="BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions" />
+		<meta property="og:description" content="BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution" />
+		<meta property="og:url" content="https://www.0ffset.net/reverse-engineering/bazarloader-iso-file-infection/" />
+		<meta property="og:image" content="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" />
+		<meta property="og:image:secure_url" content="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" />
+		<meta property="og:image:width" content="933" />
+		<meta property="og:image:height" content="613" />
+		<meta property="article:published_time" content="2022-04-19T13:07:00+00:00" />
+		<meta property="article:modified_time" content="2022-04-19T18:27:37+00:00" />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@0verfl0w_" />
+		<meta name="twitter:title" content="BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions" />
+		<meta name="twitter:description" content="BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution" />
+		<meta name="twitter:creator" content="@cPeterr" />
+		<meta name="twitter:image" content="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" />
+		<script type="application/ld+json" class="aioseo-schema">
+			{"@context":"https:\/\/schema.org","@graph":[{"@type":"WebSite","@id":"https:\/\/www.0ffset.net\/#website","url":"https:\/\/www.0ffset.net\/","name":"0ffset Training Solutions","description":"Practical and Affordable Cyber Security Training","inLanguage":"en-GB","publisher":{"@id":"https:\/\/www.0ffset.net\/#organization"}},{"@type":"Organization","@id":"https:\/\/www.0ffset.net\/#organization","name":"0ffset Training Solutions LTD.","url":"https:\/\/www.0ffset.net\/","logo":{"@type":"ImageObject","@id":"https:\/\/www.0ffset.net\/#organizationLogo","url":"https:\/\/0ffset.net\/wp-content\/uploads\/2021\/05\/cropped-z2a_logo.png"},"image":{"@id":"https:\/\/www.0ffset.net\/#organizationLogo"},"sameAs":["https:\/\/twitter.com\/0verfl0w_","https:\/\/www.youtube.com\/channel\/UCy21puSd9R3C5Xn46YI32_g","https:\/\/www.linkedin.com\/company\/0ffset"]},{"@type":"BreadcrumbList","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#breadcrumblist","itemListElement":[{"@type":"ListItem","@id":"https:\/\/www.0ffset.net\/#listItem","position":1,"item":{"@type":"WebPage","@id":"https:\/\/www.0ffset.net\/","name":"Home","description":"Practical and affordable malware analysis training, designed by well-known subject matter experts.","url":"https:\/\/www.0ffset.net\/"},"nextItem":"https:\/\/www.0ffset.net\/reverse-engineering\/#listItem"},{"@type":"ListItem","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/#listItem","position":2,"item":{"@type":"WebPage","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/","name":"Reverse Engineering","description":"BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution","url":"https:\/\/www.0ffset.net\/reverse-engineering\/"},"nextItem":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#listItem","previousItem":"https:\/\/www.0ffset.net\/#listItem"},{"@type":"ListItem","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#listItem","position":3,"item":{"@type":"WebPage","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/","name":"BAZARLOADER: Unpacking an ISO File Infection","description":"BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution","url":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/"},"previousItem":"https:\/\/www.0ffset.net\/reverse-engineering\/#listItem"}]},{"@type":"Person","@id":"https:\/\/www.0ffset.net\/author\/chuong-dong\/#author","url":"https:\/\/www.0ffset.net\/author\/chuong-dong\/","name":"Chuong Dong","image":{"@type":"ImageObject","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#authorImage","url":"https:\/\/secure.gravatar.com\/avatar\/0c476d40eeb49e69fb95b4144689c974?s=96&d=mm&r=g","width":96,"height":96,"caption":"Chuong Dong"},"sameAs":["https:\/\/twitter.com\/cPeterr","https:\/\/www.youtube.com\/channel\/UCy21puSd9R3C5Xn46YI32_g","https:\/\/www.linkedin.com\/company\/0ffset"]},{"@type":"WebPage","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#webpage","url":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/","name":"BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions","description":"BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution","inLanguage":"en-GB","isPartOf":{"@id":"https:\/\/www.0ffset.net\/#website"},"breadcrumb":{"@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#breadcrumblist"},"author":"https:\/\/www.0ffset.net\/author\/chuong-dong\/#author","creator":"https:\/\/www.0ffset.net\/author\/chuong-dong\/#author","image":{"@type":"ImageObject","@id":"https:\/\/www.0ffset.net\/#mainImage","url":"https:\/\/www.0ffset.net\/wp-content\/uploads\/2022\/04\/bazarloader_16.png","width":933,"height":613},"primaryImageOfPage":{"@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#mainImage"},"datePublished":"2022-04-19T13:07:00+01:00","dateModified":"2022-04-19T18:27:37+01:00"},{"@type":"BlogPosting","@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#blogposting","name":"BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions","description":"BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During infection, it is common for BAZARLOADER to lead to Cobalt Strike execution","inLanguage":"en-GB","headline":"BAZARLOADER: Unpacking an ISO File Infection","author":{"@id":"https:\/\/www.0ffset.net\/author\/chuong-dong\/#author"},"publisher":{"@id":"https:\/\/www.0ffset.net\/#organization"},"datePublished":"2022-04-19T13:07:00+01:00","dateModified":"2022-04-19T18:27:37+01:00","articleSection":"Malware Analysis, Reverse Engineering","mainEntityOfPage":{"@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#webpage"},"isPartOf":{"@id":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/#webpage"},"image":{"@type":"ImageObject","@id":"https:\/\/www.0ffset.net\/#articleImage","url":"https:\/\/www.0ffset.net\/wp-content\/uploads\/2022\/04\/bazarloader_16.png","width":933,"height":613}}]}
+		</script>
+		<!-- All in One SEO -->
+
+<link rel='dns-prefetch' href='//fonts.googleapis.com' />
+<link rel='dns-prefetch' href='//s.w.org' />
+<link rel="alternate" type="application/rss+xml" title="0ffset Training Solutions &raquo; Feed" href="https://www.0ffset.net/feed/" />
+<link rel="alternate" type="application/rss+xml" title="0ffset Training Solutions &raquo; Comments Feed" href="https://www.0ffset.net/comments/feed/" />
+<link rel="alternate" type="application/rss+xml" title="0ffset Training Solutions &raquo; BAZARLOADER: Unpacking an ISO File Infection Comments Feed" href="https://www.0ffset.net/reverse-engineering/bazarloader-iso-file-infection/feed/" />
+		<!-- This site uses the Google Analytics by MonsterInsights plugin v8.5.0 - Using Analytics tracking - https://www.monsterinsights.com/ -->
+							<script src="//www.googletagmanager.com/gtag/js?id=UA-198064012-1"  data-cfasync="false" data-wpfc-render="false" type="text/javascript" async></script>
+			<script data-cfasync="false" data-wpfc-render="false" type="text/javascript">
+				var mi_version = '8.5.0';
+				var mi_track_user = true;
+				var mi_no_track_reason = '';
+				
+								var disableStrs = [
+															'ga-disable-UA-198064012-1',
+									];
+
+				/* Function to detect opted out users */
+				function __gtagTrackerIsOptedOut() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						if ( document.cookie.indexOf( disableStrs[ index ] + '=true' ) > -1 ) {
+							return true;
+						}
+					}
+
+					return false;
+				}
+
+				/* Disable tracking if the opt-out cookie exists. */
+				if ( __gtagTrackerIsOptedOut() ) {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				/* Opt-out function */
+				function __gtagTrackerOptout() {
+					for ( var index = 0; index < disableStrs.length; index++ ) {
+						document.cookie = disableStrs[ index ] + '=true; expires=Thu, 31 Dec 2099 23:59:59 UTC; path=/';
+						window[ disableStrs[ index ] ] = true;
+					}
+				}
+
+				if ( 'undefined' === typeof gaOptout ) {
+					function gaOptout() {
+						__gtagTrackerOptout();
+					}
+				}
+								window.dataLayer = window.dataLayer || [];
+
+				window.MonsterInsightsDualTracker = {
+					helpers: {},
+					trackers: {},
+				};
+				if ( mi_track_user ) {
+					function __gtagDataLayer() {
+						dataLayer.push( arguments );
+					}
+
+					function __gtagTracker( type, name, parameters ) {
+						if (!parameters) {
+							parameters = {};
+						}
+
+						if (parameters.send_to) {
+							__gtagDataLayer.apply( null, arguments );
+							return;
+						}
+
+						if ( type === 'event' ) {
+							
+															parameters.send_to = monsterinsights_frontend.ua;
+								__gtagDataLayer( type, name, parameters );
+													} else {
+							__gtagDataLayer.apply( null, arguments );
+						}
+					}
+					__gtagTracker( 'js', new Date() );
+					__gtagTracker( 'set', {
+						'developer_id.dZGIzZG' : true,
+											} );
+															__gtagTracker( 'config', 'UA-198064012-1', {"forceSSL":"true","anonymize_ip":"true","link_attribution":"true"} );
+										window.gtag = __gtagTracker;											(function () {
+							/* https://developers.google.com/analytics/devguides/collection/analyticsjs/ */
+							/* ga and __gaTracker compatibility shim. */
+							var noopfn = function () {
+								return null;
+							};
+							var newtracker = function () {
+								return new Tracker();
+							};
+							var Tracker = function () {
+								return null;
+							};
+							var p = Tracker.prototype;
+							p.get = noopfn;
+							p.set = noopfn;
+							p.send = function (){
+								var args = Array.prototype.slice.call(arguments);
+								args.unshift( 'send' );
+								__gaTracker.apply(null, args);
+							};
+							var __gaTracker = function () {
+								var len = arguments.length;
+								if ( len === 0 ) {
+									return;
+								}
+								var f = arguments[len - 1];
+								if ( typeof f !== 'object' || f === null || typeof f.hitCallback !== 'function' ) {
+									if ( 'send' === arguments[0] ) {
+										var hitConverted, hitObject = false, action;
+										if ( 'event' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[3] ) {
+												hitObject = {
+													'eventAction': arguments[3],
+													'eventCategory': arguments[2],
+													'eventLabel': arguments[4],
+													'value': arguments[5] ? arguments[5] : 1,
+												}
+											}
+										}
+										if ( 'pageview' === arguments[1] ) {
+											if ( 'undefined' !== typeof arguments[2] ) {
+												hitObject = {
+													'eventAction': 'page_view',
+													'page_path' : arguments[2],
+												}
+											}
+										}
+										if ( typeof arguments[2] === 'object' ) {
+											hitObject = arguments[2];
+										}
+										if ( typeof arguments[5] === 'object' ) {
+											Object.assign( hitObject, arguments[5] );
+										}
+										if ( 'undefined' !== typeof arguments[1].hitType ) {
+											hitObject = arguments[1];
+											if ( 'pageview' === hitObject.hitType ) {
+												hitObject.eventAction = 'page_view';
+											}
+										}
+										if ( hitObject ) {
+											action = 'timing' === arguments[1].hitType ? 'timing_complete' : hitObject.eventAction;
+											hitConverted = mapArgs( hitObject );
+											__gtagTracker( 'event', action, hitConverted );
+										}
+									}
+									return;
+								}
+
+								function mapArgs( args ) {
+									var arg, hit = {};
+									var gaMap = {
+										'eventCategory': 'event_category',
+										'eventAction': 'event_action',
+										'eventLabel': 'event_label',
+										'eventValue': 'event_value',
+										'nonInteraction': 'non_interaction',
+										'timingCategory': 'event_category',
+										'timingVar': 'name',
+										'timingValue': 'value',
+										'timingLabel': 'event_label',
+										'page' : 'page_path',
+										'location' : 'page_location',
+										'title' : 'page_title',
+									};
+									for ( arg in args ) {
+																				if ( ! ( ! args.hasOwnProperty(arg) || ! gaMap.hasOwnProperty(arg) ) ) {
+											hit[gaMap[arg]] = args[arg];
+										} else {
+											hit[arg] = args[arg];
+										}
+									}
+									return hit;
+								}
+
+								try {
+									f.hitCallback();
+								} catch ( ex ) {
+								}
+							};
+							__gaTracker.create = newtracker;
+							__gaTracker.getByName = newtracker;
+							__gaTracker.getAll = function () {
+								return [];
+							};
+							__gaTracker.remove = noopfn;
+							__gaTracker.loaded = true;
+							window['__gaTracker'] = __gaTracker;
+						})();
+									} else {
+										console.log( "" );
+					( function () {
+							function __gtagTracker() {
+								return null;
+							}
+							window['__gtagTracker'] = __gtagTracker;
+							window['gtag'] = __gtagTracker;
+					} )();
+									}
+			</script>
+				<!-- / Google Analytics by MonsterInsights -->
+		<script type="text/javascript">
+window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/13.1.0\/svg\/","svgExt":".svg","source":{"concatemoji":"https:\/\/www.0ffset.net\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.9.3"}};
+/*! This file is auto-generated */
+!function(e,a,t){var n,r,o,i=a.createElement("canvas"),p=i.getContext&&i.getContext("2d");function s(e,t){var a=String.fromCharCode;p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,e),0,0);e=i.toDataURL();return p.clearRect(0,0,i.width,i.height),p.fillText(a.apply(this,t),0,0),e===i.toDataURL()}function c(e){var t=a.createElement("script");t.src=e,t.defer=t.type="text/javascript",a.getElementsByTagName("head")[0].appendChild(t)}for(o=Array("flag","emoji"),t.supports={everything:!0,everythingExceptFlag:!0},r=0;r<o.length;r++)t.supports[o[r]]=function(e){if(!p||!p.fillText)return!1;switch(p.textBaseline="top",p.font="600 32px Arial",e){case"flag":return s([127987,65039,8205,9895,65039],[127987,65039,8203,9895,65039])?!1:!s([55356,56826,55356,56819],[55356,56826,8203,55356,56819])&&!s([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]);case"emoji":return!s([10084,65039,8205,55357,56613],[10084,65039,8203,55357,56613])}return!1}(o[r]),t.supports.everything=t.supports.everything&&t.supports[o[r]],"flag"!==o[r]&&(t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&t.supports[o[r]]);t.supports.everythingExceptFlag=t.supports.everythingExceptFlag&&!t.supports.flag,t.DOMReady=!1,t.readyCallback=function(){t.DOMReady=!0},t.supports.everything||(n=function(){t.readyCallback()},a.addEventListener?(a.addEventListener("DOMContentLoaded",n,!1),e.addEventListener("load",n,!1)):(e.attachEvent("onload",n),a.attachEvent("onreadystatechange",function(){"complete"===a.readyState&&t.readyCallback()})),(n=t.source||{}).concatemoji?c(n.concatemoji):n.wpemoji&&n.twemoji&&(c(n.twemoji),c(n.wpemoji)))}(window,document,window._wpemojiSettings);
+</script>
+<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 0.07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='https://www.0ffset.net/wp-includes/css/dist/block-library/style.min.css?ver=5.9.3' type='text/css' media='all' />
+<link rel='stylesheet' id='wc-blocks-vendors-style-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-vendors-style.css?ver=7.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='wc-blocks-style-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/packages/woocommerce-blocks/build/wc-blocks-style.css?ver=7.2.2' type='text/css' media='all' />
+<link rel='stylesheet' id='coblocks-frontend-css'  href='https://www.0ffset.net/wp-content/plugins/coblocks/dist/style-coblocks-1.css?ver=2.22.10' type='text/css' media='all' />
+<style id='global-styles-inline-css' type='text/css'>
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+</style>
+<link rel='stylesheet' id='contact-form-7-css'  href='https://www.0ffset.net/wp-content/plugins/contact-form-7/includes/css/styles.css?ver=5.5.6' type='text/css' media='all' />
+<link rel='stylesheet' id='font-awesome-4.7-css'  href='https://www.0ffset.net/wp-content/plugins/vaximo-toolkit/assets/css/font-awesome.min.css?ver=5.9.3' type='text/css' media='all' />
+<link rel='stylesheet' id='woocommerce-layout-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/css/woocommerce-layout.css?ver=6.4.1' type='text/css' media='all' />
+<link rel='stylesheet' id='woocommerce-smallscreen-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/css/woocommerce-smallscreen.css?ver=6.4.1' type='text/css' media='only screen and (max-width: 768px)' />
+<link rel='stylesheet' id='woocommerce-general-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/css/woocommerce.css?ver=6.4.1' type='text/css' media='all' />
+<style id='woocommerce-inline-inline-css' type='text/css'>
+.woocommerce form .form-row .required { visibility: visible; }
+</style>
+<link rel='stylesheet' id='6a5231bde-css'  href='https://www.0ffset.net/wp-content/uploads/essential-addons-elementor/734e5f942.min.css?ver=1650402199' type='text/css' media='all' />
+<link rel='stylesheet' id='vaximo-style-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/style.css?ver=5.9.3' type='text/css' media='all' />
+<link rel='stylesheet' id='bootstrap-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/bootstrap.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='owl-theme-default-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/owl.theme.default.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='owl-carousel-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/owl.carousel.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='magnific-popup-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/magnific-popup.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='animate-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/animate.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='boxicons-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/boxicons.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='flaticon-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/flaticon.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='meanmenu-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/meanmenu.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='nice-select-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/nice-select.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='odometer-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/odometer.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='all-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/all.min.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='vaximo-woocommerce-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/woocommerce.css?ver=5.9.3' type='text/css' media='all' />
+<link rel='stylesheet' id='vaximo-main-style-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/style.css?ver=1650402198' type='text/css' media='all' />
+<style id='vaximo-main-style-inline-css' type='text/css'>
+
+        .has-cyan-bluish-gray-background-color.has-cyan-bluish-gray-background-color, .page-links .current, .page-links .post-page-numbers:hover, .post-password-form input[type="submit"], .comment-navigation .nav-links .nav-previous a:hover, .comment-navigation .nav-links .nav-next a:hover, #comments .comment-list .comment-body .reply a:hover, .blog-sidebar .tagcloud a:hover, .blog-sidebar .tagcloud a:focus, .pages-links .post-page-numbers.current, .pages-links .post-page-numbers:hover, .pages-links .post-page-numbers:focus, .entry-meta li::before, .page-navigation-area .page-link:hover, .page-navigation-area .page-item.active .page-link, .blog-sidebar .widget .widget-title::before, .blog-sidebar .widget ul li::before, blockquote::after, .blog-sidebar .widget_search form button, .search-form .search-submit, .blog-sidebar .widget .widget-title::before, .blog-sidebar .widget ul li::before, .comments-title::before, .comment-respond .comment-reply-title::before, .comment-respond .form-submit input, .wp-block-button .wp-block-button__link, .pagination-area .page-numbers.current, .pagination-area .page-numbers:hover, .pagination-area .page-numbers:focus, .post-tag-media ul li a:hover { background-color: #d80650;}
+
+        .wp-block-tag-cloud a:hover, .wp-block-tag-cloud a:focus, .wp-block-file .wp-block-file__button, .wp-block-search button { background-color: #d80650 !important; }
+
+        .sticky .post-content .title::before, .blog-details .blog-details-content code, .blog-details .blog-details-content ul a, .blog-details .blog-details-content .category li a:hover, .entry-meta li a:hover, .blog-details .blog-details-content ul.entry-meta li a:hover, #comments .comment-list .comment-body a, .wp-block-image figcaption a, .blog-details .blog-details-content p a, .blog-details .blog-details-content ol a, .wp-block-file a, table th a, .blog-details .blog-details-content kbd, .wp-caption .wp-caption-text a, .comments-area .comment-content code, .comments-area .comment-content kbd, table td a, table td a:hover, .blog-sidebar .widget ul li a:hover, .page-main-content .entry-content a, .page-main-content kbd, .page-main-content code, .learn-more-btn:hover, .single-blog-post .post-content .entry-meta li a:hover, .entry-meta li a:hover, .entry-meta li i, .wpcf7-list-item-label a, .sticky .learn-more-btn, .page-navigation-area .page-link, blockquote::before, .learn-more-btn, .single-blog-post .post-content h3 a:hover, .post-tag-media ul li a, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a:hover, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a.active { color: #d80650; }
+
+        .sticky .post-content .entry-meta li a:hover, .blog-details .blog-meta ul li a:hover, .blog-details .blog-meta ul li a:hover, table th a:hover, .is-style-outline .wp-block-button__link { color: #d80650 !important; }
+
+        .default-btn, .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a::before, .banner-area.banner-area-three .follow-us ul li a i, .lines .line-two::after, .lines .line-three::after, .hero-slider-area .owl-next i, .single-features::before, .approach-content ul li:hover i, .electronic-content .electronic-tab-wrap .electronic-tab .tabs li::before, .client-area .owl-item.active.center .single-client, .client-area .owl-item.active.center .single-client .quotes, .page-title-area .page-title-content ul li::before, .single-team .image .social li a:hover, .coming-soon-area .coming-soon-content .newsletter-form button:hover, .coming-soon-area .coming-soon-content ul li a, .single-contact-info i, .services-details-info .services-list li a:hover, .services-details-info .services-list li a.active, .go-top, .go-top::before, .video-btn:hover, .video-btn:hover::after, .video-btn:hover::before, .page-navigation-area .page-link:hover, .page-navigation-area .page-item.active .page-link, .cybersecurity-content ul li:hover i, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a::before, .nav-area-six .others-option .option-item .search-overlay.search-popup .search-form .search-button, .nav-area-six .others-option .cart-icon .cart span, .nav-area-six .others-option .sidebar-menu::before, .sidebar-modal .sidebar-header .close-btn, .sidebar-modal .sidebar-header .close-btn:hover, .sidebar-modal .contact-us h3::before, .sidebar-modal .contact-us ul li i, .sidebar-modal .sidebar-gallery-feed h3::before, .sidebar-modal .sidebar-follow-us h3::before, .sidebar-modal .sidebar-follow-us .social-wrap li a i, .services-tab-slider .owl-nav .owl-prev:hover i, .services-tab-slider .owl-nav .owl-next:hover i, .services-content .services-tab-wrap .services-tab .tabs li::before, .choose-us-six-content .tabs .current, .testimonials .owl-nav .owl-prev:hover i, .testimonials .owl-nav .owl-next:hover i, .footer-area .single-footer-widget .social-icon li a:hover i, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a::before, .home-control-content .home-control-tab-wrap .home-control-tab .tabs li::before  { background-color: #d80650;}
+
+        .hero-slider-area .owl-next i:hover, .hero-slider-area .owl-prev i:hover{ background-color: #d80650 !important; }
+
+        a, .read-more, .read-more:hover, .read-more:hover i, .header-area .top-header-area .header-content-left li:hover a, .header-area .top-header-area .header-content-left li:hover a i, .header-area .top-header-area .header-content-right li:hover a, .header-area .top-header-area .header-content-right li:hover a i, .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a:hover, .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a:hover, .nav-area.nav-area-three .navbar-area .main-nav .others-option .call-us a i, .banner-area.banner-area-three .follow-us ul li a i:hover, .features-area .single-features:hover h3, .features-area .single-features:hover h3 i, .single-features h3, .single-features h3 i, .approach-content ul li i, .electronic-content .electronic-tab-wrap .electronic-tab .tabs .current a, .complete-content .single-security:hover i, .single-client .quotes, .single-client ul li i, .client-img span, .cybersecurity-content ul li i, .single-blog:hover span, .footer-bottom-area .copy-right p a:hover, .footer-bottom-area .condition-privacy ul li a:hover, .manual-content ul li i, .single-counter i, .single-counter p, .single-pricing h1, .single-pricing ul li i, .transform-content .skill-bar .down-arrow, .page-title-area .page-title-content ul li a:hover, .page-title-area .page-title-content ul .active, .single-team .content span, .user-area-all-style .contact-form-action form .form-condition .agree-label a, .user-area-all-style .contact-form-action .account-desc a, .user-area-all-style .contact-form-action .forget, .user-area-all-style .contact-form-action .now-register a, .user-area-all-style .contact-form-action .now-log-in, .services-details-info .services-contact-info ul li a:hover, .services-details-info .services-contact-info ul li .icon, .video-btn, .section-title span, .page-navigation-area .page-link, .services-details-info .download-file ul li a:hover, .performance-area .single-security span i, .single-security:hover i, .section-title-six span, .header-area-six .top-header-area .header-content-left li i, .header-area-six .top-header-area .header-content-left li:hover a, .header-area-six .top-header-area .header-content-left li:hover a i, .header-area-six .top-header-area .header-content-right .language-area .language-item-top .language-bar i, .header-area-six .top-header-area .header-content-right .language-area .language-item-top .language-item-bottom .language-item .language-link:hover, .header-area-six .top-header-area .header-content-right .log-in-sign-up li i, .header-area-six .top-header-area .header-content-right .log-in-sign-up li a:hover, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item a:hover, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li a:hover, .nav-area-six .others-option .option-item .search-btn:hover, .nav-area-six .others-option .option-item .close-btn.active, .nav-area-six .others-option .cart-icon .cart i:hover, .nav-area-six .others-option .sidebar-menu .burger-menu, .banner-area-six .banner-text .default-btn.active i, .services-content .services-tab-wrap .services-tab .tabs .current, .single-serve i, .single-counters i, .single-counters h2, .testimonials-item .testimonials-view span, .video-img-six .video-btn i, .single-blog-post-area .blog-content-area ul li i, .single-blog-post-area:hover h3 a, .footer-area .single-footer-widget .address li a:hover, .footer-area .single-footer-widget .address li i, .footer-area .single-footer-widget ul li:hover a, .copy-right-area p a, .copy-right-area .footer-menu li a:hover, .seku-new-nav-area .others-option .option-item .search-btn:hover, .seku-new-nav-area .others-option .option-item .close-btn.active, .seku-new-nav-area.nav-with-black-color .others-option .option-item .search-btn:hover, .seku-new-nav-area.nav-with-black-color .others-option .option-item .close-btn.active, .new-top-header-area .header-content-left li:hover a, .new-top-header-area .header-content-left li:hover a i, .new-top-header-area .header-content-right li:hover a, .new-top-header-area .header-content-right li:hover a i, .complete-website-security-slides.owl-theme .owl-nav [class*=owl-], .single-funfacts-card:hover .icon i, .home-control-content .home-control-tab-wrap .home-control-tab .tabs .current a, .single-plans-card .features-list ul li i, .latest-news-slides.owl-theme .owl-nav [class*=owl-], .latest-news-slides.owl-theme .owl-nav [class*=owl-], .single-footer-widget-card .custom-links li a:hover, .single-footer-widget-card .footer-contact-info li a:hover, .copyright-style-two-with-color p b, .copyright-style-two-with-color p a { color: #d80650; }
+
+        .form-control:focus, .hero-slider-area .owl-prev i:hover, .hero-slider-area .owl-next i:hover, .coming-soon-area .coming-soon-content .newsletter-form .input-newsletter:focus, .services-details-info .services-list li a:hover, .services-details-info .services-list li a.active, .page-navigation-area .page-link:hover, .page-navigation-area .page-item.active .page-link, .approach-content ul li i, .nav-area-six .others-option .option-item .search-overlay.search-popup .search-form .search-input:focus, .banner-area-six .banner-text .default-btn, .services-tab-slider .owl-nav .owl-prev i, .services-tab-slider .owl-nav .owl-next i, .single-serve i, .single-counters i, .seku-new-nav-area .others-option .option-item .search-overlay.search-popup .search-form .search-input:focus, .success-projects-slides.owl-theme .owl-dots .owl-dot span, .single-plans-card, .single-plans-card:hover, .latest-news-slides.owl-theme .owl-nav [class*=owl-] { border-color: #d80650; }
+
+        .client-area .owl-item.active.center .single-client::before {
+            border-top: 45px solid #d80650;
+        }
+
+        .transform-content .skill-bar .down-arrow {
+            border-top: 3px solid #d80650;
+        }
+
+        .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item.active a, .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li.active a, .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li.active a, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item.active a, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li.active a, .nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li .dropdown-menu li.active a, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item .dropdown-menu li.active a, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a:hover, .seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a.active { color: #d80650; }
+
+        .video-img-six .video-btn:hover, .seku-new-nav-area .others-option .option-item .search-overlay.search-popup .search-form .search-button, .new-main-banner-content .banner-btn li .default-btn::before, .new-main-banner-content .banner-btn li .default-btn::after, .new-main-banner-wrap-content .banner-btn li .default-btn::before, .new-main-banner-wrap-content .banner-btn li .default-btn::after, .new-main-banner-black-content .banner-btn li .default-btn::before, .new-main-banner-black-content .banner-btn li .default-btn::after, .new-main-banner-black-content .banner-btn li .default-btn.color-two::before, .new-main-banner-black-content .banner-btn li .default-btn.color-two::after, .success-projects-slides.owl-theme .owl-dots .owl-dot:hover span, .success-projects-slides.owl-theme .owl-dots .owl-dot.active span, .testimonials-wrap-slides.owl-theme .owl-dots .owl-dot:hover span, .testimonials-wrap-slides.owl-theme .owl-dots .owl-dot.active span, .overview-content-box .content .default-btn::before, .overview-content-box .content .default-btn::after { background: #d80650; }
+
+        .page-navigation-area .page-link:hover, .page-navigation-area .page-item.active .page-link, .new-main-banner-black-content .banner-btn li .default-btn.color-two, .testimonials-wrap-slides.owl-theme .owl-dots .owl-dot span { border-color: #d80650; }
+
+        .header-area .top-header-area .header-content-left li, .header-area .top-header-area .header-content-left li a, .header-area .top-header-area .header-content-left li i, .header-area .top-header-area .header-content-right li a i { color: #ffffff; }
+        .nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a, .nav-area .others-option .cart-btn, .nav-area.nav-area-three .navbar-area .main-nav .others-option .call-us a { color: #ffffff; }
+        
+        .nav-area .navbar-area.is-sticky { background-color: transparent; }
+
+        .nav-area.nav-area-three .navbar-area .main-nav { background-color: transparent; }
+
+        .page-title-area { background-color: #0e0129; }
+
+        .footer-top-area::before { background-color: #0e0129; }
+
+        .footer-top-area .single-footer-widget .logo p, .footer-top-area .single-footer-widget .logo h2, .footer-top-area .single-footer-widget h3, .footer-top-area .single-footer-widget ul li a, .footer-top-area .single-footer-widget ul li, .footer-top-area .single-footer-widget ul li { color: #ffffff; }
+
+        .footer-top-area .single-footer-widget ul.contact_links li i, .footer-top-area .single-footer-widget ul li a::before, .footer-top-area .single-footer-widget ul.contact_links li a i { color: #d80650; }
+
+        .footer-top-area .single-footer-widget ul li a:hover, .footer-bottom-area .copy-right p a:hover, .footer-bottom-area .condition-privacy ul li a:hover { color: #d80650; }
+
+        .footer-bottom-area { background-color: #05224c; }
+
+        .footer-bottom-area .copy-right p, .footer-bottom-area .copy-right p a, .footer-bottom-area .condition-privacy ul li a { color: #ffffff; }
+
+        .footer-bottom-area .condition-privacy ul li::before { background-color: #ffffff; }
+
+        .header-area-six .top-header-area { background-color: #f9f9f9; }
+
+        .mean-container .mean-bar { background-color: #25245e; }
+
+        @media only screen and (max-width: 991px) {
+            .header-area .top-header-area { background-color: #25245e; }
+            }
+
+        .loader {
+            border: 3px solid transparent;
+            border-top-color: #16a085;
+            -webkit-animation: spin 1.7s linear infinite;
+            animation: spin 1.7s linear infinite;
+        }
+        .loader:before {
+            border: 3px solid transparent;
+            border-top-color: #e74c3c;
+            -webkit-animation: spin-reverse .6s linear infinite;
+            animation: spin-reverse .6s linear infinite;
+        }
+        .loader:after {
+            border: 3px solid transparent;
+            border-top-color: #f9c922;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        .loader-wrapper { background-color: #ffffff; }
+
+        .loader-wrapper p { color: #000000; }
+
+        .single-features::after, .single-security i, .complete-content .single-security::before, .cybersecurity-content ul li::before, .manual-content ul li::before, .transform-content .skill-bar .progress-content, .performance-area .owl-theme .owl-dots .owl-dot.active span, .single-team .image::before, .video-btn, .video-btn::after, .video-btn::before, .single-solutions::after, .single-security:hover, .single-security::before, .seku-new-nav-area .others-option .option-item .default-btn {
+            background-image: -webkit-gradient(linear, left top, right bottom, from(#d2044d), to(#ff5e68));
+            background-image: linear-gradient(to bottom right, #d2044d, #ff5e68);
+        }
+        .section-title-wrap .wrap-btn .default-btn, .seku-new-nav-area .others-option .option-item .default-btn, .new-main-banner-slides-item, .new-main-home-slides.owl-theme .owl-nav [class*=owl-]::before, .new-main-banner-wrap-content .banner-btn li .default-btn, .new-main-banner-black-content .banner-btn li .default-btn, .single-seku-features-card::after, .safer-world-content .safer-world-btn .default-btn, .complete-website-security-card::after, .complete-website-security-card .icon i, .complete-website-security-slides.owl-theme .owl-nav [class*=owl-]::before, .funfacts-style-two-area, .single-success-projects-card .projects-image .icon a i, .success-projects-section-content .default-btn, .single-testimonials-card::after, .home-control-content .home-control-tab-wrap .tab_content .tabs_item .list li i, .home-control-content .home-control-tab-wrap .tab_content .tabs_item .default-btn, .single-plans-card::after, .single-plans-card .link-btn, .operation-center-content .operation-list li span i, .expert-team-content .default-btn, .latest-news-slides.owl-theme .owl-nav [class*=owl-]::before, .single-footer-widget-card .social-links li a, .single-footer-widget-card .newsletter-form .default-btn, .overview-content-box .content .default-btn, .cyber-defenses-content .cyber-btn .default-btn {
+            background: -webkit-gradient(linear, left top, right bottom, from(#d2044d), to(#ff5e68));
+            background: linear-gradient(to bottom right, #d2044d, #ff5e68);
+        }
+
+        .single-success-projects-card:hover .projects-content h3 a{
+            color: -webkit-gradient(linear, left top, right bottom, from(#d2044d), to(#ff5e68));
+            color: linear-gradient(to bottom right, #d2044d, #ff5e68);
+        }
+        
+        .single-products .sale-btn, .single-products .products-image ul li a:hover, .productsQuickView .modal-dialog .modal-content .products-content form button, .productsQuickView .modal-dialog .modal-content button.close:hover, .productsQuickView .modal-dialog .modal-content button.close:hover, .woocommerce ul.products li.product:hover .add-to-cart-btn, .shop-sidebar .widget_product_search form button, .shop-sidebar a.button, .shop-sidebar .woocommerce-widget-layered-nav-dropdown__submit, .shop-sidebar .woocommerce button.button, .woocommerce .widget_price_filter .ui-slider .ui-slider-range, .woocommerce .widget_price_filter .ui-slider .ui-slider-handle, .woocommerce #respond input#submit.alt, .woocommerce a.button.alt, .woocommerce button.button.alt, .woocommerce input.button.alt, .products_details div.product .woocommerce-tabs .panel #respond input#submit, .products_details div.product .product_title::before, .woocommerce #respond input#submit.alt.disabled, .woocommerce #respond input#submit.alt.disabled:hover, .woocommerce #respond input#submit.alt:disabled, .woocommerce #respond input#submit.alt:disabled:hover, .woocommerce #respond input#submit.alt:disabled[disabled], .woocommerce #respond input#submit.alt:disabled[disabled]:hover, .woocommerce a.button.alt.disabled, .woocommerce a.button.alt.disabled:hover, .woocommerce a.button.alt:disabled, .woocommerce a.button.alt:disabled:hover, .woocommerce a.button.alt:disabled[disabled], .woocommerce a.button.alt:disabled[disabled]:hover, .woocommerce button.button.alt.disabled, .woocommerce button.button.alt.disabled:hover, .woocommerce button.button.alt:disabled, .woocommerce button.button.alt:disabled:hover, .woocommerce button.button.alt:disabled[disabled], .woocommerce button.button.alt:disabled[disabled]:hover, .woocommerce input.button.alt.disabled, .woocommerce input.button.alt.disabled:hover, .woocommerce input.button.alt:disabled, .woocommerce input.button.alt:disabled:hover, .woocommerce input.button.alt:disabled[disabled], .woocommerce input.button.alt:disabled[disabled]:hover, .btn-primary:hover, .woocommerce #respond input#submit, .woocommerce a.button, .woocommerce button.button, .woocommerce input.button, .woocommerce .woocommerce-MyAccount-navigation ul .is-active a, .woocommerce .woocommerce-MyAccount-navigation ul li a:hover, .products_details div.product span.sale-btn, .shop-sidebar .tagcloud a:focus, .shop-sidebar .widget_search form button, .shop-sidebar .widget .widget-title::before, .shop-sidebar .widget ul li::before, .shop-sidebar .tagcloud a:hover, .shop-sidebar .tagcloud a:focus { background-color: #d80650; }
+        .btn-primary, .btn-primary.disabled, .btn-primary:disabled { background-color: #d80650; }
+        .productsQuickView .modal-dialog .modal-content .products-content .product-meta span a:hover, .woocommerce ul.products li.product h3 a:hover, .woocommerce ul.products li.product .add-to-cart-btn, .woocommerce div.product .woocommerce-tabs ul.tabs li.active a, .products_details div.product .woocommerce-tabs ul.tabs li a:hover, .products_details div.product .woocommerce-tabs ul.tabs li.active, .products_details div.product .woocommerce-tabs ul.tabs li.active a:hover, .products_details div.product .product_meta span.posted_in a:hover, .products_details div.product .product_meta span.tagged_as a:hover, .products_details div.product span.price, .cart-table table tbody tr td.product-name a, .woocommerce-message::before, .woocommerce-info::before, .shop-sidebar .widget ul li a:hover, .shop-sidebar .widget_rss .widget-title .rsswidget { color: #d80650; }
+
+        .woocommerce-info, .woocommerce-message { border-top-color: #d80650; }
+        .shop-sidebar .widget_shopping_cart .cart_list li a:hover, .shop-sidebar ul li a:hover { color: #d80650 !important; }
+        .woocommerce ul.products li.product:hover .add-to-cart-btn, .form-control:focus, .woocommerce .form-control:focus, .shop-sidebar .tagcloud a:hover, .shop-sidebar .tagcloud a:focus { border-color: #d80650; }
+
+        .body-with-black-color .home-control-content .home-control-tab-wrap .tab_content .tabs_item .list li i, .home-control-content.white-color-content .home-control-tab-wrap .tab_content .tabs_item .list li i, .operation-center-content.white-color-content .operation-list li span i, .cyber-defenses-list-tabs .nav .nav-item .nav-link::before, .cyber-defenses-content .cyber-list li i {
+            background: -webkit-gradient(linear, left top, right bottom, from(#603364), to(#7F3668));
+            background: linear-gradient(to bottom right, #603364, #7F3668);
+        }
+
+       
+                .navbar-area.is-sticky {
+                    display: none;
+                }
+                
+            .footer-top-area {
+                background-image: url(https://www.0ffset.net/wp-content/uploads/2020/07/footer-bg-1-1-1-1.jpg);
+            }
+</style>
+<link rel='stylesheet' id='vaximo-responsive-css'  href='https://www.0ffset.net/wp-content/themes/vaximo/assets/css/responsive.css?ver=1650402198' type='text/css' media='all' />
+<link rel='stylesheet' id='vaximo-fonts-css'  href='//fonts.googleapis.com/css?family=Rubik%3Aital%2Cwght%400%2C300%3B0%2C400%3B0%2C500%3B0%2C700%3B0%2C900%3B1%2C300%3B1%2C400%3B1%2C500%3B1%2C700%3B1%2C900%7CBarlow+Condensed%3Aital%2Cwght%400%2C300%3B0%2C400%3B0%2C500%3B0%2C600%3B0%2C700%3B0%2C800%3B1%2C200%3B1%2C300%3B1%2C400%3B1%2C500%3B1%2C600%3B1%2C700&#038;display=swap&#038;ver=1.0.0' type='text/css' media='screen' />
+<link rel='stylesheet' id='elementor-icons-css'  href='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/eicons/css/elementor-icons.min.css?ver=5.15.0' type='text/css' media='all' />
+<style id='elementor-icons-inline-css' type='text/css'>
+
+		.elementor-add-new-section .elementor-add-templately-promo-button{
+            background-color: #5d4fff;
+            background-image: url(https://www.0ffset.net/wp-content/plugins/essential-addons-for-elementor-lite/assets/admin/images/templately/logo-icon.svg);
+            background-repeat: no-repeat;
+            background-position: center center;
+            margin-left: 5px;
+            position: relative;
+            bottom: 5px;
+        }
+</style>
+<link rel='stylesheet' id='elementor-frontend-css'  href='https://www.0ffset.net/wp-content/plugins/elementor/assets/css/frontend.min.css?ver=3.6.4' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-post-12-css'  href='https://www.0ffset.net/wp-content/uploads/elementor/css/post-12.css?ver=1650388678' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-pro-css'  href='https://www.0ffset.net/wp-content/plugins/elementor-pro/assets/css/frontend.min.css?ver=3.6.5' type='text/css' media='all' />
+<link rel='stylesheet' id='elementor-post-3849-css'  href='https://www.0ffset.net/wp-content/uploads/elementor/css/post-3849.css?ver=1650388680' type='text/css' media='all' />
+<link rel='stylesheet' id='newsletter-css'  href='https://www.0ffset.net/wp-content/plugins/newsletter/style.css?ver=7.4.2' type='text/css' media='all' />
+<link rel='stylesheet' id='popup-maker-site-css'  href='//www.0ffset.net/wp-content/uploads/pum/pum-site-styles.css?generated=1649368230&#038;ver=1.16.7' type='text/css' media='all' />
+<link rel='stylesheet' id='redux-google-fonts-vaximo_opt-css'  href='https://fonts.googleapis.com/css?family=Rubik&#038;ver=1649278586' type='text/css' media='all' />
+<link rel='stylesheet' id='google-fonts-1-css'  href='https://fonts.googleapis.com/css?family=Roboto%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRoboto+Slab%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic%7CRubik%3A100%2C100italic%2C200%2C200italic%2C300%2C300italic%2C400%2C400italic%2C500%2C500italic%2C600%2C600italic%2C700%2C700italic%2C800%2C800italic%2C900%2C900italic&#038;display=auto&#038;ver=5.9.3' type='text/css' media='all' />
+<script  src='https://www.0ffset.net/wp-content/plugins/google-analytics-for-wordpress/assets/js/frontend-gtag.min.js?ver=8.5.0' id='monsterinsights-frontend-script-js'></script>
+<script data-cfasync="false" data-wpfc-render="false" type="text/javascript" id='monsterinsights-frontend-script-js-extra'>/* <![CDATA[ */
+var monsterinsights_frontend = {"js_events_tracking":"true","download_extensions":"doc,pdf,ppt,zip,xls,docx,pptx,xlsx","inbound_paths":"[{\"path\":\"\\\/go\\\/\",\"label\":\"affiliate\"},{\"path\":\"\\\/recommend\\\/\",\"label\":\"affiliate\"}]","home_url":"https:\/\/www.0ffset.net","hash_tracking":"false","ua":"UA-198064012-1","v4_id":""};/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-includes/js/jquery/jquery.min.js?ver=3.6.0' id='jquery-core-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/jquery/jquery-migrate.min.js?ver=3.3.2' id='jquery-migrate-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/popper.min.js?ver=1650402198' id='popper-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/bootstrap.bundle.min.js?ver=1650402198' id='bootstrap-bundle-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/jquery.meanmenu.js?ver=1650402198' id='jquery-meanmenu-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/wow.min.js?ver=1650402198' id='wow-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/owl.carousel.min.js?ver=1650402198' id='owl-carousel-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/jquery.magnific-popup.min.js?ver=1650402198' id='jquery-magnific-popup-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/jquery.nice-select.min.js?ver=1650402198' id='jquery-nice-select-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/parallax.min.js?ver=1650402198' id='parallax-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/jquery.appear.min.js?ver=1650402198' id='jquery-appear-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/odometer.min.js?ver=1650402198' id='odometer-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/ofi.min.js?ver=1650402198' id='ofi-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/carousel-thumbs.min.js?ver=1650402198' id='carousel-thumbs-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/ajaxChimp.min.js?ver=1' id='azaxchimp-js'></script>
+<script  src='https://www.0ffset.net/wp-content/themes/vaximo/assets/js/main.js?ver=1650402198' id='vaximo-main-js'></script>
+<link rel="https://api.w.org/" href="https://www.0ffset.net/wp-json/" /><link rel="alternate" type="application/json" href="https://www.0ffset.net/wp-json/wp/v2/posts/5755" /><link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.0ffset.net/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.0ffset.net/wp-includes/wlwmanifest.xml" /> 
+<link rel='shortlink' href='https://www.0ffset.net/?p=5755' />
+<link rel="alternate" type="application/json+oembed" href="https://www.0ffset.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.0ffset.net%2Freverse-engineering%2Fbazarloader-iso-file-infection%2F" />
+<link rel="alternate" type="text/xml+oembed" href="https://www.0ffset.net/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.0ffset.net%2Freverse-engineering%2Fbazarloader-iso-file-infection%2F&#038;format=xml" />
+<!-- HFCM by 99 Robots - Snippet # 1: Google Adsense -->
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<script>
+  (adsbygoogle = window.adsbygoogle || []).push({
+    google_ad_client: "ca-pub-4867865341670945",
+    enable_page_level_ads: true
+  });
+</script>
+<!-- /end HFCM by 99 Robots -->
+<!-- HFCM by 99 Robots - Snippet # 2: Google Search Console -->
+<meta name="google-site-verification" content="GiKrV-8gpS5ome6djZo40nVLsbGQoZAn1N6UYY2qwJ0" />
+<!-- /end HFCM by 99 Robots -->
+				<style type="text/css">
+									</style>
+				<link rel="pingback" href="https://www.0ffset.net/xmlrpc.php">	<noscript><style>.woocommerce-product-gallery{ opacity: 1 !important; }</style></noscript>
+	<link rel="icon" href="https://www.0ffset.net/wp-content/uploads/2021/06/favicon.png" sizes="32x32" />
+<link rel="icon" href="https://www.0ffset.net/wp-content/uploads/2021/06/favicon.png" sizes="192x192" />
+<link rel="apple-touch-icon" href="https://www.0ffset.net/wp-content/uploads/2021/06/favicon.png" />
+<meta name="msapplication-TileImage" content="https://www.0ffset.net/wp-content/uploads/2021/06/favicon.png" />
+		<style type="text/css" id="wp-custom-css">
+			.navbar-collapse {
+	flex-grow: 0.1;
+}
+
+
+.article-img { 
+	display: none;
+}
+		</style>
+		<style type="text/css" title="dynamic-css" class="options-output">.header-area-six .top-header-area{background-color:#f9f9f9;}.header-area-six .top-header-area .header-content-left li a, .header-area-six .top-header-area .header-content-right .log-in-sign-up li a{color:#0e0129;}.nav-area-six .navbar-area .main-nav nav .navbar-nav .nav-item a{color:#0e0129;}.seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a, .seku-new-nav-area .others-option .option-item .search-btn, .seku-new-nav-area .navbar-brand h2{color:#0e0129;}.seku-new-nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a:hover, .seku-new-nav-area .others-option .option-item .search-btn:hover{color:#d80650;}.seku-new-nav-area.nav-with-black-color .navbar-area .main-nav nav .navbar-nav .nav-item a, .seku-new-nav-area.nav-with-black-color .others-option .option-item .search-btn, .seku-new-nav-area.nav-with-black-color .navbar-brand h2{color:#ffffff;}.seku-new-nav-area.nav-with-black-color .navbar-area .main-nav nav .navbar-nav .nav-item a:hover, .seku-new-nav-area.nav-with-black-color .others-option .option-item .search-btn:hover{color:#ffffff;}.footer-area, .copy-right-area{background-color:#ffffff;}.footer-area .single-footer-widget h3, .footer-area .single-footer-widget ul li a, .footer-area .single-footer-widget ul li, .footer-area .single-footer-widget p, .footer-area .single-footer-widget .logo .logo-title, .copy-right-area .footer-menu li a, .copy-right-area p {color:#212121;}body{font-family:Rubik;}body{font-size:15px;}.nav-area .navbar-area .main-nav nav .navbar-nav .nav-item a{font-size:16px;}.footer-bottom-area .condition-privacy ul li a{font-size:15px;}</style></head>
+
+
+<body class="post-template-default single single-post postid-5755 single-format-standard theme-vaximo woocommerce-no-js elementor-default elementor-kit-12">
+
+	<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-dark-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0.49803921568627" /><feFuncG type="table" tableValues="0 0.49803921568627" /><feFuncB type="table" tableValues="0 0.49803921568627" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-grayscale"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.54901960784314 0.98823529411765" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.71764705882353 0.25490196078431" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-red"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 1" /><feFuncG type="table" tableValues="0 0.27843137254902" /><feFuncB type="table" tableValues="0.5921568627451 0.27843137254902" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-midnight"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0 0" /><feFuncG type="table" tableValues="0 0.64705882352941" /><feFuncB type="table" tableValues="0 1" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-magenta-yellow"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.78039215686275 1" /><feFuncG type="table" tableValues="0 0.94901960784314" /><feFuncB type="table" tableValues="0.35294117647059 0.47058823529412" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-purple-green"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.65098039215686 0.40392156862745" /><feFuncG type="table" tableValues="0 1" /><feFuncB type="table" tableValues="0.44705882352941 0.4" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 0 0" width="0" height="0" focusable="false" role="none" style="visibility: hidden; position: absolute; left: -9999px; overflow: hidden;" ><defs><filter id="wp-duotone-blue-orange"><feColorMatrix color-interpolation-filters="sRGB" type="matrix" values=" .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 .299 .587 .114 0 0 " /><feComponentTransfer color-interpolation-filters="sRGB" ><feFuncR type="table" tableValues="0.098039215686275 1" /><feFuncG type="table" tableValues="0 0.66274509803922" /><feFuncB type="table" tableValues="0.84705882352941 0.41960784313725" /><feFuncA type="table" tableValues="1 1" /></feComponentTransfer><feComposite in2="SourceGraphic" operator="in" /></filter></defs></svg>
+							<div class="loader-wrapper">
+							<div class="loader"></div>
+							<div class="loader-section section-left"></div>
+							<div class="loader-section section-right"></div>
+						</div>
+                     <!-- Preloader -->
+
+	
+	
+    <header class="header-area   ">
+        <div class="nav-area nav-area-three">
+            <div class="navbar-area">
+                <!-- Menu For Mobile Device -->
+                <div class="mobile-nav">
+                    <a href="https://www.0ffset.net/" class="logo">
+                                                    <img class="" src="https://www.0ffset.net/wp-content/uploads/2021/09/testlol.png" alt="Logo">
+                                            </a>
+                </div>
+
+                <!-- Menu For Desktop Device -->
+                <div class="main-nav">
+                    <nav class="navbar navbar-expand-md">
+                        <div class="container-fluid">
+                            <a class="navbar-brand" href="https://www.0ffset.net/">
+                                                                    <img class="" src="https://www.0ffset.net/wp-content/uploads/2021/05/z2a_logo-2-e1621256461350.png" alt="Logo">
+                                                            </a>
+                            
+                            <div class="collapse navbar-collapse mean-menu">
+                                <ul id="menu-header-menu" class="navbar-nav m-auto"><li id="menu-item-3248" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-3248 nav-item"><a title="Home" href="https://www.0ffset.net/" class="nav-link">Home</a></li>
+<li id="menu-item-29" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-29 nav-item"><a title="About" href="https://www.0ffset.net/about/" class="nav-link">About</a></li>
+<li id="menu-item-3778" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-has-children dropdown menu-item-3778 nav-item"><a title="Training" href="https://www.0ffset.net/training/" data-hover="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-3778">Training</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-3778" role="menu">
+	<li id="menu-item-3772" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3772 nav-item"><a title="Zero2Automated" href="https://www.0ffset.net/training/zero2automated/" class="dropdown-item">Zero2Automated</a></li>
+	<li id="menu-item-3773" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3773 nav-item"><a title="The Beginner Malware Analysis Course" href="https://www.0ffset.net/training/beginner-malanalysis/" class="dropdown-item">The Beginner Malware Analysis Course</a></li>
+</ul>
+</li>
+<li id="menu-item-32" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-has-children dropdown menu-item-32 nav-item"><a title="Blog" href="https://www.0ffset.net/blog/" data-hover="dropdown" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle nav-link" id="menu-item-dropdown-32">Blog</a>
+<ul class="dropdown-menu" aria-labelledby="menu-item-dropdown-32" role="menu">
+	<li id="menu-item-3252" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent active menu-item-3252 nav-item"><a title="Malware Analysis" href="https://www.0ffset.net/category/reverse-engineering/malware-analysis/" class="dropdown-item">Malware Analysis</a></li>
+	<li id="menu-item-3250" class="menu-item menu-item-type-taxonomy menu-item-object-category current-post-ancestor current-menu-parent current-post-parent active menu-item-3250 nav-item"><a title="Reverse Engineering" href="https://www.0ffset.net/category/reverse-engineering/" class="dropdown-item">Reverse Engineering</a></li>
+</ul>
+</li>
+<li id="menu-item-30" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-30 nav-item"><a title="Contact Us" href="https://www.0ffset.net/contact-us/" class="nav-link">Contact Us</a></li>
+</ul>                                
+                                <!-- Start Other Option -->
+                                <div class="others-option">
+                                                                                                        </div>
+                                <!-- End Other Option -->
+                            </div>
+                        </div>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    	<div class="page-title-area" style="background-image:url();">
+		<div class="container">
+			<div class="page-title-content">
+									<h2>BAZARLOADER: Unpacking an ISO File Infection</h2>
+				
+										<ul>
+															<li><a href="https://www.0ffset.net/">Home</a></li>
+														<li><a href="https://www.0ffset.net/blog/">Blog</a></li>
+															<li class="active">BAZARLOADER: Unpacking an ISO File Infection</li>
+													</ul>			</div>
+		</div>
+	</div>
+
+	<!-- Start Blog Area -->
+	<div class="blog-details-area ptb-100 ">
+		<div class="container">
+			<div class="row">
+									<div class="col-lg-8 col-md-12">
+						<div class="blog-details">
+															<div class="article-img">
+									<img src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" alt="BAZARLOADER: Unpacking an ISO File Infection">
+								</div> 
+							<div class="blog-details-content">
+																	<ul class="entry-meta">
+										<li> <i class="far fa-user-circle"></i>
+											<a href="https://www.0ffset.net/author/chuong-dong/">
+												Chuong Dong											</a>
+										</li>
+										<li>
+											<i class="far fa-calendar-alt"></i>
+											19th April 2022										</li>
+										<li>
+											<i class="far fa-comment-dots"></i> 
+											No Comments										</li>
+									</ul>
+																
+<p>BAZARLOADER (aka BAZARBACKDOOR) is a Windows-based loader that spreads through attachments in phishing emails. During an infection, the final loader payload typically downloads and executes a Cobalt Strike beacon to provide remote access for the threat actors, which, in a lot of cases, leads to ransomware being deployed to the victim’s machine.</p>
+
+
+
+<p>In this initial post, we will unpack the different stages of a BAZARLOADER infection that comes in the form of an optical disk image (ISO) file. We will also dive into the obfuscation methods used by the main BAZARLOADER payload.</p>
+
+
+
+<p>To follow along, you can grab the sample as well as the PCAP files for it on <a href="https://www.malware-traffic-analysis.net/2022/02/07/index.html" target="_blank" rel="noreferrer noopener">Malware-Traffic-Analysis.net</a>.</p>
+
+
+
+<p>SHA256: 0900b4eb02bdcaefd21df169d21794c8c70bfbc68b2f0612861fcabc82f28149</p>
+
+
+
+<h2><strong>Step 1: Mounting ISO File &amp; Extracting Stage 1 Executable</strong></h2>
+
+
+
+<p>Recent BAZARLOADER samples arrive in emails containing OneDrive links to download an ISO file to avoid detection since most AVs tend to ignore this particular file type. With Windows 7 and above integrating the mounting functionality into Windows Explorer, we can mount any ISO file as a virtual drive by double-clicking on it.</p>
+
+
+
+<p>When we mount the malicious ISO file, we see that a drive is mounted on the system that contains a shortcut file named <strong>“Attachments.lnk”</strong> and a hidden file named <strong>“documents.log”</strong>.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img width="833" height="203" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01.png" alt="" class="wp-image-5759" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01.png 833w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01-300x73.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01-768x187.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_01-530x129.png 530w" sizes="(max-width: 833px) 100vw, 833px" /></figure></div>
+
+
+
+<p>The shortcut file has to be run by the victim to begin the chain of infection. We can quickly extract the actual command being executed by this shortcut from its <strong>Properties </strong>window.</p>
+
+
+
+<pre class="wp-block-code"><code>C:\Windows\System32\rundll32.exe documents.log,vspa</code></pre>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="362" height="507" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_02.png" alt="" class="wp-image-5761" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_02.png 362w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_02-214x300.png 214w" sizes="(max-width: 362px) 100vw, 362px" /></figure></div>
+
+
+
+<p>Once the victim double-clicks on the shortcut file, the command executes the Windows <strong>rundll32.exe </strong>program to launch the <strong>“documents.log”</strong> file. This lets us know that the file being launched is a DLL file, and the entry point is its export function <strong>vspa</strong>.</p>
+
+
+
+<h2><strong>Step 2: Extracting Second Stage Shellcode</strong></h2>
+
+
+
+<p>Taking a quick look in IDA, we can somewhat tell that the extracted DLL is packed since it has only a few functions and a really suspicious looking buffer of ASCII characters in its custom <strong>.odata</strong> section.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img loading="lazy" width="1024" height="623" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-1024x623.png" alt="" class="wp-image-5764" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-1024x623.png 1024w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-300x182.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-768x467.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03-530x322.png 530w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_03.png 1039w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure></div>
+
+
+
+<p>With that in mind, we will just perform some quick static analysis to determine where we can dump the next stage.</p>
+
+
+
+<p>In the first function of the <strong>vspa </strong>export, we see <strong>sub_1800045D6</strong> takes a DWORD in as the parameter. This function returns a variable that contains an address to a function that is later called in the code.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="902" height="340" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04.png" alt="" class="wp-image-5765" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04.png 902w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04-300x113.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04-768x289.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_04-530x200.png 530w" sizes="(max-width: 902px) 100vw, 902px" /></figure></div>
+
+
+
+<p>At this point, we can safely guess that <strong>sub_1800045D6 </strong>is an API resolving function, and the parameter it takes is the hash of the API’s name. Because this is still the unpacking phase, we won’t dive too deep into analyzing this function.</p>
+
+
+
+<p>Instead, I’ll just use <strong>OALabs’s</strong> <a href="https://github.com/OALabs/hashdb-ida" target="_blank" rel="noreferrer noopener"><strong>HashDB</strong></a> IDA plugin to quickly reverse-lookup the hashing algorithm used from the hash. The result shows that the hash corresponds to an API name hashed with <a href="https://github.com/OALabs/hashdb/blob/b3cc544fad41c749d04616663ac13f02bf1aaf37/algorithms/metasploit.py" target="_blank" rel="noreferrer noopener">Metasploit’s hashing algorithm <strong>ROR13</strong></a>.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="663" height="307" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_05.png" alt="" class="wp-image-5766" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_05.png 663w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_05-300x139.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_05-530x245.png 530w" sizes="(max-width: 663px) 100vw, 663px" /></figure></div>
+
+
+
+<p>After determining the hashing algorithm, we can use <strong>HashDB </strong>to quickly look up the APIs being resolved by this function. It becomes clear that this function resolves the <strong>RtlAllocateHeap</strong> API, calls that to allocate a heap buffer and writes the encoded ASCII data to it.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="923" height="444" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1.png" alt="" class="wp-image-5772" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1.png 923w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1-300x144.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1-768x369.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_06-1-530x255.png 530w" sizes="(max-width: 923px) 100vw, 923px" /></figure></div>
+
+
+
+<p>From this point onward, we can guess that the packer will decode this buffer and launch it somewhere later in the code. If we skip toward the end of the <strong>vspa </strong>export, we see a <strong>call </strong>instruction<strong> </strong>on a variable that is not returned from the API resolving function, so it can potentially be our tail jump.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="885" height="302" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07.png" alt="" class="wp-image-5773" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07.png 885w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07-300x102.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07-768x262.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_07-530x181.png 530w" sizes="(max-width: 885px) 100vw, 885px" /></figure></div>
+
+
+
+<p>The last function to modify that <strong>v19 </strong>variable is <strong>sub_180003FE6</strong>, so we can quickly take a look at that.</p>
+
+
+
+<p>It turns out the <strong>sub_180003FE6</strong> function just resolves and calls <strong>NtMapViewOfSection</strong> to map a view of a section into the virtual address space and writes the base address of the view into the <strong>v19 </strong>variable. Then, it just executes <strong>qmemcpy</strong> to copy the data in the second variable to the returned virtual base address.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="885" height="570" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08.png" alt="" class="wp-image-5774" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08.png 885w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08-300x193.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08-768x495.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_08-530x341.png 530w" sizes="(max-width: 885px) 100vw, 885px" /></figure></div>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="617" height="193" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_09.png" alt="" class="wp-image-5775" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_09.png 617w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_09-300x94.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_09-530x166.png 530w" sizes="(max-width: 617px) 100vw, 617px" /></figure></div>
+
+
+
+<p>This tells us two things. First, our guess that the <strong>v19 </strong>variable will contain the address to executable code is correct. Second, we know that the executable code is shellcode since the data is mapped and executed directly at offset 0 from where it is written.</p>
+
+
+
+<p>From here, we can set up <strong>x64dbg</strong>, execute the DLL file at the <strong>vspa</strong> export, and break at the call instruction. After stepping into the function, we will be at the head of the shellcode.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img loading="lazy" width="1024" height="520" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-1024x520.png" alt="" class="wp-image-5777" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-1024x520.png 1024w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-300x152.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-768x390.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10-530x269.png 530w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_10.png 1166w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure></div>
+
+
+
+<p>We can now dump this virtual memory buffer to retrieve the second stage shellcode for the next unpacking step.</p>
+
+
+
+<h2><strong>Step 3: Extracting The Final BAZARLOADER Payload</strong></h2>
+
+
+
+<p>When we examine the shellcode in IDA, we can quickly use the same trick with <strong>HashDB </strong>above to see that the shellcode also performs API hashing with Metasploit’s <strong>ROR13</strong>.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="794" height="489" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11.png" alt="" class="wp-image-5780" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11.png 794w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11-300x185.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11-768x473.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_11-530x326.png 530w" sizes="(max-width: 794px) 100vw, 794px" /></figure></div>
+
+
+
+<p>At the entry point above, the shellcode resolves a set of functions that it will call, most notably <strong>VirtualAlloc</strong> and <strong>VirtualProtect</strong>. These two functions are typically used by packers to allocate virtual memory to decode and write the next stage executable in before launching it.</p>
+
+
+
+<p>With this in mind, our next step should be debugging the shellcode and setting breakpoints at these two API calls. We can pick up where we are after dumping in <strong>x64dbg</strong> during <strong>Step 2</strong>, or we can launch the shellcode directly in our debugger using OALabs’s <a href="https://github.com/OALabs/BlobRunner">BlobRunner</a> or similar shellcode launcher.</p>
+
+
+
+<p>Our first hit with <strong>VirtualAlloc</strong> is a call to allocate a virtual memory buffer at virtual address 0x204140000 with the size of 0x2A000 bytes.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img loading="lazy" width="1024" height="452" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-1024x452.png" alt="" class="wp-image-5784" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-1024x452.png 1024w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-300x132.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-768x339.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12-530x234.png 530w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_12.png 1355w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure></div>
+
+
+
+<p>We can run until <strong>VirtualAlloc</strong> returns and start monitoring the memory at address 0x204140000. After running until the next <strong>VirtualProtect</strong> call, we see that a valid PE executable has been written to this memory region.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="860" height="377" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13.png" alt="" class="wp-image-5785" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13.png 860w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13-300x132.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13-768x337.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_13-530x232.png 530w" sizes="(max-width: 860px) 100vw, 860px" /></figure></div>
+
+
+
+<p>Finally, we can dump this memory region into a file to extract the BAZARLOADER payload.</p>
+
+
+
+<h2><strong>Step 4: BAZARLOADER’s String Obfuscation</strong></h2>
+
+
+
+<p>As we begin performing static analysis on BAZARLOADER, it is crucial that we identify obfuscation methods that the malware uses.</p>
+
+
+
+<p>One of those methods is string obfuscation, where the malware uses encoded stack strings to hide them from static analysis.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="730" height="219" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_14.png" alt="" class="wp-image-5787" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_14.png 730w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_14-300x90.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_14-530x159.png 530w" sizes="(max-width: 730px) 100vw, 730px" /></figure></div>
+
+
+
+<p>As shown, a typical encoded string is pushed on the stack and decoded dynamically using some multiplication, subtraction, and modulus operations.</p>
+
+
+
+<p>There are different ways to resolve these stack strings, such as writing IDAPython scripts, <a href="https://github.com/mandiant/flare-emu" target="_blank" rel="noreferrer noopener">emulation</a>, or just running the program in a debugger and dumping the stack strings when they are resolved.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="935" height="540" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15.png" alt="" class="wp-image-5789" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15.png 935w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15-300x173.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15-768x444.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_15-530x306.png 530w" sizes="(max-width: 935px) 100vw, 935px" /></figure></div>
+
+
+
+<h2><strong>Step 5: BAZARLOADER’s API Obfuscation</strong></h2>
+
+
+
+<p>BAZARLOADER obfuscates most of its API calls through a few structures that it constructs in the <strong>DllEntryPoint </strong>function.</p>
+
+
+
+<p>First, the malware populates the following structure that contains a handle to <strong>Kernel32.dll</strong> and addresses to API required to load libraries and get their API addresses.</p>
+
+
+
+<pre class="wp-block-code"><code>struct API_IMPORT_STRUCT {
+    HANDLE kernel32_handle;
+    FARPROC mw_GetProcAddress;
+    FARPROC mw_LoadLibraryW;
+    FARPROC mw_LoadLibraryA;
+    FARPROC mw_LoadLibraryA2;
+    FARPROC mw_FreeLibrary;
+    FARPROC mw_GetModuleHandleW;
+    FARPROC mw_GetModuleHandleA;
+};
+</code></pre>
+
+
+
+<p>It calls <strong>GetModuleHandle</strong> to retrieve the handle to <strong>Kernel32.dll</strong>, calls <strong>GetProcAddress</strong> to retrieve the address of the <strong>GetProcAddress</strong> API, and writes those in the structure.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="933" height="613" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png" alt="" class="wp-image-5791" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16.png 933w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16-300x197.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16-768x505.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_16-530x348.png 530w" sizes="(max-width: 933px) 100vw, 933px" /></figure></div>
+
+
+
+<p>Using the structure’s <strong>GetProcAddress</strong> API field, BAZARLOADER retrieves the rest of the required APIs to populate other fields in the structure. This <strong>API_IMPORT_STRUCT</strong> structure will later be used to import other libraries’ APIs.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="947" height="362" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17.png" alt="" class="wp-image-5794" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17.png 947w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17-300x115.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17-768x294.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_17-530x203.png 530w" sizes="(max-width: 947px) 100vw, 947px" /></figure></div>
+
+
+
+<p>Next, for each library to be imported, BAZARLOADER populates the following <strong>LIBRARY_STRUCT </strong>structure that contains a set of functions to interact with the library and the library handle.</p>
+
+
+
+<pre class="wp-block-code"><code>struct LIB_FUNCS
+{
+    FARPROC free_lib;
+    FARPROC w_free_lib;
+    __int64 (__fastcall *get_API_addr)(API_IMPORT_STRUCT*, HANDLE, char*);
+};
+
+struct LIBRARY_STRUCT
+{
+    LIB_FUNCS *lib_funcs;
+    HANDLE lib_handle;
+};
+</code></pre>
+
+
+
+<p>The first 2 functions in the <strong>LIB_FUNCS </strong>structure just call the <strong>FreeLibrary</strong> API from the global <strong>API_IMPORT_STRUCT</strong> to free the library module.</p>
+
+
+
+<p>The third function calls the <strong>GetProcAddress </strong>from the <strong>API_IMPORT_STRUCT</strong>’s field to retrieve the address of an API exported from that specific library.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="656" height="256" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_18.png" alt="" class="wp-image-5795" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_18.png 656w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_18-300x117.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_18-530x207.png 530w" sizes="(max-width: 656px) 100vw, 656px" /></figure></div>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img loading="lazy" width="1024" height="81" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-1024x81.png" alt="" class="wp-image-5797" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-1024x81.png 1024w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-300x24.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-768x61.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19-530x42.png 530w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_19.png 1079w" sizes="(max-width: 1024px) 100vw, 1024px" /></figure></div>
+
+
+
+<p>To begin populating each <strong>LIBRARY_STRUCT </strong>structure, BAZARLOADER decodes the library name from a stack string and populates it with the corresponding set of functions and the library handle retrieved from calling <strong>LoadLibraryA</strong>.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="774" height="398" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20.png" alt="" class="wp-image-5798" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20.png 774w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20-300x154.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20-768x395.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_20-530x273.png 530w" sizes="(max-width: 774px) 100vw, 774px" /></figure></div>
+
+
+
+<p>Below is the list of all libraries used by the malware.</p>
+
+
+
+<pre class="wp-block-code"><code>kernel32.dll, wininet.dll, advapi32.dll, ole32.dll, rpcrt4.dll, shell32.dll, bcrypt.dll, crypt32.dll, dnsapi.dll, netapi32.dll, shlwapi.dll, user32.dll, ktmw32.dll</code></pre>
+
+
+
+<p>The <strong>LIBRARY_STRUCT </strong>structures corresponding to these are pushed into a global list in the order below.</p>
+
+
+
+<pre class="wp-block-code"><code>struct LIBRARY_STRUCT_LIST
+{
+    LIBRARY_STRUCT *lib_struct_kernel32;
+    LIBRARY_STRUCT *lib_struct_wininet;
+    LIBRARY_STRUCT *lib_struct_advapi32;
+    LIBRARY_STRUCT *lib_struct_ole32;
+    LIBRARY_STRUCT *lib_struct_rpcrt4;
+    LIBRARY_STRUCT *lib_struct_shell32;
+    LIBRARY_STRUCT *lib_struct_bcrypt;
+    LIBRARY_STRUCT *lib_struct_crypt32;
+    LIBRARY_STRUCT *lib_struct_dnsapi;
+    LIBRARY_STRUCT *lib_struct_netapi32;
+    LIBRARY_STRUCT *lib_struct_shlwapi;
+    LIBRARY_STRUCT *lib_struct_user32;
+    LIBRARY_STRUCT *lib_struct_ktmw32;
+};
+</code></pre>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="767" height="673" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_21.png" alt="" class="wp-image-5800" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_21.png 767w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_21-300x263.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_21-530x465.png 530w" sizes="(max-width: 767px) 100vw, 767px" /></figure></div>
+
+
+
+<p>After this global list of <strong>LIBRARY_STRUCT </strong>is populated, an API can be called from a function taking in its corresponding library’s <strong>LIBRARY_STRUCT </strong>structure and its parameters. </p>
+
+
+
+<p>This function resolves the API name from a stack string, retrieves the API’s address using the <strong>get_API_addr</strong> function from the library structure, and calls the API with its parameters.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="847" height="259" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22.png" alt="" class="wp-image-5802" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22.png 847w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22-300x92.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22-768x235.png 768w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_22-530x162.png 530w" sizes="(max-width: 847px) 100vw, 847px" /></figure></div>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img loading="lazy" width="570" height="220" src="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_23.png" alt="" class="wp-image-5803" srcset="https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_23.png 570w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_23-300x116.png 300w, https://www.0ffset.net/wp-content/uploads/2022/04/bazarloader_23-530x205.png 530w" sizes="(max-width: 570px) 100vw, 570px" /></figure></div>
+
+
+
+<p>The way the wrapper function is setup to call the actual API is really intuitive, making the code simple to understand through static analysis. However, it’s a bit more difficult to automate the process since there is no API hashing involved.</p>
+
+
+
+<p>For my analysis, I just manually decode the stack strings in my debugger and rename the wrapper function accordingly.</p>
+
+
+
+<p>At this point, we have fully unpacked BAZARLOADER and understood how the malware obfuscates its strings and APIs to make analysis harder.</p>
+
+
+
+<p>In the next blog post, we will fully analyze how the loader downloads and launches a Cobalt Strike beacon from its C2 servers!</p>
+
+															</div>
+						</div>
+					
+						
+<div id="comments" class="comments-area">
+
+		<div id="respond" class="comment-respond">
+		<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="/reverse-engineering/bazarloader-iso-file-infection/#respond" style="display:none;">Cancel reply</a></small></h3><form action="https://www.0ffset.net/wp-comments-post.php" method="post" id="commentform" class="comment-form" novalidate><p class="comment-notes"><span id="email-notes">Your email address will not be published.</span> <span class="required-field-message" aria-hidden="true">Required fields are marked <span class="required" aria-hidden="true">*</span></span></p><p class="comment-form-comment"><label for="comment">Comment <span class="required" aria-hidden="true">*</span></label> <textarea id="comment" name="comment" cols="45" rows="8" maxlength="65525" required></textarea></p><p class="comment-form-author"><label for="author">Name <span class="required" aria-hidden="true">*</span></label> <input id="author" name="author" type="text" value="" size="30" maxlength="245" required /></p>
+<p class="comment-form-email"><label for="email">Email <span class="required" aria-hidden="true">*</span></label> <input id="email" name="email" type="email" value="" size="30" maxlength="100" aria-describedby="email-notes" required /></p>
+<p class="comment-form-url"><label for="url">Website</label> <input id="url" name="url" type="url" value="" size="30" maxlength="200" /></p>
+<p class="comment-form-cookies-consent"><input id="wp-comment-cookies-consent" name="wp-comment-cookies-consent" type="checkbox" value="yes" /> <label for="wp-comment-cookies-consent">Save my name, email, and website in this browser for the next time I comment.</label></p>
+<p class="form-submit"><input name="submit" type="submit" id="submit" class="submit" value="Post a Comment" /> <input type='hidden' name='comment_post_ID' value='5755' id='comment_post_ID' />
+<input type='hidden' name='comment_parent' id='comment_parent' value='0' />
+</p></form>	</div><!-- #respond -->
+	
+</div><!-- #comments -->
+					</div> 				
+									<div class="col-lg-4 col-md-12">
+				<div id="secondary" class="title blog-sidebar widget-area">
+		
+		<div id="search-2" class="widget widget_search"><form role="search" method="get" id="search" action="https://www.0ffset.net/" class="search-form">
+    <label>
+        <input type="search" class="search-field" placeholder="Search..." value="" name="s" id="s" required>
+    </label>
+    <button type="submit" class="search-submit"><i class="fas fa-search"></i></button>
+</form></div><div id="categories-3" class="widget widget_categories"><h2 class="widget-title">Categories</h2>
+			<ul>
+					<li class="cat-item cat-item-41"><a href="https://www.0ffset.net/category/reverse-engineering/ctf-challenges/">CTF/Challenges</a>
+</li>
+	<li class="cat-item cat-item-42"><a href="https://www.0ffset.net/category/reverse-engineering/forensics/">Forensics</a>
+</li>
+	<li class="cat-item cat-item-43"><a href="https://www.0ffset.net/category/reverse-engineering/malware-analysis/">Malware Analysis</a>
+</li>
+	<li class="cat-item cat-item-35"><a href="https://www.0ffset.net/category/development/malware-development/">Malware Development</a>
+</li>
+	<li class="cat-item cat-item-36"><a href="https://www.0ffset.net/category/miscellaneous/">Miscellaneous</a>
+</li>
+	<li class="cat-item cat-item-37"><a href="https://www.0ffset.net/category/reverse-engineering/">Reverse Engineering</a>
+</li>
+			</ul>
+
+			</div><div id="text-1" class="widget widget_text"><h2 class="widget-title">Contact Info</h2>			<div class="textwidget"><li><a href="mailto:daniel@0ffset.net">
+<i class="bx bx-envelope"></i>
+daniel@0ffset.net
+</a></li>
+ 	<li><i class="bx bx-location-plus"></i>
+5 The Quadrant, Coventry</li>
+</div>
+		</div><div id="nav_menu-1" class="widget widget_nav_menu"><h2 class="widget-title">Training</h2><div class="menu-training-links-container"><ul id="menu-training-links" class="menu"><li id="menu-item-3898" class="menu-item menu-item-type-post_type menu-item-object-page current_page_parent menu-item-3898"><a href="https://www.0ffset.net/blog/">Blog</a></li>
+<li id="menu-item-3896" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3896"><a href="https://www.0ffset.net/training/zero2automated/">Zero2Automated</a></li>
+<li id="menu-item-3897" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3897"><a href="https://www.0ffset.net/training/beginner-malanalysis/">The Beginner Malware Analysis Course</a></li>
+</ul></div></div><div id="nav_menu-2" class="widget widget_nav_menu"><h2 class="widget-title">Quick Links</h2><div class="menu-quick-links-container"><ul id="menu-quick-links" class="menu"><li id="menu-item-3902" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3902"><a href="https://www.0ffset.net/about/">About</a></li>
+<li id="menu-item-3903" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3903"><a href="https://www.0ffset.net/training/">Training</a></li>
+<li id="menu-item-3904" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3904"><a href="https://www.0ffset.net/corporate/">Corporate/Bulk Orders</a></li>
+<li id="menu-item-3905" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-3905"><a href="https://www.0ffset.net/contact-us/">Contact Us</a></li>
+</ul></div></div>	</div>
+</div><!-- #secondary -->
+				
+			</div>
+		</div>
+	</div>
+	<!-- End Blog Area -->
+
+	<!-- Footer -->
+	<!-- Start Footer Area -->
+    <footer class="footer-top-area pt-100 pb-70  footer-top-padding">
+        <div class="container">
+            <div class="row">
+                                                                                            </div>
+        </div>
+    </footer>
+
+            <div class="footer-bottom-area">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6">
+                        <div class="copy-right">
+                            <p>Copyright © 2021 <a title="Home" href="https://www.0ffset.net/">0ffset Training Solutions LTD</a>. All Rights Reserved.</p>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="condition-privacy">
+                                                    </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    
+    <div class="go-top">
+        <i class="bx bx-chevron-up"></i>
+        <i class="bx bx-chevron-up"></i>
+    </div>
+
+	
+	<!-- HFCM by 99 Robots - Snippet # 3: Amazon OneLink -->
+<div id="amzn-assoc-ad-4d645d38-ab18-43b7-84ef-2835845f8064"></div><script async src="//z-na.amazon-adsystem.com/widgets/onejs?MarketPlace=US&adInstanceId=4d645d38-ab18-43b7-84ef-2835845f8064"></script>
+<!-- /end HFCM by 99 Robots -->
+<script>(function() {function maybePrefixUrlField() {
+	if (this.value.trim() !== '' && this.value.indexOf('http') !== 0) {
+		this.value = "http://" + this.value;
+	}
+}
+
+var urlFields = document.querySelectorAll('.mc4wp-form input[type="url"]');
+if (urlFields) {
+	for (var j=0; j < urlFields.length; j++) {
+		urlFields[j].addEventListener('blur', maybePrefixUrlField);
+	}
+}
+})();</script><div id="pum-3120" class="pum pum-overlay pum-theme-2973 pum-theme-enterprise-blue popmake-overlay click_open" data-popmake="{&quot;id&quot;:3120,&quot;slug&quot;:&quot;notify_course&quot;,&quot;theme_id&quot;:2973,&quot;cookies&quot;:[{&quot;event&quot;:&quot;on_popup_close&quot;,&quot;settings&quot;:{&quot;name&quot;:&quot;pum-3120&quot;,&quot;key&quot;:&quot;&quot;,&quot;session&quot;:false,&quot;path&quot;:&quot;1&quot;,&quot;time&quot;:&quot;1 month&quot;}}],&quot;triggers&quot;:[{&quot;type&quot;:&quot;click_open&quot;,&quot;settings&quot;:{&quot;cookie_name&quot;:[&quot;pum-3120&quot;],&quot;extra_selectors&quot;:&quot;&quot;}}],&quot;mobile_disabled&quot;:null,&quot;tablet_disabled&quot;:null,&quot;meta&quot;:{&quot;display&quot;:{&quot;stackable&quot;:false,&quot;overlay_disabled&quot;:false,&quot;scrollable_content&quot;:false,&quot;disable_reposition&quot;:false,&quot;size&quot;:&quot;small&quot;,&quot;responsive_min_width&quot;:&quot;0%&quot;,&quot;responsive_min_width_unit&quot;:false,&quot;responsive_max_width&quot;:&quot;100%&quot;,&quot;responsive_max_width_unit&quot;:false,&quot;custom_width&quot;:&quot;640px&quot;,&quot;custom_width_unit&quot;:false,&quot;custom_height&quot;:&quot;380px&quot;,&quot;custom_height_unit&quot;:false,&quot;custom_height_auto&quot;:false,&quot;location&quot;:&quot;center&quot;,&quot;position_from_trigger&quot;:false,&quot;position_top&quot;:&quot;100&quot;,&quot;position_left&quot;:&quot;0&quot;,&quot;position_bottom&quot;:&quot;0&quot;,&quot;position_right&quot;:&quot;0&quot;,&quot;position_fixed&quot;:false,&quot;animation_type&quot;:&quot;fade&quot;,&quot;animation_speed&quot;:&quot;350&quot;,&quot;animation_origin&quot;:&quot;center top&quot;,&quot;overlay_zindex&quot;:false,&quot;zindex&quot;:&quot;1999999999&quot;},&quot;close&quot;:{&quot;text&quot;:&quot;&quot;,&quot;button_delay&quot;:&quot;0&quot;,&quot;overlay_click&quot;:false,&quot;esc_press&quot;:false,&quot;f4_press&quot;:false},&quot;click_open&quot;:[]}}" role="dialog" aria-hidden="true" >
+
+	<div id="popmake-3120" class="pum-container popmake theme-2973 pum-responsive pum-responsive-small responsive size-small">
+
+				
+
+				
+
+		
+
+				<div class="pum-content popmake-content" tabindex="0">
+			<div id="mc_embed_signup">
+<form id="mc-embedded-subscribe-form" class="validate" action="https://0ffset.us20.list-manage.com/subscribe/post?u=2eafc8c636a8ffc4378f8fa6d&amp;id=b249c44d9f" method="post" name="mc-embedded-subscribe-form" novalidate="" target="_blank">
+<div id="mc_embed_signup_scroll">
+<div class="clear">[ninja_form id=2]</div>
+</div>
+</form>
+</div>
+<p><!--End mc_embed_signup--></p>
+		</div>
+
+
+				
+
+				            <button type="button" class="pum-close popmake-close" aria-label="Close">
+			×            </button>
+		
+	</div>
+
+</div>
+<div id="pum-2980" class="pum pum-overlay pum-theme-2973 pum-theme-enterprise-blue popmake-overlay click_open" data-popmake="{&quot;id&quot;:2980,&quot;slug&quot;:&quot;ebook_popup&quot;,&quot;theme_id&quot;:2973,&quot;cookies&quot;:[{&quot;event&quot;:&quot;on_popup_close&quot;,&quot;settings&quot;:{&quot;name&quot;:&quot;pum-2980&quot;,&quot;key&quot;:&quot;&quot;,&quot;session&quot;:false,&quot;time&quot;:&quot;1 month&quot;,&quot;path&quot;:&quot;1&quot;}}],&quot;triggers&quot;:[{&quot;type&quot;:&quot;click_open&quot;,&quot;settings&quot;:{&quot;cookie_name&quot;:&quot;&quot;,&quot;extra_selectors&quot;:&quot;&quot;}}],&quot;mobile_disabled&quot;:null,&quot;tablet_disabled&quot;:null,&quot;meta&quot;:{&quot;display&quot;:{&quot;stackable&quot;:false,&quot;overlay_disabled&quot;:false,&quot;scrollable_content&quot;:false,&quot;disable_reposition&quot;:false,&quot;size&quot;:&quot;medium&quot;,&quot;responsive_min_width&quot;:&quot;0%&quot;,&quot;responsive_min_width_unit&quot;:false,&quot;responsive_max_width&quot;:&quot;100%&quot;,&quot;responsive_max_width_unit&quot;:false,&quot;custom_width&quot;:&quot;640px&quot;,&quot;custom_width_unit&quot;:false,&quot;custom_height&quot;:&quot;380px&quot;,&quot;custom_height_unit&quot;:false,&quot;custom_height_auto&quot;:false,&quot;location&quot;:&quot;center top&quot;,&quot;position_from_trigger&quot;:false,&quot;position_top&quot;:&quot;100&quot;,&quot;position_left&quot;:&quot;0&quot;,&quot;position_bottom&quot;:&quot;0&quot;,&quot;position_right&quot;:&quot;0&quot;,&quot;position_fixed&quot;:false,&quot;animation_type&quot;:&quot;fade&quot;,&quot;animation_speed&quot;:&quot;350&quot;,&quot;animation_origin&quot;:&quot;center top&quot;,&quot;overlay_zindex&quot;:false,&quot;zindex&quot;:&quot;1999999999&quot;},&quot;close&quot;:{&quot;text&quot;:&quot;&quot;,&quot;button_delay&quot;:&quot;0&quot;,&quot;overlay_click&quot;:false,&quot;esc_press&quot;:false,&quot;f4_press&quot;:false},&quot;click_open&quot;:[]}}" role="dialog" aria-hidden="true" aria-labelledby="pum_popup_title_2980">
+
+	<div id="popmake-2980" class="pum-container popmake theme-2973 pum-responsive pum-responsive-medium responsive size-medium">
+
+				
+
+				            <div id="pum_popup_title_2980" class="pum-title popmake-title">
+				Mastering Algorithm Analysis			</div>
+		
+
+		
+
+				<div class="pum-content popmake-content" tabindex="0">
+			<script>(function() {
+	window.mc4wp = window.mc4wp || {
+		listeners: [],
+		forms: {
+			on: function(evt, cb) {
+				window.mc4wp.listeners.push(
+					{
+						event   : evt,
+						callback: cb
+					}
+				);
+			}
+		}
+	}
+})();
+</script><!-- Mailchimp for WordPress v4.8.7 - https://wordpress.org/plugins/mailchimp-for-wp/ --><form id="mc4wp-form-1" class="mc4wp-form mc4wp-form-2397" method="post" data-id="2397" data-name="ebook" ><div class="mc4wp-form-fields"><p style="font-size:16px">
+Struggling with recognizing algorithms in use by malware, or software
+in general? Not sure of the difference between an RC4 subsitution table
+and an AES one?<br><br>
+Get your free copy of our "<em>Recognizing Encryption Algorithms</em>" 
+E-Book!<br><br>
+With the rapid increase of ransomware usage over the past few years,
+the need for reverse engineering and recognizing algorithms 
+has also risen. If you can understand the algorithm,
+you can discover any weaknesses in it.<br>
+This book takes you through the most common Encryption Algorithms
+found in malware nowadays, such as Salsa20, RSA, AES, and more! These
+algorithms will be shown in the context of active malware families,
+such as the REvil ransomware and the SendSafe SpamBot.
+<br><br>
+So what are you waiting for? Grab your copy now!
+<br>
+</p>
+<div id="mc_embed_signup">
+
+    <div id="mc_embed_signup_scroll">
+        <div class="mc-field-group">
+            <label for="mce-NAME" style="font-size:16px">Name:</label>
+            <input type="name" name="NAME" placeholder="Your name" color="#fff" style="margin-top:10px">  
+        </div>    
+      	<br>
+        <div class="mc-field-group">
+            <label for="mce-EMAIL" style="font-size:16px">E-mail Address:</label>
+            <input type="email" name="EMAIL" placeholder="Your e-mail address" color="#fff" style="margin-top:10px">  
+        </div>  
+        <div id="mce-responses" class="clear">
+            <div class="response" style="display:none"></div>
+            <div class="response" style="display:none"></div>
+        </div>
+      
+        <div style="position: absolute; left: -5000px;">
+            <input type="text" tabindex="-1" value="">
+        </div>
+      
+        <br>
+        <div class="clear">
+            <input type="submit" name="subscribe" value="Get your free copy">
+        </div>
+      
+    </div>
+
+</div>
+</div><label style="display: none !important;">Leave this field empty if you're human: <input type="text" name="_mc4wp_honeypot" value="" tabindex="-1" autocomplete="off" /></label><input type="hidden" name="_mc4wp_timestamp" value="1650402199" /><input type="hidden" name="_mc4wp_form_id" value="2397" /><input type="hidden" name="_mc4wp_form_element_id" value="mc4wp-form-1" /><div class="mc4wp-response"></div></form><!-- / Mailchimp for WordPress Plugin -->
+		</div>
+
+
+				
+
+				            <button type="button" class="pum-close popmake-close" aria-label="Close">
+			×            </button>
+		
+	</div>
+
+</div>
+		<div data-elementor-type="popup" data-elementor-id="3849" class="elementor elementor-3849 elementor-location-popup" data-elementor-settings="{&quot;entrance_animation&quot;:&quot;fadeIn&quot;,&quot;exit_animation&quot;:&quot;none&quot;,&quot;entrance_animation_duration&quot;:{&quot;unit&quot;:&quot;px&quot;,&quot;size&quot;:1,&quot;sizes&quot;:[]},&quot;open_selector&quot;:&quot;a[href=\&quot;#inform\&quot;]&quot;,&quot;triggers&quot;:[],&quot;timing&quot;:[]}">
+								<section class="elementor-section elementor-top-section elementor-element elementor-element-7a757673 elementor-section-height-min-height elementor-section-items-stretch ignore-toc elementor-section-boxed elementor-section-height-default" data-id="7a757673" data-element_type="section">
+						<div class="elementor-container elementor-column-gap-default">
+					<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-6e183b73" data-id="6e183b73" data-element_type="column" data-settings="{&quot;background_background&quot;:&quot;classic&quot;}">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-6a421d0a elementor-widget elementor-widget-spacer" data-id="6a421d0a" data-element_type="widget" data-widget_type="spacer.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-spacer">
+			<div class="elementor-spacer-inner"></div>
+		</div>
+				</div>
+				</div>
+					</div>
+		</div>
+				<div class="elementor-column elementor-col-50 elementor-top-column elementor-element elementor-element-4740561b" data-id="4740561b" data-element_type="column">
+			<div class="elementor-widget-wrap elementor-element-populated">
+								<div class="elementor-element elementor-element-1d837d7c elementor-widget-divider--view-line_text elementor-widget-divider--element-align-right elementor-widget elementor-widget-divider" data-id="1d837d7c" data-element_type="widget" data-widget_type="divider.default">
+				<div class="elementor-widget-container">
+					<div class="elementor-divider">
+			<span class="elementor-divider-separator">
+							<span class="elementor-divider__text elementor-divider__element">
+				Receive the latest news				</span>
+						</span>
+		</div>
+				</div>
+				</div>
+				<div class="elementor-element elementor-element-22bff13c elementor-widget elementor-widget-heading" data-id="22bff13c" data-element_type="widget" data-widget_type="heading.default">
+				<div class="elementor-widget-container">
+			<h2 class="elementor-heading-title elementor-size-default">Subscribe & Stay Tuned
+</h2>		</div>
+				</div>
+				<div class="elementor-element elementor-element-1aeb9c1 elementor-widget elementor-widget-text-editor" data-id="1aeb9c1" data-element_type="widget" data-widget_type="text-editor.default">
+				<div class="elementor-widget-container">
+							<p>Stay updated on new course releases and related InfoSec content</p>						</div>
+				</div>
+				<div class="elementor-element elementor-element-43a09ff8 elementor-button-align-stretch elementor-widget elementor-widget-form" data-id="43a09ff8" data-element_type="widget" data-settings="{&quot;step_next_label&quot;:&quot;Next&quot;,&quot;step_previous_label&quot;:&quot;Previous&quot;,&quot;button_width&quot;:&quot;100&quot;,&quot;step_type&quot;:&quot;number_text&quot;,&quot;step_icon_shape&quot;:&quot;circle&quot;}" data-widget_type="form.default">
+				<div class="elementor-widget-container">
+					<form class="elementor-form" method="post" name="New Form">
+			<input type="hidden" name="post_id" value="3849"/>
+			<input type="hidden" name="form_id" value="43a09ff8"/>
+			<input type="hidden" name="referer_title" value="BAZARLOADER: Unpacking an ISO File Infection - 0ffset Training Solutions" />
+
+							<input type="hidden" name="queried_id" value="5755"/>
+			
+			<div class="elementor-form-fields-wrapper elementor-labels-">
+								<div class="elementor-field-type-email elementor-field-group elementor-column elementor-field-group-email_subscribe elementor-col-100 elementor-field-required">
+												<label for="form-field-email_subscribe" class="elementor-field-label elementor-screen-only">
+								Email Address							</label>
+														<input size="1" type="email" name="form_fields[email_subscribe]" id="form-field-email_subscribe" class="elementor-field elementor-size-md  elementor-field-textual" placeholder="Email Address" required="required" aria-required="true">
+											</div>
+								<div class="elementor-field-group elementor-column elementor-field-type-submit elementor-col-100 e-form__buttons">
+					<button type="submit" class="elementor-button elementor-size-sm">
+						<span >
+															<span class=" elementor-button-icon">
+																										</span>
+																						<span class="elementor-button-text">subscribe</span>
+													</span>
+					</button>
+				</div>
+			</div>
+		</form>
+				</div>
+				</div>
+					</div>
+		</div>
+							</div>
+		</section>
+						</div>
+			<script type="text/javascript">
+		(function () {
+			var c = document.body.className;
+			c = c.replace(/woocommerce-no-js/, 'woocommerce-js');
+			document.body.className = c;
+		})();
+	</script>
+	
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+	<div class="pswp__bg"></div>
+	<div class="pswp__scroll-wrap">
+		<div class="pswp__container">
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+			<div class="pswp__item"></div>
+		</div>
+		<div class="pswp__ui pswp__ui--hidden">
+			<div class="pswp__top-bar">
+				<div class="pswp__counter"></div>
+				<button class="pswp__button pswp__button--close" aria-label="Close (Esc)"></button>
+				<button class="pswp__button pswp__button--share" aria-label="Share"></button>
+				<button class="pswp__button pswp__button--fs" aria-label="Toggle fullscreen"></button>
+				<button class="pswp__button pswp__button--zoom" aria-label="Zoom in/out"></button>
+				<div class="pswp__preloader">
+					<div class="pswp__preloader__icn">
+						<div class="pswp__preloader__cut">
+							<div class="pswp__preloader__donut"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+				<div class="pswp__share-tooltip"></div>
+			</div>
+			<button class="pswp__button pswp__button--arrow--left" aria-label="Previous (arrow left)"></button>
+			<button class="pswp__button pswp__button--arrow--right" aria-label="Next (arrow right)"></button>
+			<div class="pswp__caption">
+				<div class="pswp__caption__center"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/template" id="tmpl-variation-template">
+	<div class="woocommerce-variation-description">{{{ data.variation.variation_description }}}</div>
+	<div class="woocommerce-variation-price">{{{ data.variation.price_html }}}</div>
+	<div class="woocommerce-variation-availability">{{{ data.variation.availability_html }}}</div>
+</script>
+<script type="text/template" id="tmpl-unavailable-variation-template">
+	<p>Sorry, this product is unavailable. Please choose a different combination.</p>
+</script>
+<link rel='stylesheet' id='e-animations-css'  href='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/animations/animations.min.css?ver=3.6.4' type='text/css' media='all' />
+<link rel='stylesheet' id='photoswipe-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/css/photoswipe/photoswipe.min.css?ver=6.4.1' type='text/css' media='all' />
+<link rel='stylesheet' id='photoswipe-default-skin-css'  href='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/css/photoswipe/default-skin/default-skin.min.css?ver=6.4.1' type='text/css' media='all' />
+<script  src='https://www.0ffset.net/wp-content/plugins/coblocks/dist/js/coblocks-animation.js?ver=2.22.10' id='coblocks-animation-js'></script>
+<script type='text/javascript' id='coblocks-lightbox-js-extra'>
+/* <![CDATA[ */
+var coblocksLigthboxData = {"closeLabel":"Close Gallery","leftLabel":"Previous","rightLabel":"Next"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/coblocks/dist/js/coblocks-lightbox.js?ver=2.22.10' id='coblocks-lightbox-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/dist/vendor/regenerator-runtime.min.js?ver=0.13.9' id='regenerator-runtime-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/dist/vendor/wp-polyfill.min.js?ver=3.15.0' id='wp-polyfill-js'></script>
+<script type='text/javascript' id='contact-form-7-js-extra'>
+/* <![CDATA[ */
+var wpcf7 = {"api":{"root":"https:\/\/www.0ffset.net\/wp-json\/","namespace":"contact-form-7\/v1"}};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/contact-form-7/includes/js/index.js?ver=5.5.6' id='contact-form-7-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/jquery-blockui/jquery.blockUI.min.js?ver=2.7.0-wc.6.4.1' id='jquery-blockui-js'></script>
+<script type='text/javascript' id='wc-add-to-cart-js-extra'>
+/* <![CDATA[ */
+var wc_add_to_cart_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_view_cart":"View basket","cart_url":"https:\/\/www.0ffset.net","is_cart":"","cart_redirect_after_add":"no"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart.min.js?ver=6.4.1' id='wc-add-to-cart-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/js-cookie/js.cookie.min.js?ver=2.1.4-wc.6.4.1' id='js-cookie-js'></script>
+<script type='text/javascript' id='woocommerce-js-extra'>
+/* <![CDATA[ */
+var woocommerce_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/frontend/woocommerce.min.js?ver=6.4.1' id='woocommerce-js'></script>
+<script type='text/javascript' id='wc-cart-fragments-js-extra'>
+/* <![CDATA[ */
+var wc_cart_fragments_params = {"ajax_url":"\/wp-admin\/admin-ajax.php","wc_ajax_url":"\/?wc-ajax=%%endpoint%%","cart_hash_key":"wc_cart_hash_7f71ce132ca7a7d28e9d29463cb8e868","fragment_name":"wc_fragments_7f71ce132ca7a7d28e9d29463cb8e868","request_timeout":"5000"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/frontend/cart-fragments.min.js?ver=6.4.1' id='wc-cart-fragments-js'></script>
+<script type='text/javascript' id='6a5231bde-js-extra'>
+/* <![CDATA[ */
+var localize = {"ajaxurl":"https:\/\/www.0ffset.net\/wp-admin\/admin-ajax.php","nonce":"8da2189778","i18n":{"added":"Added ","compare":"Compare","loading":"Loading..."},"page_permalink":"https:\/\/www.0ffset.net\/reverse-engineering\/bazarloader-iso-file-infection\/"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/uploads/essential-addons-elementor/734e5f942.min.js?ver=1650402199' id='6a5231bde-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/comment-reply.min.js?ver=5.9.3' id='comment-reply-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/jquery/ui/core.min.js?ver=1.13.1' id='jquery-ui-core-js'></script>
+<script type='text/javascript' id='popup-maker-site-js-extra'>
+/* <![CDATA[ */
+var pum_vars = {"version":"1.16.7","pm_dir_url":"https:\/\/www.0ffset.net\/wp-content\/plugins\/popup-maker\/","ajaxurl":"https:\/\/www.0ffset.net\/wp-admin\/admin-ajax.php","restapi":"https:\/\/www.0ffset.net\/wp-json\/pum\/v1","rest_nonce":null,"default_theme":"1080","debug_mode":"","disable_tracking":"","home_url":"\/","message_position":"top","core_sub_forms_enabled":"1","popups":[],"analytics_route":"analytics","analytics_api":"https:\/\/www.0ffset.net\/wp-json\/pum\/v1"};
+var pum_sub_vars = {"ajaxurl":"https:\/\/www.0ffset.net\/wp-admin\/admin-ajax.php","message_position":"top"};
+var pum_popups = {"pum-3120":{"triggers":[{"type":"click_open","settings":{"cookie_name":["pum-3120"],"extra_selectors":""}}],"cookies":[{"event":"on_popup_close","settings":{"name":"pum-3120","key":"","session":false,"path":"1","time":"1 month"}}],"disable_on_mobile":false,"disable_on_tablet":false,"atc_promotion":null,"explain":null,"type_section":null,"theme_id":"2973","size":"small","responsive_min_width":"0%","responsive_max_width":"100%","custom_width":"640px","custom_height_auto":false,"custom_height":"380px","scrollable_content":false,"animation_type":"fade","animation_speed":"350","animation_origin":"center top","open_sound":"none","custom_sound":"","location":"center","position_top":"100","position_bottom":"0","position_left":"0","position_right":"0","position_from_trigger":false,"position_fixed":false,"overlay_disabled":false,"stackable":false,"disable_reposition":false,"zindex":"1999999999","close_button_delay":"0","fi_promotion":null,"close_on_form_submission":false,"close_on_form_submission_delay":"0","close_on_overlay_click":false,"close_on_esc_press":false,"close_on_f4_press":false,"disable_form_reopen":false,"disable_accessibility":false,"theme_slug":"enterprise-blue","id":3120,"slug":"notify_course"},"pum-2980":{"triggers":[{"type":"click_open","settings":{"cookie_name":"","extra_selectors":""}}],"cookies":[{"event":"on_popup_close","settings":{"name":"pum-2980","key":"","session":false,"time":"1 month","path":"1"}}],"disable_on_mobile":false,"disable_on_tablet":false,"atc_promotion":null,"explain":null,"type_section":null,"theme_id":"2973","size":"medium","responsive_min_width":"0%","responsive_max_width":"100%","custom_width":"640px","custom_height_auto":false,"custom_height":"380px","scrollable_content":false,"animation_type":"fade","animation_speed":"350","animation_origin":"center top","open_sound":"none","custom_sound":"","location":"center top","position_top":"100","position_bottom":"0","position_left":"0","position_right":"0","position_from_trigger":false,"position_fixed":false,"overlay_disabled":false,"stackable":false,"disable_reposition":false,"zindex":"1999999999","close_button_delay":"0","fi_promotion":null,"close_on_form_submission":false,"close_on_form_submission_delay":"0","close_on_overlay_click":false,"close_on_esc_press":false,"close_on_f4_press":false,"disable_form_reopen":false,"disable_accessibility":false,"theme_slug":"enterprise-blue","id":2980,"slug":"ebook_popup"}};
+/* ]]> */
+</script>
+<script  src='//www.0ffset.net/wp-content/uploads/pum/pum-site-scripts.js?defer&#038;generated=1649368230&#038;ver=1.16.7' id='popup-maker-site-js'></script>
+<script  src='//cdn.cookie-script.com/s/f7880085be5f53685c89aa7e1abba794.js' id='cookie_script-js'></script>
+<script  defer src='https://www.0ffset.net/wp-content/plugins/mailchimp-for-wp/assets/js/forms.js?ver=4.8.7' id='mc4wp-forms-api-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor-pro/assets/js/webpack-pro.runtime.min.js?ver=3.6.5' id='elementor-pro-webpack-runtime-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/js/webpack.runtime.min.js?ver=3.6.4' id='elementor-webpack-runtime-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/js/frontend-modules.min.js?ver=3.6.4' id='elementor-frontend-modules-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/dist/hooks.min.js?ver=1e58c8c5a32b2e97491080c5b10dc71c' id='wp-hooks-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/dist/i18n.min.js?ver=30fcecb428a0e8383d3776bcdd3a7834' id='wp-i18n-js'></script>
+<script  id='wp-i18n-js-after'>
+wp.i18n.setLocaleData( { 'text direction\u0004ltr': [ 'ltr' ] } );
+</script>
+<script  id='elementor-pro-frontend-js-translations'>
+( function( domain, translations ) {
+	var localeData = translations.locale_data[ domain ] || translations.locale_data.messages;
+	localeData[""].domain = domain;
+	wp.i18n.setLocaleData( localeData, domain );
+} )( "elementor-pro", { "locale_data": { "messages": { "": {} } } } );
+</script>
+<script  id='elementor-pro-frontend-js-before'>
+var ElementorProFrontendConfig = {"ajaxurl":"https:\/\/www.0ffset.net\/wp-admin\/admin-ajax.php","nonce":"5ae349a1a5","urls":{"assets":"https:\/\/www.0ffset.net\/wp-content\/plugins\/elementor-pro\/assets\/","rest":"https:\/\/www.0ffset.net\/wp-json\/"},"shareButtonsNetworks":{"facebook":{"title":"Facebook","has_counter":true},"twitter":{"title":"Twitter"},"linkedin":{"title":"LinkedIn","has_counter":true},"pinterest":{"title":"Pinterest","has_counter":true},"reddit":{"title":"Reddit","has_counter":true},"vk":{"title":"VK","has_counter":true},"odnoklassniki":{"title":"OK","has_counter":true},"tumblr":{"title":"Tumblr"},"digg":{"title":"Digg"},"skype":{"title":"Skype"},"stumbleupon":{"title":"StumbleUpon","has_counter":true},"mix":{"title":"Mix"},"telegram":{"title":"Telegram"},"pocket":{"title":"Pocket","has_counter":true},"xing":{"title":"XING","has_counter":true},"whatsapp":{"title":"WhatsApp"},"email":{"title":"Email"},"print":{"title":"Print"}},"woocommerce":{"menu_cart":{"cart_page_url":"https:\/\/www.0ffset.net","checkout_page_url":"https:\/\/www.0ffset.net"}},"facebook_sdk":{"lang":"en_GB","app_id":""},"lottie":{"defaultAnimationUrl":"https:\/\/www.0ffset.net\/wp-content\/plugins\/elementor-pro\/modules\/lottie\/assets\/animations\/default.json"}};
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor-pro/assets/js/frontend.min.js?ver=3.6.5' id='elementor-pro-frontend-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/waypoints/waypoints.min.js?ver=4.0.2' id='elementor-waypoints-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/swiper/swiper.min.js?ver=5.3.6' id='swiper-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/share-link/share-link.min.js?ver=3.6.4' id='share-link-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/lib/dialog/dialog.min.js?ver=4.9.0' id='elementor-dialog-js'></script>
+<script  id='elementor-frontend-js-before'>
+var elementorFrontendConfig = {"environmentMode":{"edit":false,"wpPreview":false,"isScriptDebug":false},"i18n":{"shareOnFacebook":"Share on Facebook","shareOnTwitter":"Share on Twitter","pinIt":"Pin it","download":"Download","downloadImage":"Download image","fullscreen":"Fullscreen","zoom":"Zoom","share":"Share","playVideo":"Play Video","previous":"Previous","next":"Next","close":"Close"},"is_rtl":false,"breakpoints":{"xs":0,"sm":480,"md":768,"lg":1025,"xl":1440,"xxl":1600},"responsive":{"breakpoints":{"mobile":{"label":"Mobile","value":767,"default_value":767,"direction":"max","is_enabled":true},"mobile_extra":{"label":"Mobile Extra","value":880,"default_value":880,"direction":"max","is_enabled":false},"tablet":{"label":"Tablet","value":1024,"default_value":1024,"direction":"max","is_enabled":true},"tablet_extra":{"label":"Tablet Extra","value":1200,"default_value":1200,"direction":"max","is_enabled":false},"laptop":{"label":"Laptop","value":1366,"default_value":1366,"direction":"max","is_enabled":false},"widescreen":{"label":"Widescreen","value":2400,"default_value":2400,"direction":"min","is_enabled":false}}},"version":"3.6.4","is_static":false,"experimentalFeatures":{"e_dom_optimization":true,"a11y_improvements":true,"e_import_export":true,"e_hidden_wordpress_widgets":true,"theme_builder_v2":true,"landing-pages":true,"elements-color-picker":true,"favorite-widgets":true,"admin-top-bar":true,"page-transitions":true,"form-submissions":true,"e_scroll_snap":true},"urls":{"assets":"https:\/\/www.0ffset.net\/wp-content\/plugins\/elementor\/assets\/"},"settings":{"page":[],"editorPreferences":[]},"kit":{"active_breakpoints":["viewport_mobile","viewport_tablet"],"global_image_lightbox":"yes","lightbox_enable_counter":"yes","lightbox_enable_fullscreen":"yes","lightbox_enable_zoom":"yes","lightbox_enable_share":"yes","lightbox_title_src":"title","lightbox_description_src":"description","woocommerce_notices_elements":[]},"post":{"id":5755,"title":"BAZARLOADER%3A%20Unpacking%20an%20ISO%20File%20Infection%20-%200ffset%20Training%20Solutions","excerpt":"","featuredImage":"https:\/\/www.0ffset.net\/wp-content\/uploads\/2022\/04\/bazarloader_16.png"}};
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/js/frontend.min.js?ver=3.6.4' id='elementor-frontend-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor-pro/assets/js/preloaded-elements-handlers.min.js?ver=3.6.5' id='pro-preloaded-elements-handlers-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor/assets/js/preloaded-modules.min.js?ver=3.6.4' id='preloaded-modules-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/elementor-pro/assets/lib/sticky/jquery.sticky.min.js?ver=3.6.5' id='e-sticky-js'></script>
+<script  src='https://www.0ffset.net/wp-includes/js/underscore.min.js?ver=1.13.1' id='underscore-js'></script>
+<script type='text/javascript' id='wp-util-js-extra'>
+/* <![CDATA[ */
+var _wpUtilSettings = {"ajax":{"url":"\/wp-admin\/admin-ajax.php"}};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-includes/js/wp-util.min.js?ver=5.9.3' id='wp-util-js'></script>
+<script type='text/javascript' id='wpforms-elementor-js-extra'>
+/* <![CDATA[ */
+var wpformsElementorVars = {"captcha_provider":"recaptcha","recaptcha_type":"v2"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/wpforms-lite/assets/js/integrations/elementor/frontend.min.js?ver=1.7.3' id='wpforms-elementor-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/zoom/jquery.zoom.min.js?ver=1.7.21-wc.6.4.1' id='zoom-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/flexslider/jquery.flexslider.min.js?ver=2.7.2-wc.6.4.1' id='flexslider-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/photoswipe/photoswipe.min.js?ver=4.1.1-wc.6.4.1' id='photoswipe-js'></script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/photoswipe/photoswipe-ui-default.min.js?ver=4.1.1-wc.6.4.1' id='photoswipe-ui-default-js'></script>
+<script type='text/javascript' id='wc-add-to-cart-variation-js-extra'>
+/* <![CDATA[ */
+var wc_add_to_cart_variation_params = {"wc_ajax_url":"\/?wc-ajax=%%endpoint%%","i18n_no_matching_variations_text":"Sorry, no products matched your selection. Please choose a different combination.","i18n_make_a_selection_text":"Please select some product options before adding this product to your basket.","i18n_unavailable_text":"Sorry, this product is unavailable. Please choose a different combination."};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/frontend/add-to-cart-variation.min.js?ver=6.4.1' id='wc-add-to-cart-variation-js'></script>
+<script type='text/javascript' id='wc-single-product-js-extra'>
+/* <![CDATA[ */
+var wc_single_product_params = {"i18n_required_rating_text":"Please select a rating","review_rating_required":"yes","flexslider":{"rtl":false,"animation":"slide","smoothHeight":true,"directionNav":false,"controlNav":"thumbnails","slideshow":false,"animationSpeed":500,"animationLoop":false,"allowOneSlide":false},"zoom_enabled":"1","zoom_options":[],"photoswipe_enabled":"1","photoswipe_options":{"shareEl":false,"closeOnScroll":false,"history":false,"hideAnimationDuration":0,"showAnimationDuration":0},"flexslider_enabled":"1"};
+/* ]]> */
+</script>
+<script  src='https://www.0ffset.net/wp-content/plugins/woocommerce/assets/js/frontend/single-product.min.js?ver=6.4.1' id='wc-single-product-js'></script>
+		<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'}),_trfd.push({'ap':'wpaas'},{'server':'601fdbe7-dd6a-a383-c522-6518fd978010.secureserver.net'},{'pod':'n3nlwppod03'},{'storage':'n3cephmah002pod03_data01'},{'xid':'42941395'},{'wp':'5.9.3'},{'php':'7.3.33'},{'loggedin':'0'},{'cdn':'0'},{'builder':'wp-block-editor'},{'theme':'vaximo'},{'nextgen':'0'},{'wds':'0'},{'wp_alloptions_count':'511'},{'wp_alloptions_bytes':'190336'})</script>
+		<script>window.addEventListener('click', function (elem) { var _elem$target, _elem$target$dataset, _window, _window$_trfq; return (elem === null || elem === void 0 ? void 0 : (_elem$target = elem.target) === null || _elem$target === void 0 ? void 0 : (_elem$target$dataset = _elem$target.dataset) === null || _elem$target$dataset === void 0 ? void 0 : _elem$target$dataset.eid) && ((_window = window) === null || _window === void 0 ? void 0 : (_window$_trfq = _window._trfq) === null || _window$_trfq === void 0 ? void 0 : _window$_trfq.push(["cmdLogEvent", "click", elem.target.dataset.eid]));});</script>
+		<script src='https://img1.wsimg.com/tcc/tcc_l.combined.1.0.6.min.js'></script>
+		<script src='https://img1.wsimg.com/traffic-assets/js/tccl-tti.min.js' onload="window.tti.calculateTTI()"></script>
+		
+	</body>
+</html>

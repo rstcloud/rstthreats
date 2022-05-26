@@ -1,0 +1,160 @@
+[
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0xdc8f3993",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "text": "Antonis Terefos\n/\nApril 21, 2022"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0xcf3446a9",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "text": "Crimeware"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x3f5a9a16",
+            "title": "Executive Summary",
+            "text": "At the beginning of February 2022, SentinelLabs observed two samples of a new Nemty variant dubbed Nokoyawa (sample 1, 2).\nSentinelLabs consider Nokoyawa to be an evolution of the previous Nemty strain, Karma.\nThe developers have attempted to enhance code responsible for excluding folders from encryption, but SentinelLabs analysis finds that the algorithm contains logical flaws.\nIn March, TrendMicro suggested this ransomware bore some relation to Hive. We assess that Hive and Nokoyawa are different and that the latter is not a rebrand of Hive RaaS."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x189c9a4a",
+            "title": "Overview",
+            "text": "In this post, we take a broader look at the similarities between Nokoyawa and Karma ransomware. Previous researchers have highlighted similarities in the attack chain between Nokoyawa and Hive ransomware, concluding that Nokoyawa is likely connected with Hive, as the two families share some striking similarities in their attack chain, from the tools used to the order in which they execute various steps. Our analysis contradicts that finding, and we assess Nokoyawa is clearly an evolution of Karma (Nemty), bearing no major code similarities to Hive."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x6828c049",
+            "title": "Nokoyawa and Karma Variant Similarities",
+            "text": "Both Nokoyawa and Karma variants manage multi-threaded encryption by creating an input/output (I/O) completion port (CreateIoCompletionPort), which allows communication between the thread responsible for the enumeration of files and the sub-threads (2 * NumberOfProcessors) responsible for the file encryption.\nNokyoawa (left) vs Karma, initialization of encryption threads\nIn both cases, public keys for the encryption and ransom note are encoded with Base64.\nLike Karma, Nokoyawa accepts different command line parameters, although in the latter they are documented by the developer via a -help command.\nNokoyawa command line support\nAside from the -help command, three other commands (-network, -file, and -dir) are also provided.\nIf the ransomware is executed without any parameter, it then encrypts the machine without enumerating and encrypting network resources.\nOne new parameter not observed in the Karma version is -network, which is responsible for encrypting network shares. Network enumeration is achieved by calling WNetOpenEnumW, WNetEnumResourceW, and WNetCloseEnum.\nThere are no significant similarities between the ransom notes except the use of email for contact points. Karma variants contained an .onion link that was also present in the Karma ransom note. We did not find any .onion links in Nokoyawa code or ransom note.\nThe Nokyoawa ransom note:\nDear usernamme, your files were encrypted, some are compromised.\nBe sure, you can't restore it without our help.\nYou need a private key that only we have.\nContact us to reach an agreement or we will leak your black shit to media:\ncharlefletcher@onionmail.org\nJohnatannielson@protonmail.com\ncharlefletcher@onionmail.org\nJohnatannielson@protonmail.com\nThe Karma ransom note:\nYour network has been breached by Karma ransomware group.\nWe have extracted valuable or sensitive data from your network and encrypted the data on your systems.\nDecryption is only possible with a private key that only we posses.\nOur group's only aim is to financially benefit from our brief acquaintance,this is a guarantee that we will do what we promise.\nScamming is just bad for business in this line of work.\nContact us to negotiate the terms of reversing the damage we have done and deleting the data we have downloaded.\nWe advise you not to use any data recovery tools without leaving copies of the initial encrypted file.\nYou are risking irreversibly damaging the file by doing this.\nIf we are not contacted or if we do not reach an agreement we will leak your data to journalists and publish it on our website.\nhttp://3nvzqyo6l4wkrzumzu5aod7zbosq4ipgf7ifgj3hsvbcr5vcasordvqd.onion/\nIf a ransom is payed we will provide the decryption key and proof that we deleted you data.\nWhen you contact us we will provide you proof that we can decrypt your files and that we have downloaded your data.\nHow to contact us:\nJordanKelly@onionmail.org\ntommyshanahan@tutanota.com\nrichardwafflespencer1982@protonmail.com\nThe ransom note filename uses a similar format as the previous versions: <ransom_extension>_<note_name>.txt.\nThe <ransom_extension> string has been used for many different functions, including:\nfile extension of encrypted files\nappended as data to an encrypted file\nransom note filename part\nmutex (the NOKOYAWA variant is observed to not make use of Mutexes)\nto denote files to be excluded from further processing (e.g., to avoid running in a loop)",
+            "table": "0;1;2\n;Nokoyawa;Karma\nransom_extension;\u201cNOKOYAWA\u201d;\u201cKARMA\u201d & \u201cKARMA_V2\u201d\nnote_name;\u201c_readme.txt\u201d;\u201c-ENCRYPTED.txt\u201d\n;;\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x120e8e57",
+            "title": "Nokoyawas Flawed Encryption Routine",
+            "text": "During the file and folder enumeration, the new variant creates a hash of the enumerated folder and compares it to those of excluded folders. However, this custom hashing algorithm appears to have flaws as it doesnt seem logical nor does it appear to work as expected.\nBelow is a Python representation of the hashing algorithm.\ndef nokoyawa_dir_hashing(folder):\nfolder_len = len(folder)\n# to unicode\nfolder = '\\x00'.join([c for c in folder])\n# initial hash value\nnhash = 0x1505\ni = 0\nwhile i < folder_len:\nc = ord(folder[i])\n# to capital\nc = c if c < 0x61 else c - 0x20\n# hashing\nnhash = ((nhash << 5) + nhash) + c\n# flawed logic, taking only null bytes after 1st character.\ni += 2 if not c else 1\nreturn nhash & 0xFFFFFFFF\nThe implementation of this flawed hashing algorithm in some cases results in excluding multiple folders. Logically, one would expect there to be a 1:1 correlation between a hash and the folder to be excluded. However, the flawed code effectively makes it possible for multiple folders to be excluded based on a single hash. This code does not appear in Karma variants, which instead contain hardcoded strings denoting which folders to ignore during encryption.\nThe following table shows which folders the developers intended to skip during encryption.\nFor extensions, the ransomware doesn't have any hashing algorithm and compares the raw strings with the extracted extension of the file. The excluded extensions are .exe, .dll, and .lnk. Files containing \"NOKOYAWA\" are also excluded.\nBoth Nokoyawa and Karma variants dynamically load bcrypt.dll and call BCryptGenRandom in order to generate 0x20 random bytes. They generate an ephemeral Sect233r1 key pair using the generated random bytes as the seed. The malware then uses the private ephemeral key and the public embedded key to generate a shared Salsa20 key, which is subsequently used for the file encryption. The Salsa20 nonce is hardcoded as lvcelvce in Nokoyawa, whereas in the Karma version it was \"11111111\".\nAn I/O completion packet is sent to the thread responsible for encryption. The packet includes the following:\nFile handle\nFile size\nFile data\nSalsa20 key\nSalsa nonce\npublic ephemeral key\nThe encryption thread has a switch containing four cases, as follows:\nCase 1: Writes encrypted content and decryption struct to file and appends \"extension\"/\"variant name\".\nCase 2: Calculates validation SHA1 hash and encrypts file data with Salsa20.\nCase 3: Closes File Handle and moves files with the new extension.\nCase 4: Exits.\nIn both variants, the initial switch case is \"2\".\nInitial case, encryption thread\nEncryption thread case handler\nDuring Case 2, the malware adds a SHA1 checksum, which is possibly validated during the decryption phase. The method runs through the following logic:\nAllocates 0x13 bytes (0x14 required for SHA1)\nXORs Salsa key with a buffer of \"6\".\nConcatenates file data to XORed Salsa key\nCalculates SHA1.\nXORs Salsa key with a buffer of \"\\\".\nConcatenates SHA1 hash to the second XORed Salsa key.\nCalculates validation SHA1.\nValidation SHA1 hash first 0x13 bytes are added to the encrypted file struct\nFiles encrypted by Nokoyawa will have the following structure.\nstruct nokoyawa_encrypted_file\n{\nBYTE encrypted_file_data[file_size], // using salsa20\nBYTE public_ephemeral_key[0x40], // Sect233r1\nBYTE validation_hash[0x13], // last byte is chopped\nSTRING ransomware_extension\n}\nThe private key required for decryption is held by the attacker. When made available to the victim, the decryption routine reads the struct, extracts the public ephemeral key and generates the Salsa 20 key using the private key. The encrypted data is then decrypted with the key and validated by replicating the validated hash.",
+            "table": "0;1\nHash;Folders Intended To Be Excluded\n0x11f299b5;program files\n0x78fb3995;program files (x86)\n0x7c80b426;appdata\n0x7c8cc47c;windows\n0xc27bb715;programdata\n0xd6f02889;$recycle.bin\n;\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x52e997fc",
+            "title": "Conclusion",
+            "text": "Nokoyawa code similarity and structure suggest it to be an evolution of the previous Nemty strain, Karma. This appears to be another attempt from the developer to confuse attribution. At this time, the actor appears not to have or provide any onion leak page.\nSentinelLabs could not validate previous research suggesting Nokoyawa is related to Hive. Given the lack of code similarities between the two and the lack of further correlating data, we can only suggest that earlier researchers' findings may be explained by the possibility of an affiliate using both Hive and Nokoyawa.\nSentinelLabs continues to follow and analyze the development of Nemty ransomware variants."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x47d936ee",
+            "title": "Indicators of Compromise",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x46f4e585",
+            "title": "Karma Ransomware SHA1",
+            "text": "960fae8b8451399eb80dd7babcc449c0229ee395"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x5363919a",
+            "title": "Nokoyawa Ransomware SHA1",
+            "text": "2904358f825b6eb6b750e13de43da9852c9a9d91\n2d92468b5982fbbb39776030fab6ac35c4a9b889\n32c2ecf9703aec725034ab4a8a4c7b2944c1f0b7"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0xaeefd3c8",
+            "title": "Nokoyawa Ransom Note Email Addresses",
+            "text": "Brookslambert@protonmail.com\ncharlefletcher@onionmail.org\nJohnatannielson@protonmail.com\nSheppardarmstrong@tutanota.com"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x39f02f1a",
+            "date": "20220422",
+            "title": "Nokoyawa Ransomware | New Karma/Nemty Variant Wears Thin Disguise",
+            "url": "https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise"
+        },
+        "chapter": {
+            "id": "chapter_0x606e9996",
+            "title": "Nokoyawa YARA Rule",
+            "text": "rule Nokoyawa_Nemty\n{\nmeta:\nauthor = \"@Tera0017\"\ndescription = \"Nokoyawa, Nemty/Karma ransomware variant\"\nReference = \"https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise/\"\n\nstrings:\n$code1 = {B8 (41| 43) 00 00 00 [10-30] 83 F8 5A}\n$code2 = {48 8B 4C 24 08 F0 0F C1 01 03 44 24 10}\n$code3 = {83 E8 20 88 [7] 48 C1 E0 05 48 03 44 24}\n$code4 = {48 C7 44 24 ?? 05 15 00 00}\n$string1 = \"RGVhciB1c2VybmFtbWUsIHlvdXIgZmlsZXMgd2VyZSBlbmNyeXB0ZWQsIHNvbWUgY\" ascii\n$string2 = \"-network\" fullword wide\n$string3 = \"-help\" fullword wide\n$winapi1 = \"PostQueuedCompletionStatus\" fullword ascii\n$winapi2 = \"GetSystemInfo\" fullword ascii\n$winapi3 = \"WNetEnumResourceW\" fullword ascii\n$winapi4 = \"GetCommandLineW\" fullword ascii\n$winapi5 = \"BCryptGenRandom\" fullword ascii\n\ncondition:\nall of ($winapi*) and 4 of ($code*, $string*)\n}"
+        }
+    }
+]

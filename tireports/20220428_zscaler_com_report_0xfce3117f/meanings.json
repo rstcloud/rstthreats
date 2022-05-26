@@ -1,0 +1,3034 @@
+{
+    "title": "Peeking into PrivateLoader",
+    "url": "https://www.zscaler.com/blogs/security-research/peeking-privateloader",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x5baabb96>",
+                    "type": "Threat",
+                    "value": "privateloader"
+                },
+                "references": {
+                    "sentences": [
+                        "Table 1: Replacement bytes used in PrivateLoaders decryption algorithm.",
+                        "Table 2: Listing of PrivateLoader campaign names.",
+                        "Most of the malwares important strings are stored as encrypted stack strings where each string is decoded with its own XOR key as shown in Figure 2. A listing of PrivateLoaders decrypted strings for the loader component can be found here and the main components decrypted strings can be found here.",
+                        "The PrivateLoader main component creates a URL by combining the C2 address passed in from the loader with the path /base/api/getData.php. The malware then sends HTTP POST requests containing a command and various data. An example PrivateLoader main components request and response is similar to Figure 3.",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads.",
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials.",
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "Most of the important Windows DLL and API names used by PrivateLoader are also stored as encrypted stack strings. After decryption, PrivateLoader dynamically resolves the API functions at runtime. Finally, PrivateLoader adds junk code to obfuscate the programs logic and control flow.",
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:",
+                        "The PrivateLoader loader component contains three dead drop resolver URLs hardcoded in the malware that communicate via an HTTP GET request. An example of PrivateLoaders dead drop resolvers is the following:",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware.",
+                        "Figure 1: Example of a PrivateLoader obfuscated integer constant.",
+                        "Figure 3: Example C2 request and response by the PrivateLoader main component.",
+                        "The PrivateLoader malware is written in the C++ programming language, and based on the existence of multiple versions it seems to be in active development. The name PrivateLoader comes from debugging strings that can be found in some versions of the malware, for example:",
+                        "PrivateLoader retrieves the content from this URL via an HTTP GET request. The response contains an unknown DWORD followed by encrypted data. To decrypt the data, first some of the bytes are replaced as shown in Table 1.",
+                        "Some campaigns are also interested in a victim's cryptocurrency and banking activity. PrivateLoader performs this action by searching a large number of file paths, registry keys, browser extensions, and saved browser logins for the following broad groups (see the decrypted strings listing for details):",
+                        "PrivateLoader is modularized into a loader component and a main component.",
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "Both the loader and main components of PrivateLoader make use of similar anti-analysis techniques. These anti-analysis techniques include obfuscating integer constants with various mathematical operations as shown in Figure 1.",
+                        "Figure 2: Example of a PrivateLoader encrypted stack string."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<PATH_0x30a404e5>",
+                            "type": "Path",
+                            "value": "c:\\users\\young hefner\\desktop\\privateloader\\pl_client\\pl_client\\json.h"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0x335ee802>",
+                            "type": "Url",
+                            "value": "https://cdn.discordapp.com/attachments/934006169125679147/963471252436172840/pl_client.bmp"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xfe4a4d24>",
+                            "type": "Threat",
+                            "value": "beacon"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0x2f84afb4>",
+                            "type": "Url",
+                            "value": "https://pastebin.com/raw/a7dsg1te"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xb48afc1b>",
+                            "type": "Url",
+                            "value": "http://wfsdragon.ru/api/setstats.php"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xd3e49c54>",
+                            "type": "File",
+                            "value": "win32.trojan.privateloader"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xcbc567dd>",
+                            "type": "Url",
+                            "value": "http://45.144.225.57/server.txt"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0xb073f50c>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "077225467638a420cf29fb9b3f0241416dcb9ed5d4ba32fdcf2bf28f095740bb"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x9b209515>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "aa2c0a9e34f9fa4cbf1780d757cc84f32a8bd005142012e91a6888167f80f4d5"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x32239007>",
+                            "type": "Category",
+                            "value": "stealer"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xdfe719ab>",
+                    "type": "Threat",
+                    "value": "vidar_stealer"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xe29833aa>",
+                    "type": "Threat",
+                    "value": "redline_stealer"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x954f4715>",
+                    "type": "Threat",
+                    "value": "smokeloader_backdoor"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xfe4a4d24>",
+                    "type": "Threat",
+                    "value": "beacon"
+                },
+                "references": {
+                    "sentences": [
+                        "Once decrypted, an example C2 beacon looks similar to the following:"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xfe4a4d24>",
+                            "type": "Threat",
+                            "value": "beacon"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware.",
+                        "Most of the malwares important strings are stored as encrypted stack strings where each string is decoded with its own XOR key as shown in Figure 2. A listing of PrivateLoaders decrypted strings for the loader component can be found here and the main components decrypted strings can be found here.",
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "The PrivateLoader malware is written in the C++ programming language, and based on the existence of multiple versions it seems to be in active development. The name PrivateLoader comes from debugging strings that can be found in some versions of the malware, for example:",
+                        "The C2 IP address<crlf>A hard coded integer used in some of the main components C2 communications<crlf>A hard coded integer used to represent the campaign that the malware sample is associated with",
+                        "The PrivateLoader loader component contains three dead drop resolver URLs hardcoded in the malware that communicate via an HTTP GET request. An example of PrivateLoaders dead drop resolvers is the following:",
+                        "The PrivateLoader main component creates a URL by combining the C2 address passed in from the loader with the path /base/api/getData.php. The malware then sends HTTP POST requests containing a command and various data. An example PrivateLoader main components request and response is similar to Figure 3.",
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads.",
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xa179f90c>",
+                    "type": "Category",
+                    "value": "ransomware"
+                },
+                "references": {
+                    "sentences": [
+                        "Security Research<crlf>Insights and Research<crlf>Ransomware",
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware.",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x32239007>",
+                    "type": "Category",
+                    "value": "stealer"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads.",
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x32239007>",
+                            "type": "Category",
+                            "value": "stealer"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:",
+                        "C2 commands may include the following values:",
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "Figure 3: Example C2 request and response by the PrivateLoader main component.",
+                        "The sample analyzed for this blog post was configured with campaign ID 27 which maps to WW_P_7. The campaign a particular sample is associated with determines what payloads are downloaded and executed. For some campaigns, the payload URLs are hardcoded into the main component (see the decrypted strings listing), while for others the payload URLs are retrieved from the C2.",
+                        "Once decrypted, an example C2 beacon looks similar to the following:",
+                        "The C2 IP address<crlf>A hard coded integer used in some of the main components C2 communications<crlf>A hard coded integer used to represent the campaign that the malware sample is associated with",
+                        "The PrivateLoader main component creates a URL by combining the C2 address passed in from the loader with the path /base/api/getData.php. The malware then sends HTTP POST requests containing a command and various data. An example PrivateLoader main components request and response is similar to Figure 3.",
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "Some campaigns are also interested in a victim's cryptocurrency and banking activity. PrivateLoader performs this action by searching a large number of file paths, registry keys, browser extensions, and saved browser logins for the following broad groups (see the decrypted strings listing for details):",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware.",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads.",
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials."
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xe29833aa>",
+                            "type": "Threat",
+                            "value": "redline_stealer"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xdfe719ab>",
+                            "type": "Threat",
+                            "value": "vidar_stealer"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x954f4715>",
+                            "type": "Threat",
+                            "value": "smokeloader_backdoor"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "Path": [
+            {
+                "token": {
+                    "id": "<PATH_0x30a404e5>",
+                    "type": "Path",
+                    "value": "c:\\users\\young hefner\\desktop\\privateloader\\pl_client\\pl_client\\json.h"
+                },
+                "references": {
+                    "sentences": [
+                        "C:\\Users\\Young Hefner\\Desktop\\PrivateLoader\\PL_Client\\PL_Client\\json.h"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<PATH_0x30a404e5>",
+                            "type": "Path",
+                            "value": "c:\\users\\young hefner\\desktop\\privateloader\\pl_client\\pl_client\\json.h"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Url": [
+            {
+                "token": {
+                    "id": "<URL_0xcbc567dd>",
+                    "type": "Url",
+                    "value": "http://45.144.225.57/server.txt"
+                },
+                "references": {
+                    "sentences": [
+                        "hxxp://45.144.225[.]57/server.txt<crlf>hxxps://pastebin[.]com/raw/A7dSG1te<crlf>hxxp://wfsdragon[.]ru/api/setStats.php"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xcbc567dd>",
+                            "type": "Url",
+                            "value": "http://45.144.225.57/server.txt"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xcbc567dd>",
+                            "type": "Url",
+                            "value": "http://45.144.225.57/server.txt"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x2f84afb4>",
+                    "type": "Url",
+                    "value": "https://pastebin.com/raw/a7dsg1te"
+                },
+                "references": {
+                    "sentences": [
+                        "hxxp://45.144.225[.]57/server.txt<crlf>hxxps://pastebin[.]com/raw/A7dSG1te<crlf>hxxp://wfsdragon[.]ru/api/setStats.php"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x2f84afb4>",
+                            "type": "Url",
+                            "value": "https://pastebin.com/raw/a7dsg1te"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0x2f84afb4>",
+                            "type": "Url",
+                            "value": "https://pastebin.com/raw/a7dsg1te"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0xb48afc1b>",
+                    "type": "Url",
+                    "value": "http://wfsdragon.ru/api/setstats.php"
+                },
+                "references": {
+                    "sentences": [
+                        "hxxp://45.144.225[.]57/server.txt<crlf>hxxps://pastebin[.]com/raw/A7dSG1te<crlf>hxxp://wfsdragon[.]ru/api/setStats.php"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xb48afc1b>",
+                            "type": "Url",
+                            "value": "http://wfsdragon.ru/api/setstats.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xb48afc1b>",
+                            "type": "Url",
+                            "value": "http://wfsdragon.ru/api/setstats.php"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x335ee802>",
+                    "type": "Url",
+                    "value": "https://cdn.discordapp.com/attachments/934006169125679147/963471252436172840/pl_client.bmp"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x335ee802>",
+                            "type": "Url",
+                            "value": "https://cdn.discordapp.com/attachments/934006169125679147/963471252436172840/pl_client.bmp"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "IP": [
+            {
+                "token": {
+                    "id": "<IP_0x539fdd1c>",
+                    "type": "IP",
+                    "value": "2.56.59.42"
+                },
+                "references": {
+                    "sentences": [
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc180f32a>",
+                            "type": "UnknownWord",
+                            "value": "resolvers"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "c2_from_net",
+                        "dst": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<IP_0x2356bff7>",
+                    "type": "IP",
+                    "value": "212.193.30.21"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        },
+                        "relation": "c2_from_net",
+                        "dst": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x2356bff7>",
+                            "type": "IP",
+                            "value": "212.193.30.21"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0xd3e49c54>",
+                    "type": "File",
+                    "value": "win32.trojan.privateloader"
+                },
+                "references": {
+                    "sentences": [
+                        "Win32.Trojan.PrivateLoader"
+                    ],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xd3e49c54>",
+                            "type": "File",
+                            "value": "win32.trojan.privateloader"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x9b209515>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "aa2c0a9e34f9fa4cbf1780d757cc84f32a8bd005142012e91a6888167f80f4d5"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x9b209515>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "aa2c0a9e34f9fa4cbf1780d757cc84f32a8bd005142012e91a6888167f80f4d5"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0xb073f50c>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "077225467638a420cf29fb9b3f0241416dcb9ed5d4ba32fdcf2bf28f095740bb"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xb073f50c>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "077225467638a420cf29fb9b3f0241416dcb9ed5d4ba32fdcf2bf28f095740bb"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x5baabb96>",
+                            "type": "Threat",
+                            "value": "privateloader"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa4d1dfd0>",
+                    "type": "UnknownWord",
+                    "value": "peeking"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Peeking into PrivateLoader"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x58ab2dee>",
+                    "type": "UnknownWord",
+                    "value": "dennis schwarz"
+                },
+                "references": {
+                    "sentences": [
+                        "Dennis Schwarz"
+                    ],
+                    "titles": [
+                        "Dennis Schwarz"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9263c882>",
+                    "type": "UnknownWord",
+                    "value": "brett"
+                },
+                "references": {
+                    "sentences": [
+                        "Brett Stone-Gross"
+                    ],
+                    "titles": [
+                        "Brett Stone-Gross"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b4a26ba>",
+                    "type": "UnknownWord",
+                    "value": "stone-gross"
+                },
+                "references": {
+                    "sentences": [
+                        "Brett Stone-Gross"
+                    ],
+                    "titles": [
+                        "Brett Stone-Gross"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8069fe91>",
+                    "type": "UnknownWord",
+                    "value": "transformation"
+                },
+                "references": {
+                    "sentences": [
+                        "Stay up to date with the latest digital transformation tips and news."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x989b6e9e>",
+                    "type": "UnknownWord",
+                    "value": "addressplease"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb4935c43>",
+                    "type": "UnknownWord",
+                    "value": "addressemail"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdab0ce23>",
+                    "type": "UnknownWord",
+                    "value": "mandatoryemail"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe9c1bd99>",
+                    "type": "UnknownWord",
+                    "value": "newfirstnamespam"
+                },
+                "references": {
+                    "sentences": [
+                        "newFirstNameSpam Bot"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xac3a0347>",
+                    "type": "UnknownWord",
+                    "value": "pay-per-install"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3256bf1b>",
+                    "type": "UnknownWord",
+                    "value": "ppi"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family that was first identified in early 2021<crlf>The loaders primary purpose is to download and execute additional malware as part of a pay-per-install (PPI) malware distribution service<crlf>PrivateLoader is used by multiple threat actors to distribute ransomware, information stealers, banking trojans, downloaders, and other commodity malware",
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware.",
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfd1c9a70>",
+                    "type": "UnknownWord",
+                    "value": "walmart"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x539c7a1a>",
+                    "type": "UnknownWord",
+                    "value": "selectively"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcd5e69bc>",
+                    "type": "UnknownWord",
+                    "value": "modularized"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is modularized into a loader component and a main component."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x29dbbf38>",
+                    "type": "UnknownWord",
+                    "value": "mathematical"
+                },
+                "references": {
+                    "sentences": [
+                        "Both the loader and main components of PrivateLoader make use of similar anti-analysis techniques. These anti-analysis techniques include obfuscating integer constants with various mathematical operations as shown in Figure 1."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1525fafe>",
+                    "type": "UnknownWord",
+                    "value": "stack"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 2: Example of a PrivateLoader encrypted stack string.",
+                        "Most of the important Windows DLL and API names used by PrivateLoader are also stored as encrypted stack strings. After decryption, PrivateLoader dynamically resolves the API functions at runtime. Finally, PrivateLoader adds junk code to obfuscate the programs logic and control flow.",
+                        "Most of the malwares important strings are stored as encrypted stack strings where each string is decoded with its own XOR key as shown in Figure 2. A listing of PrivateLoaders decrypted strings for the loader component can be found here and the main components decrypted strings can be found here.",
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3392f9de>",
+                    "type": "UnknownWord",
+                    "value": "resolver"
+                },
+                "references": {
+                    "sentences": [
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "The PrivateLoader loader component contains three dead drop resolver URLs hardcoded in the malware that communicate via an HTTP GET request. An example of PrivateLoaders dead drop resolvers is the following:",
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xb48afc1b>",
+                            "type": "Url",
+                            "value": "http://wfsdragon.ru/api/setstats.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0xcbc567dd>",
+                            "type": "Url",
+                            "value": "http://45.144.225.57/server.txt"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0x2f84afb4>",
+                            "type": "Url",
+                            "value": "https://pastebin.com/raw/a7dsg1te"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3392f9de>",
+                            "type": "UnknownWord",
+                            "value": "resolver"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc180f32a>",
+                    "type": "UnknownWord",
+                    "value": "resolvers"
+                },
+                "references": {
+                    "sentences": [
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "The PrivateLoader loader component contains three dead drop resolver URLs hardcoded in the malware that communicate via an HTTP GET request. An example of PrivateLoaders dead drop resolvers is the following:",
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x539fdd1c>",
+                            "type": "IP",
+                            "value": "2.56.59.42"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc180f32a>",
+                            "type": "UnknownWord",
+                            "value": "resolvers"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x10045522>",
+                    "type": "UnknownWord",
+                    "value": "one-byte"
+                },
+                "references": {
+                    "sentences": [
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:",
+                        "After the replacement, the data is XOR decrypted with a one-byte key (0x9d). The decrypted data contains the main component, which is a DLL that is injected into the loader process and then executed. The loader passes a structure to the main component containing:",
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf1ef2fad>",
+                    "type": "UnknownWord",
+                    "value": "<ip_address>"
+                },
+                "references": {
+                    "sentences": [
+                        "The purpose of these resolvers is to retrieve PrivateLoaders command and control (C2) address. The first two dead drop resolver URLs return a plaintext response, while the third dead drop resolver returns a response that is XOR encrypted with a one-byte key (e.g., 0x6d). PrivateLoader expects the (decrypted) response to be in the format HOST:<IP_Address>. An example dead drop resolver response is the following:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3f190806>",
+                    "type": "UnknownWord",
+                    "value": "<privateloader_main_component_url>"
+                },
+                "references": {
+                    "sentences": [
+                        "If PrivateLoader is unable to retrieve the primary C2 address via the dead drop resolvers, there is a secondary C2 address (2.56.59[.]42) stored in the malware. The C2 address obtained from the dead drop resolver (or the hardcoded C2 address) is combined with the path /base/api/statistics.php. PrivateLoader sends an HTTP GET request to this URL, which in turn fetches another URL that is XOR encrypted with a one-byte key (0x1d). Similar to the previous request, PrivateLoader expects the decrypted response from the C2 to be in the format URL:<PrivateLoader_Main_Component_URL>. An example of a decrypted response from the PrivateLoader C2 is shown below:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x321f6e5d>",
+                    "type": "UnknownWord",
+                    "value": "discordapp"
+                },
+                "references": {
+                    "sentences": [
+                        "URL:hxxps://cdn.discordapp[.]com/attachments/934006169125679147/963471252436172840/PL_Client.bmp"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6f6a794e>",
+                    "type": "UnknownWord",
+                    "value": "pl_client"
+                },
+                "references": {
+                    "sentences": [
+                        "URL:hxxps://cdn.discordapp[.]com/attachments/934006169125679147/963471252436172840/PL_Client.bmp"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbfd35d87>",
+                    "type": "UnknownWord",
+                    "value": "bmp"
+                },
+                "references": {
+                    "sentences": [
+                        "URL:hxxps://cdn.discordapp[.]com/attachments/934006169125679147/963471252436172840/PL_Client.bmp"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3cffce1>",
+                    "type": "UnknownWord",
+                    "value": "hard"
+                },
+                "references": {
+                    "sentences": [
+                        "The C2 IP address<crlf>A hard coded integer used in some of the main components C2 communications<crlf>A hard coded integer used to represent the campaign that the malware sample is associated with"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x32b96b0d>",
+                    "type": "UnknownWord",
+                    "value": "ww_5"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xde8da610>",
+                    "type": "UnknownWord",
+                    "value": "ww_6"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbec2c54c>",
+                    "type": "UnknownWord",
+                    "value": "ww_7"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5abf7264>",
+                    "type": "UnknownWord",
+                    "value": "ww_opera"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ef345b3>",
+                    "type": "UnknownWord",
+                    "value": "ww_8"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe0d68c7f>",
+                    "type": "UnknownWord",
+                    "value": "ww_9"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f9e4418>",
+                    "type": "UnknownWord",
+                    "value": "ww_10"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc308e9e4>",
+                    "type": "UnknownWord",
+                    "value": "ww_11"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9be0c1aa>",
+                    "type": "UnknownWord",
+                    "value": "ww_12"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8bf713cc>",
+                    "type": "UnknownWord",
+                    "value": "ww_13"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x57cb83dd>",
+                    "type": "UnknownWord",
+                    "value": "ww_14"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb95c7f54>",
+                    "type": "UnknownWord",
+                    "value": "ww_15"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb28bea8>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_1"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x69809fe8>",
+                    "type": "UnknownWord",
+                    "value": "ww_16"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd64e518f>",
+                    "type": "UnknownWord",
+                    "value": "ww_17"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8176feeb>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_2"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ed3d9dc>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_3"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x380ba07d>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_4"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf9df84f>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_5"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x27439e6e>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_6"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9647a1>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_7"
+                },
+                "references": {
+                    "sentences": [
+                        "The sample analyzed for this blog post was configured with campaign ID 27 which maps to WW_P_7. The campaign a particular sample is associated with determines what payloads are downloaded and executed. For some campaigns, the payload URLs are hardcoded into the main component (see the decrypted strings listing), while for others the payload URLs are retrieved from the C2.",
+                        "AddLoggerStat|WW_P_7|{\"extensions\":[],\"links\":[{\"id\":\"1916\"},{\"id\":\"468\"},{\"id\":\"1920\"},{\"id\":\"1750\"},{\"id\":\"1927\"},{\"id\":\"1929\"},{\"id\":\"1946\"},{\"id\":\"1985\"}],\"net_country_code\":\"US\",\"os_country_code\":\"US\"}"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x938d7946>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_8"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xecbd0eaf>",
+                    "type": "UnknownWord",
+                    "value": "ww_18"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5957bddf>",
+                    "type": "UnknownWord",
+                    "value": "ww_19"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb9d217b2>",
+                    "type": "UnknownWord",
+                    "value": "ww_20"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe6858f60>",
+                    "type": "UnknownWord",
+                    "value": "ww_21"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x907bca0>",
+                    "type": "UnknownWord",
+                    "value": "interested"
+                },
+                "references": {
+                    "sentences": [
+                        "Some campaigns are also interested in a victim's cryptocurrency and banking activity. PrivateLoader performs this action by searching a large number of file paths, registry keys, browser extensions, and saved browser logins for the following broad groups (see the decrypted strings listing for details):"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5bb70eb3>",
+                    "type": "UnknownWord",
+                    "value": "broad"
+                },
+                "references": {
+                    "sentences": [
+                        "Some campaigns are also interested in a victim's cryptocurrency and banking activity. PrivateLoader performs this action by searching a large number of file paths, registry keys, browser extensions, and saved browser logins for the following broad groups (see the decrypted strings listing for details):"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb024cf0>",
+                    "type": "UnknownWord",
+                    "value": "cryptowallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc1a3d9ee>",
+                    "type": "UnknownWord",
+                    "value": "cryptowallets_part1"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x482faf4d>",
+                    "type": "UnknownWord",
+                    "value": "cryptowallets_part2"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3aa7f674>",
+                    "type": "UnknownWord",
+                    "value": "cryptogames"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd1c16ccc>",
+                    "type": "UnknownWord",
+                    "value": "bankwallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20927a75>",
+                    "type": "UnknownWord",
+                    "value": "cubankwallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xebd5e955>",
+                    "type": "UnknownWord",
+                    "value": "bankauwallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20c1bac5>",
+                    "type": "UnknownWord",
+                    "value": "bankcawallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x37503892>",
+                    "type": "UnknownWord",
+                    "value": "bankwallets_part1"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a38c293>",
+                    "type": "UnknownWord",
+                    "value": "bankwallets_part2"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc70bf374>",
+                    "type": "UnknownWord",
+                    "value": "bankmxwallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xff08d828>",
+                    "type": "UnknownWord",
+                    "value": "bankpkwallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa2f0e626>",
+                    "type": "UnknownWord",
+                    "value": "bankeswallets"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x34aa3acf>",
+                    "type": "UnknownWord",
+                    "value": "shops"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8dd8c3bc>",
+                    "type": "UnknownWord",
+                    "value": "amazon_eu"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4921c071>",
+                    "type": "UnknownWord",
+                    "value": "vbmt"
+                },
+                "references": {
+                    "sentences": [
+                        "cryptoWallets browser<crlf>cryptoWallets cold<crlf>cryptoWallets_part1<crlf>cryptoWallets_part2<crlf>cryptoGames<crlf>bankWallets<crlf>cuBankWallets<crlf>bankAUWallets<crlf>paypal<crlf>bankCAWallets<crlf>bankWallets_part1<crlf>bankWallets_part2<crlf>bankMXWallets<crlf>bankPKWallets<crlf>bankESWallets<crlf>shops<crlf>amazon_eu<crlf>webhosts<crlf>VBMT (travel related sites)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3ff2770>",
+                    "type": "UnknownWord",
+                    "value": "arent"
+                },
+                "references": {
+                    "sentences": [
+                        "The wallet and/or saved login data themselves arent exfiltrated, rather PrivateLoader just checks for the existence of them. This data is likely used to help determine follow-on payloads such as stealer or banking malware that can make better use of the credentials."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf09543ae>",
+                    "type": "UnknownWord",
+                    "value": "combining"
+                },
+                "references": {
+                    "sentences": [
+                        "The PrivateLoader main component creates a URL by combining the C2 address passed in from the loader with the path /base/api/getData.php. The malware then sends HTTP POST requests containing a command and various data. An example PrivateLoader main components request and response is similar to Figure 3."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1327af56>",
+                    "type": "UnknownWord",
+                    "value": "getdata"
+                },
+                "references": {
+                    "sentences": [
+                        "The PrivateLoader main component creates a URL by combining the C2 address passed in from the loader with the path /base/api/getData.php. The malware then sends HTTP POST requests containing a command and various data. An example PrivateLoader main components request and response is similar to Figure 3."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xde8a2ca8>",
+                    "type": "UnknownWord",
+                    "value": "hmac"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x802982d0>",
+                    "type": "UnknownWord",
+                    "value": "pbkdf2the"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf96b1f6>",
+                    "type": "UnknownWord",
+                    "value": "snowman"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd87a9030>",
+                    "type": "UnknownWord",
+                    "value": "under_a_sn0wdrift_forgot_the_snow_maiden"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3d702418>",
+                    "type": "UnknownWord",
+                    "value": "stringthe"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x23ff2af4>",
+                    "type": "UnknownWord",
+                    "value": "salt"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7bda5335>",
+                    "type": "UnknownWord",
+                    "value": "16-bytes"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a861359>",
+                    "type": "UnknownWord",
+                    "value": "datathe"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x35b58925>",
+                    "type": "UnknownWord",
+                    "value": "iteration"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfcab9c9b>",
+                    "type": "UnknownWord",
+                    "value": "000the"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5399f583>",
+                    "type": "UnknownWord",
+                    "value": "validated"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7c40b65a>",
+                    "type": "UnknownWord",
+                    "value": "addloggerstat"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze",
+                        "AddLoggerStat|WW_P_7|{\"extensions\":[],\"links\":[{\"id\":\"1916\"},{\"id\":\"468\"},{\"id\":\"1920\"},{\"id\":\"1750\"},{\"id\":\"1927\"},{\"id\":\"1929\"},{\"id\":\"1946\"},{\"id\":\"1985\"}],\"net_country_code\":\"US\",\"os_country_code\":\"US\"}"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xae14ae57>",
+                    "type": "UnknownWord",
+                    "value": "net_country_code"
+                },
+                "references": {
+                    "sentences": [
+                        "AddLoggerStat|WW_P_7|{\"extensions\":[],\"links\":[{\"id\":\"1916\"},{\"id\":\"468\"},{\"id\":\"1920\"},{\"id\":\"1750\"},{\"id\":\"1927\"},{\"id\":\"1929\"},{\"id\":\"1946\"},{\"id\":\"1985\"}],\"net_country_code\":\"US\",\"os_country_code\":\"US\"}"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x64effe9a>",
+                    "type": "UnknownWord",
+                    "value": "os_country_code"
+                },
+                "references": {
+                    "sentences": [
+                        "AddLoggerStat|WW_P_7|{\"extensions\":[],\"links\":[{\"id\":\"1916\"},{\"id\":\"468\"},{\"id\":\"1920\"},{\"id\":\"1750\"},{\"id\":\"1927\"},{\"id\":\"1929\"},{\"id\":\"1946\"},{\"id\":\"1985\"}],\"net_country_code\":\"US\",\"os_country_code\":\"US\"}"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x18026c4c>",
+                    "type": "UnknownWord",
+                    "value": "delimited"
+                },
+                "references": {
+                    "sentences": [
+                        "Each field is pipe delimited and contains the following parameters:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa8b3b465>",
+                    "type": "UnknownWord",
+                    "value": "json"
+                },
+                "references": {
+                    "sentences": [
+                        "Command<crlf>Campaign name<crlf>JSON object"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2287737b>",
+                    "type": "UnknownWord",
+                    "value": "geoip"
+                },
+                "references": {
+                    "sentences": [
+                        "IDs of browser extension payloads that have been downloaded and executed<crlf>IDs of hardcoded or retrieved payloads that have been downloaded and executed<crlf>Location of victim based on GeoIP<crlf>Location of victim based on system data"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb272984c>",
+                    "type": "UnknownWord",
+                    "value": "getlinks"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example of the GetLinks command, a listing of payload URLs returned for the analyzed samples campaign on 04/14/2022 is available here. Some of the payload URLs are encrypted similarly to how the main component was encrypted, while others are unencrypted PE executable files.",
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x645d872e>",
+                    "type": "UnknownWord",
+                    "value": "getextensions"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe807bfb5>",
+                    "type": "UnknownWord",
+                    "value": "addextensionstat"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6b72de2>",
+                    "type": "UnknownWord",
+                    "value": "getip"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe7062530>",
+                    "type": "UnknownWord",
+                    "value": "setincrement"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa8c0fdc6>",
+                    "type": "UnknownWord",
+                    "value": "not_elevated"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x912f745a>",
+                    "type": "UnknownWord",
+                    "value": "ww_starts"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4eb68096>",
+                    "type": "UnknownWord",
+                    "value": "getcryptosleeping"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x48eac7a2>",
+                    "type": "UnknownWord",
+                    "value": "isusedominationproject"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x49b2d041>",
+                    "type": "UnknownWord",
+                    "value": "setloaderanalyze"
+                },
+                "references": {
+                    "sentences": [
+                        "GetLinks - get payload URLs<crlf>GetExtensions - get browser extension payload URLs<crlf>AddExtensionStat - used to update C2 panel statistics<crlf>GetIP - used to obtain the victim's external IP address<crlf>AddLoggerStat - used to update C2 panel statistics<crlf>SetIncrement|not_elevated - indicates if the malware's process token is not elevated<crlf>SetIncrement|ww_starts<crlf>GetCryptoSleeping<crlf>IsUseDominationProject<crlf>SetLoaderAnalyze"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3d087d5>",
+                    "type": "UnknownWord",
+                    "value": "unencrypted"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example of the GetLinks command, a listing of payload URLs returned for the analyzed samples campaign on 04/14/2022 is available here. Some of the payload URLs are encrypted similarly to how the main component was encrypted, while others are unencrypted PE executable files."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8813d985>",
+                    "type": "UnknownWord",
+                    "value": "traction"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdeae0121>",
+                    "type": "UnknownWord",
+                    "value": "viable"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x89882201>",
+                    "type": "UnknownWord",
+                    "value": "second-stage"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a typical downloader malware family that provides a PPI service that has gained traction as a viable malware distribution method for multiple threat actors. PrivateLoader is currently used to distribute ransomware, stealer, banker, and other commodity malware. The loader will likely continue to be updated with new features and functionality to evade detection and effectively deliver second-stage malware payloads."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72fb0263>",
+                    "type": "UnknownWord",
+                    "value": "cloud sandbox"
+                },
+                "references": {
+                    "sentences": [
+                        "Cloud Sandbox Detection"
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x1b4a26ba>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b4a26ba>",
+                    "type": "UnknownWord",
+                    "value": "stone-gross"
+                },
+                "references": {
+                    "sentences": [
+                        "Brett Stone-Gross"
+                    ],
+                    "titles": [
+                        "Brett Stone-Gross"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0x989b6e9e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x989b6e9e>",
+                    "type": "UnknownWord",
+                    "value": "addressplease"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xb4935c43>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb4935c43>",
+                    "type": "UnknownWord",
+                    "value": "addressemail"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xdab0ce23>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdab0ce23>",
+                    "type": "UnknownWord",
+                    "value": "mandatoryemail"
+                },
+                "references": {
+                    "sentences": [
+                        "Please enter a valid email addressPlease enter a valid email addressPlease enter your corporate email addressEmail address is mandatoryEmail address is mandatory"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xfd1c9a70>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfd1c9a70>",
+                    "type": "UnknownWord",
+                    "value": "walmart"
+                },
+                "references": {
+                    "sentences": [
+                        "PrivateLoader is a downloader malware family whose primary purpose is to download and execute additional malware. Intel 471 and Walmart reported on PrivateLoaders pay-per-install (PPI) service that distributes malware on behalf of other threat actors. The malware payloads can be selectively delivered to victims based on certain criteria (e.g. location, cryptocurrency or financial activity, on a corporate network, specific software installed, etc.) As previously reported, some of the payloads being distributed include Redline Stealer, Vidar Stealer, SmokeLoader, Stop ransomware, and other commodity malware."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x5abf7264>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5abf7264>",
+                    "type": "UnknownWord",
+                    "value": "ww_opera"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x9f9e4418>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f9e4418>",
+                    "type": "UnknownWord",
+                    "value": "ww_10"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x9be0c1aa>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9be0c1aa>",
+                    "type": "UnknownWord",
+                    "value": "ww_12"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8bf713cc>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8bf713cc>",
+                    "type": "UnknownWord",
+                    "value": "ww_13"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x57cb83dd>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x57cb83dd>",
+                    "type": "UnknownWord",
+                    "value": "ww_14"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xb95c7f54>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb95c7f54>",
+                    "type": "UnknownWord",
+                    "value": "ww_15"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xfb28bea8>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb28bea8>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_1"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x69809fe8>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x69809fe8>",
+                    "type": "UnknownWord",
+                    "value": "ww_16"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xd64e518f>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd64e518f>",
+                    "type": "UnknownWord",
+                    "value": "ww_17"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8176feeb>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8176feeb>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_2"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8ed3d9dc>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ed3d9dc>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_3"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x380ba07d>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x380ba07d>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_4"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xdf9df84f>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf9df84f>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_5"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x27439e6e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x27439e6e>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_6"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x9647a1>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9647a1>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_7"
+                },
+                "references": {
+                    "sentences": [
+                        "The sample analyzed for this blog post was configured with campaign ID 27 which maps to WW_P_7. The campaign a particular sample is associated with determines what payloads are downloaded and executed. For some campaigns, the payload URLs are hardcoded into the main component (see the decrypted strings listing), while for others the payload URLs are retrieved from the C2.",
+                        "AddLoggerStat|WW_P_7|{\"extensions\":[],\"links\":[{\"id\":\"1916\"},{\"id\":\"468\"},{\"id\":\"1920\"},{\"id\":\"1750\"},{\"id\":\"1927\"},{\"id\":\"1929\"},{\"id\":\"1946\"},{\"id\":\"1985\"}],\"net_country_code\":\"US\",\"os_country_code\":\"US\"}"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x938d7946>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x938d7946>",
+                    "type": "UnknownWord",
+                    "value": "ww_p_8"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xecbd0eaf>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xecbd0eaf>",
+                    "type": "UnknownWord",
+                    "value": "ww_18"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x5957bddf>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5957bddf>",
+                    "type": "UnknownWord",
+                    "value": "ww_19"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xb9d217b2>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb9d217b2>",
+                    "type": "UnknownWord",
+                    "value": "ww_20"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x802982d0>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x802982d0>",
+                    "type": "UnknownWord",
+                    "value": "pbkdf2the"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x3d702418>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3d702418>",
+                    "type": "UnknownWord",
+                    "value": "stringthe"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x9a861359>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a861359>",
+                    "type": "UnknownWord",
+                    "value": "datathe"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xfcab9c9b>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfcab9c9b>",
+                    "type": "UnknownWord",
+                    "value": "000the"
+                },
+                "references": {
+                    "sentences": [
+                        "Replace the characters \"_\" with \"/\" and \"-\" with \"+\"<crlf>Base64 decode the data<crlf>Generate a 32-byte AES key and a 32-byte HMAC secret with PBKDF2The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack stringThe salt is stored as the first 16-bytes of the Base64 decoded dataThe iteration count is hardcoded to 20,000The HMAC hashing algorithm is SHA512<crlf>The password Snowman+under_a_sn0wdrift_forgot_the_Snow_Maiden is stored as an encrypted stack string<crlf>The salt is stored as the first 16-bytes of the Base64 decoded data<crlf>The iteration count is hardcoded to 20,000<crlf>The HMAC hashing algorithm is SHA512<crlf>An IV is stored as the second 16-bytes of the Base64 decoded data<crlf>An HMAC hash is stored as the last 32-bytes of the Base64 decoded data<crlf>Between the IV and the HMAC hash is AES encrypted data<crlf>The HMAC hash is validated"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x2287737b>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2287737b>",
+                    "type": "UnknownWord",
+                    "value": "geoip"
+                },
+                "references": {
+                    "sentences": [
+                        "IDs of browser extension payloads that have been downloaded and executed<crlf>IDs of hardcoded or retrieved payloads that have been downloaded and executed<crlf>Location of victim based on GeoIP<crlf>Location of victim based on system data"
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [
+            "The C2 IP address<crlf>A hard coded integer used in some of the main components C2 communications<crlf>A hard coded integer used to represent the campaign that the malware sample is associated with",
+            "The campaign a particular sample is associated with determines what payloads are downloaded and executed"
+        ],
+        "targets": [],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://www.zscaler.com/author/dschwarz",
+                "https://www.zscaler.com/author/bstonegross",
+                "https://intel471.com/blog/privateloader-malware",
+                "https://medium.com/walmartglobaltech/privateloader-to-anubis-loader-55d066a2653e",
+                "https://pastebin.com/BY8CnYzN",
+                "https://pastebin.com/CtDaPrkD",
+                "https://pastebin.com/amiYQYu7",
+                "https://threatlibrary.zscaler.com/threats/45f34992-d01a-405b-9a6d-b0d75e0431b4",
+                "https://www.zscaler.com/blogs/security-research",
+                "https://www.zscaler.com/blogs/insights-and-research",
+                "https://www.zscaler.com/blogs/ransomware",
+                "mailto:?subject=Peeking%20into%20PrivateLoader&body=https://bit.ly/3rFSjCH",
+                "https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3rFSjCH",
+                "https://www.linkedin.com/sharing/share-offsite/?title=Peeking%20into%20PrivateLoader&url=https://bit.ly/3rFSjCH",
+                "https://twitter.com/intent/tweet?text=https://bit.ly/3rFSjCH%20%E2%80%94%20Peeking%20into%20PrivateLoader",
+                "https://www.zscaler.com/blogs/feeds/security-research"
+            ]
+        },
+        "images": [
+            "https://www.zscaler.com/cdn-cgi/image/format%3Dauto/sites/default/files/images/blogs/----category-images/cyber-security/zscaler-blog-cyber-security-1%402x_5.jpg",
+            "https://lh6.googleusercontent.com/UkeZxJ2os3gauaqVNdtWHBM1yfrf43TNSPWGC8PL2EDN-fkQN69mx6Stlc2lYgd8eGUEq0SkzZlOi0EChOTTRSZxuesyXejTonjPR-MSayJXSa4dN86arjkg4Az6sMsxm3GbTc9I",
+            "https://lh3.googleusercontent.com/MBakzyNhmNsLUwt8lpbQkFl-V2sGdGuF8x0nosoprKul7tpH1NJpxsqxzs0uZikAh6KTf27rDlvK5FN-ScgKnfOwD0FSWtwPZyOTh7HgIPSxQQynxd3x93EUV0MefXWyxErZXtYh"
+        ]
+    }
+}

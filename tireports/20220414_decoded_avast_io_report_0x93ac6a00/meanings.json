@@ -1,0 +1,3592 @@
+{
+    "title": "Zloader 2: The Silent Night",
+    "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x55fb205a>",
+                    "type": "Threat",
+                    "value": "z_loader"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft recently announced a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court.",
+                        "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data.",
+                        "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6].",
+                        "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions its able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.",
+                        "Third example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021",
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021",
+                        "It is not the only digital signature, shared among Ursnif and Zloader samples.",
+                        "It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!",
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it.",
+                        "The largest group of software from which Zloader steal files is crypto wallets:",
+                        "Zloader consists of different modules and components:",
+                        "Registry paths to other storages, used by Zloader<crlf>Files and directories path, used by Zloader<crlf>Encryption key(s) to decrypt those storages",
+                        "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families.",
+                        "To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:",
+                        "Root path is %APPDATA%. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the MAIN_STRUCT.",
+                        "According to ZeusMuseum, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code leaked. As a result, new versions and variants appeared. One of the Zeus successors named Zloader appeared at the turn of 2016 and 2017. Finally, another successor named Silent Night appeared in 2019. It was for sale on the underground market.",
+                        "Another example aerulonoured[.]su host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021.",
+                        "Zloader sample signed with it has a SHA256 hash:<crlf>2a9ff0a0e962d28c488af9767770d48b9128b19ee43e8df392efb2f1c5a696f.",
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT.",
+                        "Although the original name of the malware likely was Silent Night and the ZeusMuseum calls it Zloader 2 we are simply going to use the name Zloader.",
+                        "Zloader modules (at least Downloaders and Backdoors) use a registry to store various data necessary for their work. The ROOT_KEY for this data is",
+                        "Moreover, Raccoon was mentioned in [6] before we received commands from C&Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer here.",
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called.",
+                        "Injected code is usually small: from dozens of bytes up to 20 kb. To perform its tasks, it loads JavaScript code from external domains, controlled by bad guys. Analysis of these domains allowed us to find connections between Zloader operators and other cybercrime gangs.",
+                        "As was shown before, built in configuration has a list of hardcoded C&Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&Cs, Zloader uses DGA Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration.",
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": [
+                        "Digital Signatures",
+                        "Distribution",
+                        "Registry usage",
+                        "WebInjects",
+                        "Stealing files",
+                        "Download tasks",
+                        "Infrastructure",
+                        "History",
+                        "Modules and components",
+                        "Zloader 2: The Silent Night",
+                        "Files usage",
+                        "Raccoon Stealer",
+                        "C&Cs and DGA",
+                        "Code peculiarities",
+                        "BinStorage",
+                        "Introduction",
+                        "Conclusion",
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x6a35444b>",
+                            "type": "Category",
+                            "value": "proxy"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x96121f83>",
+                            "type": "Category",
+                            "value": "backdoor"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xa0a81b29>",
+                            "type": "File",
+                            "value": "msedge.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8c1eb237>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x4c7d543d>",
+                            "type": "IP",
+                            "value": "1.6.28.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc5b6dc7>",
+                            "type": "Domain",
+                            "value": "etjmejjcxjtwweitluuw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0xe735351e>",
+                            "type": "IP",
+                            "value": "1.0.2.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x69bcce9a>",
+                            "type": "File",
+                            "value": "chrome.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x6ccd758c>",
+                            "type": "File",
+                            "value": "iexplore.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7e118ed8>",
+                            "type": "Threat",
+                            "value": "exodus"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4eaf1758>",
+                            "type": "File",
+                            "value": "firefox.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x233c410f>",
+                            "type": "Domain",
+                            "value": "aerulonoured.su"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x1d537c21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x62cdb4bc>",
+                            "type": "IP",
+                            "value": "2.0.0.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xbe913128>",
+                            "type": "Domain",
+                            "value": "braves.fun"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0xbbb14195>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xf4c4d742>",
+                            "type": "File",
+                            "value": "explorer.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2e91b04d>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "46c79bd6482e287647b1d6700176a5f6f5ac6d57"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7ef9081>",
+                            "type": "Threat",
+                            "value": "zeus"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xf27a6bda>",
+                            "type": "Domain",
+                            "value": "dotxvcnjlvdajkwerwoh.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x8571f814>",
+                            "type": "File",
+                            "value": "msiexec.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x7ef9081>",
+                    "type": "Threat",
+                    "value": "zeus"
+                },
+                "references": {
+                    "sentences": [
+                        "According to ZeusMuseum, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code leaked. As a result, new versions and variants appeared. One of the Zeus successors named Zloader appeared at the turn of 2016 and 2017. Finally, another successor named Silent Night appeared in 2019. It was for sale on the underground market.",
+                        "Third example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021",
+                        "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families."
+                    ],
+                    "titles": [
+                        "Zloader 2: The Silent Night",
+                        "Infrastructure",
+                        "History"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7ef9081>",
+                            "type": "Threat",
+                            "value": "zeus"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7ef9081>",
+                            "type": "Threat",
+                            "value": "zeus"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x7e118ed8>",
+                    "type": "Threat",
+                    "value": "exodus"
+                },
+                "references": {
+                    "sentences": [
+                        "Electrum<crlf>Ethereum<crlf>Exodus cryptowallet<crlf>Zcash<crlf>Bitcoin-Qt<crlf>Etc."
+                    ],
+                    "titles": [
+                        "Stealing files"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7e118ed8>",
+                            "type": "Threat",
+                            "value": "exodus"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x7b599f25>",
+                    "type": "Threat",
+                    "value": "raccoon_stealer"
+                },
+                "references": {
+                    "sentences": [
+                        "Two out of three download tasks contained links to Raccoon Stealer. Downloaded samples have the following sha256 hashes:",
+                        "Both of them have the same Raccoon configuration with Telegram channel kumchakl1.",
+                        "Moreover, Raccoon was mentioned in [6] before we received commands from C&Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer here."
+                    ],
+                    "titles": [
+                        "Raccoon Stealer"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8c1eb237>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x1d537c21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x632dd8ef>",
+                    "type": "Threat",
+                    "value": "gozi"
+                },
+                "references": {
+                    "sentences": [
+                        "It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!",
+                        "Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions.",
+                        "Third example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021",
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021",
+                        "It is not the only digital signature, shared among Ursnif and Zloader samples.",
+                        "As we mentioned before, the first observed download command contained a link to teamworks455[.]com. We checked the TLS certificate for this site and realized that it was for another site dotxvcnjlvdajkwerwoh[.]com. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data.",
+                        "Signed Ursnif sample has a SHA256 hash:",
+                        "Another example aerulonoured[.]su host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021."
+                    ],
+                    "titles": [
+                        "Infrastructure",
+                        "Ursnif",
+                        "Digital Signatures"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xd91561a2>",
+                    "type": "Category",
+                    "value": "botnet"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft recently announced a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court.",
+                        "Most active botnets and campaigns use RC4 key 03d5ae30a0bd934a23b6a7f0756aa504 and well focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x.",
+                        "Botnet name (divader on the picture below)<crlf>Campaign name (xls_s_2010)<crlf>List of hardcoded C&Cs<crlf>RC4 key (03d5ae30a0bd934a23b6a7f0756aa504)",
+                        "Some DWORD from the Configuration<crlf>Botnet name from the Configuration<crlf>BotID, derived from the system information<crlf>Debug flag from the Configuration<crlf>16 random bytes",
+                        "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families.",
+                        "Among botnet names it is worth mentioning the following groups:",
+                        "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6].",
+                        "botnet",
+                        "Samples with botnet names from the second group were first observed in November 2021 and we found 6 botnet names from this group in the next two months. Letters after numbers, like ca and us might be country codes.",
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": [
+                        "Botnet and Campaign names",
+                        "Download tasks",
+                        "History",
+                        "Networking",
+                        "Zloader 2: The Silent Night",
+                        "Botnets, Campaigns and their activity",
+                        "Configuration",
+                        "Conclusion"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "Although the original name of the malware likely was Silent Night and the ZeusMuseum calls it Zloader 2 we are simply going to use the name Zloader.",
+                        "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families.",
+                        "During our tracking we have noticed links to other malware families we originally thought were unrelated.",
+                        "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions its able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.",
+                        "Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions.",
+                        "malware"
+                    ],
+                    "titles": [
+                        "Connections",
+                        "History",
+                        "Zloader 2: The Silent Night",
+                        "Introduction",
+                        "Ursnif",
+                        "Conclusion"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x96121f83>",
+                    "type": "Category",
+                    "value": "backdoor"
+                },
+                "references": {
+                    "sentences": [
+                        "Backdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger.",
+                        "64-bit version of Backdoor is injected into 64-bit processes, 32-bit version into 32-bit processes.",
+                        "In any case, the Backdoor module is requested from the disk or from the network and executed.",
+                        "Key Backdoor abilities:",
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "Function of Downloader is to download, install and run the next module the Backdoor.",
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called.",
+                        "There are actually two Backdoor modules: for 32-bit systems (moduleID 0x3EE) and for 64-bit systems (moduleID 0x3E9). Downloader always requests a 32-bit Backdoor.",
+                        "To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:",
+                        "Both Downloader and Backdoor modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like vcvslrpvwwfanquofupxt. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:",
+                        "Downloader initial infector<crlf>Backdoor main module, exists in x86 and x64 versions<crlf>VNC module (x86 and x64)<crlf>Web Injects received from C&C<crlf>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)",
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": [
+                        "Downloader module",
+                        "Backdoor module",
+                        "Modules and components",
+                        "Injected code",
+                        "Web Injecting",
+                        "Code peculiarities",
+                        "Configuration",
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x96121f83>",
+                            "type": "Category",
+                            "value": "backdoor"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x4c7d543d>",
+                            "type": "IP",
+                            "value": "1.6.28.0"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x96121f83>",
+                            "type": "Category",
+                            "value": "backdoor"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "Starting VNC module<crlf>Injecting WebInjects into the pages visited using browsers<crlf>Downloading and execute arbitrary file<crlf>Keylogging<crlf>Making screenshots<crlf>Stealing files and sending to C&C",
+                        "Requests are encrypted using the RC4 key from the Configuration. C&C responses are signed with RSA.",
+                        "This request is used to download modules by their ID from the C&C. The response is not in a BinStorage form!",
+                        "Downloader initial infector<crlf>Backdoor main module, exists in x86 and x64 versions<crlf>VNC module (x86 and x64)<crlf>Web Injects received from C&C<crlf>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)",
+                        "Third example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021",
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021",
+                        "As was mentioned before, communication between the bot and C&C is done using BinStorages. Depending on the actual type of the message, field list may be changed, but there are 5 constant fields sent to C&C:",
+                        "Some FieldIDs are hardcoded. For example, in FieldID=0x4E20 the last working C&C is stored. Other FieldIDs are derived from file paths (used to store stolen files).",
+                        "This request is used to check if C&C is alive. Response contains only random bytes sent by a bot."
+                    ],
+                    "titles": [
+                        "PING request",
+                        "Infrastructure",
+                        "Backdoor module",
+                        "Modules and components",
+                        "Networking",
+                        "BinStorage",
+                        "DOWNLOAD MODULE request"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x3e4901d2>",
+                    "type": "Category",
+                    "value": "spam"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": [
+                        "Distribution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x3e4901d2>",
+                            "type": "Category",
+                            "value": "spam"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x6a35444b>",
+                    "type": "Category",
+                    "value": "proxy"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.",
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": [
+                        "Web Injecting"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x6a35444b>",
+                            "type": "Category",
+                            "value": "proxy"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions its able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.",
+                        "We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc.",
+                        "Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions.",
+                        "Electrum<crlf>Ethereum<crlf>Exodus cryptowallet<crlf>Zcash<crlf>Bitcoin-Qt<crlf>Etc."
+                    ],
+                    "titles": [
+                        "Stealing files",
+                        "Introduction",
+                        "Ursnif",
+                        "WebInjects"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x632dd8ef>",
+                            "type": "Threat",
+                            "value": "gozi"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0xbbb14195>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a"
+                },
+                "references": {
+                    "sentences": [
+                        "The earliest version of this variant we found has a SHA256:<crlf>384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a<crlf>Timestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted."
+                    ],
+                    "titles": [
+                        "History"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xbbb14195>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<MD5_0x50f2697e>",
+                    "type": "Hash",
+                    "hash_type": "MD5",
+                    "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                },
+                "references": {
+                    "sentences": [
+                        "Most active botnets and campaigns use RC4 key 03d5ae30a0bd934a23b6a7f0756aa504 and well focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x.",
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021",
+                        "Botnet name (divader on the picture below)<crlf>Campaign name (xls_s_2010)<crlf>List of hardcoded C&Cs<crlf>RC4 key (03d5ae30a0bd934a23b6a7f0756aa504)"
+                    ],
+                    "titles": [
+                        "Infrastructure",
+                        "Configuration",
+                        "Botnets, Campaigns and their activity"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x60e71a94>",
+                            "type": "UnknownWord",
+                            "value": "4th"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb00e09f6>",
+                            "type": "UnknownWord",
+                            "value": "rc4"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x8c1eb237>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc"
+                },
+                "references": {
+                    "sentences": [
+                        "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc<crlf>5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                    ],
+                    "titles": [
+                        "Raccoon Stealer"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8c1eb237>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8c1eb237>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x1d537c21>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                },
+                "references": {
+                    "sentences": [
+                        "5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc<crlf>5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                    ],
+                    "titles": [
+                        "Raccoon Stealer"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x1d537c21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7b599f25>",
+                            "type": "Threat",
+                            "value": "raccoon_stealer"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x1d537c21>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA1_0x2e91b04d>",
+                    "type": "Hash",
+                    "hash_type": "SHA1",
+                    "value": "46c79bd6482e287647b1d6700176a5f6f5ac6d57"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example, consider a signature:<crlf>Issuer BABJNCXZHQCJUVWAJJ<crlf>Thumbprint 46C79BD6482E287647B1D6700176A5F6F5AC6D57."
+                    ],
+                    "titles": [
+                        "Digital Signatures"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2e91b04d>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "46c79bd6482e287647b1d6700176a5f6f5ac6d57"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2e91b04d>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "46c79bd6482e287647b1d6700176a5f6f5ac6d57"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x14bcdbdf>",
+                            "type": "UnknownWord",
+                            "value": "thumbprint"
+                        }
+                    }
+                ]
+            }
+        ],
+        "IP": [
+            {
+                "token": {
+                    "id": "<IP_0xe735351e>",
+                    "type": "IP",
+                    "value": "1.0.2.0"
+                },
+                "references": {
+                    "sentences": [
+                        "The earliest version of this variant we found has a SHA256:<crlf>384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a<crlf>Timestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted."
+                    ],
+                    "titles": [
+                        "History"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0xe735351e>",
+                            "type": "IP",
+                            "value": "1.0.2.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<IP_0x62cdb4bc>",
+                    "type": "IP",
+                    "value": "2.0.0.0"
+                },
+                "references": {
+                    "sentences": [
+                        "The earliest version of this variant we found has a SHA256:<crlf>384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a<crlf>Timestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted."
+                    ],
+                    "titles": [
+                        "History"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x62cdb4bc>",
+                            "type": "IP",
+                            "value": "2.0.0.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<IP_0x4c7d543d>",
+                    "type": "IP",
+                    "value": "1.6.28.0"
+                },
+                "references": {
+                    "sentences": [
+                        "Analysis based on version 1.6.28.0,"
+                    ],
+                    "titles": [
+                        "Downloader module",
+                        "Backdoor module"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x4c7d543d>",
+                            "type": "IP",
+                            "value": "1.6.28.0"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x4c7d543d>",
+                            "type": "IP",
+                            "value": "1.6.28.0"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x96121f83>",
+                            "type": "Category",
+                            "value": "backdoor"
+                        }
+                    }
+                ]
+            }
+        ],
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x8571f814>",
+                    "type": "File",
+                    "value": "msiexec.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe",
+                        "Control flow passed to the small buffer, which decrypts the Downloader in the address space of msiexec.exe After the decryption, Downloader begins to execute its main task.",
+                        "The second and the last task of the Main function is to start msiexec.exe and perform the PE injection of the code into it. Injected data consists of two buffers: the big one, where the Downloader is stored in the encrypted form and the small one (0x42 bytes) with decryption code. Just after the injection Downloader terminates himself."
+                    ],
+                    "titles": [
+                        "Injected code",
+                        "Main function",
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x8571f814>",
+                            "type": "File",
+                            "value": "msiexec.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xf4c4d742>",
+                    "type": "File",
+                    "value": "explorer.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xf4c4d742>",
+                            "type": "File",
+                            "value": "explorer.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x6ccd758c>",
+                    "type": "File",
+                    "value": "iexplore.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x6ccd758c>",
+                            "type": "File",
+                            "value": "iexplore.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x4eaf1758>",
+                    "type": "File",
+                    "value": "firefox.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4eaf1758>",
+                            "type": "File",
+                            "value": "firefox.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x69bcce9a>",
+                    "type": "File",
+                    "value": "chrome.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x69bcce9a>",
+                            "type": "File",
+                            "value": "chrome.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xa0a81b29>",
+                    "type": "File",
+                    "value": "msedge.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "explorer.exe<crlf>msiexec.exe<crlf>iexplore.exe<crlf>firefox.exe<crlf>chrome.exe<crlf>msedge.exe"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xa0a81b29>",
+                            "type": "File",
+                            "value": "msedge.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Registry": [
+            {
+                "token": {
+                    "id": "<REGISTRY_0xffadc836>",
+                    "type": "Registry",
+                    "value": "hkcu/software/microsoft/windows/currentversion/run"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, the injected code tries to read MAIN_STRUCT from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: MAIN_STRUCT is created, Downloader module is copied into %APPDATA% and added to the autorun key HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run with random value name."
+                    ],
+                    "titles": [
+                        "Injected code"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xecc758ca>",
+                            "type": "UnknownWord",
+                            "value": "main_struct"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x32547989>",
+                            "type": "UnknownWord",
+                            "value": "appdata"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Domain": [
+            {
+                "token": {
+                    "id": "<DOMAIN_0xc4921bfe>",
+                    "type": "Domain",
+                    "value": "teamworks455.com"
+                },
+                "references": {
+                    "sentences": [
+                        "As we mentioned before, the first observed download command contained a link to teamworks455[.]com. We checked the TLS certificate for this site and realized that it was for another site dotxvcnjlvdajkwerwoh[.]com. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data.",
+                        "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6]."
+                    ],
+                    "titles": [
+                        "Download tasks",
+                        "Infrastructure"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9297abdd>",
+                            "type": "UnknownWord",
+                            "value": "9092ca"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0xbe913128>",
+                    "type": "Domain",
+                    "value": "braves.fun"
+                },
+                "references": {
+                    "sentences": [
+                        "Another two download tasks contained braves[.]fun and"
+                    ],
+                    "titles": [
+                        "Download tasks"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xbe913128>",
+                            "type": "Domain",
+                            "value": "braves.fun"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0xf27a6bda>",
+                    "type": "Domain",
+                    "value": "dotxvcnjlvdajkwerwoh.com"
+                },
+                "references": {
+                    "sentences": [
+                        "As we mentioned before, the first observed download command contained a link to teamworks455[.]com. We checked the TLS certificate for this site and realized that it was for another site dotxvcnjlvdajkwerwoh[.]com. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data."
+                    ],
+                    "titles": [
+                        "Infrastructure"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xf27a6bda>",
+                            "type": "Domain",
+                            "value": "dotxvcnjlvdajkwerwoh.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x87937905>",
+                            "type": "UnknownWord",
+                            "value": "realized"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xf27a6bda>",
+                            "type": "Domain",
+                            "value": "dotxvcnjlvdajkwerwoh.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0x233c410f>",
+                    "type": "Domain",
+                    "value": "aerulonoured.su"
+                },
+                "references": {
+                    "sentences": [
+                        "Another example aerulonoured[.]su host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021."
+                    ],
+                    "titles": [
+                        "Infrastructure"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x233c410f>",
+                            "type": "Domain",
+                            "value": "aerulonoured.su"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0x1ab6a56f>",
+                    "type": "Domain",
+                    "value": "qyfurihpsbhbuvitilgw.com"
+                },
+                "references": {
+                    "sentences": [
+                        "Third example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021"
+                    ],
+                    "titles": [
+                        "Infrastructure"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "c2_from_net",
+                        "dst": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x7ef9081>",
+                            "type": "Threat",
+                            "value": "zeus"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xc8ecca29>",
+                            "type": "Category",
+                            "value": "c2"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x1ab6a56f>",
+                            "type": "Domain",
+                            "value": "qyfurihpsbhbuvitilgw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0xc5b6dc7>",
+                    "type": "Domain",
+                    "value": "etjmejjcxjtwweitluuw.com"
+                },
+                "references": {
+                    "sentences": [
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021"
+                    ],
+                    "titles": [
+                        "Infrastructure"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc5b6dc7>",
+                            "type": "Domain",
+                            "value": "etjmejjcxjtwweitluuw.com"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x55fb205a>",
+                            "type": "Threat",
+                            "value": "z_loader"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc5b6dc7>",
+                            "type": "Domain",
+                            "value": "etjmejjcxjtwweitluuw.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x60e71a94>",
+                            "type": "UnknownWord",
+                            "value": "4th"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4da09c16>",
+                    "type": "UnknownWord",
+                    "value": "vladimir martyanov"
+                },
+                "references": {
+                    "sentences": [
+                        "Vladimir Martyanov"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf1e78c3d>",
+                    "type": "UnknownWord",
+                    "value": "peculiarities"
+                },
+                "references": {
+                    "sentences": [
+                        "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families."
+                    ],
+                    "titles": [
+                        "Code peculiarities"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3ecafbe9>",
+                    "type": "UnknownWord",
+                    "value": "visited"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions its able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on.",
+                        "Starting VNC module<crlf>Injecting WebInjects into the pages visited using browsers<crlf>Downloading and execute arbitrary file<crlf>Keylogging<crlf>Making screenshots<crlf>Stealing files and sending to C&C"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf9d68f61>",
+                    "type": "UnknownWord",
+                    "value": "zeusmuseum"
+                },
+                "references": {
+                    "sentences": [
+                        "According to ZeusMuseum, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code leaked. As a result, new versions and variants appeared. One of the Zeus successors named Zloader appeared at the turn of 2016 and 2017. Finally, another successor named Silent Night appeared in 2019. It was for sale on the underground market.",
+                        "Although the original name of the malware likely was Silent Night and the ZeusMuseum calls it Zloader 2 we are simply going to use the name Zloader."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xea2204f6>",
+                    "type": "UnknownWord",
+                    "value": "2006-2008"
+                },
+                "references": {
+                    "sentences": [
+                        "According to ZeusMuseum, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code leaked. As a result, new versions and variants appeared. One of the Zeus successors named Zloader appeared at the turn of 2016 and 2017. Finally, another successor named Silent Night appeared in 2019. It was for sale on the underground market."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x396ac7c0>",
+                    "type": "UnknownWord",
+                    "value": "isacs"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft recently announced a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f00da1e>",
+                    "type": "UnknownWord",
+                    "value": "court"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft recently announced a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf3970468>",
+                    "type": "UnknownWord",
+                    "value": "infector"
+                },
+                "references": {
+                    "sentences": [
+                        "Downloader initial infector<crlf>Backdoor main module, exists in x86 and x64 versions<crlf>VNC module (x86 and x64)<crlf>Web Injects received from C&C<crlf>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe611013b>",
+                    "type": "UnknownWord",
+                    "value": "sqlite"
+                },
+                "references": {
+                    "sentences": [
+                        "Downloader initial infector<crlf>Backdoor main module, exists in x86 and x64 versions<crlf>VNC module (x86 and x64)<crlf>Web Injects received from C&C<crlf>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1ecab03b>",
+                    "type": "UnknownWord",
+                    "value": "zlib"
+                },
+                "references": {
+                    "sentences": [
+                        "Downloader initial infector<crlf>Backdoor main module, exists in x86 and x64 versions<crlf>VNC module (x86 and x64)<crlf>Web Injects received from C&C<crlf>Additional libraries (openssl, sqlite, zlib, Mozilla libraries)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc6a7cc7e>",
+                    "type": "UnknownWord",
+                    "value": "adwords"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe0a2767c>",
+                    "type": "UnknownWord",
+                    "value": "advertise"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x69fe2230>",
+                    "type": "UnknownWord",
+                    "value": "pornsites"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xea1f5834>",
+                    "type": "UnknownWord",
+                    "value": "packed"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb095a314>",
+                    "type": "UnknownWord",
+                    "value": "recognizable"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x479efccb>",
+                    "type": "UnknownWord",
+                    "value": "diluted"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1bd4cd7d>",
+                    "type": "UnknownWord",
+                    "value": "vice"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf6a0532c>",
+                    "type": "UnknownWord",
+                    "value": "versa"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3b32a60>",
+                    "type": "UnknownWord",
+                    "value": "cmp"
+                },
+                "references": {
+                    "sentences": [
+                        "Second, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other replacement functions. To add more insult to the injury multiple replacement functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned replacement functions."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc1b6ea8>",
+                    "type": "UnknownWord",
+                    "value": "insult"
+                },
+                "references": {
+                    "sentences": [
+                        "Second, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other replacement functions. To add more insult to the injury multiple replacement functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned replacement functions."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1bcf8569>",
+                    "type": "UnknownWord",
+                    "value": "injury"
+                },
+                "references": {
+                    "sentences": [
+                        "Second, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other replacement functions. To add more insult to the injury multiple replacement functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned replacement functions."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x41cfb030>",
+                    "type": "UnknownWord",
+                    "value": "imported"
+                },
+                "references": {
+                    "sentences": [
+                        "Samples have very little imported functions. APIs are resolved in runtime by the hashes of their names."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9879afd7>",
+                    "type": "UnknownWord",
+                    "value": "resolved"
+                },
+                "references": {
+                    "sentences": [
+                        "Samples have very little imported functions. APIs are resolved in runtime by the hashes of their names."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb00e09f6>",
+                    "type": "UnknownWord",
+                    "value": "rc4"
+                },
+                "references": {
+                    "sentences": [
+                        "Most active botnets and campaigns use RC4 key 03d5ae30a0bd934a23b6a7f0756aa504 and well focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x.",
+                        "MAIN_STRUCT is encrypted using RC4 with the key from the configuration. It stores:",
+                        "Botnet name (divader on the picture below)<crlf>Campaign name (xls_s_2010)<crlf>List of hardcoded C&Cs<crlf>RC4 key (03d5ae30a0bd934a23b6a7f0756aa504)",
+                        "Requests are encrypted using the RC4 key from the Configuration. C&C responses are signed with RSA.",
+                        "Both Downloader and Backdoor modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like vcvslrpvwwfanquofupxt. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:",
+                        "As was shown before, built in configuration has a list of hardcoded C&Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&Cs, Zloader uses DGA Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration.",
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb00e09f6>",
+                            "type": "UnknownWord",
+                            "value": "rc4"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa333f691>",
+                    "type": "UnknownWord",
+                    "value": "vcvslrpvwwfanquofupxt"
+                },
+                "references": {
+                    "sentences": [
+                        "Both Downloader and Backdoor modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like vcvslrpvwwfanquofupxt. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd7185edd>",
+                    "type": "UnknownWord",
+                    "value": "divader"
+                },
+                "references": {
+                    "sentences": [
+                        "Botnet name (divader on the picture below)<crlf>Campaign name (xls_s_2010)<crlf>List of hardcoded C&Cs<crlf>RC4 key (03d5ae30a0bd934a23b6a7f0756aa504)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x50277523>",
+                    "type": "UnknownWord",
+                    "value": "xls_s_2010"
+                },
+                "references": {
+                    "sentences": [
+                        "Botnet name (divader on the picture below)<crlf>Campaign name (xls_s_2010)<crlf>List of hardcoded C&Cs<crlf>RC4 key (03d5ae30a0bd934a23b6a7f0756aa504)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb10f9cd2>",
+                    "type": "UnknownWord",
+                    "value": "binstorage"
+                },
+                "references": {
+                    "sentences": [
+                        "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data.",
+                        "This request is used to download modules by their ID from the C&C. The response is not in a BinStorage form!",
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": [
+                        "BinStorage"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcc974fc7>",
+                    "type": "UnknownWord",
+                    "value": "briefly"
+                },
+                "references": {
+                    "sentences": [
+                        "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9df6ab58>",
+                    "type": "UnknownWord",
+                    "value": "binstorages"
+                },
+                "references": {
+                    "sentences": [
+                        "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data.",
+                        "As was mentioned before, communication between the bot and C&C is done using BinStorages. Depending on the actual type of the message, field list may be changed, but there are 5 constant fields sent to C&C:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5df7fa86>",
+                    "type": "UnknownWord",
+                    "value": "fieldid"
+                },
+                "references": {
+                    "sentences": [
+                        "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data.",
+                        "Some FieldIDs are hardcoded. For example, in FieldID=0x4E20 the last working C&C is stored. Other FieldIDs are derived from file paths (used to store stolen files)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x887e46ee>",
+                    "type": "UnknownWord",
+                    "value": "fieldids"
+                },
+                "references": {
+                    "sentences": [
+                        "Some FieldIDs are hardcoded. For example, in FieldID=0x4E20 the last working C&C is stored. Other FieldIDs are derived from file paths (used to store stolen files)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc0fef5>",
+                    "type": "UnknownWord",
+                    "value": "root_key"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader modules (at least Downloaders and Backdoors) use a registry to store various data necessary for their work. The ROOT_KEY for this data is",
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xecc758ca>",
+                    "type": "UnknownWord",
+                    "value": "main_struct"
+                },
+                "references": {
+                    "sentences": [
+                        "Root path is %APPDATA%. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the MAIN_STRUCT.",
+                        "MAIN_STRUCT is encrypted using RC4 with the key from the configuration. It stores:",
+                        "First of all, the injected code tries to read MAIN_STRUCT from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: MAIN_STRUCT is created, Downloader module is copied into %APPDATA% and added to the autorun key HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run with random value name.",
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xecc758ca>",
+                            "type": "UnknownWord",
+                            "value": "main_struct"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe843bde7>",
+                    "type": "UnknownWord",
+                    "value": "subkey"
+                },
+                "references": {
+                    "sentences": [
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x15d43f60>",
+                    "type": "UnknownWord",
+                    "value": "suppose"
+                },
+                "references": {
+                    "sentences": [
+                        "Just after the start of the Downloader module, junk code is started. It consists of many junk functions, which forms a kind of a network. In the image below there is a call graph from just a single junk function. These functions also trying to read, write and delete some *.txt files %TEMP%. The purpose of this is to delay the execution of the payload and, We suppose, to complicate the emulation, debugging and analysis.",
+                        "The most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x32547989>",
+                    "type": "UnknownWord",
+                    "value": "appdata"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, the injected code tries to read MAIN_STRUCT from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: MAIN_STRUCT is created, Downloader module is copied into %APPDATA% and added to the autorun key HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run with random value name.",
+                        "Root path is %APPDATA%. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the MAIN_STRUCT."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<REGISTRY_0xffadc836>",
+                            "type": "Registry",
+                            "value": "hkcu/software/microsoft/windows/currentversion/run"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x32547989>",
+                            "type": "UnknownWord",
+                            "value": "appdata"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x67208674>",
+                    "type": "UnknownWord",
+                    "value": "botid"
+                },
+                "references": {
+                    "sentences": [
+                        "Some DWORD from the Configuration<crlf>Botnet name from the Configuration<crlf>BotID, derived from the system information<crlf>Debug flag from the Configuration<crlf>16 random bytes"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x731ac34a>",
+                    "type": "UnknownWord",
+                    "value": "produces"
+                },
+                "references": {
+                    "sentences": [
+                        "As was shown before, built in configuration has a list of hardcoded C&Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&Cs, Zloader uses DGA Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5791a987>",
+                    "type": "UnknownWord",
+                    "value": "3rd"
+                },
+                "references": {
+                    "sentences": [
+                        "There is a 3rd type of C&Cs received in the response from the server. Theyre stored into the Registry."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc83d0e08>",
+                    "type": "UnknownWord",
+                    "value": "theyre"
+                },
+                "references": {
+                    "sentences": [
+                        "There is a 3rd type of C&Cs received in the response from the server. Theyre stored into the Registry."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6c8d5b2f>",
+                    "type": "UnknownWord",
+                    "value": "moduleid"
+                },
+                "references": {
+                    "sentences": [
+                        "There are actually two Backdoor modules: for 32-bit systems (moduleID 0x3EE) and for 64-bit systems (moduleID 0x3E9). Downloader always requests a 32-bit Backdoor."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72524b90>",
+                    "type": "UnknownWord",
+                    "value": "unpacking"
+                },
+                "references": {
+                    "sentences": [
+                        "Backdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbf190638>",
+                    "type": "UnknownWord",
+                    "value": "bigger"
+                },
+                "references": {
+                    "sentences": [
+                        "Backdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xefd9558b>",
+                    "type": "UnknownWord",
+                    "value": "abilities"
+                },
+                "references": {
+                    "sentences": [
+                        "Key Backdoor abilities:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6741c2b>",
+                    "type": "UnknownWord",
+                    "value": "electrum"
+                },
+                "references": {
+                    "sentences": [
+                        "Electrum<crlf>Ethereum<crlf>Exodus cryptowallet<crlf>Zcash<crlf>Bitcoin-Qt<crlf>Etc."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeb42c73b>",
+                    "type": "UnknownWord",
+                    "value": "cryptowallet"
+                },
+                "references": {
+                    "sentences": [
+                        "Electrum<crlf>Ethereum<crlf>Exodus cryptowallet<crlf>Zcash<crlf>Bitcoin-Qt<crlf>Etc."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7f3cb5e2>",
+                    "type": "UnknownWord",
+                    "value": "zcash"
+                },
+                "references": {
+                    "sentences": [
+                        "Electrum<crlf>Ethereum<crlf>Exodus cryptowallet<crlf>Zcash<crlf>Bitcoin-Qt<crlf>Etc."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x13043227>",
+                    "type": "UnknownWord",
+                    "value": "hooking"
+                },
+                "references": {
+                    "sentences": [
+                        "To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:"
+                    ],
+                    "titles": [
+                        "Hooking"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7a86d374>",
+                    "type": "UnknownWord",
+                    "value": "winapi"
+                },
+                "references": {
+                    "sentences": [
+                        "Injected code hooks the following WinAPI functions:",
+                        "To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb08c7e16>",
+                    "type": "UnknownWord",
+                    "value": "ntcreateuserprocess"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87032266>",
+                    "type": "UnknownWord",
+                    "value": "ntcreatethread"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe119aa14>",
+                    "type": "UnknownWord",
+                    "value": "zwdeviceiocontrolfile"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.",
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates.",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2560c875>",
+                    "type": "UnknownWord",
+                    "value": "translatemessage"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa250e957>",
+                    "type": "UnknownWord",
+                    "value": "certgetcertificatechain"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb19326c2>",
+                    "type": "UnknownWord",
+                    "value": "certverifycertificatechainpolicy"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "NtCreateUserProcess<crlf>NtCreateThread<crlf>ZwDeviceIoControlFile<crlf>TranslateMessage<crlf>CertGetCertificateChain<crlf>CertVerifyCertificateChainPolicy"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8d2fd742>",
+                    "type": "UnknownWord",
+                    "value": "divided"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooks might be divided in 3 groups, depending on the purpose:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a048a7e>",
+                    "type": "UnknownWord",
+                    "value": "hooked"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots",
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf7ea0d31>",
+                    "type": "UnknownWord",
+                    "value": "webinjection"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd984d179>",
+                    "type": "UnknownWord",
+                    "value": "pressed"
+                },
+                "references": {
+                    "sentences": [
+                        "NtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.<crlf>ZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism<crlf>TranslateMessage is hooked to log the keys pressed and to create screenshots"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcaa89357>",
+                    "type": "UnknownWord",
+                    "value": "moment"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd061fb25>",
+                    "type": "UnknownWord",
+                    "value": "man-in-the-browser"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfa4280fd>",
+                    "type": "UnknownWord",
+                    "value": "cert-related"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.",
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x81fc199a>",
+                    "type": "UnknownWord",
+                    "value": "winapis"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa9a40e>",
+                    "type": "UnknownWord",
+                    "value": "synchronized"
+                },
+                "references": {
+                    "sentences": [
+                        "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b0f6350>",
+                    "type": "UnknownWord",
+                    "value": "waiting"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf882e384>",
+                    "type": "UnknownWord",
+                    "value": "ioctl_afd_connect"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7644169b>",
+                    "type": "UnknownWord",
+                    "value": "ioctl_afd_super_connect"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x22e5f3b4>",
+                    "type": "UnknownWord",
+                    "value": "routing"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8bb336b>",
+                    "type": "UnknownWord",
+                    "value": "inform"
+                },
+                "references": {
+                    "sentences": [
+                        "Hooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9418456b>",
+                    "type": "UnknownWord",
+                    "value": "dllobnova"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a8ba8bd>",
+                    "type": "UnknownWord",
+                    "value": "aktualizacjadll"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2ced3d7c>",
+                    "type": "UnknownWord",
+                    "value": "googleaktualizacija"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xffd0521b>",
+                    "type": "UnknownWord",
+                    "value": "googleaktualizacija1"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7bac53ec>",
+                    "type": "UnknownWord",
+                    "value": "obnovlenie19"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5bfb2b62>",
+                    "type": "UnknownWord",
+                    "value": "vasja"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge",
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72b496db>",
+                    "type": "UnknownWord",
+                    "value": "ivan"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge",
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbf317dbf>",
+                    "type": "UnknownWord",
+                    "value": "9092zi"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2aeec9bd>",
+                    "type": "UnknownWord",
+                    "value": "9092ti"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9297abdd>",
+                    "type": "UnknownWord",
+                    "value": "9092ca"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge",
+                        "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6]."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc4921bfe>",
+                            "type": "Domain",
+                            "value": "teamworks455.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9297abdd>",
+                            "type": "UnknownWord",
+                            "value": "9092ca"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x152f85b4>",
+                    "type": "UnknownWord",
+                    "value": "9092us"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2b2f43bf>",
+                    "type": "UnknownWord",
+                    "value": "9092ge"
+                },
+                "references": {
+                    "sentences": [
+                        "DLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan<crlf>9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3607cc1>",
+                    "type": "UnknownWord",
+                    "value": "transliterated"
+                },
+                "references": {
+                    "sentences": [
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeb8c7d4e>",
+                    "type": "UnknownWord",
+                    "value": "slavic"
+                },
+                "references": {
+                    "sentences": [
+                        "We see the same picture with campaign names: quite a big amount of Slavic words and the same 9092* group.",
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6d9ab02>",
+                    "type": "UnknownWord",
+                    "value": "maybe"
+                },
+                "references": {
+                    "sentences": [
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb763eb3f>",
+                    "type": "UnknownWord",
+                    "value": "sheds"
+                },
+                "references": {
+                    "sentences": [
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x623375ab>",
+                    "type": "UnknownWord",
+                    "value": "definitely"
+                },
+                "references": {
+                    "sentences": [
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd404a067>",
+                    "type": "UnknownWord",
+                    "value": "slavs"
+                },
+                "references": {
+                    "sentences": [
+                        "The first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa11ecb6b>",
+                    "type": "UnknownWord",
+                    "value": "brokerage"
+                },
+                "references": {
+                    "sentences": [
+                        "We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7a34eb0f>",
+                    "type": "UnknownWord",
+                    "value": "cryptocurrency-related"
+                },
+                "references": {
+                    "sentences": [
+                        "We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xffbb8093>",
+                    "type": "UnknownWord",
+                    "value": "havent"
+                },
+                "references": {
+                    "sentences": [
+                        "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6]."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7885f2d>",
+                    "type": "UnknownWord",
+                    "value": "kumchakl1"
+                },
+                "references": {
+                    "sentences": [
+                        "Both of them have the same Raccoon configuration with Telegram channel kumchakl1."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x533d2d76>",
+                    "type": "UnknownWord",
+                    "value": "lost"
+                },
+                "references": {
+                    "sentences": [
+                        "Moreover, Raccoon was mentioned in [6] before we received commands from C&Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer here."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x84c46cc2>",
+                    "type": "UnknownWord",
+                    "value": "conjecture"
+                },
+                "references": {
+                    "sentences": [
+                        "Moreover, Raccoon was mentioned in [6] before we received commands from C&Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer here."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1f992296>",
+                    "type": "UnknownWord",
+                    "value": "surprise"
+                },
+                "references": {
+                    "sentences": [
+                        "It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfe094e89>",
+                    "type": "UnknownWord",
+                    "value": "issuer"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example, consider a signature:<crlf>Issuer BABJNCXZHQCJUVWAJJ<crlf>Thumbprint 46C79BD6482E287647B1D6700176A5F6F5AC6D57."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdd2f2e69>",
+                    "type": "UnknownWord",
+                    "value": "babjncxzhqcjuvwajj"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example, consider a signature:<crlf>Issuer BABJNCXZHQCJUVWAJJ<crlf>Thumbprint 46C79BD6482E287647B1D6700176A5F6F5AC6D57."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x14bcdbdf>",
+                    "type": "UnknownWord",
+                    "value": "thumbprint"
+                },
+                "references": {
+                    "sentences": [
+                        "As an example, consider a signature:<crlf>Issuer BABJNCXZHQCJUVWAJJ<crlf>Thumbprint 46C79BD6482E287647B1D6700176A5F6F5AC6D57."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2e91b04d>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "46c79bd6482e287647b1d6700176a5f6f5ac6d57"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x14bcdbdf>",
+                            "type": "UnknownWord",
+                            "value": "thumbprint"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87937905>",
+                    "type": "UnknownWord",
+                    "value": "realized"
+                },
+                "references": {
+                    "sentences": [
+                        "As we mentioned before, the first observed download command contained a link to teamworks455[.]com. We checked the TLS certificate for this site and realized that it was for another site dotxvcnjlvdajkwerwoh[.]com. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xf27a6bda>",
+                            "type": "Domain",
+                            "value": "dotxvcnjlvdajkwerwoh.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x87937905>",
+                            "type": "UnknownWord",
+                            "value": "realized"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x60e71a94>",
+                    "type": "UnknownWord",
+                    "value": "4th"
+                },
+                "references": {
+                    "sentences": [
+                        "And, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0x50f2697e>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "03d5ae30a0bd934a23b6a7f0756aa504"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x60e71a94>",
+                            "type": "UnknownWord",
+                            "value": "4th"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0xc5b6dc7>",
+                            "type": "Domain",
+                            "value": "etjmejjcxjtwweitluuw.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x60e71a94>",
+                            "type": "UnknownWord",
+                            "value": "4th"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xba6fd140>",
+                    "type": "UnknownWord",
+                    "value": "proud"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcc40d4da>",
+                    "type": "UnknownWord",
+                    "value": "safer"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x93c62dd5>",
+                    "type": "UnknownWord",
+                    "value": "everybody"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdbf9d535>",
+                    "type": "UnknownWord",
+                    "value": "hope"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xab3bb80>",
+                    "type": "UnknownWord",
+                    "value": "takedown"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it.",
+                        "takedown"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb48c381c>",
+                    "type": "UnknownWord",
+                    "value": "prosecution"
+                },
+                "references": {
+                    "sentences": [
+                        "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it."
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {},
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [
+            "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services",
+            "Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions."
+        ],
+        "associated": [],
+        "targets": [],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://decoded.avast.io/author/vladimirmartyanov/",
+                "https://zeusmuseum.com/zeus%201/",
+                "https://threatpost.com/zeus-source-code-leaked-051011/75217/",
+                "https://blog.malwarebytes.com/cybercrime/2017/01/zbot-with-legitimate-applications-on-board/",
+                "https://blog.malwarebytes.com/threat-analysis/2020/05/the-silent-night-zloader-zbot/",
+                "https://blogs.microsoft.com/on-the-issues/2022/04/13/zloader-botnet-disrupted-malware-ukraine/",
+                "https://zeusmuseum.com/zloader%202/",
+                "https://decoded.avast.io/vladimirmartyanov/raccoon-stealer-trash-panda-abuses-telegram/",
+                "https://decoded.avast.io/tag/analysis/",
+                "https://decoded.avast.io/tag/botnet/",
+                "https://decoded.avast.io/tag/malware/",
+                "https://decoded.avast.io/tag/reversing/",
+                "https://decoded.avast.io/tag/takedown/"
+            ]
+        },
+        "images": [
+            "https://lh6.googleusercontent.com/ZmMYYUJfjI2rdiRWIRRvPDsaecgIezMrlYIA8BAYAjlcPVJenIp7lbvrmEpN_XtJs4NRcT19doiFw9__EqI5ZBEPXkQSQUfRKHS69lh2muuBOU-s536GyrlNd74KEyeAh-21EFu7",
+            "https://lh6.googleusercontent.com/I0WQosnGRXyP_gEuuGswjk_VglMMG0ypH-tgkzHAjZMo8d_E01Xv1fWvAd-KCPIw0R3cwyAfgy2PvRCI6FM5ZwG0Kd52lV5Wc6krjcqV8aeI_a0-jje8CI9Ns2L_00UP9xl47EoW",
+            "https://lh4.googleusercontent.com/md7sG8nyfvIkMyTJMfr5EBH1oOxnHKbLb5kCic-vkhKCC9cLTlDFTjBwpRjnJ3a1vrq5yoZc_61byCVL9bzk-0z9T0tFJmhDo8-EPTT5DLyzxBM0L4B7W2_Z7HV2Jbv_azoeblT3"
+        ]
+    }
+}

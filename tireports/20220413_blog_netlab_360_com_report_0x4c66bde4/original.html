@@ -1,0 +1,764 @@
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Fodcha, a new DDos botnet</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=d28f5eb4c2">
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <link rel="canonical" href="https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/amp/">
+    
+    <meta property="og:site_name" content="360 Netlab Blog - Network Security Research Lab at 360">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Fodcha, a new DDos botnet">
+    <meta property="og:description" content="Overview
+Recently, CNCERT and 360netlab worked together and discovered a rapidly
+spreading DDoS botnet on the Internet. The global infection looks fairly big as
+just in China there are more than 10,000 daily active bots (IPs) and alsomore
+than 100 DDoS victims beingtargeted on a daily basis. We named the botnet Fodcha
+because of its initial use of the C2 domain name folded.in and its use of the
+chacha algorithm to encrypt network traffic.
+
+Botnet size
+From March 29 to April 10, 2022, the total n">
+    <meta property="og:url" content="https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/">
+    <meta property="article:published_time" content="2022-04-13T14:01:14.000Z">
+    <meta property="article:modified_time" content="2022-04-13T14:01:14.000Z">
+    <meta property="article:tag" content="Botnet">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Fodcha, a new DDos botnet">
+    <meta name="twitter:description" content="Overview
+Recently, CNCERT and 360netlab worked together and discovered a rapidly
+spreading DDoS botnet on the Internet. The global infection looks fairly big as
+just in China there are more than 10,000 daily active bots (IPs) and alsomore
+than 100 DDoS victims beingtargeted on a daily basis. We named the botnet Fodcha
+because of its initial use of the C2 domain name folded.in and its use of the
+chacha algorithm to encrypt network traffic.
+
+Botnet size
+From March 29 to April 10, 2022, the total n">
+    <meta name="twitter:url" content="https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Hui Wang">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="Botnet">
+    <meta name="twitter:site" content="@360Netlab">
+    
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "360 Netlab Blog - Network Security Research Lab at 360",
+        "logo": "https://blog.netlab.360.com/content/images/2019/02/netlab-brand-5.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Hui Wang",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://blog.netlab.360.com/content/images/2017/05/WechatIMG1.jpeg",
+            "width": 1280,
+            "height": 1280
+        },
+        "url": "https://blog.netlab.360.com/author/huiwang/",
+        "sameAs": []
+    },
+    "headline": "Fodcha, a new DDos botnet",
+    "url": "https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/",
+    "datePublished": "2022-04-13T14:01:14.000Z",
+    "dateModified": "2022-04-13T14:01:14.000Z",
+    "keywords": "Botnet",
+    "description": "Overview\nRecently, CNCERT and 360netlab worked together and discovered a rapidly\nspreading DDoS botnet on the Internet. The global infection looks fairly big as\njust in China there are more than 10,000 daily active bots (IPs) and alsomore\nthan 100 DDoS victims beingtargeted on a daily basis. We named the botnet Fodcha\nbecause of its initial use of the C2 domain name folded.in and its use of the\nchacha algorithm to encrypt network traffic.\n\nBotnet size\nFrom March 29 to April 10, 2022, the total n",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://blog.netlab.360.com/"
+    }
+}
+    </script>
+
+    <script src="/public/ghost-sdk.min.js?v=d28f5eb4c2"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "2a7213b591a9"
+});
+</script>
+    <meta name="generator" content="Ghost 2.13">
+    <link rel="alternate" type="application/rss+xml" title="360 Netlab Blog - Network Security Research Lab at 360" href="https://blog.netlab.360.com/rss/">
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83587830-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- Fix first paragraph font size -->
+<style type="text/css">
+ .post-template .post-content > p:first-child {font-size: 1em;}
+</style>
+
+<script src="https://blog-netlab-360.disqus.com/embed.js" data-timestamp="1649861610853"></script><style id="fit-vids-style">.fluid-width-video-container{flex-grow: 1;width:100%;}.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><link rel="prefetch" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.63860eb743c7d9d2adf0fa435788abe7.css"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.9450cde9dd2c9d366781a8fc5ff6e933.js"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.c20284e0add6900b2689cfac496169f0.js"><link rel="prefetch" as="script" href="https://disqus.com/next/config.js"><script src="https://c.disquscdn.com/next/embed/alfie_v4.63f1ab6d6b9d5807dc0c94ef3fe0b851.js" async="" charset="UTF-8"></script></head>
+<body class="post-template tag-botnet">
+
+    <div class="site-wrapper">
+
+             <header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://blog.netlab.360.com"><img src="https://blog.netlab.360.com/content/images/2019/02/netlab-brand-5.png" alt="360 Netlab Blog - Network Security Research Lab at 360"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-botnet" role="menuitem"><a href="https://blog.netlab.360.com/tag/botnet/">Botnet</a></li>
+    <li class="nav-dnsmon" role="menuitem"><a href="https://blog.netlab.360.com/tag/dnsmon/">DNSMon</a></li>
+    <li class="nav-ddos" role="menuitem"><a href="https://blog.netlab.360.com/tag/ddos/">DDoS</a></li>
+    <li class="nav-passivedns" role="menuitem"><a href="https://blog.netlab.360.com/tag/pdns/">PassiveDNS</a></li>
+    <li class="nav-mirai" role="menuitem"><a href="https://blog.netlab.360.com/tag/mirai/">Mirai</a></li>
+    <li class="nav-dta" role="menuitem"><a href="https://blog.netlab.360.com/tag/dta/">DTA</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+                <a class="social-link social-link-tw" href="https://twitter.com/360Netlab" title="Twitter" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+</a>
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://blog.netlab.360.com/rss/" title="RSS" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+    </header>
+
+
+    <main id="site-main" class="site-main outer">
+        <div class="inner">
+
+            <article class="post-full post tag-botnet no-image">
+
+                <header class="post-full-header">
+                    <section class="post-full-meta">
+                        <time class="post-full-meta-date" datetime="2022-04-13">13 April                            2022</time>
+                        <span class="date-divider">/</span> <a href="/tag/botnet/">Botnet</a>
+                    </section>
+                    <h1 class="post-full-title">Fodcha, a new DDos botnet</h1>
+                </header>
+
+
+                <section class="post-full-content">
+                    <div class="post-content">
+                        <h2 id="overview">Overview</h2><p>Recently, CNCERT and 360netlab worked together and discovered a rapidly spreading DDoS botnet on the Internet. The global infection looks fairly big as just in China there are more than 10,000 daily active bots (IPs) and alsomore than 100 DDoS victims beingtargeted on a daily basis. We named the botnet Fodcha because of its initial use of the C2 domain name folded.in and its use of the chacha algorithm to encrypt network traffic.</p><h2 id="botnetsize">Botnet size</h2>
+<p>From March 29 to April 10, 2022, the total number of unique Fodcha bots(IPs) has exceeded 62,000, and daily numbers fluctuate around 10,000. A daily breakdown is shown below.</p>
+<p><img src="https://blog.netlab.360.com/content/images/2022/04/fodcha.online.png" alt="fodcha.online"></p>
+<blockquote>
+<p>Netlab note:<br>
+Based on direct data from the security community that we worked with, the number of daily live bots are more than 56000.</p>
+</blockquote>
+<p>When we look at the domestic data, the top provinces that the bots are coming from are the Shandong Province (12.9%), the Liaoning Province (11.8%) and the Zhejiang Province (9.9%).The service providers that these bots originate from are China Unicom(59.9%), China Telecom(39.4%), and China Mobile(0.5%).</p>
+<p><img src="https://blog.netlab.360.com/content/images/2022/04/fodcha.diss.province-1.png" alt="fodcha.diss.province-1"><br>
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha.diss.isp.png" alt="fodcha.diss.isp"></p>
+<h2 id="spreadmethod">Spread method</h2>
+<p>Fodcha is mainly spreading through the following NDay vulnerabilities and Telnet/SSH weak passwords.</p>
+<blockquote>
+<p>Netlab note:<br>
+We observed that a brute-force cracking tool we named Crazyfia appears on the same downloader server of FodchaThe scan results of this tool will be used by the Fodcha author to install Fodcha samples on the vulnerable devices.</p>
+</blockquote>
+<p><img src="https://blog.netlab.360.com/content/images/2022/04/fodcha.vul.png" alt="fodcha.vul"></p>
+<p>List of main vulnerabilities:</p>
+<table>
+<thead>
+<tr>
+<th>Vulnerability</th>
+<th>Affected Device/Service</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://www.exploit-db.com/exploits/39328">Android ADB Debug Server RCE</a></td>
+<td>Android</td>
+</tr>
+<tr>
+<td><a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2021-22205">CVE-2021-22205</a></td>
+<td>GitLab</td>
+</tr>
+<tr>
+<td><a href="https://nvd.nist.gov/vuln/detail/CVE-2021-35394">CVE-2021-35394</a></td>
+<td>Realtek Jungle SDK</td>
+</tr>
+<tr>
+<td><a href="https://www.exploit-db.com/exploits/41471/">JAWS Webserver unauthenticated shell command execution</a></td>
+<td>MVPower DVR</td>
+</tr>
+<tr>
+<td><a href="https://blog.netlab.360.com/multiple-botnets-are-spreading-using-lilin-dvr-0-day/">LILIN DVR RCE</a></td>
+<td>LILIN DVR</td>
+</tr>
+<tr>
+<td><a href="https://www.exploit-db.com/exploits/37770">TOTOLINK Routers Backdoor</a></td>
+<td>TOTOLINK Routers</td>
+</tr>
+<tr>
+<td><a href="https://www.exploit-db.com/exploits/38453">ZHONE Router Web RCE</a></td>
+<td>ZHONE Router</td>
+</tr>
+</tbody>
+</table>
+<h2 id="sampleanalysis">Sample Analysis</h2>
+<p>The Fodcha botnet includes samples targeting mips, mpsl, arm, x86, and other CPU architectures. In the past 3 months, the Fodcha samples we captured can be divided into two versions, v1 and v2. Their main functions are almost the same. By cross-referencing the different versions, we can tell that the Fodcha operators are really trying to hide their C2s and load-balance among the C2s.</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Chacha20</th>
+<th>C2 Format</th>
+<th>C2</th>
+<th>MAPPING(Domain&lt;--&gt;IP)</th>
+<th>MAPPING(IP&lt;--&gt;PORT )</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1</td>
+<td>yes</td>
+<td>plaintext</td>
+<td>folded.in</td>
+<td>1:N</td>
+<td>N:1</td>
+</tr>
+<tr>
+<td>v2</td>
+<td>yes</td>
+<td>ciphertext</td>
+<td>fridgexperts.cc</td>
+<td>1:N</td>
+<td>N:10</td>
+</tr>
+</tbody>
+</table>
+<p>The latest sample of V2 X86 CPU architecture is selected as the main object of analysis in this paper, and its basic information is as follows.</p>
+<pre><code>8ea56a9fa9b11b15443b369f49fa9719
+ELF 32-bit LSB executable, Intel 80386, version 1 (SYSV), statically linked, stripped
+Packer:None
+</code></pre>
+<p>Fodcha's function is simple. When it executes on the compromised device, it first checks the runtime parameters. When there are no parameters, it exits out. Fodcha does this as a simple countermeasure to deter sandbox. When parameters are present, it first decrypts the key configurations data, the data include some sensitive information such as C2s will It then prints “here we are” on the Console, and uses a random string to disguise the process name. Finally communication with the C2 will be established. The following section will focus on Fodcha's decryption method and network communication.</p>
+<h4 id="decryptingkeyconfigurations">Decrypting key configurations</h4>
+<p>Fodcha uses a multiple-Xor encryption method to protect its key configurations such as C2 data.</p>
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha_xor.png" width="860px">
+<p>The corresponding python implementation is shown below, taking the ciphertext <code>EB D3 EB C9 C2 EF F6 FD FD FC FB F1 A3 FB E9</code> in the sample as an example. After decryption, we will get the Fodcha's C2: <strong>fridgexperts.cc</strong>.</p>
+<pre><code class="language-python">cipher=[  0xEB, 0xD3, 0xEB, 0xC9, 0xC2, 0xEF, 0xF6, 0xFD, 0xFD, 0xFC, 
+  0xFB, 0xF1, 0xA3, 0xFB, 0xE9]
+  
+key=[0x66, 0x4A, 0x69, 0x46, 0x4E, 0x61, 0x65, 0x66, 0x73, 0x65, 
+  0x64, 0x69, 0x66, 0x73, 0x61, 0x69, 0x66, 0x73, 0x69,00]
+
+tmp=[]
+
+for i in range(len(cipher)):
+    tmp.append((cipher[i] ^ key[i])%0xff^0xbe)
+
+for i in range(len(tmp)):
+    for j in key:
+        tmp[i]^=j
+out=''.join([chr(i) for i in tmp])
+
+print out
+</code></pre>
+<h4 id="networkcommunication">Network communication</h4>
+<p>Fodcha establishes a connection with C2 through the following code fragment where the DNS A record IP of the C2 domain corresponds to the PORT of N:10.</p>
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha_connect.png" width="860px">
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha_mapping.png" width="860px"> 
+<p>Once the connection is successfully established with C2, the Bot must go through 5 rounds of interaction with C2 before it can actually communicate with C2. We use arm as the packet string, which generates the network traffic shown in the following figure.</p>
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha_net.png" width="860px"> 
+<p>Let us elaborate on how this traffic is generated:</p>
+<h6 id="step1botc2fixedlength5bytes">Step 1: Bot--&gt;C2 (fixed length 5 bytes)</h6>
+<p>The hard-coded <code>ee 00 00</code> is calculated by the tcp/ip checksum method to get the 2-byte checksum value 0xff11, which is filled to the last 2 bytes.</p>
+<pre><code class="language-python">def checksum(data):
+  s = 0
+  n = len(data) % 2
+  for i in range(0, len(data)-n, 2):
+    s+= ord(data[i]) + (ord(data[i+1]) &lt;&lt; 8)
+  if n:
+    s+= ord(data[i+1])
+  while (s &gt;&gt; 16):
+    s = (s &amp; 0xFFFF) + (s &gt;&gt; 16)
+  s = ~s &amp; 0xffff
+  return s
+</code></pre>
+<h6 id="step2c2bot2timesthefirst32bytesthesecond12bytes">Step 2: C2--&gt;BOT (2 times, the first 32 bytes; the second 12 bytes)</h6>
+<p>Note that the key and nonce are generated by the C2 side, not fixed.</p>
+<pre><code>32 bytes at the beginning is chacha20 key:
+
+26 14 2d 4d 58 d2 9e 26  67 98 bc e4 ef 69 b9 04
+e6 d0 73 17 5c 4f 71 33  9f 97 18 f7 31 8d d4 d6
+
+12 bytes at the last is chacha20 nonce:
+
+2f 8a 5c da 57 50 a6 64  d7 98 f5 5d
+</code></pre>
+<h6 id="step3botc2fixedlength5bytes">Step 3: BOT--&gt;C2 (fixed length 5 bytes)</h6>
+<p>Hard-coded <code>55 00 00</code> by checksum, calculate the checksum value 0xffaa, fill in the last 2 bytes, become <code>55 00 00 aa ff</code>, then use chacha20 algorithm to encrypt, the number of rounds is 1, get <code>99 9e 95 f6 32</code>.</p>
+<h6 id="step4c2botfixedlength5bytes">Step 4: C2--&gt;BOT(fixed length 5 bytes)</h6>
+<p>At this point, if the format of the 5 bytes received is <code>0x55</code> at the beginning and the last 2 bytes are the checksum value, it means the previous interaction is right, enter Step 5 and ask BOT to start sending packet information.</p>
+<h6 id="step5botc22timesthefirst5bytesthesecondgrouping">Step 5: Bot---&gt;C2 (2 times, the first 5 bytes, the second grouping)</h6>
+<ul>
+<li>
+<p>First time<br>
+Hard-coded <code>fe 00 00</code>, the third byte is really the grouping length, becomes <code>fe 00 03</code>, calculate the checksum value 0xfefe, fill in the tail to get <code>fe 00 03 fe fe</code></p>
+</li>
+<li>
+<p>Second time<br>
+grouping string <code>arm</code>, use chacha20 encryption, round number 1, get <code>ad ec f8</code></p>
+</li>
+</ul>
+<p>At this point the BOT is successfully registered and waits to execute the instruction issued by C2. The instruction code and its meaning are shown below:<br>
+- 0x69, Heartbeat<br>
+<img src="https://blog.netlab.360.com/content/images/2022/04/fodcha_heart.png" width="860px"><br>
+- 0xEB, DDoS Attack<br>
+- 0xFB, Exit</p>
+<h2 id="c2tracking">C2 Tracking</h2>
+<p>Our botnet tracking system data shows that Fodcha has been launching DDoS attacks non stop since it came online, with the following trends in attack targets.</p>
+<p><img src="https://blog.netlab.360.com/content/images/2022/04/fodcha.cccommand.png" alt="fodcha.cccommand"></p>
+<p>As you can see, the DDoS behavior of this family is very active:</p>
+<ul>
+<li>The most active attack time was on 2022-03-01, with over 130k attacking commands being recorded.</li>
+<li>In the recent week, the average daily attack command has exceeded 7k, targeting 100+ DDoS victims.</li>
+</ul>
+<p>At the same time, we can also clearly see from the DNS perspective that the C2 domain of this family made a turnover around 2022-03-19, corresponding to the shift from v1 to v2 in the aforementioned sample analysis section.</p>
+<p><img src="https://blog.netlab.360.com/content/images/2022/04/c2.dns.png" alt="c2.dns"></p>
+<blockquote>
+<p>Netlab note:<br>
+The shift from v1 to v2 is due to the fact that the C2 servers  corresponding to the v1 version were shutdown by a their cloud vendor, so Fodcha's operators had no choice but to re-launch v2 and update C2. The new C2 is mapped to more than a dozen IPs and is distributed across multiple countries including the US, Korea, Japan, and India, it involves more cloud providers such as Amazon, DediPath, DigitalOcean, Linode, and many others.</p>
+</blockquote>
+<h2 id="ioc">IoC</h2>
+<h4 id="samplehashmd5">Sample Hash(md5)</h4>
+<pre><code>0e3ff1a19fcd087138ec85d5dba59715
+1b637faa5e424966393928cd6df31849
+208e72261e10672caa60070c770644ba
+2251cf2ed00229c8804fc91868b3c1cb
+2a02e6502db381fa4d4aeb356633af73
+2ed0c36ebbeddb65015d01e6244a2846
+2fe2deeb66e1a08ea18dab520988d9e4
+37adb95cbe4875a9f072ff7f2ee4d4ae
+3fc8ae41752c7715f7550dabda0eb3ba
+40f53c47d360c1c773338ef5c42332f8
+4635112e2dfe5068a4fe1ebb1c5c8771
+525670acfd097fa0762262d9298c3b3b
+54e4334baa01289fa4ee966a806ef7f1
+5567bebd550f26f0a6df17b95507ca6d
+5bdb128072c02f52153eaeea6899a5b1
+6244e9da30a69997cf2e61d8391976d9
+65dd4b23518cba77caab3e8170af8001
+6788598e9c37d79fd02b7c570141ddcf
+760b2c21c40e33599b0a10cf0958cfd4
+792fdd3b9f0360b2bbee5864845c324c
+7a6ebf1567de7e432f09f53ad14d7bc5
+9413d6d7b875f071314e8acae2f7e390
+954879959743a7c63784d1204efc7ed3
+977b4f1a153e7943c4db6e5a3bf40345
+9defda7768d2d806b06775c5768428c4
+9dfa80650f974dffe2bda3ff8495b394
+a996e86b511037713a1be09ee7af7490
+b11d8e45f7888ce85a67f98ed7f2cd89
+b1776a09d5490702c12d85ab6c6186cd
+b774ad07f0384c61f96a7897e87f96c0
+c99db0e8c3ecab4dd7f13f3946374720
+c9cbf28561272c705c5a6b44897757ca
+cbdb65e4765fbd7bcae93b393698724c
+d9c240dbed6dfc584a20246e8a79bdae
+e372e5ca89dbb7b5c1f9f58fe68a8fc7
+ebf81131188e3454fe066380fa469d22
+fe58b08ea78f3e6b1f59e5fe40447b11
+</code></pre>
+<h4 id="downloadlinks">Download Links</h4>
+<pre><code><a class="vglnk" href="http://139.177.195.192/bins/arm" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>bins</span><span>/</span><span>arm</span></a>
+<a class="vglnk" href="http://139.177.195.192/bins/arm5" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>bins</span><span>/</span><span>arm5</span></a>
+<a class="vglnk" href="http://139.177.195.192/bins/arm7" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>bins</span><span>/</span><span>arm7</span></a>
+<a class="vglnk" href="http://139.177.195.192/bins/mips" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>bins</span><span>/</span><span>mips</span></a>
+<a class="vglnk" href="http://139.177.195.192/bins/realtek.mips" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>bins</span><span>/</span><span>realtek</span><span>.</span><span>mips</span></a>
+<a class="vglnk" href="http://139.177.195.192/blah" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>blah</span></a>
+<a class="vglnk" href="http://139.177.195.192/linnn" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>linnn</span></a>
+<a class="vglnk" href="http://139.177.195.192/skidrt" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>skidrt</span></a>
+<a class="vglnk" href="http://139.177.195.192/z.sh" rel="nofollow"><span>http</span><span>://</span><span>139</span><span>.</span><span>177</span><span>.</span><span>195</span><span>.</span><span>192</span><span>/</span><span>z</span><span>.</span><span>sh</span></a>
+<a class="vglnk" href="http://162.33.179.171/bins/arm" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>bins</span><span>/</span><span>arm</span></a>
+<a class="vglnk" href="http://162.33.179.171/bins/arm7" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>bins</span><span>/</span><span>arm7</span></a>
+<a class="vglnk" href="http://162.33.179.171/bins/mpsl" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>bins</span><span>/</span><span>mpsl</span></a>
+<a class="vglnk" href="http://162.33.179.171/bins/realtek.mips" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>bins</span><span>/</span><span>realtek</span><span>.</span><span>mips</span></a>
+<a class="vglnk" href="http://162.33.179.171/bins/realtek.mpsl" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>bins</span><span>/</span><span>realtek</span><span>.</span><span>mpsl</span></a>
+<a class="vglnk" href="http://162.33.179.171/blah" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>blah</span></a>
+<a class="vglnk" href="http://162.33.179.171/k.sh" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>k</span><span>.</span><span>sh</span></a>
+<a class="vglnk" href="http://162.33.179.171/linnn" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>linnn</span></a>
+<a class="vglnk" href="http://162.33.179.171/z.sh" rel="nofollow"><span>http</span><span>://</span><span>162</span><span>.</span><span>33</span><span>.</span><span>179</span><span>.</span><span>171</span><span>/</span><span>z</span><span>.</span><span>sh</span></a>
+<a class="vglnk" href="http://206.188.197.104/bins/arm7" rel="nofollow"><span>http</span><span>://</span><span>206</span><span>.</span><span>188</span><span>.</span><span>197</span><span>.</span><span>104</span><span>/</span><span>bins</span><span>/</span><span>arm7</span></a>
+<a class="vglnk" href="http://206.188.197.104/bins/realtek.mips" rel="nofollow"><span>http</span><span>://</span><span>206</span><span>.</span><span>188</span><span>.</span><span>197</span><span>.</span><span>104</span><span>/</span><span>bins</span><span>/</span><span>realtek</span><span>.</span><span>mips</span></a>
+<a class="vglnk" href="http://206.188.197.104/skidrt" rel="nofollow"><span>http</span><span>://</span><span>206</span><span>.</span><span>188</span><span>.</span><span>197</span><span>.</span><span>104</span><span>/</span><span>skidrt</span></a>
+<a class="vglnk" href="http://31.214.245.253/bins/arm" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>bins</span><span>/</span><span>arm</span></a>
+<a class="vglnk" href="http://31.214.245.253/bins/arm7" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>bins</span><span>/</span><span>arm7</span></a>
+<a class="vglnk" href="http://31.214.245.253/bins/mips" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>bins</span><span>/</span><span>mips</span></a>
+<a class="vglnk" href="http://31.214.245.253/bins/mpsl" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>bins</span><span>/</span><span>mpsl</span></a>
+<a class="vglnk" href="http://31.214.245.253/bins/x86" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>bins</span><span>/</span><span>x86</span></a>
+<a class="vglnk" href="http://31.214.245.253/k.sh" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>k</span><span>.</span><span>sh</span></a>
+<a class="vglnk" href="http://31.214.245.253/kk.sh" rel="nofollow"><span>http</span><span>://</span><span>31</span><span>.</span><span>214</span><span>.</span><span>245</span><span>.</span><span>253</span><span>/</span><span>kk</span><span>.</span><span>sh</span></a>
+</code></pre>
+<h4 id="c2domain">C2 domain</h4>
+<pre><code>folded.in
+fridgexperts.cc
+</code></pre>
+<h2 id="contactus">Contact us</h2>
+<p>Readers are always welcomed to reach us on Twitter or email us to netlab at 360 dot cn.</p>
+
+                    </div>
+                </section>
+
+
+                <footer class="post-full-footer">
+
+
+                    <section class="post-full-authors">
+
+    <div class="post-full-authors-content">
+        <p>This post was a collaboration between</p>
+        <p><a href="/author/huiwang/">Hui Wang</a>, <a href="/author/alex/">Alex.Turing</a>, <a href="/author/xuy1202/">YANG XU</a></p>
+    </div>
+
+    <ul class="author-list">
+        <li class="author-list-item">
+
+            <div class="author-card">
+                <div class="basic-info">
+                        <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2017/05/WechatIMG1.jpeg" alt="Hui Wang">
+                    <h2>Hui Wang</h2>
+                </div>
+                <div class="bio">
+                        <p>Read <a href="/author/huiwang/">more posts</a> by this author.</p>
+                </div>
+            </div>
+
+                <a href="/author/huiwang/" class="moving-avatar">
+                    <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2017/05/WechatIMG1.jpeg" alt="Hui Wang">
+                </a>
+
+        </li>
+        <li class="author-list-item">
+
+            <div class="author-card">
+                <div class="basic-info">
+                        <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/06/turing.PNG" alt="Alex.Turing">
+                    <h2>Alex.Turing</h2>
+                </div>
+                <div class="bio">
+                        <p>Read <a href="/author/alex/">more posts</a> by this author.</p>
+                </div>
+            </div>
+
+                <a href="/author/alex/" class="moving-avatar">
+                    <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/06/turing.PNG" alt="Alex.Turing">
+                </a>
+
+        </li>
+        <li class="author-list-item">
+
+            <div class="author-card">
+                <div class="basic-info">
+                        <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/04/head.jpg" alt="YANG XU">
+                    <h2>YANG XU</h2>
+                </div>
+                <div class="bio">
+                        <p>Read <a href="/author/xuy1202/">more posts</a> by this author.</p>
+                </div>
+            </div>
+
+                <a href="/author/xuy1202/" class="moving-avatar">
+                    <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/04/head.jpg" alt="YANG XU">
+                </a>
+
+        </li>
+
+    </ul>
+
+</section>
+
+
+                </footer>
+
+                <div id="disqus_thread"><iframe id="dsq-app5773" name="dsq-app5773" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="https://disqus.com/embed/comments/?base=default&amp;f=blog-netlab-360&amp;t_i=ghost-6256254b2c81b900076f9a02&amp;t_u=https%3A%2F%2Fblog.netlab.360.com%2Ffodcha-a-new-ddos-botnet%2F&amp;t_d=Fodcha%2C%20a%20new%20DDos%20botnet&amp;t_t=Fodcha%2C%20a%20new%20DDos%20botnet&amp;s_o=default#version=05eb5483fcdc979cee82423b401a7c46" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 394px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe><iframe id="indicator-north" name="indicator-north" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 1040px !important; border: none !important; overflow: hidden !important; top: 0px !important; min-width: 1040px !important; max-width: 1040px !important; position: fixed !important; z-index: 2147483646 !important; height: 0px !important; min-height: 0px !important; max-height: 0px !important; display: none !important;"></iframe><iframe id="indicator-south" name="indicator-south" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" style="width: 1040px !important; border: none !important; overflow: hidden !important; bottom: 0px !important; min-width: 1040px !important; max-width: 1040px !important; position: fixed !important; z-index: 2147483646 !important; height: 0px !important; min-height: 0px !important; max-height: 0px !important; display: none !important;"></iframe></div>
+                <script>
+                    var disqus_config = function () {
+                        this.page.url = "https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/";
+                        this.page.identifier = "ghost-6256254b2c81b900076f9a02"
+                    };
+                    (function () {
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://blog-netlab-360.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+
+            </article>
+
+        </div>
+    </main>
+
+    <aside class="read-next outer">
+        <div class="inner">
+            <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://blog.netlab.360.com/content/images/size/w600/2019/02/astronomy-constellation-dark-998641-4.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— 360 Netlab Blog - Network Security Research Lab at 360 —</small>
+                        <h3 class="read-next-card-header-title"><a href="/tag/botnet/">Botnet</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="/men-sheng-fa-da-cai-fodchajiang-shi-wang-luo/">新威胁：闷声发大财的Fodcha僵尸网络</a></li>
+                            <li><a href="/b1txor20-use-of-dns-tunneling_en/">New Threat: B1txor20, A Linux Backdoor Using DNS Tunnel</a></li>
+                            <li><a href="/b1txor20-use-of-dns-tunneling_cn/">新威胁：使用DNS Tunnel技术的Linux后门B1txor20正在通过Log4j漏洞传播</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="/tag/botnet/">See all 104 posts →</a>
+                    </footer>
+                </article>
+
+
+                <article class="post-card post tag-botnet tag-ddos no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/men-sheng-fa-da-cai-fodchajiang-shi-wang-luo/">
+
+            <header class="post-card-header">
+                    <span class="post-card-tags">Botnet</span>
+                <h2 class="post-card-title">新威胁：闷声发大财的Fodcha僵尸网络</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                <p>本报告由国家互联网应急中心（CNCERT）与三六零数字安全科技集团有限公司共同发布。 概述 近期，CNCERT和三六零数字安全科技集团有限公司共同监测发现一个新的且在互联网上快速传播的DDoS僵尸网络，通过跟踪监测发现其每日上线境内肉鸡数（以IP数计算）已超过1万、且每日会针对超过100个攻击目标发起攻击，给网络空间带来较大威胁。由于该僵尸网络最初使用的C2域名folded.in，以及使用chacha算法来加密网络流量，我们将其命名为Fodcha。 僵尸网络规模 通过监测分析发现，2022年3月29日至4月10日Fodcha僵尸网络日上线境内肉鸡数最高达到1.5万台，累计感染肉鸡数达到6.2万。每日境内上线肉鸡数情况如下。 Netlab按： 根据国外合作伙伴的数据，我们估算该家族全球日活肉鸡数量应该在5.6w+ Fodcha僵尸网络位于境内肉鸡按省份统计，排名前三位的分别为山东省（12.9%）、辽宁省（11.8%</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        Hui Wang
+                    </div>
+
+                        <a href="/author/huiwang/" class="static-avatar">
+                            <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2017/05/WechatIMG1.jpeg" alt="Hui Wang">
+                        </a>
+                </li>
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        Alex.Turing
+                    </div>
+
+                        <a href="/author/alex/" class="static-avatar">
+                            <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/06/turing.PNG" alt="Alex.Turing">
+                        </a>
+                </li>
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        YANG XU
+                    </div>
+
+                        <a href="/author/xuy1202/" class="static-avatar">
+                            <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2019/04/head.jpg" alt="YANG XU">
+                        </a>
+                </li>
+            </ul>
+
+            <span class="reading-time">9 min read</span>
+
+        </footer>
+
+    </div>
+
+</article>
+
+            </div>
+        </div>
+    </aside>
+
+    <div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://blog.netlab.360.com">
+                <img src="https://blog.netlab.360.com/content/images/size/w30/2019/02/netlab_xs-2.png" alt="360 Netlab Blog - Network Security Research Lab at 360 icon">
+            <span>360 Netlab Blog - Network Security Research Lab at 360</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">Fodcha, a new DDos botnet</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Fodcha%2C%20a%20new%20DDos%20botnet&amp;url=https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/" onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.netlab.360.com/fodcha-a-new-ddos-botnet/" onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0" max="9686">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://blog.netlab.360.com">360 Netlab Blog - Network Security Research Lab at 360</a> © 2022</section>
+                <nav class="site-footer-nav">
+                    <a href="https://blog.netlab.360.com">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/360Netlab" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script>
+        var images = document.querySelectorAll('.kg-gallery-image img');
+        images.forEach(function (image) {
+            var container = image.closest('.kg-gallery-image');
+            var width = image.attributes.width.value;
+            var height = image.attributes.height.value;
+            var ratio = width / height;
+            container.style.flex = ratio + ' 1 0%';
+        })
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/built/jquery.fitvids.js?v=d28f5eb4c2"></script>
+
+
+    <script>
+// Adds delay to author card dropups to disappear. This gives enough
+// time for the user to interact with the author card while they move
+// the mouse from the avatar to the card. Also makes space for the
+// interacted avatar.
+$(document).ready(function () {
+
+    var hoverTimeout;
+
+    $('.author-list-item').hover(function(){
+        var $this = $(this);
+
+        clearTimeout(hoverTimeout);
+
+        $('.author-card').removeClass('hovered');
+        $(this).children('.author-card').addClass('hovered');
+
+    }, function() {
+        var $this = $(this);
+
+        hoverTimeout = setTimeout(function() {
+            $this.children('.author-card').removeClass('hovered');
+        }, 800);
+    });
+
+});
+</script>
+
+    <script>
+
+        // NOTE: Scroll performance is poor in Safari
+        // - this appears to be due to the events firing much more slowly in Safari.
+        //   Dropping the scroll event and using only a raf loop results in smoother
+        //   scrolling but continuous processing even when not scrolling
+        $(document).ready(function () {
+            // Start fitVids
+            var $postContent = $(".post-full-content");
+            $postContent.fitVids();
+            // End fitVids
+
+            var progressBar = document.querySelector('#reading-progress');
+            var header = document.querySelector('.floating-header');
+            var title = document.querySelector('.post-full-title');
+
+            var lastScrollY = window.scrollY;
+            var lastWindowHeight = window.innerHeight;
+            var lastDocumentHeight = $(document).height();
+            var ticking = false;
+
+            function onScroll() {
+                lastScrollY = window.scrollY;
+                requestTick();
+            }
+
+            function onResize() {
+                lastWindowHeight = window.innerHeight;
+                lastDocumentHeight = $(document).height();
+                requestTick();
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(update);
+                }
+                ticking = true;
+            }
+
+            function update() {
+                var trigger = title.getBoundingClientRect().top + window.scrollY;
+                var triggerOffset = title.offsetHeight + 35;
+                var progressMax = lastDocumentHeight - lastWindowHeight;
+
+                // show/hide floating header
+                if (lastScrollY >= trigger + triggerOffset) {
+                    header.classList.add('floating-active');
+                } else {
+                    header.classList.remove('floating-active');
+                }
+
+                progressBar.setAttribute('max', progressMax);
+                progressBar.setAttribute('value', lastScrollY);
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onResize, false);
+
+            update();
+
+        });
+    </script>
+
+
+    
+
+
+
+<iframe style="display: none;"></iframe></body></html>

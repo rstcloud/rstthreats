@@ -1,0 +1,199 @@
+[
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x458ee9e6",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "text": "1,453 people reacted\n66\n8 min. read\nBy Shimi Cohen, Inbal Shalev and Irena Damsky\nApril 8, 2022 at 6:00 PM\nCategory: Malware\nTags: backdoor, C2, Cortex, Infostealer, Jupyter, Polazert, SolarMarker, WildFire, Yellow Cockatoo"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xe1de7312",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x2d096983",
+            "title": "Executive Summary",
+            "text": "Recently, we've identified a new version of SolarMarker, a malware family known for its infostealing and backdoor capabilities, mainly delivered through search engine optimization (SEO) manipulation to convince users to download malicious documents.\nSome of SolarMarkers capabilities include the exfiltration of auto-fill data, saved passwords and saved credit card information from victims web browsers. Besides capabilities typical for infostealers, SolarMarker has additional capabilities such as file transfer and execution of commands received from a C2 server.\nThe malware invests significant effort into defense evasion, which consists of techniques like signed files, huge files, impersonation of legitimate software installations and obfuscated PowerShell scripts.\nThis malware has been prevalent since September 2020 targeting U.S. organizations, and part of the infrastructure is still active as of 2022 in addition to a new infrastructure that attackers have recently deployed.\nHere, we dive into the technical details of the newly identified SolarMarker activity specifically, how this malware often changes and modifies its attack patterns. For example, the recent version demonstrated an evolution from Windows Portable Executables (EXE files) to working with Windows installer package files (MSI files). According to the evidence we have, this campaign is still in development and going back to using executables files (EXE) as it did in its earlier versions.\nPalo Alto Networks customers received protections against the newly discovered campaigns through Cortex XDR and WildFire.",
+            "table": "0;1\nRelated malware names;SolarMarker, Jupyter, Yellow Cockatoo, Polazert\nRelated Unit 42 topics;infostealer  ,  backdoor\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xc0d8f1ed",
+            "title": "Table of Contents",
+            "text": "Infection Vector\nDeployment of SolarMarker Infrastructure on a Victim Machine\nMain Sections of the PowerShell Script\nEncrypted Payload\nSolarMarker Backdoor\nSolarMarker Infostealer\nKey Changes Observed in the New Version of SolarMarker\nConclusion\nIndicators of Compromise\nAdditional Resources"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xd1f1d2a0",
+            "title": "Infection Vector",
+            "text": "SolarMarker is multi-stage malware. The attackers use obfuscated PowerShell scripts to deploy their attack and stay under the radar.\nThe primary infection vector of SolarMarker is SEO poisoning, which is an attack method in which threat actors create malicious websites packed with keywords and use search engine optimization techniques to make them show up prominently in search results."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xae8af9a8",
+            "title": "Deployment of SolarMarker Infrastructure on a Victim Machine",
+            "text": "The initial stage is an EXE file larger than 250MB (the large file size helps to avoid inspection by an automated sandbox or an AV engine). In this case, the file we analyzed was called setup.exe. based on the sample compilation date in February 2022, the demonstrated artifacts belong to a new development in the malware lifecycle.\nFigure 1. Dropper file properties.\nFigure 2. The file is signed with valid digital certificates to further hide from detection. We assume a stolen code-signing cert from a legitimate company was used to sign SolarMarker but at the time of writing, the certificate chain has been revoked.\nThis file is a .NET-compiled dropper that will drop and execute an installer of a legitimate program to avoid raising the users suspicion toward the downloaded binary.\nFigure 3. Legitimate PDF Merge installer.\nFigure 4. The name of the legitimate dropped installer file is the same as the first stage file with the _install suffix. (setup_install.exe)\nIn parallel, the malware runs a PowerShell loader in a new thread to load and execute the SolarMarker backdoor payload.\nWe can see the loaded script decoded by debugging the PowerShell invoke function.\nLet's take a look at the script.\nFigure 5. Obfuscated PowerShell script.\nFigure 6. To improve the readability of this PowerShell loader script, we removed various types of obfuscation and added comments."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xe50a579c",
+            "title": "Main Sections of the PowerShell Script",
+            "text": "showWindowAsync makes PowerShell windows hidden to conceal malicious activity from the plain sight of users.\nWrites the encrypted base64 payload of the SolarMarker backdoor to file with random extension into the TEMP folder.\nAchieves persistence using the lnk file in the startup folder. The target file of the lnk is the encrypted base64 payload of the SolarMarker backdoor with the random extension. (This file cannot be run directly).\nIn Windows environments, every file extension is associated with a default program. The associations of extensions with programs are handled through the registry. SolarMarker sets a handler to the custom random extension to run the encrypted payload. This handler is a PowerShell script that decrypts the payload and loads the bytes of the encrypted payload (backdoor) into memory.\nThe attacker avoids downloading the assembly to disk and subverts it using the Load method, which accepts a byte array instead of a file. The loading technique is called Reflective Code Loading.\nIn the first execution of the malware on the victim machine, the encrypted payload (backdoor) will load into the first stage of the malware (setup.exe) because, as we mentioned earlier, setup.exe opened a new thread in which it ran the PowerShell script.\nAfter the reboot, the encrypted payload will load directly into the PowerShell process due to the lnk file from the startup folder."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x66cea7fd",
+            "title": "Encrypted Payload",
+            "text": "Weve so far mentioned the encrypted payload many times. What exactly is it?\nWe can make a small change to the PowerShell script of the attacker to save the assembly to disk rather than loading it directly into memory. In addition, this can help us understand the functionality of this version of SolarMarker.\nWe got a .NET-compiled Dynamic-Link Library (.DLL) that contains the core code of the SolarMarker backdoor with an embedded C2 client.\nWhen looking at the decompiled code and the names of the classes and functions, we can see that they don't look right. Instead, they look like they are obfuscated.\nFigure 7. Obfuscated names of the classes and functions/obfuscated code doesn't make much sense.\nAfter quickly running de4dot, we can see that it unpacked and deobfuscated:\nFigure 8. Deobfuscated strings in functions."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xa3340c7f",
+            "title": "SolarMarker Backdoor",
+            "text": "The SolarMarker backdoor is a .NET C2 client that will communicate with the C2 server within the encrypted channel.\nThe protocol communication is HTTP usually POST requests.\nThe data is encrypted using RSA encryption with Advanced Encryption Standard (AES) symmetric encryption.\nFigure 9. Encrypted network communication with the C2 server.\nThe client performs internal reconnaissance, collects basic information about the victim machine and exfiltrates it over an existing C2 channel.\nFigure 10. Exfiltrated data before encryption.\nThe client sends a signal to the attackers server to check for instructions or additional payloads at regular intervals (60 seconds).\nThe attacker can run a PowerShell script and transfer files to the victim machine.\nThe next stage is again a PowerShell encoded script that deploys the SolarMarker final payload (.NET Infostealer) and loads it into memory (this typically occurs about a few hours after the initial infection of the victim machine).\nThe attackers' servers and version names vary between the backdoor and infostealer modules."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x281aa24b",
+            "title": "SolarMarker Infostealer",
+            "text": "In terms of its structure, the infostealer module looks very similar to the backdoor module we introduced earlier but has extended capabilities.\nThe SolarMarker infostealer module acquires login data, cookies and web data (auto-fill) from web browsers by reading files specific to the target browser. SolarMarker uses the API function CryptUnprotectData (DPAPI) to decrypt the credentials.\nFigure 11. Data collection for exfiltration example.\nFigure 12. Collected data is exfiltrated as XML format.\nFigure 13. Data leakage exfiltration through HTTP encrypted channel."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0xc89e168e",
+            "title": "Key Changes Observed in the New Version of SolarMarker",
+            "text": "Let's summarize the main changes seen in the new version of SolarMarker:\nSwitches back to executables as the dropper instead of MSI.\nIncreases the dropper files to larger volumes.\nThe dropper files are always signed by a legitimate company.\nModified the PowerShell loader script.\nIn the first execution of the malware on the victim machine, the backdoor will load into the dropper process and not into the PowerShell process as in previous versions."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x6ecce5a4",
+            "title": "Conclusion",
+            "text": "This blog post documents recent changes in SolarMarker behavior patterns. These updates appear to upgrade evasion abilities in an attempt to stay under the radar and demonstrate that SolarMarker continues to evolve.\nIn recent years, the security industry has come to realize the importance of behavior-based detectors to reduce the dwell time of threats inside their network.\nPalo Alto WildFire Customers are protected from the SolarMarker malware.\nPalo Alto Customers using Cortex XDR Prevent or Pro are protected from such campaigns in different layers, including over 30 Behavioral Threat Protection, BIOC, and Analytics BIOCs rules that identify the tactics and techniques that SolarMarker uses at different stages of its execution.\nMost rules are not customized for SolarMarker and are based on unusual, rare behaviors and therefore provide protection against many additional malware families and campaigns that use the same methods. On top of that, the Local Analysis Engine and WildFire integration provide additional layers of protection to Cortex customers."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x38f238d1",
+            "title": "Indicators of Compromise",
+            "text": "",
+            "table": "0\nCertificates\nName: Zimmi Consulting Inc Serial Number: 06 FA 27 A1 21 CC 82 23 0C 30 13 EE 63 4B 6C 62 Status: Trust for this certificate or one of the certificates in the certificate chain has been revoked. Valid From: 12:00 AM 02/18/2022 Valid To: 11:59 PM 02/13/2023 Thumbprint: BA256F3716A5613B2DDA5F2DBD36ABC9AC321583Name: Divertida Creative Limited Serial Number: 08 83 DB 13 70 21 B5 1F 3A 2A 08 A7 6A 4B C0 66 Status: Trust for this certificate or one of the certificates in the certificate chain has been revoked. Issuer: DigiCert Trusted G4 Code Signing RSA4096 SHA384 2021 CA1 Valid From: 12:00 AM 07/28/2021 Valid To: 11:59 PM 07/27/2022 Thumbprint: C049731B453AB96F0D81D02392C9FC57257E647D\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x10444efc",
+            "title": "Additional Resources",
+            "text": "The Introduction of the Jupyter Infostealer/Backdoor - Morphisec\nSolarMarker campaign used novel registry for persistence SOPHOS\nBlocking SolarMarker Backdoor CrowdStrike\nThreat Spotlight: Solarmarker Cisco Talos\nNew-jupyter-evasive-delivery-through-msi-installer Morphisec\nSolarmarker In-Depth Analysis Prodaft\nMalware Analysis (PowerShell to .NET) John Hammond\nYellow Cockatoo Red Canary\nMars-Deimos: SolarMarker/Jupyter Infostealer (Part 1) Squiblydoo\nMars-Deimos: From Jupiter to Mars and Back again (Part Two) Squiblydoo"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x973b2d78",
+            "date": "20220409",
+            "title": "New SolarMarker (Jupyter) Campaign Demonstrates the Malwares Changing Attack Patterns",
+            "url": "https://unit42.paloaltonetworks.com/solarmarker-malware"
+        },
+        "chapter": {
+            "id": "chapter_0x338137e",
+            "title": "Get updates from Palo Alto Networks!",
+            "text": "Sign up to receive the latest news, cyber threat intelligence and research from us\nPlease enter your email address!\nPlease mark, I'm not a robot!\nBy submitting this form, you agree to our Terms of Use and acknowledge our Privacy Statement."
+        }
+    }
+]

@@ -1,0 +1,1704 @@
+{
+    "title": "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win",
+    "url": "https://www.sentinelone.com/blog/from-the-front-lines-unsigned-macos-orat-malware-gambles-for-the-win",
+    "threats": {},
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers.",
+                        "The sym._orat_cmd_agent.app contains the primary RAT functionality of the malware and defines the following functions.",
+                        "Of particular interest is the LoadConfig function. This is used to parse a blob of data appended to the binary which turns out to be an encrypted malware configuration. The encrypted data at the end of the unpacked binary occupies 166 bytes and consists of the data, an AES key, and two bytes representing the entire blob size.",
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries.",
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response.",
+                        "Once decrypted, the blob turns out to contain configuration data for the malware C2.",
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind.",
+                        "The SentinelOne agent also detects the malware on execution.",
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget.",
+                        "The SentinelOne agent detects the oRAT payload as malicious when it is written to disk, protecting SentinelOne customers from this threat.",
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": [
+                        "The oRAT Payload",
+                        "Conclusion",
+                        "Detecting oRAT in the Enterprise",
+                        "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win",
+                        "oRAT Distribution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xb1e8e304>",
+                            "type": "File",
+                            "value": "sys._orat_protocal.dial"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "The orat_utils package contains several interesting functions and gives us an entry into understanding how the RAT works.",
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments.",
+                        "The sym._orat_cmd_agent.app contains the primary RAT functionality of the malware and defines the following functions.",
+                        "The preinstall script is a succinct bash shell script whose purpose is to deliver a payload to the /tmp directory, give the payload executable permissions, and then launch it."
+                    ],
+                    "titles": [
+                        "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win",
+                        "oRAT Distribution",
+                        "The oRAT Payload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x49c0dad0>",
+                    "type": "Category",
+                    "value": "dropper"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers.",
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": [
+                        "oRAT Distribution",
+                        "Conclusion"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "Once decrypted, the blob turns out to contain configuration data for the malware C2."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0xef3c30d4>",
+                    "type": "File",
+                    "value": "main.main"
+                },
+                "references": {
+                    "sentences": [
+                        "In Go binaries, the program code entrypoint is at main.main, and we can work our way through there to see what other functions, packages and modules are called. Below, we see that the main.main function calls out to another custom package, orat_utils."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xef3c30d4>",
+                            "type": "File",
+                            "value": "main.main"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe292bd16>",
+                            "type": "UnknownWord",
+                            "value": "entrypoint"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xef3c30d4>",
+                            "type": "File",
+                            "value": "main.main"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x1ffe278e>",
+                            "type": "UnknownWord",
+                            "value": "orat_utils"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xb1e8e304>",
+                    "type": "File",
+                    "value": "sys._orat_protocal.dial"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xb1e8e304>",
+                            "type": "File",
+                            "value": "sys._orat_protocal.dial"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xbfa92ef3>",
+                    "type": "File",
+                    "value": "orat_protocol.dialtcp"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xc6835efc>",
+                    "type": "File",
+                    "value": "orat_protocol.dialstcp"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xfdd3c841>",
+                    "type": "File",
+                    "value": "orat_protocol.dialsudp"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": [
+                        "The oRAT Payload"
+                    ]
+                }
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA1_0x2a3542cb>",
+                    "type": "Hash",
+                    "hash_type": "SHA1",
+                    "value": "3f08dfafbf04a062e6231344f18a60d95e8bd010"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2a3542cb>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "3f08dfafbf04a062e6231344f18a60d95e8bd010"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7e1e2b60>",
+                            "type": "UnknownWord",
+                            "value": "bitget-0"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA1_0x9dd56cf7>",
+                    "type": "Hash",
+                    "hash_type": "SHA1",
+                    "value": "911895ed27ee290bea47bca3e208f1b302e98648"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x9dd56cf7>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "911895ed27ee290bea47bca3e208f1b302e98648"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe5a2d20a>",
+                            "type": "UnknownWord",
+                            "value": "preinstall"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA1_0x13d5aa0>",
+                    "type": "Hash",
+                    "hash_type": "SHA1",
+                    "value": "26ccf50a6c120cd7ad6b0d810aca509948c8cd78"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x13d5aa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "26ccf50a6c120cd7ad6b0d810aca509948c8cd78"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaca387e>",
+                            "type": "UnknownWord",
+                            "value": "darwinx64"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA1_0x13d5aa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "26ccf50a6c120cd7ad6b0d810aca509948c8cd78"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xea1f5834>",
+                            "type": "UnknownWord",
+                            "value": "packed"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA1_0xcb060754>",
+                    "type": "Hash",
+                    "hash_type": "SHA1",
+                    "value": "9b4717505d8d165b0b12c6e2b9cc4f58ee8095a6"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0xcb060754>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "9b4717505d8d165b0b12c6e2b9cc4f58ee8095a6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaca387e>",
+                            "type": "UnknownWord",
+                            "value": "darwinx64"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0xc4a44aed>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA1_0x51191aeb>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                        },
+                        {
+                            "id": "<FILE_0x54bfaf5>",
+                            "type": "File",
+                            "value": "apps.pkg"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget."
+                    ],
+                    "titles": [
+                        "oRAT Distribution",
+                        "Indicators of Compromise"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<HASHSET_0xc4a44aed>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA1_0x51191aeb>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA1",
+                                    "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                                },
+                                {
+                                    "id": "<FILE_0x54bfaf5>",
+                                    "type": "File",
+                                    "value": "apps.pkg"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8b6d46d6>",
+                            "type": "UnknownWord",
+                            "value": "bitget"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<HASHSET_0xc4a44aed>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA1_0x51191aeb>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA1",
+                                    "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                                },
+                                {
+                                    "id": "<FILE_0x54bfaf5>",
+                                    "type": "File",
+                                    "value": "apps.pkg"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x257dd160>",
+                            "type": "UnknownWord",
+                            "value": "pkg"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6f265a9>",
+                    "type": "UnknownWord",
+                    "value": "orat"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT Payload",
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers.",
+                        "Detecting oRAT in the Enterprise",
+                        "oRAT Distribution",
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip",
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget.",
+                        "The SentinelOne agent detects the oRAT payload as malicious when it is written to disk, protecting SentinelOne customers from this threat.",
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": [
+                        "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win",
+                        "oRAT Distribution",
+                        "The oRAT Payload",
+                        "Detecting oRAT in the Enterprise"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1a37c925>",
+                    "type": "UnknownWord",
+                    "value": "gambles"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf3257240>",
+                    "type": "UnknownWord",
+                    "value": "dinesh"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes",
+                        "Dinesh Devadoss"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x85a7fac5>",
+                    "type": "UnknownWord",
+                    "value": "devadoss"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes",
+                        "Dinesh Devadoss"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc4b58929>",
+                    "type": "UnknownWord",
+                    "value": "phil"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7b99465e>",
+                    "type": "UnknownWord",
+                    "value": "stokes"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x88241b63>",
+                    "type": "UnknownWord",
+                    "value": "cross-platform"
+                },
+                "references": {
+                    "sentences": [
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries.",
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x639ce59a>",
+                    "type": "UnknownWord",
+                    "value": "neither"
+                },
+                "references": {
+                    "sentences": [
+                        "The disk image and installer package are notable for two reasons: neither has a valid developer signature, and the latter doesnt actually install any files and only contains a preinstall script.",
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc7827cf4>",
+                    "type": "UnknownWord",
+                    "value": "nor"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6fc1a9f2>",
+                    "type": "UnknownWord",
+                    "value": "uncommon"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x551ef29>",
+                    "type": "UnknownWord",
+                    "value": "signifying"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a03312>",
+                    "type": "UnknownWord",
+                    "value": "rising"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6dc5f692>",
+                    "type": "UnknownWord",
+                    "value": "occurrence"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x99139513>",
+                    "type": "UnknownWord",
+                    "value": "macs"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa02dc11e>",
+                    "type": "UnknownWord",
+                    "value": "dig"
+                },
+                "references": {
+                    "sentences": [
+                        "Researchers looking into a new APT group targeting gambling sites with a variety of cross-platform malware recently identified a version of oRAT malware targeting macOS users and written in Go. While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims. In this post, we dig deeper into the technical details of this novel RAT to understand better how it works and how security teams can detect it in their environments."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8b6d46d6>",
+                    "type": "UnknownWord",
+                    "value": "bitget"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<HASHSET_0xc4a44aed>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA1_0x51191aeb>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA1",
+                                    "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                                },
+                                {
+                                    "id": "<FILE_0x54bfaf5>",
+                                    "type": "File",
+                                    "value": "apps.pkg"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8b6d46d6>",
+                            "type": "UnknownWord",
+                            "value": "bitget"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x257dd160>",
+                    "type": "UnknownWord",
+                    "value": "pkg"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<HASHSET_0xc4a44aed>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA1_0x51191aeb>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA1",
+                                    "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                                },
+                                {
+                                    "id": "<FILE_0x54bfaf5>",
+                                    "type": "File",
+                                    "value": "apps.pkg"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x257dd160>",
+                            "type": "UnknownWord",
+                            "value": "pkg"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe5a2d20a>",
+                    "type": "UnknownWord",
+                    "value": "preinstall"
+                },
+                "references": {
+                    "sentences": [
+                        "The disk image and installer package are notable for two reasons: neither has a valid developer signature, and the latter doesnt actually install any files and only contains a preinstall script.",
+                        "The preinstall script is a succinct bash shell script whose purpose is to deliver a payload to the /tmp directory, give the payload executable permissions, and then launch it."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x9dd56cf7>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "911895ed27ee290bea47bca3e208f1b302e98648"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe5a2d20a>",
+                            "type": "UnknownWord",
+                            "value": "preinstall"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20808fd6>",
+                    "type": "UnknownWord",
+                    "value": "succinct"
+                },
+                "references": {
+                    "sentences": [
+                        "The preinstall script is a succinct bash shell script whose purpose is to deliver a payload to the /tmp directory, give the payload executable permissions, and then launch it."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x761a8528>",
+                    "type": "UnknownWord",
+                    "value": "precisely"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcf47950c>",
+                    "type": "UnknownWord",
+                    "value": "convince"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x751ac47e>",
+                    "type": "UnknownWord",
+                    "value": "override"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1a29a6a8>",
+                    "type": "UnknownWord",
+                    "value": "sourcing"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2c0c0db1>",
+                    "type": "UnknownWord",
+                    "value": "3rd-party"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4ca0a33c>",
+                    "type": "UnknownWord",
+                    "value": "pre-groomed"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x58155ba7>",
+                    "type": "UnknownWord",
+                    "value": "engagement"
+                },
+                "references": {
+                    "sentences": [
+                        "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe865095a>",
+                    "type": "UnknownWord",
+                    "value": "deliverable"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4f4aaa7b>",
+                    "type": "UnknownWord",
+                    "value": "gamble"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a605237>",
+                    "type": "UnknownWord",
+                    "value": "whatever"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1509c339>",
+                    "type": "UnknownWord",
+                    "value": "expecting"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x74348609>",
+                    "type": "UnknownWord",
+                    "value": "happy"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x21ec7a8d>",
+                    "type": "UnknownWord",
+                    "value": "sweep"
+                },
+                "references": {
+                    "sentences": [
+                        "In either case, the fact that theres no deliverable from the users perspective is a risky gamble on the part of the threat actors. After running the installer and finding that it did not provide whatever they were expecting, users are likely to become suspicious. This might suggest the campaign was broadly targeted and that the threat actors were playing a numbers game, happy to sweep up opportunistic infections as they occurred."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaca387e>",
+                    "type": "UnknownWord",
+                    "value": "darwinx64"
+                },
+                "references": {
+                    "sentences": [
+                        "Things get more interesting when we examine the darwinx64 payload dropped in the /tmp folder. The binary doesnt define any Symbols, and outputting the list of Sections tells us that the file has been packed with UPX."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x13d5aa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "26ccf50a6c120cd7ad6b0d810aca509948c8cd78"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaca387e>",
+                            "type": "UnknownWord",
+                            "value": "darwinx64"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA1_0xcb060754>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "9b4717505d8d165b0b12c6e2b9cc4f58ee8095a6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaca387e>",
+                            "type": "UnknownWord",
+                            "value": "darwinx64"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x94aa91d2>",
+                    "type": "UnknownWord",
+                    "value": "symbols"
+                },
+                "references": {
+                    "sentences": [
+                        "Things get more interesting when we examine the darwinx64 payload dropped in the /tmp folder. The binary doesnt define any Symbols, and outputting the list of Sections tells us that the file has been packed with UPX."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd1be1db4>",
+                    "type": "UnknownWord",
+                    "value": "outputting"
+                },
+                "references": {
+                    "sentences": [
+                        "Things get more interesting when we examine the darwinx64 payload dropped in the /tmp folder. The binary doesnt define any Symbols, and outputting the list of Sections tells us that the file has been packed with UPX."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xea1f5834>",
+                    "type": "UnknownWord",
+                    "value": "packed"
+                },
+                "references": {
+                    "sentences": [
+                        "Things get more interesting when we examine the darwinx64 payload dropped in the /tmp folder. The binary doesnt define any Symbols, and outputting the list of Sections tells us that the file has been packed with UPX.",
+                        "Packed files like this are opaque to static analysis, but fortunately standard UPX is very easy to unpack thanks to the UPX utility itself. Dumping the strings tells us that it was packed with UPX 3.96, the most recently released version available.",
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x13d5aa0>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "26ccf50a6c120cd7ad6b0d810aca509948c8cd78"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xea1f5834>",
+                            "type": "UnknownWord",
+                            "value": "packed"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x26629c95>",
+                    "type": "UnknownWord",
+                    "value": "fortunately"
+                },
+                "references": {
+                    "sentences": [
+                        "Fortunately, from a reverse engineering perspective, we can easily ignore most of the standard code that is common to all Go bins and focus on what is unique to the sample at hand. For IDA Pro users, see here; for r2 users, we can start by printing out a list of the functions flagged with sym._main.",
+                        "Packed files like this are opaque to static analysis, but fortunately standard UPX is very easy to unpack thanks to the UPX utility itself. Dumping the strings tells us that it was packed with UPX 3.96, the most recently released version available."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc832e23c>",
+                    "type": "UnknownWord",
+                    "value": "unpack"
+                },
+                "references": {
+                    "sentences": [
+                        "Packed files like this are opaque to static analysis, but fortunately standard UPX is very easy to unpack thanks to the UPX utility itself. Dumping the strings tells us that it was packed with UPX 3.96, the most recently released version available."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbfe09cd6>",
+                    "type": "UnknownWord",
+                    "value": "3mb"
+                },
+                "references": {
+                    "sentences": [
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72524b90>",
+                    "type": "UnknownWord",
+                    "value": "unpacking"
+                },
+                "references": {
+                    "sentences": [
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc272d8cb>",
+                    "type": "UnknownWord",
+                    "value": "10mb"
+                },
+                "references": {
+                    "sentences": [
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1542d8cb>",
+                    "type": "UnknownWord",
+                    "value": "run-time"
+                },
+                "references": {
+                    "sentences": [
+                        "The packed binary is around 3MB in size, but after unpacking we are presented with a massive ~10MB file. Such large file sizes are typical of cross-platform malware, particularly when binaries are compiled in Go, since they contain the entire run-time for the language along with a number of supporting libraries."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xac200d2f>",
+                    "type": "UnknownWord",
+                    "value": "printing"
+                },
+                "references": {
+                    "sentences": [
+                        "Fortunately, from a reverse engineering perspective, we can easily ignore most of the standard code that is common to all Go bins and focus on what is unique to the sample at hand. For IDA Pro users, see here; for r2 users, we can start by printing out a list of the functions flagged with sym._main."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa9934bb4>",
+                    "type": "UnknownWord",
+                    "value": "sym"
+                },
+                "references": {
+                    "sentences": [
+                        "Fortunately, from a reverse engineering perspective, we can easily ignore most of the standard code that is common to all Go bins and focus on what is unique to the sample at hand. For IDA Pro users, see here; for r2 users, we can start by printing out a list of the functions flagged with sym._main."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb2968a42>",
+                    "type": "UnknownWord",
+                    "value": "_main"
+                },
+                "references": {
+                    "sentences": [
+                        "Fortunately, from a reverse engineering perspective, we can easily ignore most of the standard code that is common to all Go bins and focus on what is unique to the sample at hand. For IDA Pro users, see here; for r2 users, we can start by printing out a list of the functions flagged with sym._main."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe292bd16>",
+                    "type": "UnknownWord",
+                    "value": "entrypoint"
+                },
+                "references": {
+                    "sentences": [
+                        "In Go binaries, the program code entrypoint is at main.main, and we can work our way through there to see what other functions, packages and modules are called. Below, we see that the main.main function calls out to another custom package, orat_utils."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xef3c30d4>",
+                            "type": "File",
+                            "value": "main.main"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe292bd16>",
+                            "type": "UnknownWord",
+                            "value": "entrypoint"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1ffe278e>",
+                    "type": "UnknownWord",
+                    "value": "orat_utils"
+                },
+                "references": {
+                    "sentences": [
+                        "The orat_utils package contains several interesting functions and gives us an entry into understanding how the RAT works.",
+                        "In Go binaries, the program code entrypoint is at main.main, and we can work our way through there to see what other functions, packages and modules are called. Below, we see that the main.main function calls out to another custom package, orat_utils."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xef3c30d4>",
+                            "type": "File",
+                            "value": "main.main"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x1ffe278e>",
+                            "type": "UnknownWord",
+                            "value": "orat_utils"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc2d60b35>",
+                    "type": "UnknownWord",
+                    "value": "loadconfig"
+                },
+                "references": {
+                    "sentences": [
+                        "Of particular interest is the LoadConfig function. This is used to parse a blob of data appended to the binary which turns out to be an encrypted malware configuration. The encrypted data at the end of the unpacked binary occupies 166 bytes and consists of the data, an AES key, and two bytes representing the entire blob size."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x511dbbdf>",
+                    "type": "UnknownWord",
+                    "value": "occupies"
+                },
+                "references": {
+                    "sentences": [
+                        "Of particular interest is the LoadConfig function. This is used to parse a blob of data appended to the binary which turns out to be an encrypted malware configuration. The encrypted data at the end of the unpacked binary occupies 166 bytes and consists of the data, an AES key, and two bytes representing the entire blob size."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf35638a1>",
+                    "type": "UnknownWord",
+                    "value": "representing"
+                },
+                "references": {
+                    "sentences": [
+                        "Of particular interest is the LoadConfig function. This is used to parse a blob of data appended to the binary which turns out to be an encrypted malware configuration. The encrypted data at the end of the unpacked binary occupies 166 bytes and consists of the data, an AES key, and two bytes representing the entire blob size."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87af43af>",
+                    "type": "UnknownWord",
+                    "value": "smux"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb6d59d07>",
+                    "type": "UnknownWord",
+                    "value": "sudp"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x51565c1f>",
+                    "type": "UnknownWord",
+                    "value": "quic"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x35b7b581>",
+                    "type": "UnknownWord",
+                    "value": "cycle"
+                },
+                "references": {
+                    "sentences": [
+                        "After the malware decodes the config, it calls into sym._orat_cmd_agent.app and begins a number of loops through sys._orat_protocal.Dial. Depending on the config, it will call one of orat_protocol.DialTCP, orat_protocol.DialSTCP or orat_protocol.DialSUDP to establish a connection. The TCP protocols leverage smux while the SUDP protocol leverages QUIC. The malware loops with a sleep cycle of 5 seconds as it waits for a response."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x13df263c>",
+                    "type": "UnknownWord",
+                    "value": "downloadfile"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6f67ac8d>",
+                    "type": "UnknownWord",
+                    "value": "info"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x84d373dd>",
+                    "type": "UnknownWord",
+                    "value": "killself"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x58f76c66>",
+                    "type": "UnknownWord",
+                    "value": "newnetconn"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4b0322c3>",
+                    "type": "UnknownWord",
+                    "value": "newproxyconn"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xee52e463>",
+                    "type": "UnknownWord",
+                    "value": "newshellconn"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a9ec635>",
+                    "type": "UnknownWord",
+                    "value": "portscan"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb323ac16>",
+                    "type": "UnknownWord",
+                    "value": "registerrouters"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1ba37e2>",
+                    "type": "UnknownWord",
+                    "value": "unzip"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x469b1fb2>",
+                    "type": "UnknownWord",
+                    "value": "uploadfile"
+                },
+                "references": {
+                    "sentences": [
+                        "orat/cmd/agent/app.(*App).DownloadFile<crlf>orat/cmd/agent/app.(*App).Info<crlf>orat/cmd/agent/app.(*App).Join<crlf>orat/cmd/agent/app.(*App).KillSelf<crlf>orat/cmd/agent/app.(*App).NewNetConn<crlf>orat/cmd/agent/app.(*App).NewProxyConn<crlf>orat/cmd/agent/app.(*App).NewShellConn<crlf>orat/cmd/agent/app.(*App).Ping<crlf>orat/cmd/agent/app.(*App).PortScan<crlf>orat/cmd/agent/app.(*App).registerRouters<crlf>orat/cmd/agent/app.(*App).run<crlf>orat/cmd/agent/app.(*App).Screenshot<crlf>orat/cmd/agent/app.(*App).Serve<crlf>orat/cmd/agent/app.(*App).Unzip<crlf>orat/cmd/agent/app.(*App).UploadFile<crlf>orat/cmd/agent/app.(*App).Zip"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5e10da0f>",
+                    "type": "UnknownWord",
+                    "value": "custom-written"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x45a60e79>",
+                    "type": "UnknownWord",
+                    "value": "repos"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x96a5fdce>",
+                    "type": "UnknownWord",
+                    "value": "simplistic"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6ccdb6>",
+                    "type": "UnknownWord",
+                    "value": "observable"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xec11d785>",
+                    "type": "UnknownWord",
+                    "value": "plenty"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos. The developers are clearly familiar with using sophisticated features of Go for networking and communications, but due to the simplistic way the malware dropper was packaged, unsigned and with no observable install to distract the victim, it would seem they are less experienced with the challenges of infecting Mac users. Unfortunately, other threat actors have provided plenty of examples from which this new player can learn, and security teams should expect to see any future campaigns from this actor using more sophisticated droppers."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7e1e2b60>",
+                    "type": "UnknownWord",
+                    "value": "bitget-0"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA1_0x2a3542cb>",
+                            "type": "Hash",
+                            "hash_type": "SHA1",
+                            "value": "3f08dfafbf04a062e6231344f18a60d95e8bd010"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7e1e2b60>",
+                            "type": "UnknownWord",
+                            "value": "bitget-0"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x1a37c925>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1a37c925>",
+                    "type": "UnknownWord",
+                    "value": "gambles"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "From the Front Lines | Unsigned macOS oRAT Malware Gambles For The Win"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0x85a7fac5>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x85a7fac5>",
+                    "type": "UnknownWord",
+                    "value": "devadoss"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes",
+                        "Dinesh Devadoss"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x7b99465e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7b99465e>",
+                    "type": "UnknownWord",
+                    "value": "stokes"
+                },
+                "references": {
+                    "sentences": [
+                        "By Dinesh Devadoss and Phil Stokes"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8b6d46d6>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8b6d46d6>",
+                    "type": "UnknownWord",
+                    "value": "bitget"
+                },
+                "references": {
+                    "sentences": [
+                        "The oRAT malware is distributed via a Disk Image masquerading as a collection of Bitget Apps. The disk image contains a package with the name Bitget Apps.pkg and the distribution identifier com.adobe.pkg.Bitget."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<HASHSET_0xc4a44aed>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA1_0x51191aeb>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA1",
+                                    "value": "9779aac8867c4c5ff5ce7b40180d939572a4ff55"
+                                },
+                                {
+                                    "id": "<FILE_0x54bfaf5>",
+                                    "type": "File",
+                                    "value": "apps.pkg"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8b6d46d6>",
+                            "type": "UnknownWord",
+                            "value": "bitget"
+                        }
+                    }
+                ]
+            },
+            "<UNKNOWNWORD_0x94aa91d2>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x94aa91d2>",
+                    "type": "UnknownWord",
+                    "value": "symbols"
+                },
+                "references": {
+                    "sentences": [
+                        "Things get more interesting when we examine the darwinx64 payload dropped in the /tmp folder. The binary doesnt define any Symbols, and outputting the list of Sections tells us that the file has been packed with UPX."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xc2d60b35>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc2d60b35>",
+                    "type": "UnknownWord",
+                    "value": "loadconfig"
+                },
+                "references": {
+                    "sentences": [
+                        "Of particular interest is the LoadConfig function. This is used to parse a blob of data appended to the binary which turns out to be an encrypted malware configuration. The encrypted data at the end of the unpacked binary occupies 166 bytes and consists of the data, an AES key, and two bytes representing the entire blob size."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [
+            "While neither RATs nor Go malware are uncommon on any platform, including the Mac, the development of such a tool by a previously unknown APT is an interesting turn, signifying the increasing need for threat actors to address the rising occurrence of Macs among their intended targets and victims",
+            "Precisely what kind of lure the threat actors use to convince targets to download and launch the dropper is unknown at this time, but given that the target would need to override default security warnings from Gatekeeper, it is likely either that the users are sourcing the malware from an environment where this is typical (e.g., a 3rd-party software distribution site that regularly delivers unsigned software) or users have been pre-groomed to bypass Gatekeeper during a social engineering engagement of some kind.",
+            "The oRAT malware targets macOS users using a combination of custom-written code and public Golang repos"
+        ],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [
+                "https://github.com/xtaci/smux",
+                "https://github.com/lucas-clemente/quic-go"
+            ],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://www.sentinelone.com/blog/2022/05/",
+                "https://www.sentinelone.com/blog/author/dineshd/",
+                "https://www.facebook.com/sharer.php?u=https://s1.ai/wPPkVV",
+                "https://twitter.com/intent/tweet?url=https://s1.ai/wPPkVV&text=From%20the%20Front%20Lines%20%7C%20Unsigned%20macOS%20oRAT%20Malware%20Gambles%20For%20The%20Win",
+                "https://www.linkedin.com/shareArticle?mini=true&url=https://s1.ai/wPPkVV",
+                "https://reddit.com/submit?url=https://s1.ai/wPPkVV",
+                "sms:?body=From%20the%20Front%20Lines%20%7C%20Unsigned%20macOS%20oRAT%20Malware%20Gambles%20For%20The%20Win%20-%20https%3A%2F%2Fs1.ai%2FwPPkVV",
+                "https://www.trendmicro.com/en_us/research/22/d/new-apt-group-earth-berberoka-targets-gambling-websites-with-old.html",
+                "https://mothersruin.com/software/SuspiciousPackage/",
+                "https://www.sentinelone.com/blog/the-complete-guide-to-understanding-apple-mac-security-for-enterprise-read-the-free-ebook/",
+                "https://www.sentinelone.com/blog/scripting-macs-with-malice-how-shlayer-and-other-malware-installers-infect-macos/",
+                "https://upx.github.io/",
+                "https://www.sentinelone.com/blog/how-to-reverse-macos-malware-part-two/",
+                "https://www.sentinelone.com/labs/alphagolang-a-step-by-step-go-malware-reversing-methodology-for-ida-pro/",
+                "https://www.sentinelone.com/labs/6-pro-tricks-for-rapid-macos-malware-triage-with-radare2/"
+            ]
+        },
+        "images": [
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Unsigned-macOS-oRAT-Malware-Gambles-For-The-Win-5.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_dmg.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat-suspicious-package.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_preinstall-script.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_sections.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat-go-functions.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat-main-function.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_functions.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat-encrypted-confit.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_decrypted-blob.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_detection-console.jpg?lossy=0&strip=1&webp=0",
+            "https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/orat_agent-detection.jpg?lossy=0&strip=1&webp=0"
+        ]
+    }
+}

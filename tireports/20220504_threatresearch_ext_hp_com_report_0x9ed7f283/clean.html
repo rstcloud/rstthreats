@@ -1,0 +1,79 @@
+<div>
+Tips for Automating IOC Extraction from GootLoader, a Changing JavaScript Malware
+<a href="https://threatresearch.ext.hp.com/blog/">HP Threat Research Blog</a> • Tips for Automating IOC Extraction from GootLoader, a Changing JavaScript Malware
+<p><img alt="" class="attachment-large size-large wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/10/blogImage_refresh_001.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/></p>
+ May 4, 2022 •
+Category: <a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a>
+• By: <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+• Comments: 0
+<a class="fusion-social-network-icon fusion-tooltip fusion-twitter fusion-icon-twitter" href="https://twitter.com/share?url=https://threatresearch.ext.hp.com/tips-for-automating-ioc-extraction-from-gootloader-a-changing-javascript-malware/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-linkedin fusion-icon-linkedin" href="https://www.linkedin.com/shareArticle?url=https://threatresearch.ext.hp.com/tips-for-automating-ioc-extraction-from-gootloader-a-changing-javascript-malware/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-facebook fusion-icon-facebook" href="https://www.facebook.com/sharer.php?u=https://threatresearch.ext.hp.com/tips-for-automating-ioc-extraction-from-gootloader-a-changing-javascript-malware/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-mail fusion-icon-mail" href="mailto:?subject=I%20wanted%20to%20share%20this%20post%20with%20you%20from%20https://threatresearch.ext.hp.com/tips-for-automating-ioc-extraction-from-gootloader-a-changing-javascript-malware/&amp;body=Tips%20for%20Automating%20IOC%20Extraction%20from%20GootLoader,%20a%20Changing%20JavaScript%20Malware" rel="noopener noreferrer" target="_self" title=""></a>
+<h1 class="title-heading-left fusion-responsive-typography-calculated">Tips for Automating IOC Extraction from GootLoader, a Changing JavaScript Malware</h1><p>The threat actors behind GootLoader are always making adjustments to this family of JavaScript malware, which affects indicator of compromise (IOC) extraction using <a href="https://github.com/hpthreatresearch/tools/blob/main/gootloader/decode.py" rel="noopener" target="_blank">our decoder script</a>. Whenever the GootLoader decoder breaks we try to adapt it to the new version of the malware to help the security community. In this post, we share the process of debugging and fixing the script, showing the common steps we usually take.</p>
+<p>First, we look at all extracts from the regular expressions (regex) because this is usually the reason why the decoder breaks. To do so, we add print statements before and after each regex evaluation starting from the bottom of the script. The following image shows our first check.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_001.png"><img alt="" class="size-full wp-image-22260 aligncenter" height="119" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_001.png" style="max-width:800px;height:auto;width:auto;" width="1214"/></a>Figure 1 – Print statements around regular expression evaluations.</p>
+<p>Based on the output we try to figure out the position where the script fails to decode the new GootLoader version. In this case, we get an empty content output and therefore the script failed earlier in the process. In Figure 2, above the regex evaluation, we you can see an additional print statement to debug the script:<a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_002.png"><img alt="" class="size-full wp-image-22261 aligncenter" height="240" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_002.png" style="max-width:800px;height:auto;width:auto;" width="1008"/></a></p>
+<p>Figure 2 – Printing the content and the longest match of the regex.</p>
+<p>Running the script again leads to another empty output. So further debugging is required. Again, we add two print statements around the next regex evaluation, which looks as follows:</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_003.png"><img alt="" class="size-full wp-image-22262 aligncenter" height="62" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_003.png" style="max-width:800px;height:auto;width:auto;" width="1107"/></a>Figure 3 – Debug prints to check if the regex still works.</p>
+<p>At this point we finally get an output from our debug print statements. This tells us that we found the position where the script fails to decode the new version of the malware.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_004.png"><img alt="" class="size-full wp-image-22270 aligncenter" height="348" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_004.png" style="max-width:800px;height:auto;width:auto;" width="1511"/></a>Figure 4 – Printed script content of the new GootLoader version.</p>
+<p>To understand why this specific regex does not work anymore, we compare our debug outputs to the outputs of an older GootLoader version where the decoder worked. Using the output of the working one, we can see what it should look like (Figure 5).</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_005.png"><img alt="" class="size-full wp-image-22263 aligncenter" height="348" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_005.png" style="max-width:800px;height:auto;width:auto;" width="1508"/></a>Figure 5 – Printed script content of an older GootLoader version.</p>
+<p>The regex result for this evaluation should lead to a list of variables concatenated with plus signs. This list is used by GootLoader to rearrange the code into the right order and then later on execute it using the eval function. To decode the script and extract the domains and URLs we need to do the same and bring the code into the correct order. With this version adjustment, GootLoader no longer uses just one statement to rearrange the code, but several interdependent ones. To fix the script we need to make two edits. First, we need to adjust the regex pattern so that it matches the new statements. Second, we need to add logic to merge the code. With the help of regex101.com we can adjust and fix the regex pattern.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_006.png"><img alt="" class="size-full wp-image-22266 aligncenter" height="212" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_006.png" style="max-width:800px;height:auto;width:auto;" width="867"/></a>
+Figure 6 – Extracting the statements using regex.</p>
+<p>The idea is to extract all the statements used for the code arrangement.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_007.png"><img alt="" class="size-full wp-image-22264 aligncenter" height="26" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_007.png" width="469"/></a>Figure 7 – Definition of regex pattern to extract the statements.</p>
+<p>Each statement can be split into the variable and the expression. To keep track of the variables we create a dictionary which uses the variables as keys and the expressions as values. The last statement is the main statement used to join the code. For this statement we substitute the expression based on the values in our dictionary and get the final expression consisting of variables that refer to code fragments. The adjusted code sequence looks like this:</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_008.png"><img alt="" class="size-full wp-image-22268 aligncenter" height="378" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_008.png" style="max-width:800px;height:auto;width:auto;" width="1110"/></a>Figure 8 – Modified code sequence to decode the new GootLoader version.</p>
+<p>To keep the script still compatible for older GootLoader versions, we add an If statement. If we do not get regex matches for the simple statement, we use the code which evaluates compound statements. Finally, we remove the print statements which we inserted for debugging and run the repaired script to get the following output:</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_009.png"><img alt="" class="size-full wp-image-22269 aligncenter" height="273" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/gootloader_debug_009.png" width="631"/></a>Figure 9 – GootLoader decoding script output.</p>
+<p>This is the typical process we go through to adapt the decoding script to new GootLoader versions. As the threat actors behind GootLoader have been making version changes more frequently lately, we have had to make changes to our script more frequently as well. We hope that this explanation is helpful for analyzing GootLoader and making adjustments of our decoder script.</p>
+<h2 class="fusion-responsive-typography-calculated">Tools</h2>
+<p>You can download the latest GootLoader decoder script here:
+<a href="https://github.com/hpthreatresearch/tools/blob/main/gootloader/decode.py" rel="noopener" target="_blank">https://github.com/hpthreatresearch/tools/blob/main/gootloader/decode.py</a></p>
+<h2 class="fusion-responsive-typography-calculated">IOCs</h2>
+<p>New GootLoader version:
+0a7c07fc84fd9f5b91bde6822b865f9647ca4ece67e8a4a646ce8d405187dc8b
+hxxps://lakeside-fishandchips[.]com/test.php?sgjngbizjfwgs=
+hxxps://learn.openschool[.]ua/test.php?sgjngbizjfwgs=
+hxxps://kristinee[.]com/test.php?sgjngbizjfwgs=</p>
+<p>Older GootLoader version:
+765fbca3b6b1a922b442bc7304454e752e8bf231e2abe5060ace55db72c78d68
+hxxps://kristinee[.]com/test.php?zemyrwgzcsnjur=
+hxxps://kepw[.]org/test.php?zemyrwgzcsnjur=
+hxxps://korsakovmusic[.]com/test.php?zemyrwgzcsnjur=</p>
+<h6 class="title-heading-left fusion-responsive-typography-calculated">Tags</h6><a href="https://threatresearch.ext.hp.com/blog/?post-tag=automate">automate</a> <a href="https://threatresearch.ext.hp.com/blog/?post-tag=gootloader">gootloader</a> <a href="https://threatresearch.ext.hp.com/blog/?post-tag=ioc">ioc</a>
+<h1 class="title-heading-left fusion-responsive-typography-calculated">About the Author</h1>
+<p><a class="fusion-modal-text-link fusion-no-lightbox" href="#"><img class="avatar pp-user-avatar avatar-96 photo wpv-profile-picture-shape-circle" height="96" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/01/profile_img-150x150.jpg" width="96"/></a></p>
+Patrick Schläpfer
+<a class="fusion-modal-text-link" href="#">Author bio
+ &gt;</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Posts by this author &gt;</a>
+<h3 class="title-heading-left fusion-responsive-typography-calculated">Recent Posts</h3>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0008.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>April 19, 2022
+<a href="https://threatresearch.ext.hp.com/zero-trust-in-reverse-why-the-current-definition-of-zero-trust-is-only-half-full/">Zero Trust in Reverse: Why the Current Definition of Zero Trust is Only Half Full</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=12">Dan Allen</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/blogImage__b7.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>April 12, 2022
+<a href="https://threatresearch.ext.hp.com/malware-campaigns-targeting-african-banking-sector/">Malware Campaigns Targeting African Banking Sector</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0001.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>February 8, 2022
+<a href="https://threatresearch.ext.hp.com/redline-stealer-disguised-as-a-windows-11-upgrade/">Attackers Disguise RedLine Stealer as a Windows 11 Upgrade</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0004.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>January 14, 2022
+<a href="https://threatresearch.ext.hp.com/how-attackers-use-xll-malware-to-infect-systems/">How Attackers Use XLL Malware to Infect Systems</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/blogImage__b2.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>December 9, 2021
+<a href="https://threatresearch.ext.hp.com/emotets-return-whats-different/">Emotet’s Return: What’s Different?</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<h6 class="title-heading-left fusion-responsive-typography-calculated">Categories</h6>
+<ul> <li class="cat-item cat-item-4414"><a href="https://threatresearch.ext.hp.com/category/web-of-profit/" title="Into the Web of Profit is a series of four in-depth studies into the murky world of cybercrime, criminals and money. The reports are sponsored by HP, and researched and written by Dr. Mike McGuire, Senior Lecturer in Criminology at the University of Surrey. ">Into the Web of Profit</a>
+</li>
+<li class="cat-item cat-item-849"><a href="https://threatresearch.ext.hp.com/category/threat-insights-reports/" title="HP's Threat Insights Reports share insights about the most notable malware and cyber threats analyzed by our experts. They highlight new techniques used by attackers, and give you practical and actionable information about how to protect your organization against cyber attacks.">Threat Insights Reports</a>
+</li>
+<li class="cat-item cat-item-986"><a href="https://threatresearch.ext.hp.com/category/threat-research/" title="Threat Research blog posts.">Threat Research</a>
+</li>
+<li class="cat-item cat-item-1"><a href="https://threatresearch.ext.hp.com/category/uncategorized/">Uncategorized</a>
+</li>
+</ul>
+ 
+2022-05-04T06:55:53-07:00May 4th, 2022|<a href="https://threatresearch.ext.hp.com/category/threat-research/" rel="category tag">Threat Research</a>|
+</div>

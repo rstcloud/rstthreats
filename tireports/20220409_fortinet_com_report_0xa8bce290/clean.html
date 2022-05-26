@@ -1,0 +1,254 @@
+<div>
+<h2><a href="https://www.fortinet.com/fortiguard/labs.html?utm_source=blog&amp;utm_medium=campaign&amp;utm_campaign=FortiGuardLabs">FortiGuard Labs</a> Research</h2>
+<p>Affected Platforms: Windows
+Impacted Users: Windows users
+Impact: Most files on the compromised machines are encrypted
+Severity Level: Medium
+</p>
+<p>In Greek mythology, opening of the infamous Pandora’s box (jar) introduced terrible things to the world. That can also be said about today’s ransomware. The newly emerged Pandora ransomware that crowned the name is no exception. It steals data from the victim’s network, encrypts the victim’s files, and unleashes the stolen data if the victim opts not to pay. The Greek myth says hope was left in the box. Does that hold true for Pandora ransomware, an emerging malware that shows all techniques used by modern ransomware? In this blog we are taking a hammer and crowbar to look inside today’s Pandora’s box to find out what mysteries it holds. We will discuss:</p>
+<ul>
+<li>How this ransomware tries to evade detection</li>
+<li>The numerous obfuscation and anti-analysis techniques that are used to hinder analysts</li>
+<li>How multi-threading is used to speed up processing</li>
+<li>How the filesystem is processed</li>
+<li>How and which files are encrypted.</li>
+</ul>
+<h2>Pandora Group</h2>
+<p>The Pandora ransomware group emerged into the already crowded ransomware field as early as in mid-February 2022 and targets corporate networks for financial gain. The group got recent publicity after they announced that they acquired data from an international supplier in the automotive industry. The incident came as surprise as the attack came two weeks after another automotive supplier was reportedly hit with unknown ransomware, which resulted in one of the world’s biggest car manufacturers suspending factory operations. The threat group uses the double extortion method to increase pressure on the victim. This means that they not only encrypt the victim’s files, but also exfiltrate them and threaten to release the data if the victim does not pay.</p>
+<p>The Pandora Group has a leak site in the Dark Web (TOR network), where they publicly announce their victims and threaten them with the data leak. There are currently three victims listed on the leak site (see Figure 1), a U.S.-based real estate agency, a Japanese technology company, and a U.S. law firm.</p>
+<img alt="Figure 1: Pandora's leak site" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 1 - Pandora's leak site
+<h2>Malware Analysis</h2>
+<p>We analyzed the sample with the SHA-256 hash 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b, which is a 64-bit Windows PE file. It is the ransomware itself, so by the time this file is executed during an attack, the attackers probably already had extensive access to the victim’s network, and they had already exfiltrated the data they will use for the extortion. This sample does not have the capability to communicate with the threat actors. Its sole purpose is to find and encrypt files. However, it does this in an interesting and complex manner.</p>
+<p>In the following sections these interesting aspects of the malware will be discussed.</p>
+<h3>Execution Flow</h3>
+<p>The sample goes through the following steps:</p>
+<p>Note that “T” followed by numbers within brackets refers to MITRE ATT&amp;CK technique ID, which are summarized at the end of the post.</p>
+<p> 1) Unpacking: The sample is packed with a modified UPX packer (T1027.002), so the first step is to unpack the real content to memory and jump to it. This will be discussed later.</p>
+<p> 2) Mutex: It creates a mutex called ThisIsMutexa.</p>
+<p> 3) Disable Security Features: It can delete Windows shadow copies (T1490), bypass AMSI (T1562.001), and disable Event Logging (T1562.002). More on these features later.</p>
+<p> 4) Collects system information: GetSystemInfo()is used to collect information about the local system.</p>
+<p> 5) Loads Hardcoded Public Key: A public key is hardcoded in the malware sample. This is used to set up the cryptography for encryption.</p>
+<p> 6) Store Private and Public Keys in Registry: A private key is generated, and both the hardcoded public key and the newly generated private key are stored in the registry (T1112).</p>
+<p> 7) Search Drives: It searches for unmounted drives on the system and mounts them to encrypt them as well (T1005).</p>
+<p> 8) Setup Multi-Threading: The sample uses worker threads to distribute the encryption process. More on this later.</p>
+<p> 9) Enumerate Filesystem: The worker threads start to enumerate the filesystems of the identified drives (T1083).</p>
+<p>10) Drop Ransom Note: The ransom note is dropped in every folder in Restore_My_Files.txt.</p>
+<p>11) Check File Name Blacklist: For every file and folder a blacklist of file/folder names is checked. If the file/folder is on the blacklist it will not be encrypted. More on this later.</p>
+<p>12) Check File Extension Blacklist: Each file is checked against a file extension blacklist. If the extension is on the list, it will not be encrypted.</p>
+<p>13) Unlock File: If the file is locked by a running process, the sample will try to unlock it using the Windows Restart Manager(T1489).</p>
+<p>14) Encrypt File: The worker threads will encrypt(T1486) the file and write it back to the original file.</p>
+<p>15) Rename File: Once the encryption is finished the file is renamed to[original_filename].pandora.</p>
+<h2>Anti-Reverse Engineering Techniques</h2>
+<p>One of the most significant aspect of the Pandora ransomware is the extensive use of anti-reverse-engineering techniques. This is not new for malware, but Pandora lies on the extreme side of how much is invested in slowing analysis down. In this section we will go through the different techniques that were identified.</p>
+<h3>Packed</h3>
+<p>The sample is packed with a modified UPX packer, which can be easily detected with Detect It Easy (see Figure 2).</p>
+<img alt="Figure 2 - Detect It Easy can identify UPX" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 2: Detect It Easy can identify UPX
+<p>However, the standard UPX unpacker does not work, which indicates that the packer was modified to make sure that off-the-shelf tools cannot be used to unpack it.</p>
+<p>Unpacking is still relatively easy, by scrolling down from the entry point to the end of the code in a debugger. The code will end with a jump (Figure 3). This is typical with packers, that after unpacking the original code somewhere in memory they will jump there, instead of returning from the main function.</p>
+<img alt="Figure 3 - Tail jump at the end of the unpacking" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 3: Tail jump at the end of the unpacking
+<p>By putting a breakpoint to the tail jump we can dump the PE file from memory including the unpacked code. With the dumped file we can analyze the ransomware statically as well.</p>
+<h3>Control-Flow Flattening</h3>
+<p>Control-Flow Flattening is an obfuscation technique that can hide the structure of the program by modifying the control-flow. In the simplest case, it replaces the normal control flow of each function with a state machine, thus it makes harder for an analyst to quickly understand how each function works. Pandora uses a more complex control-flow flattening combined with opaque predicates, to complicate the control flow even further.</p>
+<img alt="Figure 4 - Graph view of main()" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 4: Graph view of main()
+<p>Figure 4 shows the graph view of the main function in the unpacked code. We can see that it does not resemble a normal function’s control flow. It looks like a huge switch-case statement, which is the result of the control-flow flattening that implements a state machine. However, in Pandora’s case most of the basic blocks are not connected at all. This is the result of the opaque predicates. Most of the jumps between basic blocks are calculated at runtime, as shown in Figure 5.</p>
+<img alt="Figure 5 - Calculating the address for the jmp in runtime" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 5: Calculating the address for the jmp in runtime
+<p>The first cmp instruction checks the current state of the state machine and depending on that calculates the value of the rdx register for the jmp at the end of the basic block. Because of this static analysis tools, such as IDA Pro cannot understand where the control flow will continue, and thus cannot connect the basic blocks in Figure 4.</p>
+<p>Emulation can be used to understand the control flow to a limited degree but debugging had to be applied extensively to be sure how the execution flows.</p>
+<h3>String Encoding</h3>
+<p>Some strings can be found in the unpacked binary, but most of them are from the statically linked libraries. However, the strings that would help us understand what is happening in the code are encoded. Figure 6 shows how one of the string decryption functions is called.</p>
+<img alt="Figure 6 - Calling one of the string decryption functions" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 6: Calling one of the string decryption functions
+<p>Both the address of the decryption function, which is called through rax, and the address of the encoded string, are calculated at runtime. This way, when looking at this code statically, there is no way to know what is happening here. The comment on the right side is the result of an IDAPython script that uses the <a href="https://github.com/mandiant/flare-emu">flare-emu</a> project to emulate the code and calculate the addresses of the function call, as well as emulate the decryption function. This solution was very effective in recovering the encoded strings in the binary. The decryption function implements an XOR decoding. The decryption keys are stored together with each encoded string. As a bonus, the malware uses multiple decryption functions. We identified 14 separate functions that are used for string decoding.</p>
+<h3>Function Call Obfuscation</h3>
+<p>It was already mentioned in the previous section that most function calls are not calling a direct address, but a register. Its value is calculated at runtime.</p>
+<p>If we use Figure 6 as an example the address in rax is calculated like this:</p>
+<p>rax = *(*address_table_base + 638300900) - 1426601284)</p>
+<p>As mentioned, this was solved using emulation. By emulating the execution of a function, we could calculate the register values at CALL instructions. This allowed us to resolve function calls at scale.</p>
+<h3>Windows API Call Obfuscation</h3>
+<p>Contrary to other malware, the Windows API function names are not encoded, but another obfuscation technique is used to hide their usage. As shown in Figure 7, the Windows API functions are organized in a jump table. At each address there is a jmp instruction that redirects to the library function. </p>
+<img alt="Figure 7 - Windows API function jump table" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 7: Windows API function jump table
+<p>Resolving the API functions was implemented in the same flare-emu IDAPython script that resolves the function calls. Whenever a CALL [register] points to a jmp instruction (see Figure 8), instead of the beginning of a function, then we assumed that it points to the API function jump table. So we took the name of the operand of the jump and used that to generate the comments for the function call (see Figure 9).</p>
+<img alt="Figure 8 - Recovering API function name in the emulation script" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 8: Recovering API function name in the emulation script
+<p>
+</p>
+<img alt="Figure 9 - The script recovered that this is a function call to OpenMutexA" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 9: The script recovered that this is a function call to OpenMutexA
+<h2>Multi-Threading</h2>
+<p>Pandora uses multiple threads to speed up the encryption process. For that it uses Windows’s <a href="https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports">IO Completion Ports</a> concept. This allows threads to wait for a file/network handle to appear in the IO Completion Port queue and process them. Pandora uses unassociated IO Completion Ports and sends any data through it using the OVERLAPPED structure. In this case drives and file paths will be passed to threads to process (enumerate or encrypt) them. The IO Completion Port is set up using the CreateIOCompletionPort() API function as shown in Figure 10. By passing INVALID_HANDLE_VALUE as the first parameter (rcx = 0xFFFFFFFFFFFFFFFF) and NULL as the second (rdx = 0x0) an unassociated IO Completion Port is created. The fourth parameter is the NumberOfConcurrentThreads, which is set to 4 (r9 = 0x4), defines that maximum 4 threads are allowed to work with this IO Completion Port.</p>
+<img alt="Figure 10 - Initializing an IO Completion Port" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 10: Initializing an IO Completion Port
+<p>After this, the main function will start the new threads. The communication between the threads is done using the GetQueuedCompletionStatus() and PostQueuedCompletionStatus API functions. Figure 11 shows how a discovered file (pydisas.py) is put in the queue with PostQueuedCompletionStatus(). Another thread will pick up this task with GetQueuedCompletionStatus(), and since it receives a full path to a file it will encrypt and rename it.</p>
+<img alt="Figure 11 - Posting the file path to the IO Completion Port's queue" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 11: Posting the file path to the IO Completion Port's queue
+<h2>Restart Manager</h2>
+<p>The Restart Manager is a Windows feature to reduce the number of restarts needed during installation and updates. The reason for a restart is usually because a file that needs to be updated is locked by a running process. The Restart Manager can save the state and stop the locking process to unlock the target file. Once the update is finished, it can restore the locking process again. Pandora uses the Restart Manager to make sure that even files that are currently locked will be encrypted. For each file the following process is executed:</p>
+<p>1) Create Restart Manager session with RmStartSession()</p>
+<p>2) Register the target file as a resource with RmRegisterResource()</p>
+<p>3) Check if the target file is locked by any process with RmGetList()</p>
+<p>4) If so, terminate locking processes</p>
+<p>5) End Restart Manager session with RmEndSession()</p>
+<h2>Encryption</h2>
+<ul>
+<li>Before a file is encrypted, Pandora does the following checks to make sure that it does not render the machine inoperable. Each target file is checked against the following blacklist of file and folder names. If the target file is on the list, Pandora will not encrypt it.</li>
+</ul>
+<table cellspacing="0" class="MsoTableGrid">
+<tbody><tr><td><p>AppData</p>
+<p>Boot</p>
+<p>Windows</p>
+<p>Windows.old</p>
+<p>Tor Browser</p>
+<p>Internet Explorer</p>
+<p>Google</p>
+<p>Opera</p>
+<p>Opera Software</p>
+<p>Mozilla</p>
+<p>Mozilla Firefox</p>
+</td>
+<td><p>$Recycle.Bin</p>
+<p>ProgramData</p>
+<p>All Users</p>
+<p>autorun.inf</p>
+<p>boot.ini</p>
+<p>bootfont.bin</p>
+<p>bootsect.bak</p>
+<p>bootmgr</p>
+<p>bootmgr.efi</p>
+<p>bootmgfw.efi</p>
+<p>desktop.ini</p>
+</td>
+<td><p>iconcache.db</p>
+<p>ntldr</p>
+<p>ntuser.dat</p>
+<p>ntuser.dat.log</p>
+<p>ntuser.ini</p>
+<p>thumbs.db</p>
+<p>Program Files</p>
+<p>Program Files (x86)</p>
+<p>#recycle</p>
+<p>..</p>
+<p>.</p>
+</td>
+</tr></tbody></table>
+<ul>
+<li>Each target file is compared to the following list of file extensions. If the file’s extension is on the list, the file will not be encrypted:</li>
+</ul>
+<p>.hta .exe .dll .cpl .ini .cab .cur .drv .hlp .icl .icns .ico .idx .sys .spl .ocx</p>
+<p>The ransom note, shown in Figure 12, promises an RSA-2048 encryption. The fact that malware is shipped with a hardcoded RSA-2048 public key (Figure 13) confirms this claim. </p>
+<img alt="Figure 12 - Ransom note" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 12: Ransom note
+<p>
+</p>
+<img alt="Figure 13 - Hardcoded RSA public key" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 13: Hardcoded RSA public key
+<p>A private key is also generated and both of these keys are stored in the registry under HKCU\SOFTWARE\[Private,Public] (see Figure 14).</p>
+<img alt="Figure 14 - Cryptographic keys are stored in the Registry" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 14: Cryptographic keys are stored in the Registry
+<p>The unpacked binary contains the <a href="https://github.com/ARMmbed/mbedtls">Mbed TLS</a> cryptographic library statically linked.</p>
+<p>Once a file is encrypted in memory, it is written to disk. After that the file is renamed to have the .pandora extension.</p>
+<h2>Disabling Security Features</h2>
+<p>The Pandora ransomware has the capabilities to disable some of the security measures on the target machine.</p>
+<h3>Deleting Shadow Copies
+</h3>
+<p>Like a lot of other ransomware, Pandora deletes the Windows Shadow Copies, which could help the operator restore the machine to a state before the infection. Figure 15 shows the call to ShellExecuteW() with the parameters from runtime(T1059). We can see that it uses the vssadmin.exe.</p>
+<img alt="Figure 15 - Deleting shadow copies with ShellExecuteW" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 15: Deleting shadow copies with ShellExecuteW
+<h3>AMSI Bypass</h3>
+<p>The Antimalware Scan Interface (AMSI) allows security products to integrate better with Windows to be able to scan all kinds of different objects, such as PowerShell scripts, JavaScript, VBScript, etc. By bypassing AMSI, the malware can take away significant capabilities from the security products running on the machine. Pandora bypasses AMSI by patching the AmsiScanBuffer() function in the amsi.dll in memory.</p>
+<h3>Disable Event Log</h3>
+<p>Similar to the AMSI bypass, Pandora disables the Event Tracing for Windows (ETW) feature, by patching the EtwEventWrite() function in the Windows kernel (ntdll.dll). Figure 16 shows that the first byte of the function is replaced with 0xC3, which is the ret instruction. This renders the EtwEventWrite() function useless, because after every call it return immediately without logging the event.</p>
+<img alt="Figure 16 - Patching the EtwEventWrite function to return immediately" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 16: Patching the EtwEventWrite function to return immediately
+<h2>Conclusion</h2>
+<p>The Pandora ransomware contains all of the most important features that state-of-the-art ransomware samples usually contain. The level of obfuscation to slow down analysis is more advanced than average malware. The threat actor also paid attention to unlock files to guarantee the maximum encryption coverage, while still allowing the machine to run. We can already see anti-security product features. We can expect the threat actor to develop these capabilities further. There is currently no proof that Pandora operates as Ransomware-as-a-Service (RaaS), but the time investment in the complexity of the malware might indicate that they are moving in that direction in the long term. The current attacks and leaks might be a way to make their name in the ransomware field, which they could capitalize on if they adopt the RaaS model later. It is worth tracking the threat actor to monitor how their malware changes.</p>
+<h2>Fortinet Protection</h2>
+<p>The analyzed Pandora ransomware sample is detected by the following (AV) signature:</p>
+<p>W64/Filecoder.EGYTYFD!tr.ransom</p>
+<h2>IOCs:</h2>
+<p>Mutex: ThisIsMutexa
+Ransom note: Restore_My_Files.txt
+SHA256 hash of hardcoded public key: 7b2c21eea03a370737d2fe7c108a3ed822be848cce07da2ddc66a30bc558af6b
+SHA256 hash of sample: 5b56c5d86347e164c6e571c86dbf5b1535eae6b979fede6ed66b01e79ea33b7b</p>
+<h2>ATT&amp;CK TTPs</h2>
+<table border="1" cellpadding="0" cellspacing="0">
+<tbody><tr><td><p>TTP Name</p>
+</td>
+<td><p>TTP ID</p>
+</td>
+<td><p>Description</p>
+</td>
+</tr><tr><td><p>Obfuscated Files or Information: Software Packing</p>
+</td>
+<td><p>T1027.002</p>
+</td>
+<td><p>Modified UPX packer</p>
+</td>
+</tr><tr><td><p>Impair Defenses: Disable Windows Event Logging</p>
+</td>
+<td><p>T1562.002</p>
+</td>
+<td><p>Disable Event Logging</p>
+</td>
+</tr><tr><td><p>Impair Defenses: Disable or Modify Tools</p>
+</td>
+<td><p>T1562.001</p>
+</td>
+<td><p>Bypass AMSI</p>
+</td>
+</tr><tr><td><p>Data from Local System</p>
+</td>
+<td><p>T1005</p>
+</td>
+<td><p>Searches unmounted drives and partitions</p>
+</td>
+</tr><tr><td><p>Modify Registry</p>
+</td>
+<td><p>T1112</p>
+</td>
+<td><p>Cryptographic keys are stored in the registry</p>
+</td>
+</tr><tr><td><p>Data Encrypted for Impact</p>
+</td>
+<td><p>T1486</p>
+</td>
+<td><p>As a ransomware it encrypts files</p>
+</td>
+</tr><tr><td><p>Command and Scripting Interpreter</p>
+</td>
+<td><p>T1059</p>
+</td>
+<td><p>Uses cmd.exe to remove the shadow copies</p>
+</td>
+</tr><tr><td><p>System Information Discovery</p>
+</td>
+<td><p>T1082</p>
+</td>
+<td><p>Collects system information with GetSystemInfo()</p>
+</td>
+</tr><tr><td><p>File and Directory Discovery</p>
+</td>
+<td><p>T1083</p>
+</td>
+<td><p>Discovers drives and enumerates filesystems</p>
+</td>
+</tr><tr><td><p>Inhibit System Recovery</p>
+</td>
+<td><p>T1490</p>
+</td>
+<td><p>Deletes shadow copies</p>
+</td>
+</tr><tr><td><p>Service Stop</p>
+</td>
+<td><p>T1489</p>
+</td>
+<td><p>Terminates processes if they lock a file</p>
+</td>
+</tr></tbody></table>
+<p>Learn more about Fortinet’s <a href="https://www.fortinet.com/fortiguard/labs?utm_source=blog&amp;utm_campaign=fortiguard-labs">FortiGuard Labs</a> threat research and intelligence organization and the FortiGuard Security Subscriptions and Services <a href="https://www.fortinet.com/fortiguard/labs?tab=security-bundles&amp;utm_source=blog&amp;utm_campaign=security-bundles">portfolio</a>.</p>
+</div>

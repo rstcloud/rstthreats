@@ -1,0 +1,369 @@
+<div>
+<h1>New SYK Crypter Distributed Via Discord</h1>
+Posted by
+<a class="author-link" href="https://blog.morphisec.com/author/hido-cohen">Hido Cohen</a> on May 12, 2022
+<ul class="hs-blog-social-share-list">
+<li class="hs-blog-social-share-item hs-blog-social-share-item-twitter">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-linkedin">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-facebook">
+</li>
+</ul>
+<p>With <a href="https://influencermarketinghub.com/discord-stats/#:~:text=Discord%20has%20150%20Million%20Monthly%20Users,-Discord%20has%20now&amp;text=The%20most%20significant%20growth%20came,spend%20chatting%20on%20Discord%20servers.">50% more users</a> last year than in 2020, the number of people using the community chat platform Discord is growing at a blistering pace. This has led cybercriminals to refine and expand malicious attack use cases for the platform. In this threat research report, Morphisec reveals how threat actors are using Discord as part of an increasingly popular attack chain with a new SYK crypter designed to outwit signature and behavior-based security controls. </p>
+<p>Morphisec’s Threat Labs team is on the cutting edge of threat research in this area. Our researchers previously dissected other Discord-related threats like <a href="https://blog.morphisec.com/nft-buyers-beware-journey-of-a-crypto-scammer-how-to-stop-them">Babadeda </a>and <a href="https://engage.morphisec.com/journey-of-a-crypto-scammer-nft-001-threat-report">NFT-001</a>. We can report that as Discord has expanded from a gaming messaging app to broader use, it’s being used to distribute a crypter we named SYK.</p>
+<p>The attack chain preceding the SYK crypter deployment demonstrates a new evolution of how threat actors abuse Discord's CDN (content delivery network). As a conduit for new, highly innovative crypters, Discord plays an important role in a campaign that starts with targeted phishing emails directed at organizations in various sectors.</p>
+<p>The attack chain we saw comprises two main components; a .NET loader (which we refer to as DNetLoader) and a .NET crypter (SYK Crypter). This crypter delivers many malware families, such as AsyncRAT, njRAT, QuasarRAT, WarzoneRAT, NanoCore RAT, and RedLine Stealer, putting organizations in every sector and industry at risk. </p>
+<p><a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy" rel="noopener"><img src="https://blog.morphisec.com/hs-fs/hubfs/Screen%20Shot%202022-05-10%20at%2012.59.02%20PM.png?width=1082&amp;name=Screen%20Shot%202022-05-10%20at%2012.59.02%20PM.png" style="max-width:800px;height:auto;width:auto;" width="1082"/></a></p>
+<h2>Initial Infection</h2>
+<p>To lure new victims, attackers disguise the malware as a purchase order using file names such as Purchase Order.exe, New_Order_*.exe, AMAZON_ORDER*PDF.ex, etc. The following example is delivered as a phishing email:</p>
+<p><img alt="Phishing email that delivers the SYK crypter" height="464" src="https://lh4.googleusercontent.com/ZQVZrA9mrxCJiRE5gmZlBRnI2vMgD0LuYhDtqCQjw93fSk7dipqxtijxx5uHVVlEfqTRzGTn1wto1LZexb4Sfp7ADa4zdexNojGaTLo3Mmso02OcMAryWV6xTdUOaPcTR3BTupe-CcE0cPYu1w" width="624"/></p>
+<p>Phishing email containing the Discord malware</p>
+<p>If this deception works, the victim opens and executes the attachment and the infection begins. </p>
+<h2>Technical Analysis</h2>
+<p>Before diving into the analysis, let’s look at the execution chain:</p>
+<p><img alt="SYK crypter execution chain" height="486" src="https://lh4.googleusercontent.com/h7Eq4b7tjhT5RqqH142zLtyYtx08lD3ix2W0ZdQ6jb1orlo_tg-gVzheyid_RjA_4MT5snGycvVvfB5Ran8E4jSX1ngWANklbIXDShE-dM3j-0Z4xvsvp3W8ASBL9vzeTtDKvoH5DuQwRodZtQ" width="406"/></p>
+<p>Malware execution flow</p>
+<p>This execution flow consists of two stages and a final payload. The first stage is the downloader. It connects to a hard coded Discord CDN endpoint and downloads encrypted data. The data, once decrypted, is the second stage—the crypter. This second stage loads into the memory and is responsible for decrypting the final payload, which is stored as a PE resource. It includes antivirus evasion, persistence setup, and injection of the final payload to a newly initiated process.</p>
+<h2>Discord CDN as Malware Distributor</h2>
+<p>Steps 1-2</p>
+<p>If you’re unfamiliar with the Discord CDN, it enables Discord users to create and contribute to topic-based text channels. There, users share photos, videos, voice messages, and executable files, all of which are stored on Discord CDN servers—including malware masquerading as legitimate files. </p>
+<p>The URL format for a specific file is as follows: </p>
+<p>hxxps://cdn.discordapp[.]com/attachments/{ChannelID}/{AttachmentID}/{filename}</p>
+<p>In this context, the DNetLoader is identified by the filename, a three digit number. Let’s look inside the code:</p>
+<p><img alt="DNetLoader code" height="615" src="https://lh5.googleusercontent.com/WYOWgZxxCPv8VwowbhuEf8MW_IPuJAGrAfGpmX2VtkYGcXo_M4kIavFichujM9xfsgLQKBw0kLBGOatiXGixB0l19XsV42YjypXfpUkbGRqIx48ZjTlGlLCleO5ndeTB8tzKIHuuyfqSM4JkVw" width="624"/></p>
+<p>First stage malicious code</p>
+<p>The first stage is pretty straightforward. The malware downloads the next stage from Discord CDN where the file name is hardcoded and used as the decryption key. The decryption algorithm is just a subtraction of the file name from each byte in the downloaded data.</p>
+<p>Once decoded, the malware loads it into memory and creates an instance of the first exported type. Then the execution moves to the next stage. In other cases, the instance name is explicitly noted, usually with type name “B”. </p>
+<h3>DNetLoader In the Wild</h3>
+<p>At the time of this post’s writing, we observed the following malware distribution initiated by the DNetLoader. Note that the SYK crypter is only one variant; additional crypters have been delivered by the same loader.</p>
+<p><img alt="DNetLoader payloads" height="428" src="https://lh5.googleusercontent.com/uvuoeq-jJE82feAnJgSc-atiOPUtVavGedWb5O5zFVdAVVXYkG3GMe3QjDshWL8M27uy74YkWdqVp7jE4WAqgAbEazWDfMiLSsNyRUGF5sPKO2dOudlcRZVD71eJa4EGK8CB8vnTcUSz7EM5Ow" width="624"/></p>
+<p>Final payloads distributed by DNetLoader</p>
+<p>Besides the RedLine infostealer, all malware families are RATs (remote access trojans), with Async RAT the most common. We also extracted some of the C2 servers (this list is not exhaustive):</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>Payload</p>
+</td>
+<td>
+<p>C2</p>
+</td>
+</tr>
+<tr>
+<td rowspan="8">
+<p>Async RAT</p>
+</td>
+<td>
+<p>joseedward5001[.]ddns[.]net:1515</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>bendito2714[.]duckdns[.]org:7090</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>sgrmbroker[.]com:4404</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>dedicatedlambo9[.]ddns[.]net:1515</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>glengaidos2881[.]ddns[.]net:1515</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>polarjwns[.]xyz:8808</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>enero2022[.]con-ip[.]com:3028</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>mijamajor[.]hopto[.]org:4872</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>NanoCore RAT</p>
+</td>
+<td>
+<p>windapts[.]ddns[.]net:1608</p>
+</td>
+</tr>
+<tr>
+<td rowspan="2">
+<p>njRAT</p>
+</td>
+<td>
+<p>diosamor27[.]duckdns[.]org:8899</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>nipuelputas[.]myftp[.]org:1788</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Quasar RAT</p>
+</td>
+<td>
+<p>gu3rr4[.]duckdns[.]org:5965</p>
+</td>
+</tr>
+<tr>
+<td rowspan="4">
+<p>RedLine Stealer</p>
+</td>
+<td>
+<p>lunovim957[.]duckdns[.]org:42543</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>crossred9188[.]duckdns[.]org:29580</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>asheesh[.]duckdns[.]org:5519</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>hustlegang[.]duckdns[.]org:34261</p>
+</td>
+</tr>
+<tr>
+<td rowspan="3">
+<p>WarZone RAT</p>
+</td>
+<td>
+<p>dreams2reality[.]duckdns[.]org:2612</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>185.19.85[.]163:9961</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>185.140.53[.]174:2404</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<p>Mapping payload to C2</p>
+<p>In the next section we explain how the next stage, the SYK crypter, decrypts its component, how to extract its configuration, and the AV evasion and persistence techniques in place.</p>
+<h2>The SYK Crypter</h2>
+<p>Steps 3-5</p>
+<p>Before diving deeper into the .NET crypter, note that we found that the same crypter was delivered by loaders other than the DNetLoader. However, they all had a resource named SYKSBIKO in common—the encrypted payload. For this reason, we dubbed it the SYK Crypter.</p>
+<p>As with other crypters, this crypter has a payload decryption method, control flow manipulation, strings and constant obfuscation, AV detection, persistence, and anti-debugging features. We examine each capability and explain how it’s implemented.</p>
+<h3>Configuration Extraction / Strings Obfuscation</h3>
+<p>The SYK crypter holds its configuration inside an obfuscated string represented as a byte array:</p>
+<p><img alt="SYK crypter encrypted byte array and access functions" height="180" src="https://lh6.googleusercontent.com/GvJiTagQyHpU7nPlRRbJMgah4gSS67jnRHqUsqMfFTrc5gF89PNPKAvK34k4AXrR7Q7RPhAAAcPmIHszj41k_TZumDUFd-P_iEJq_9PLmSQffFA3mmjP9jytUYLtd39d5VQoMdFrucNHCDh61w" width="624"/></p>
+<p>Encrypted byte array and access functions</p>
+<p>The crypter starts with a string de-obfuscation technique. Each string can be accessed and used by a predefined function which hardcodes its length and offset in a large byte array. The de-obfuscation algorithm is just XOR with 170 and the current index, so we can use the following Python script:</p>
+<p>encrypted = [231, 216, 235, …] </p>
+<p>ba_encrypted = bytearray(encrypted)</p>
+<p>ba_decrypted = bytearray(encrypted)</p>
+<p>for counter, i in enumerate(ba_encrypted):</p>
+<p> ba_decrypted[counter] = (i ^ counter ^ 170) &amp; 0xff</p>
+<p>A similar method is used as part of an Agent Tesla <a href="https://malgamy.github.io/malware-analysis/Deep-Analysis-Agent-Tesla/">delivery campaign</a>.</p>
+<p>Among all setting strings inside the configuration, the important ones are the final payload decryption key, list of AV solutions services and process names, and a small .NET delegator (base64 encoded).</p>
+<p><img alt="SYK crypter decrypted configurations" height="400" src="https://lh3.googleusercontent.com/rPYIpqsOGpIFXmGXAjwGIm498ah3QhVbUrA8Ic_tHYpfV-ouu8rlXVqnObySbMpvnN8orcpJxbGXqHAmyF9GgOq_0nHE3gxe-5CrU9KpqObvh-HJDp_-M1ro_oOGTulTWwKT8Y0Dg1OP-ppkyA" width="624"/></p>
+<p>Decrypted configuration</p>
+<p>As you can see above, several strings are still encrypted. The crypter uses subtraction encryption for those, with the keys also stored as part of the configuration.<img alt="String decryption algorithm" height="120" src="https://lh3.googleusercontent.com/trXBewsrMM9RoWHutHOmCE3eoSDPET_mct_E5GI1s5tQen60jZ7HYurh5JTxTCjo1sarP9phgwb5-QSzg1BGE-M0iR4yTCUbto0b2zaTplR1HX-AYyYMi-4U2NXLALD34SpG_0_TExfOqqA61w" width="624"/></p>
+<p>String decryption algorithm</p>
+<h3>Security Solutions Detection</h3>
+<p>The crypter checks for the existence of a set of security solutions using the following two methods. </p>
+<ul>
+<li>By calling GetProcessByName:
+<img alt="Calling GetProcessByName" height="41" src="https://lh6.googleusercontent.com/t4Yi49NLbw5kp9SFylwiPQoe3Gaic1fyT6TgyKKEzvpWHMHOltxrsByZ8894ehadnxPTa3zgnw8k3oh3hVrTQOvfYJNhU7ja33NDpeBZlW_5LymxWXDbgcccPP41qiWodsK-mAAcOWnqeHo6SQ" width="624"/></li>
+<li>By checking if a path exists.</li>
+</ul>
+<p><img alt="Checking if a path exists" height="107" src="https://lh3.googleusercontent.com/oLAff3jjlstiYlklGcCUqGva-dT0DPIPXgpixw62Cel_J7awKn1PYBsPG-r8sDbUDIr6YIs-2jfpFPWhgyNlRq6j17DxQQGfqyw8fkRMEkCMdH00bCNkfUYi67fLNH22hFywg_qiLJGzeCtcKg" width="624"/>
+<img alt="Checking if a path exists" height="39" src="https://lh3.googleusercontent.com/R1OJrz6JGzGlnFoOcrgQ_kfXFlpj5FYoPzYWKhamND3UDA3Z4Shw8JL2EZjtvpwFJAegp2ZltiJr0XxGE52moN27JDcOg7tJdR8mHVY6JwzvVNhh7PDnB1VVtA8AIPClnOJiMMxjiz6C09fusw" width="624"/></p>
+<p>These actions happen many times throughout the execution, each time with different solution names and/or file paths. The list of process names and paths are in the appendix at bottom. Note that if a security vendor is identified, the malware will abort the current functionality.</p>
+<h3>“Anti-Debugging”</h3>
+<p>For this task, the crypter implements a popular anti-debugging technique by inspecting the value inside Debugger.IsAttached:</p>
+<p><img alt="Anti-debugging function" height="131" src="https://lh5.googleusercontent.com/J6bjdk4q5KVedhVoZHce8SOdKaJk_dFq5j8I1u0NT4KA9o-nVuassl1PN-aiYQH4Z6J-JNcQm6OjGc4OTtKtMB4tttFsOQpwezl_OTVPLfML1UzDadlgMnuyy8Aff46TZG8QE1TAsFRn4hmMsA" width="434"/></p>
+<p>Anti-debugging function</p>
+<h3>Persistence</h3>
+<p>On its first run, the crypter copies itself to the Startup folder by executing a small javascript file:</p>
+<p>var FSO = WScript.CreateObject("Scripting.FileSystemObject"); try { FSO.MoveFile("&lt;execution_path&gt;\\malware.exe", "%AppData%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\malware.exe");} catch(err) {}</p>
+<p>This javascript file is executed from the %Temp% directory:</p>
+<p><img alt="%Temp% directory" height="33" src="https://lh5.googleusercontent.com/Bc6UtGaobV1Oea4DqFt1U0lu-GUhZzWBc6K53zyvUiOWHZS0Zl05_SnH-ywYWS4sREMbmZz7MN3YalmqgQzyIA0GzmO3McM77yGJ5khAwWyArCL8McL5lrqCZJfFtjG1yv-xnozfFCtRWDxWnA" width="624"/></p>
+<p>Next, the following command is executed:</p>
+<p><img alt="Command execution code" height="84" src="https://lh4.googleusercontent.com/IDNb9oIFKeyJxxeLlIWCjZCVjKmAruCpwIyw0hPQfy7kSETusZBs7hlVrEdJFca3EEH24aw4WuORDlynN7aZWdRvlhF62qRC8Jy7zpz5oTrctzafA5_jk8EFJpBoofouzZqa-gdBjefXtKiNYA" width="624"/></p>
+<p>At this point the malware runs from the Startup folder again, so the current instance is killed:</p>
+<p><img alt="Code that kills the current instance" height="169" src="https://lh4.googleusercontent.com/TXSVJf-gSTZ98q3Coz4L1iitxXgV9dkEkvyRjp0WY_pzGoR7gIfaoQdljeXmvXgc8yWNR7xHwjsv2A0tcTxDf7Var5Isrml5wJ8GNbREPA3lKWtdSMYbf7a9XBD9luK_R732MikpB99Mypr0GA" width="624"/></p>
+<p>The final payload injection starts if the malware execution path is the Startup folder.</p>
+<h3>Final Payload Injection</h3>
+<h4>Payload Decryption and Deobfuscation</h4>
+<p>Before moving forward, we need to understand where the final payload is located and how it’s decrypted. We can divide this process into four steps:</p>
+<ol>
+<li>Read the decryption key from the config—the first element</li>
+<li>Read resource bytes from SYKSBIKO.Properties.Resources.a</li>
+<li>Use the key to decrypt the resource’s bytes </li>
+<li>Deflate the result </li>
+</ol>
+<p>The final payload decryption algorithm is a bit more complicated than the previous algorithms.</p>
+<p>The decryption starts from initializing a new 256 unsigned integer array with its index values.</p>
+<p><img alt="Array initialization" height="96" src="https://lh3.googleusercontent.com/BInBQ_zksJ1hWNauy6zNhrENmppsbs_cOX289D7IXBLlOGUv1mNLayv4k7nPI6zeVtkrlT1vGjcZ3daO1p2ck3Zj9hpIMvC5_R7KAXi7fNO0hceZA2cmtBx-l7DDl8S4oMUl4Vz55aDuWwBkOw" width="393"/></p>
+<p>Array initialization</p>
+<p>Next, it uses the extracted decryption key to alter the values inside the initialized array:</p>
+<p><img alt="Altering values in the initialized array" height="183" src="https://lh3.googleusercontent.com/4gmCIzN_GEV8LycuembD0jPlpMmxClx6dYdaESPX7dkK07PNc2JZMCAR0eXYcX7--Q77KtireXPZSM5Nhwl6agEuPFr-IFlo8pl0tB_vvLGpLAdq-QScfsrRyUQSHuY96CLobGdEcg_riHrqAg" width="624"/></p>
+<p>Altering array values</p>
+<p><img alt="Altering array values" height="244" src="https://lh6.googleusercontent.com/VuNUcR_YGpeWVVqP3Pnf-KfHtdyPjaN2Kgwqa6K4ROcvjlyRgN7VKbCvnURU8vpKuBSAD56RUs5h_V4H37Mx2FPWjJlKl-KrwnA4lRTYIcGwmkFwWtLtiYcgmaTJtPwfLjOYgQAwmnbmFu5wKw" width="584"/></p>
+<p>Once the alteration is completed, the array is ready to be used for payload decryption.</p>
+<p><img alt="Array ready for payload decryption" height="189" src="https://lh4.googleusercontent.com/3cv6wyB1WIiPLNQppw2IX-o_uG4U4aGcUzOpInzDmiIaUwCE9lcZaE5FRB3UlJCp29FjSejsGV2jdhmGHkW-3PTGfCwsbI4kme6nD1QXvS8VtXNiq_wS_Xb8uontzjbE9ndLzeE0h3DX2oTHFA" width="624"/></p>
+<p><img alt="Completed array" height="500" src="https://lh3.googleusercontent.com/ArKjlkJU7yGMUEKX-l7ydoVo26Js0IkFFVBKowPeqzmE5oljqSj15x8RifixlLbSF6dUyherLNcCFl7BKHvHWWk2vlYo8V0728eajSd2zeu03nMCxKU544j3UtUyM7YtrOWnHW_DEX1zgk3qaw" width="487"/></p>
+<p>As part of the decryption, before XORing the values there is another swapping, as seen earlier. Then an index is calculated from the sum of the swapped values. The encrypted data is XORed with the value of the array inside the index.</p>
+<p>The end result is a deflated compressed representation of the final payload. So all that’s left to do is decompress the result and get the final payload. </p>
+<h3>Process Hollowing Injection</h3>
+<p>The SYK crypter uses Process Hollowing as its preferred injection method. It creates a new process—RegAsm.exe or the named process according to the configuration—and injects the decrypted final payload into it.</p>
+<p>It's interesting how the WinAPI functions get loaded into memory. The SYK malware uses the .NET Delegator in its configuration to create a delegate for each function.</p>
+<p><img alt=".NET delegator" height="175" src="https://lh4.googleusercontent.com/faOCWTcVeKYIiJiVKNEFqnZu5eQ3vWXZyFjRnfziDT0cCNzChfowDjyeXsW7Q_yiSPXBbhXJHKOO55Mvv2pIwj_-YOWRNLbiuiXF9Q56FsFTBvMFsHWGgNPhCRNGFQ6Y-Tf-eElIPV3qg_Aw5A" width="624"/></p>
+<p>Here, the malware loads the Base64 additional assembly, denoted by “s”, and calls its ClassLibrary1.Class1.GetDelegateForFunctionPointer function. This delegates to the given function address. The library and function name are encrypted in the configuration.</p>
+<p>The crypter will create delegation to all APIs in the same manner. For example, the following snippet loads kernel32!GetThreadContext:</p>
+<p><img alt="kernel32!GetThreadContext" height="51" src="https://lh4.googleusercontent.com/6Isi66dwqQ7xIJyLPLYL0w43foi1cWtrjv7QwE52D4VU_LTSvdMZnvk89IFE6sAI3JsRCmfdv_DaWedqkD8ntAeAFrtZ5Nct-kmo1zoNTdgOO8ykRSuwEB_oKRzHgMTIqU-X7kIWvStARqxWUA" width="624"/></p>
+<p>Where the strings are decrypted to: kernel32 and GetThreadContext.</p>
+<h2>Defending Against the SYK Crypter</h2>
+<p>This attack chain delivers a crypter that is persistent, features multiple layers of obfuscation, and uses polymorphism to maintain its ability to avoid detection by security solutions, demonstrating a further escalation of the cybersecurity threat level. By combining a freely available messaging app with a powerful crypter, threat actors have made it easier to conduct attacks that signature-based security solutions cannot stop.</p>
+<p>In response, organizations urgently need to acknowledge an important fact. You can no longer depend on malware having recognizable signatures or behaviors. To stop this continued threat evolution, it's vital to prevent threats by making attack surfaces inherently dynamic and hostile to intruders like the SYK crypter by implementing a zero trust architecture (ZTA).</p>
+<p>Enabling a zero-trust environment for endpoints, including Microsoft and Linux servers, Morphisec’s Moving Target Defense (MTD) technology stops polymorphic threats like the SYK crypter. Instead of waiting to react to attacks that have already happened, MTD prevents advanced threats from getting a foothold in the first place. MTD morphs application memory, shifting and shrinking the attack surface from threats like SYK, preventing payload deployment. </p>
+<p>Want to learn more about how combining Moving Target Defense with zero trust works? To see how Morphisec stops threats like the SYK crypter and other advanced attacks, read the white paper: <a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy">Zero Trust + Moving Target Defense: The Ultimate Ransomware Strategy</a>. </p>
+<p><a href="https://engage.morphisec.com/the-ultimate-ransomware-strategy" rel="noopener" target="_blank"><img alt="Moving Target Defense white paper" src="https://blog.morphisec.com/hs-fs/hubfs/MO-ZeroDay-RD-400X300-v14%20(1).png?width=400&amp;name=MO-ZeroDay-RD-400X300-v14%20(1).png" style="max-width:80%;height:auto;width:auto;"/></a></p>
+<h2>Appendix</h2>
+<h2>Security Solutions Strings</h2>
+<h3>Process Names</h3>
+<p>AVGUI</p>
+<p>BgScan</p>
+<p>BgWsc</p>
+<p>BullGuardBhvScanner</p>
+<p>WSRA</p>
+<p>a2guard</p>
+<p>avp</p>
+<p>avpui</p>
+<p>bdagent</p>
+<p>bdredline</p>
+<p>bdservicehost</p>
+<p>drweb</p>
+<p>ekrn</p>
+<p>masvc</p>
+<p>mbamtray</p>
+<p>mfecanary</p>
+<p>mfeesp</p>
+<p>mfehcs</p>
+<p>mfemactl</p>
+<p>navapsvc</p>
+<p>odscanui</p>
+<p>uiSeAgnt</p>
+<p>vsserv</p>
+<h3>Paths</h3>
+<p>C:\Program Files\McAfee\Agent</p>
+<p>C:\Program Files\AVAST Software\Avast\avastUI.exe</p>
+<p>C:\Program Files (x86)\AVAST Software\Avast\avastUI.exe</p>
+<p>C:\Program Files\AVG\Antivirus\AVGUI.exe</p>
+<p>C:\Program Files (x86)\AVG\Antivirus\AVGUI.exe</p>
+<p>C:\Program Files (x86)\Webroot\WRSA.exe</p>
+<p>C:\Program Files\Webroot\WRSA.exe</p>
+<p>C:\Program Files (x86)\Trend Micro</p>
+<p>C:\Program Files\Kaspersky Lab</p>
+<h2>Indicators of Compromise</h2>
+<h2>Attachments</h2>
+<p>64f5839c38382c863ccba737bca9f9726fb395f52bfad3cfabfec0cde05fc47c</p>
+<p>11d750682595eef404ad43b2c1e9981dc35bdb180d82709f4d33811a88a8fbfe</p>
+<p>bbda6c0478c03c9845285bd399ff04e989106ab461fc773aecb3e03b607b370c</p>
+<p>77d7e7c68fdc652d5292d8b474763fb79ec99d2faa9b1d9f6f1c468d0d8f3d87</p>
+<h2>First Stage - Discord Downloader</h2>
+<p>66eca7b1860d778cfce8e0ad6b66e09e12128cb149208122644c0622e0ba3910</p>
+<p>0db1d14dc510cf6310e63b3dba2f2168b35dde1066abfa279881b9752b45d49a</p>
+<p>2f2b971a4c04c399427f2c71b4fe7c0c945a9223d66b3325f42c9ade54cf6867</p>
+<p>4def53afd3cfa7cf644b61a877f18ceed798dc8f62268afb52827ee61280d3ac</p>
+<p>07c7268c2f8a736f5c74f9dabfdf5e10c8a4580fdfcf11eaa7e20a88dd52cae8</p>
+<p>2775f8771630ffad088473e525e9f7f5bbea7e3314569480eb9efb4767ad1dc6</p>
+<p>13d27cdf24f15d418b2197f6d017725bbd26ea1b8db7a61bdd648e90f1d269c5</p>
+<p>f9ca68d46bfdd5710abe9d01b9c6de61a0861581b0de9684c202b0c9aff11ccc</p>
+<p>769c5c1d9681b468b84a14af0c33ec4ee786f8c7a0eecf7819bd9286cab2d474</p>
+<p>561f65daae4410569d883adbb919fe4ea751540330738a3675afdddfe4acf764</p>
+<p>1611e88c7df03554eb83b7d5c22610ec8c6bec03c2d52bd451abbf0b9b53687e</p>
+<p>6484c71c7cfb6ae4914267ebc7e508665f1996a01c30f46d74494aa540f40eed</p>
+<p>43427de4b45f2aa2e6289d1a6d5e6859f4184e5cf638a4b6c185fafca6a85838</p>
+<p>a72f7b3f503af99c1b930817fe7c14468cf932b924d849d48c84a2b740cd93dc</p>
+<p>a56025263e68435d2602e821077174aae47ee2944f5719748e653f8f054149b4</p>
+<p>bce1723245d13050d1de61f9c8d4ebdf13442208f3baba2326c79d62c3709983</p>
+<p>c01c02c1534e41ca75c1ba1fb165252887ed6a5091e0047cf33169f902927503</p>
+<p>c04802a977e8d933c30def1dddaee61bbfd0625616960bf05352814b1a002679</p>
+<p>c6988c24086656560348185a4d8672463bc19b37c9ff6df4a04810a54127785e</p>
+<p>f77dbafd3d7b569f613cb5bb8797d010f5c00ab94de46cfde1a0d550c7167979</p>
+<p>faa38595a083c174ccca2b3be0089dc049b429e9d94a77cc1ed862d395372f2e</p>
+<p>fac3c7ee9dda4b577571c7bdd28bb802227bdd36585378da354e6e104deb166c</p>
+<p>bc5198ebfbe1f184e4649a6c4c7cc14b990bd440dc8367654115d3b4ee178d06</p>
+<p>88a95249594b0466dec732c7fe79dcd49cef9b62f416d9d5dd2c18d2ee4b48c7</p>
+<p>008665f46f819b9e514f10522115482f0696b43b194af0766df3bd005502d71e</p>
+<p>0e4b58eda9ddb835af5e3f91ed71527c0cfae1284af66a7bff2d3c12d873ef79</p>
+<p>709dfdb42be61038697b83df71a329ab080f79e2f1d1bae9b4bc162d9af774b0</p>
+<h2>Download URLs</h2>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/948367670900846643/885</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/896158305087553560/924658841847726170/981</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/933520960521400381/933521000300163143/867</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/875759269977411698/945098629780226158/897</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/951729456752508948/910</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/946300452096598067/536</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/959254345982029855/817</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/854820268773736493/946915889863860316/778</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/866351974466977835/950118342172221470/556</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/900653930571235341/905956542162022420/660</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/854820268773736493/895128481858474004/804</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/908007876960854056/928649032665014282/990</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/873602495736328236/917391419595956234/630</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/897091209665859596/941748938925563944/982</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/670204968430600202/886743722224660510/850</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/955620719667068951/960684830159405056/843</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/899050420717101059/941477948916138054/632</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/955620719667068951/956310954029748254/541</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/963787231233990706/753</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/937717676883714128/937717993683705886/616</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/854820268773736493/921074463716544534/722</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/899050420717101059/917505272975597598/954</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/854820268773736493/897577190647029760/582</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/874443728855658568/955432766999240724/621</p>
+<p>hxxps://cdn[.]discordapp[.]com/attachments/960944829708259331/960944846443511828/610</p>
+<h2>Second Stage - Decoded</h2>
+<p>7ccb0bfb6429080048c8be436589144df05e0152871098e291f548fa55a80d12</p>
+<p>998096ef9182f3a82def92be40f03c3de2bdd563dbd64a56281a221b8275453a</p>
+<p>117584349ad009a1ff68d5a68ce38dbbf80687424b6c21100a5027523ea84dd5</p>
+<p>e6a003c19f1d67b44cff8b9404f3287a2b503b9332def38d0428676d1828ebed</p>
+<p>787b25c1baaf0315d6d75110da49f35c62128555117d04b383db5aac5edd4cdd</p>
+<p>ec7cc391bb77f62288b026039580d0255cd36b619276a8fdc33af8dfdf9ccf95</p>
+<p>38f4f07f187ed0356ebe55962fb404109e4c3db39c97c94581c19ceb09eae3be</p>
+<p>8a5b720dcbdcb0bf99377ea2f5f69c25a4d7c19a00f43369c223d7060fec176d</p>
+<p>0955d76297f215c9898ea4334875dc10ddaca76dea5ec7bc82c870c6f3368672</p>
+<p>f77251430ac4e0c5296f85fdca79de02c442348d661a6412737edc1daa384ad2</p>
+<p>cc9f4854d7da2e50860c1e9d49647ddc08ae7ebae8f2fea419b1d42a2282a8b2</p>
+<p>ae39808c101926b43a96b4e46bd21c0e7876fe07d03ee5e74cf66cde723209a1</p>
+<p>b835a0febe1a8710f3cb3861944bf32b2061c195d586d74a8870d06a43305d26</p>
+<p>d5aedccb962f751a869f1d8ae0b05c27979e4501877a060d9f5498f18b67408d</p>
+<p>fbfc1b9b6e0474ac2e279b1f2e5d4a2484d7e3489b20b34828a7e642b38c0447</p>
+<p>0347192b09ab57e6f9108ed139199aef5473da454c1f315fea00d79b0d718dfd</p>
+<h3>Subscribe to our blog</h3>
+<p>Stay in the loop with industry insight, cyber security trends, and cyber attack information and company updates.</p>
+<a class="cta_button" href="https://blog.morphisec.com/cs/c/?cta_guid=3748b58d-cb4b-43c4-aa1d-004c790bbe6a&amp;signature=AAH58kHUaRRRAQlJb7nQ8ZRCzRBHu51i9w&amp;pageId=73372716308&amp;placement_guid=06461e49-d0ef-44ca-bcf3-ad6c8d5a8ff2&amp;click=031c46be-1223-4bc7-bd4e-9f1aae7f0d61&amp;hsutk=709d425c30b3bd89c467704379ef657d&amp;canon=https%3A%2F%2Fblog.morphisec.com%2Fsyk-crypter-discord&amp;portal_id=1534169&amp;redirect_url=APefjpF3rnp9_JhYjFLNjSSzj71AkYfMkuCn5ckFGsWdW4UJiJRTr8PluCwkw5WHMBLOFMwdLUQVDIFSPcG_-vOGuQblAE8RJnM3H3xvK5h00HHyHkVhKeo8dHfGksrC--6Xanid37XmxdySAHLNv3rVClaWKDAzfA&amp;__hstc=182053752.709d425c30b3bd89c467704379ef657d.1652988693108.1652988693108.1652988693108.1&amp;__hssc=182053752.1.1652988693109&amp;__hsfp=98101046&amp;contentType=blog-post" id="cta_button_1534169_3748b58d-cb4b-43c4-aa1d-004c790bbe6a" rel="noopener" target="_blank"><img alt="Healthcare Cybersecurity Summit" class="hs-cta-img" id="hs-cta-img-06461e49-d0ef-44ca-bcf3-ad6c8d5a8ff2" src="https://1534169.fs1.hubspotusercontent-na1.net/hubfs/1534169/hub_generated/resized/06f6d305-9297-4b27-a94e-6473494a72b1.png" style="max-width:80%;height:auto;width:auto;"/></a>
+<h3>Search Our Site</h3>
+<ul class="hs-search-field__suggestions"></ul>
+</div>

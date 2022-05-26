@@ -1,0 +1,779 @@
+{
+    "id": "<report_0x4937051b>",
+    "url": "https://www.zscaler.com/blogs/security-research/vidar-distributed-through-backdoored-windows-11-downloads-and-abusing",
+    "title": "Vidar distributed through backdoored Windows 11 downloads and abusing Telegram. Summary",
+    "meta": [
+        {
+            "id": "<chapter_0xf4ec985c>",
+            "title": "Summary",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x32655373>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In April 2022, ThreatLabz discovered several newly registered domains, which were created by a threat actor to spoof the official Microsoft Windows 11 OS download portal. We discovered these domains by monitoring suspicious traffic in our Zscaler cloud. The spoofed sites were created to distribute malicious ISO files which lead to a Vidar infostealer infection on the endpoint. These variants of Vidar malware fetch the C2 configuration from attacker-controlled social media channels hosted on Telegram and Mastodon network.",
+                    "html": "<p>In April 2022, ThreatLabz discovered several newly registered domains, which were created by a threat actor to spoof the official Microsoft Windows 11 OS download portal. We discovered these domains by monitoring suspicious traffic in our Zscaler cloud. The spoofed sites were created to distribute malicious ISO files which lead to a Vidar infostealer infection on the endpoint. These variants of Vidar malware fetch the C2 configuration from attacker-controlled social media channels hosted on Telegram and Mastodon network.</p>"
+                },
+                {
+                    "id": "<sentence_0x846ecbb7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ThreatLabz believes that the same threat actor is actively leveraging social engineering to impersonate popular legitimate software applications to distribute Vidar malware, as we have also identified an attacker-controlled GitHub repository which hosts several backdoored versions of Adobe Photoshop. These binaries hosted on GitHub, distribute Vidar malware using similar tactics of abusing social media channels for C2 communication.",
+                    "html": "<p>ThreatLabz believes that the same threat actor is actively leveraging social engineering to impersonate popular legitimate software applications to distribute Vidar malware, as we have also identified an attacker-controlled GitHub repository which hosts several backdoored versions of Adobe Photoshop. These binaries hosted on GitHub, distribute Vidar malware using similar tactics of abusing social media channels for C2 communication.</p>"
+                },
+                {
+                    "id": "<sentence_0x3f0e537c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blog, ThreatLabz analyzes the Vidar distribution vector, threat actor correlation, and technical analysis of the binaries involved in this campaign.",
+                    "html": "<p>In this blog, ThreatLabz analyzes the Vidar distribution vector, threat actor correlation, and technical analysis of the binaries involved in this campaign.</p>"
+                },
+                {
+                    "id": "<sentence_0x95e9fadc>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xed836a00>",
+            "title": "Distribution Vector - Windows 11 Theme",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x97ffa256>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The threat actor registered several domains beginning 20th April 2022 that host web pages that masquerade as the official Microsoft Windows 11 download page, which is the latest version of the operating system. ThreatLabz found several other domains registered by this threat actor similar to the one shown below in Figure 1. All of these domains were used to spread malicious ISO files spoofed as a Windows 11 download.",
+                    "html": "<p>The threat actor registered several domains beginning 20th April 2022 that host web pages that masquerade as the official Microsoft Windows 11 download page, which is the latest version of the operating system. ThreatLabz found several other domains registered by this threat actor similar to the one shown below in Figure 1. All of these domains were used to spread malicious ISO files spoofed as a Windows 11 download.</p>"
+                },
+                {
+                    "id": "<sentence_0xc89a9074>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x52d51b8b>": "https://www.zscaler.com/cdn-cgi/image/format=auto/sites/default/files/images/blogs/vidar/Figure%201.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 1\" class=\"lazyloading\" src=\"/cdn-cgi/image/format=auto/sites/default/files/images/blogs/vidar/Figure%201.png\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x2fe012a9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1: Vidar attacker-controlled domain serving malicious ISO file",
+                    "html": "<p>Figure 1: Vidar attacker-controlled domain serving malicious ISO file</p>"
+                },
+                {
+                    "id": "<sentence_0x160412a6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The complete list of domains linked to this threat actor that were used in this campaign are mentioned in the Indicators of Compromise (IOC) section.",
+                    "html": "<p>The complete list of domains linked to this threat actor that were used in this campaign are mentioned in the Indicators of Compromise (IOC) section.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc0d82687>",
+            "title": "Distribution Vector - Adobe Photoshop Theme",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6fae22bb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ThreatLabz also identified an attacker-controlled GitHub repository which hosts backdoored versions of the application Adobe Photoshop Creative Cloud, which we attribute to the same threat actor. Figure 4 shows the GitHub repository (https://github.com/AdobeInstal) used by the attacker to host a backdoored version of Adobe Photoshop.",
+                    "html": "<p>\nThreatLabz also identified an attacker-controlled GitHub repository which hosts backdoored versions of the application Adobe Photoshop Creative Cloud, which we attribute to the same threat actor. Figure 4 shows the GitHub repository (https://github.com/AdobeInstal) used by the attacker to host a backdoored version of Adobe Photoshop.</p>"
+                },
+                {
+                    "id": "<sentence_0xf56cab81>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 4\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x7b11d080>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 4: Vidar attacker-controlled GitHub repository",
+                    "html": "<p>Figure 4: Vidar attacker-controlled GitHub repository</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x11410b27>",
+            "title": "Social media abuse for C2 communication",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x98c2132d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All the binaries involved in this campaign fetch the IP addresses of the C2 servers from attacker-registered social media accounts on the Telegram and Mastodon networks. In the past, the threat actors distributing Vidar have abused other social media networks such as Mastodon. However, the abuse of Telegram is a new tactic that they added to their arsenal.",
+                    "html": "<p>All the binaries involved in this campaign fetch the IP addresses of the C2 servers from attacker-registered social media accounts on the Telegram and Mastodon networks. In the past, the threat actors distributing Vidar have abused other social media networks such as Mastodon. However, the abuse of Telegram is a new tactic that they added to their arsenal.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf5d0d7e6>",
+            "title": "Conclusion",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x951b7496>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The threat actors distributing Vidar malware have demonstrated their ability to social engineer victims into installing Vidar stealer using themes related to the latest popular software applications. As always, users should be cautious when downloading software applications from the Internet and download software only from the official vendor websites. The Zscaler ThreatLabZ team will continue to monitor this campaign, as well as others, to help keep our customers safe.",
+                    "html": "<p>The threat actors distributing Vidar malware have demonstrated their ability to social engineer victims into installing Vidar stealer using themes related to the latest popular software applications. As always, users should be cautious when downloading software applications from the Internet and download software only from the official vendor websites. The Zscaler ThreatLabZ team will continue to monitor this campaign, as well as others, to help keep our customers safe.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb0cd4676>",
+            "title": "Zscaler cloud sandbox detection",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6af61255>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p>\n<img alt=\"Figure 8\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x1f528e51>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 8: Zscaler cloud sandbox detection",
+                    "html": "<p>Figure 8: Zscaler cloud sandbox detection</p>"
+                },
+                {
+                    "id": "<sentence_0xfebab6eb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In addition to sandbox detections, Zscalers multilayered cloud security platform detects indicators at various levels.",
+                    "html": "<p>In addition to sandbox detections, Zscaler\u2019s multilayered cloud security platform detects indicators at various levels.</p>"
+                },
+                {
+                    "id": "<sentence_0xb38e0a67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Win32.Downloader.Vidar<crlf>Win64.Downloader.Vidar",
+                    "html": "<p>Win32.Downloader.Vidar\nWin64.Downloader.Vidar</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf32017c6>",
+            "title": "Indicators of compromise",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x8b3b08da>",
+            "title": "Appendix",
+            "title_level": 1,
+            "sentences": []
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x6d69b3cb>",
+            "title": "Vidar distributed through backdoored Windows 11 downloads and abusing Telegram",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xaf18ec90>",
+            "title": "Key points",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x515b142e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ThreatLabz discovered several newly registered domains spoofing the official Microsoft Windows 11 OS download portal<crlf>The spoofed domains were distributing malicious ISO files containing samples of the Vidar infostealer malware<crlf>The actual C2s used by the malware samples are obtained from attacker-controlled social media channels hosted on Telegram and Mastodon network<crlf>Using data obtained from this campaign, ThreatLabz was also able to identify another similar one using backdoored versions of Adobe Photoshop",
+                    "html": "<ul><li>ThreatLabz discovered several newly registered domains spoofing the official Microsoft Windows 11 OS download portal</li><li>The spoofed domains were distributing malicious ISO files containing samples of the Vidar infostealer malware</li><li>The actual C2s used by the malware samples are obtained from attacker-controlled social media channels hosted on Telegram and Mastodon network</li><li>Using data obtained from this campaign, ThreatLabz was also able to identify another similar one using backdoored versions of Adobe Photoshop</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xce983011>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x3edc09b5>",
+            "title": "Technical Analysis",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5e84ff25>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The sample with the MD5 hash below belongs to this Adobe Photoshop theme campaign.",
+                    "html": "<p>The sample with the MD5 hash below belongs to this Adobe Photoshop theme campaign.</p>"
+                },
+                {
+                    "id": "<sentence_0x7667e4f2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MD5 6ae17cb76cdf097d4dc4fcccfb5abd8a",
+                    "html": "<p>\nMD5 6ae17cb76cdf097d4dc4fcccfb5abd8a</p>"
+                },
+                {
+                    "id": "<sentence_0x4bf0a9dd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Vidar static configuration:",
+                    "html": "<p>Vidar static configuration:</p>"
+                },
+                {
+                    "id": "<sentence_0xbfedd7e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Profile: 1199<crlf>Profile ID: 0<crlf>Version: 51.8<crlf>URL marker: hello<crlf>URL1: https://t.me/mm20220428<crlf>Real C2: 195.201.250.209 (Carved out from URL1)<crlf>URL2: https://koyu.space/@ronxik123<crlf>Real C2: 107.189.11.124 (Carved out from URL2)",
+                    "html": "<ul><li>Profile: 1199</li><li>Profile ID: 0</li><li>Version: 51.8</li><li>URL marker: hello</li><li>URL1: https://t.me/mm20220428</li><li>Real C2: 195.201.250.209 (Carved out from URL1)</li><li>URL2: https://koyu.space/@ronxik123 </li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xc0bca7ed>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Vidar stealer configuration downloaded from the C2 was the following: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;",
+                    "html": "<p>The Vidar stealer configuration downloaded from the C2 was the following: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;</p>"
+                },
+                {
+                    "id": "<sentence_0xa7b2005>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).",
+                    "html": "<p>The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc30f1e04>",
+            "title": "ISO file",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2812d8b2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The binary inside the ISO file is a PE32 binary. The size of the ISO file is very large (more than 300 MB), which helps the attackers evade network security products where there is a file size limitation in place. Example MD5 hashes for this campaign are shown below:",
+                    "html": "<p>The binary inside the ISO file is a PE32 binary. The size of the ISO file is very large (more than 300 MB), which helps the attackers evade network security products where there is a file size limitation in place. Example MD5 hashes for this campaign are shown below:</p>"
+                },
+                {
+                    "id": "<sentence_0xf3e15cc6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ISO file MD5 hash: 52c47fdda399b011b163812c46ea94a6<crlf>PE32 file MD5 hash: 6352540cf679dfec21aff6bd9dee3770",
+                    "html": "<p>ISO file MD5 hash: 52c47fdda399b011b163812c46ea94a6\nPE32 file MD5 hash: 6352540cf679dfec21aff6bd9dee3770</p>"
+                },
+                {
+                    "id": "<sentence_0xebfa1cd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The binary inside the ISO file is digitally signed with a certificate by AVAST. However, this certificate is expired and hence invalid.",
+                    "html": "<p>The binary inside the ISO file is digitally signed with a certificate by AVAST. However, this certificate is expired and hence invalid.</p>"
+                },
+                {
+                    "id": "<sentence_0xa494709a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 2 shows the details of the certificate and the corresponding serial number.",
+                    "html": "<p>Figure 2 shows the details of the certificate and the corresponding serial number.</p>"
+                },
+                {
+                    "id": "<sentence_0xde1bbb40>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 2\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x6dea5bc5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 2: Details of the certificate used to sign the malicious Vidar binary",
+                    "html": "<p>Figure 2: Details of the certificate used to sign the malicious Vidar binary</p>"
+                },
+                {
+                    "id": "<sentence_0xb9f06da6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All of the binaries in this campaign were signed by a certificate with the same serial number. By pivoting on this serial number, we were able to discover several other malicious binaries from multiple different campaigns and actors, which likely indicates that this is a stolen certificate coming from the AVAST compromise back in 2019.",
+                    "html": "<p>All of the binaries in this campaign were signed by a certificate with the same serial number. By pivoting on this serial number, we were able to discover several other malicious binaries from multiple different campaigns and actors, which likely indicates that this is a stolen certificate coming from the AVAST compromise back in 2019.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc1017e46>",
+            "title": "Vidar Samples",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc6162a71>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Vidar samples in these campaigns are all packed with Themida (except for the MD5 hash 6ae17cb76cdf097d4dc4fcccfb5abd8a) and over 330MB in size. However, the sample contains a PE file that is only around 3.3MB. Figure 3 shows that the rest of the file content is just artificially filled up with 0x10 bytes to increase the files size. The Vidar strings extracted from these samples is provided in the Appendix section at the end of the blog.",
+                    "html": "<p>The Vidar samples in these campaigns are all packed with Themida (except for the MD5 hash 6ae17cb76cdf097d4dc4fcccfb5abd8a) and over 330MB in size. However, the sample contains a PE file that is only around 3.3MB. Figure 3 shows that the rest of the file content is just artificially filled up with 0x10 bytes to increase the file\u2019s size. The Vidar strings extracted from these samples is provided in the Appendix section at the end of the blog.</p>"
+                },
+                {
+                    "id": "<sentence_0x2c53062b>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 3\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xdd9c2343>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 3: Padding of bytes to inflate the Vidar binary size from 3.3MB to 330MB",
+                    "html": "<p>Figure 3: Padding of bytes to inflate the Vidar binary size from 3.3MB to 330MB</p>"
+                },
+                {
+                    "id": "<sentence_0xd692f68f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All of the binaries below are related to the same Windows 11 theme campaign:",
+                    "html": "<p>All of the binaries below are related to the same Windows 11 theme campaign:</p>"
+                },
+                {
+                    "id": "<sentence_0x8fcadbe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MD5: 6352540cf679dfec21aff6bd9dee3770",
+                    "html": "<p>\nMD5: 6352540cf679dfec21aff6bd9dee3770</p>"
+                },
+                {
+                    "id": "<sentence_0xd9ee76ae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Vidar static configuration below contains the embedded parameters needed by the sample to communicate with its C2 and information including the malware version:",
+                    "html": "<p>\nThe Vidar static configuration below contains the embedded parameters needed by the sample to communicate with its C2 and information including the malware version:</p>"
+                },
+                {
+                    "id": "<sentence_0xb1d63a27>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Profile: 670<crlf>Profile ID: 739<crlf>Version: 51.9<crlf>URL marker: hello<crlf>URL1: https://t.me/btc20220425<crlf>Real C2: 195.201.250.209 (Carved out from URL1)<crlf>URL2: https://ieji.de/@ronxik213<crlf>Real C2: 107.189.11.124 (Carved out from URL2)",
+                    "html": "<ul><li>Profile: 670</li><li>Profile ID: 739</li><li>Version: 51.9</li><li>URL marker: hello</li><li>URL1: https://t.me/btc20220425</li><li>Real C2: 195.201.250.209 (Carved out from URL1)</li><li>URL2: https://ieji.de/@ronxik213</li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xba3c3f48>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The botnet can be identified by its profile ID. Both of the hardcoded URLs are from social media sites. However, they are used as a dead drop resolver as a first stage. The URL marker instructs Vdiar to parse the second stage URL from the social media profiles located at the dead drop resolver URL.",
+                    "html": "<p>The botnet can be identified by its profile ID. Both of the hardcoded URLs are from social media sites. However, they are used as a dead drop resolver as a first stage. The URL marker instructs Vdiar to parse the second stage URL from the social media profiles located at the dead drop resolver URL.</p>"
+                },
+                {
+                    "id": "<sentence_0x1c26742c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following is an example Vidar stealer configuration downloaded from the C2: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;",
+                    "html": "<p>The following is an example Vidar stealer configuration downloaded from the C2: 1,1,1,1,1,1,1,1,1,1,250,Default;%DESKTOP%\\;*.txt:*.dat:*wallet*.*:*2fa*.*:*backup*.*:*code*.*:*password*.*:*auth*.*:*google*.*:*utc*.*:*UTC*.*:*crypt*.*:*key*.*;50;true;movies:music:mp3;</p>"
+                },
+                {
+                    "id": "<sentence_0xa2615834>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This configuration is the default with every stealing function enabled (passwords, cryptocurrency wallets, two-factor authentication, etc)",
+                    "html": "<p>This configuration is the default with every stealing function enabled (passwords, cryptocurrency wallets, two-factor authentication, etc)</p>"
+                },
+                {
+                    "id": "<sentence_0xe7173386>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following libraries are downloaded from the C2:",
+                    "html": "<p>The following libraries are downloaded from the C2:</p>"
+                },
+                {
+                    "id": "<sentence_0x2d0d4f67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "update.zip (66cf4ebdceedecd9214caab7ca87908d), which contains the following DLL libraries:<crlf>freebl3.dll (ef2834ac4ee7d6724f255beaf527e635)<crlf>mozglue.dll (8f73c08a9660691143661bf7332c3c27)<crlf>msvcp140.dll (109f0f02fd37c84bfc7508d4227d7ed5)<crlf>nss3.dll (bfac4e3c5908856ba17d41edcd455a51)<crlf>softokn3.dll (a2ee53de9167bf0d6c019303b7ca84e5)<crlf>sqlite3.dll (e477a96c8f2b18d6b5c27bde49c990bf)<crlf>vcruntime140.dll (7587bf9cb4147022cd5681b015183046)",
+                    "html": "<ul><li>update.zip (66cf4ebdceedecd9214caab7ca87908d), which contains the following DLL libraries:</li><li>freebl3.dll (ef2834ac4ee7d6724f255beaf527e635) </li><li>mozglue.dll (8f73c08a9660691143661bf7332c3c27)</li><li>msvcp140.dll (109f0f02fd37c84bfc7508d4227d7ed5)</li><li>nss3.dll (bfac4e3c5908856ba17d41edcd455a51)</li><li>softokn3.dll (a2ee53de9167bf0d6c019303b7ca84e5) </li><li>sqlite3.dll (e477a96c8f2b18d6b5c27bde49c990bf) </li><li>vcruntime140.dll (7587bf9cb4147022cd5681b015183046)</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xc8977a58>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All of these libraries are legitimate that Vidar leverages in order to extract credentials and other data from different applications and browsers.",
+                    "html": "<p>All of these libraries are legitimate that Vidar leverages in order to extract credentials and other data from different applications and browsers.</p>"
+                },
+                {
+                    "id": "<sentence_0xb7fd975d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MD5: da82d43043c101f25633c258f527c9d5<crlf>MD5: e9a3562f3851dd2dba27f90b5b2d15c0",
+                    "html": "<p>\nMD5: da82d43043c101f25633c258f527c9d5\nMD5: e9a3562f3851dd2dba27f90b5b2d15c0</p>"
+                },
+                {
+                    "id": "<sentence_0x4a71786b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Vidar static configuration:",
+                    "html": "<p>Vidar static configuration:</p>"
+                },
+                {
+                    "id": "<sentence_0x3b9a415e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Profile: 1281<crlf>Profile ID: 755<crlf>Version: 51.9<crlf>URL marker: hello<crlf>URL1: 5.252.178.50<crlf>URL2: https://koyu.space/@ronxik123<crlf>Real C2: 107.189.11.124 (Carved out from URL2)",
+                    "html": "<ul><li>Profile: 1281</li><li>Profile ID: 755</li><li>Version: 51.9</li><li>URL marker: hello</li><li>URL1: 5.252.178.50</li><li>URL2: https://koyu.space/@ronxik123 </li><li>Real C2: 107.189.11.124 (Carved out from URL2)</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x55f174e6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For these samples, the URL1 field in the static configuration is a real C2, and a social media profile is used as a backup URL.",
+                    "html": "<p>For these samples, the URL1 field in the static configuration is a real C2, and a social media profile is used as a backup URL.</p>"
+                },
+                {
+                    "id": "<sentence_0x6f163733>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Vidar stealer configuration downloaded from this C2 was the following:<crlf>1,1,0,1,1,1,1,0,0,1,250,none;",
+                    "html": "<p>The Vidar stealer configuration downloaded from this C2 was the following: \n1,1,0,1,1,1,1,0,0,1,250,none;</p>"
+                },
+                {
+                    "id": "<sentence_0x8bd92cf0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This configuration is customized to extract social media passwords with all of the other Vidar features disabled.",
+                    "html": "<p>This configuration is customized to extract social media passwords with all of the other Vidar features disabled.</p>"
+                },
+                {
+                    "id": "<sentence_0x6591e806>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).",
+                    "html": "<p>The libraries downloaded from the C2 are the same as the previous sample with the same update.zip (66cf4ebdceedecd9214caab7ca87908d).</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x31ade5be>",
+            "title": "Telegram abuse",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb78ce38d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In these campaigns, the threat actor created several Telegram channels with the C2 IP address in the channel description. The format used to store the C2 IP address on social media profiles is the following for this campaign:",
+                    "html": "<p>In these campaigns, the threat actor created several Telegram channels with the C2 IP address in the channel description. The format used to store the C2 IP address on social media profiles is the following for this campaign: </p>"
+                },
+                {
+                    "id": "<sentence_0xce4ab37b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "<C2_Url_Marker> <C2_IP_address>|",
+                    "html": "<p>&lt;C2_Url_Marker&gt; &lt;C2_IP_address&gt;|</p>"
+                },
+                {
+                    "id": "<sentence_0x414c31c2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The C2_Url_Marker field in these campaigns was hello. The naming convention for the Telegram channels includes a date that corresponds to the date when these channels were created. As an example, the channel with the handle btc20220425 corresponds to a channel created on April 25, 2022, using btc_stacking as the name as shown in Figure 5.",
+                    "html": "<p>The C2_Url_Marker field in these campaigns was hello. The naming convention for the Telegram channels includes a date that corresponds to the date when these channels were created. As an example, the channel with the handle btc20220425 corresponds to a channel created on April 25, 2022, using btc_stacking as the name as shown in Figure 5.</p>"
+                },
+                {
+                    "id": "<sentence_0x384e55e9>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 5\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x30eccd19>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 5: Vidar attacker-controlled Telegram channel with the C2 IP address included in the channel description",
+                    "html": "<p>Figure 5: Vidar attacker-controlled Telegram channel with the C2 IP address included in the channel description</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc35a3588>",
+            "title": "Mastodon network abuse",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc6d95f23>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Mastodon network is a decentralized social network which allows anyone to deploy their own instance of a self-hosted online community. There are several instances of such online communities on the Internet, which are built using Mastodon. Two such instances are ieji[.]de and koyu[.]space. The threat actor created a profile on both of these communities and stored the C2 IP address in the profile section using a format similar to the one used for Telegram channels. Figure 6 and Figure 7 show the profiles created by the threat actor on ieji[.]de and koyu[.]space, respectively.",
+                    "html": "<p>The Mastodon network is a decentralized social network which allows anyone to deploy their own instance of a self-hosted online community. There are several instances of such online communities on the Internet, which are built using Mastodon. Two such instances are ieji[.]de and koyu[.]space. The threat actor created a profile on both of these communities and stored the C2 IP address in the profile section using a format similar to the one used for Telegram channels. Figure 6 and Figure 7 show the profiles created by the threat actor on ieji[.]de and koyu[.]space, respectively.</p>"
+                },
+                {
+                    "id": "<sentence_0x6d56556c>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 6\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa76b58ba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 6: Vidar attacker-controlled profile on the Mastodon community ieji[.]de with the C2 IP address included in the channel description",
+                    "html": "<p>Figure 6: Vidar attacker-controlled profile on the Mastodon community ieji[.]de with the C2 IP address included in the channel description</p>"
+                },
+                {
+                    "id": "<sentence_0x7104a49d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><img alt=\"Figure 7\" class=\"lazyload\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x3bd9c7f5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 7: Vidar attacker-controlled profile on Mastodon community koyu[.]space with the C2 IP address included in the channel description",
+                    "html": "<p>Figure 7: Vidar attacker-controlled profile on Mastodon community koyu[.]space with the C2 IP address included in the channel description</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd89a2b46>",
+            "title": "Hashes",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9c6afd63>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "52c47fdda399b011b163812c46ea94a6<crlf>da82d43043c101f25633c258f527c9d5<crlf>e9a3562f3851dd2dba27f90b5b2d15c0<crlf>6ae17cb76cdf097d4dc4fcccfb5abd8a",
+                    "html": "<p>52c47fdda399b011b163812c46ea94a6\nda82d43043c101f25633c258f527c9d5\ne9a3562f3851dd2dba27f90b5b2d15c0\n6ae17cb76cdf097d4dc4fcccfb5abd8a</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x21ae635>",
+            "title": "Domains",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc52a31e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ms-win11[.]com<crlf>ms-win11.midlandscancer[.]com<crlf>win11-serv4[.]com<crlf>win11-serv[.]com<crlf>win11install[.]com<crlf>ms-teams-app[.]net",
+                    "html": "<p>ms-win11[.]com\nms-win11.midlandscancer[.]com\nwin11-serv4[.]com\nwin11-serv[.]com\nwin11install[.]com\nms-teams-app[.]net</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x401e6e06>",
+            "title": "URLs for fetching C2 addresses",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9afe1595>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://t.me/btc20220425<crlf>https://ieji.de/@ronxik213<crlf>https://koyu.space/@ronxik123<crlf>https://t.me/mm20220428",
+                    "html": "<p>https://t.me/btc20220425\nhttps://ieji.de/@ronxik213\nhttps://koyu.space/@ronxik123\nhttps://t.me/mm20220428</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2078868>",
+            "title": "URLs for fetching ISO files",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8761ccfd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "files.getsnyper[.]com/files/msteams/Setup.iso<crlf>files.getsnyper[.]com/files/windows11/Setup.iso<crlf>files.getsnyper[.]com/files/msteamsww/Setup.iso",
+                    "html": "<p>files.getsnyper[.]com/files/msteams/Setup.iso\nfiles.getsnyper[.]com/files/windows11/Setup.iso\nfiles.getsnyper[.]com/files/msteamsww/Setup.iso</p>"
+                },
+                {
+                    "id": "<sentence_0xe388853a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xce023b34>",
+            "title": "Actual C2s",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x85ddda6d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "195.201.250.209<crlf>107.189.11.124<crlf>5.252.178.50<crlf>107.189.11.124",
+                    "html": "<p>195.201.250.209\n107.189.11.124\n5.252.178.50\n107.189.11.124</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1870a479>",
+            "title": "Decoded Strings",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9504e59a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Wallets<crlf>Plugins<crlf>*wallet*.dat<crlf>\\\\Wallets\\\\<crlf>keystore<crlf>Ethereum\\<crlf>\\\\Ethereum\\\\<crlf>Electrum<crlf>\\\\Electrum\\\\wallets\\\\<crlf>ElectrumLTC<crlf>\\\\Electrum-LTC\\\\wallets\\\\<crlf>Exodus<crlf>\\\\Exodus\\\\<crlf>exodus.conf.json<crlf>window-state.json<crlf>\\\\Exodus\\\\exodus.wallet\\\\<crlf>passphrase.json<crlf>seed.seco<crlf>info.seco<crlf>ElectronCash<crlf>\\\\ElectronCash\\\\wallets\\\\<crlf>default_wallet<crlf>MultiDoge<crlf>\\\\MultiDoge\\\\<crlf>multidoge.wallet<crlf>JAXX<crlf>\\\\jaxx\\\\Local Storage\\\\<crlf>file__0.localstorage<crlf>Atomic<crlf>\\\\atomic\\\\Local Storage\\\\leveldb\\\\<crlf>000003.log<crlf>CURRENT<crlf>LOCK<crlf>LOG<crlf>MANIFEST-000001<crlf>0000*<crlf>Binance<crlf>\\\\Binance\\\\<crlf>app-store.json<crlf>Coinomi<crlf>\\\\Coinomi\\\\Coinomi\\\\wallets\\\\<crlf>*.wallet<crlf>*.config<crlf>wallet_path<crlf>SOFTWARE\\\\monero-project\\\\monero-core<crlf>\\\\Monero\\\\<crlf>SELECT fieldname, value FROM moz_formhistory<crlf>\\\\files\\\\Soft<crlf>\\\\files\\\\Soft\\\\Authy<crlf>\\\\Authy Desktop\\\\Local Storage\\\\<crlf>\\\\Authy Desktop\\\\Local Storage\\\\*.localstorage<crlf>\\\\Opera Stable\\\\Local State<crlf>INSERT_KEY_HERE<crlf>JohnDoe<crlf>HAL9TH<crlf>api.faceit.com<crlf>/core/v1/nicknames/<crlf>about<crlf>Mozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25<crlf>C:\\\\ProgramData\\\\<crlf>.exe<crlf>:Zone.Identifier<crlf>[ZoneTransfer] ZoneId=2<crlf>Windows<crlf>ProgramData<crlf>RECYCLE.BIN<crlf>Config.Msi<crlf>System Volume Information<crlf>msdownld.tmp<crlf>Recovery<crlf>Local\\\\Temp<crlf>Program Files<crlf>Recycle.Bin<crlf>All Users<crlf>MicrosoftEdge\\\\Cookies<crlf>Users\\\\Public<crlf>Local\\\\Packages<crlf>Local\\\\NuGet<crlf>Roaming\\\\WinRAR<crlf>Local\\\\Microsoft<crlf>Microsoft<crlf>fee_estimates<crlf>peers<crlf>mempool<crlf>banlist<crlf>governance<crlf>mncache<crlf>mnpayments<crlf>netfulfilled<crlf>passwords.txt<crlf>Login Data<crlf>Cookies<crlf>Web Data<crlf>\\\\files\\\\Autofill<crlf>\\\\files\\\\Cookies<crlf>\\\\files\\\\CC<crlf>\\\\files\\\\History<crlf>\\\\files\\\\Downloads<crlf>\\\\files\\\\<crlf>\\\\files\\\\Files<crlf>hwid<crlf>os<crlf>platform<crlf>profile<crlf>user<crlf>cccount<crlf>fcount<crlf>telegram<crlf>ver<crlf>vaultcli.dll<crlf>VaultOpenVault<crlf>VaultCloseVault<crlf>VaultEnumerateItems<crlf>VaultGetItem<crlf>VaultFree<crlf>SELECT url FROM moz_places<crlf>%s\\\\Mozilla\\\\Firefox\\\\profiles.ini<crlf>\\\\signons.sqlite<crlf>SELECT encryptedUsername, encryptedPassword, formSubmitURL FROM moz_logins<crlf>\\\\logins.json<crlf>formSubmitURL<crlf>usernameField<crlf>encryptedUsername<crlf>encryptedPassword<crlf>guid<crlf>SELECT host, name, value FROM moz_cookies<crlf>SELECT origin_url, username_value, password_value FROM logins<crlf>SELECT name, value FROM autofill<crlf>SELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards<crlf>SELECT target_path, tab_url from downloads<crlf>SELECT url, title from urls<crlf>SELECT HOST_KEY, is_httponly, path, is_secure, (expires_utc/1000000)-11644480800, name, encrypted_value from cookies<crlf>C:\\\\Users\\\\<crlf>\\\\AppData\\\\Roaming\\\\FileZilla\\\\recentservers.xml<crlf><Host><crlf><Port><crlf><User><crlf><Pass encoding=\\<crlf>Soft: FileZilla\\n<crlf>\\\\AppData\\\\Roaming\\\\.purple\\\\accounts.xml<crlf><protocol><crlf><name><crlf><password><crlf>Soft: Pidgin\\n<crlf>\\\\Thunderbird\\\\Profiles\\\\<crlf>C:\\\\Program Files (x86)\\\\Mozilla Thunderbird<crlf>APPDATA<crlf>LOCALAPPDATA<crlf>Thunderbird<crlf>\\\\files\\\\Telegram<crlf>\\\\Telegram Desktop\\\\tdata\\\\*<crlf>D877F783D5D3EF8C*<crlf>\\\\Telegram Desktop\\\\tdata\\\\<crlf>key_datas<crlf>\\\\Telegram Desktop\\\\tdata\\\\D877F783D5D3EF8C\\\\*<crlf>map*<crlf>\\\\Telegram Desktop\\\\tdata\\\\D877F783D5D3EF8C\\\\<crlf>firefox.exe<crlf>plugin-container.exe<crlf>update_notifier.exe<crlf>Mozilla Firefox<crlf>\\\\Mozilla\\\\Firefox\\\\Profiles\\\\<crlf>Pale Moon<crlf>\\\\Moonchild Productions\\\\Pale Moon\\\\Profiles\\\\<crlf>Waterfox<crlf>\\\\Waterfox\\\\Profiles\\\\<crlf>Cyberfox<crlf>\\\\8pecxstudios\\\\Cyberfox\\\\Profiles\\\\<crlf>BlackHawk<crlf>\\\\NETGATE Technologies\\\\BlackHawk\\\\Profiles\\\\<crlf>IceCat<crlf>\\\\Mozilla\\\\icecat\\\\Profiles\\\\<crlf>K-Meleon<crlf>\\\\K-Meleon\\\\<crlf>Google Chrome<crlf>\\\\Google\\\\Chrome\\\\User Data\\\\<crlf>Chromium<crlf>\\\\Chromium\\\\User Data\\\\<crlf>Kometa<crlf>\\\\Kometa\\\\User Data\\\\<crlf>Amigo<crlf>\\\\Amigo\\\\User Data\\\\<crlf>Torch<crlf>\\\\Torch\\\\User Data\\\\<crlf>Orbitum<crlf>\\\\Orbitum\\\\User Data\\\\<crlf>Comodo Dragon<crlf>\\\\Comodo\\\\Dragon\\\\User Data\\\\<crlf>Nichrome<crlf>\\\\Nichrome\\\\User Data\\\\<crlf>Maxthon5<crlf>\\\\Maxthon5\\\\Users\\\\<crlf>Sputnik<crlf>\\\\Sputnik\\\\User Data\\\\<crlf>Epic Privacy Browser<crlf>\\\\Epic Privacy Browser\\\\User Data\\\\<crlf>Vivaldi<crlf>\\\\Vivaldi\\\\User Data\\\\<crlf>CocCoc<crlf>\\\\CocCoc\\\\Browser\\\\User Data\\\\<crlf>URAN<crlf>\\\\uCozMedia\\\\Uran\\\\User Data\\\\<crlf>QIP Surf<crlf>\\\\QIP Surf\\\\User Data\\\\<crlf>Cent Browser<crlf>\\\\CentBrowser\\\\User Data\\\\<crlf>Elements Browser<crlf>\\\\Elements Browser\\\\User Data\\\\<crlf>TorBro Browser<crlf>\\\\TorBro\\\\Profile\\\\<crlf>Suhba Browser<crlf>\\\\Suhba\\\\User Data\\\\<crlf>Mustang Browser<crlf>\\\\Rafotech\\\\Mustang\\\\User Data\\\\<crlf>Chedot Browser<crlf>\\\\Chedot\\\\User Data\\\\<crlf>Brave_Old<crlf>\\\\brave\\\\<crlf>7Star<crlf>\\\\7Star\\\\7Star\\\\User Data\\\\<crlf>Microsoft Edge<crlf>\\\\Microsoft\\\\Edge\\\\User Data\\\\<crlf>360 Browser<crlf>\\\\360Browser\\\\Browser\\\\User Data\\\\<crlf>QQBrowser<crlf>\\\\Tencent\\\\QQBrowser\\\\User Data\\\\<crlf>Opera<crlf>\\\\Opera Software\\\\Opera Stable\\\\<crlf>OperaGX<crlf>\\\\Opera Software\\\\Opera GX Stable\\\\<crlf>Local State<crlf>Cookies<crlf>%s_%s.txt<crlf>TRUE<crlf>FALSE<crlf>\\\\Microsoft\\\\Windows\\\\Cookies\\\\Low\\\\<crlf>Cookies\\\\IE_Cookies.txt<crlf>\\\\Packages\\\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\\\\AC\\\\#!001\\\\MicrosoftEdge\\\\Cookies\\\\<crlf>Cookies\\\\Edge_Cookies.txt<crlf>\\\\files\\\\Wallets<crlf>%USERPROFILE%<crlf>%DESKTOP%<crlf>KERNEL32.DLL<crlf>LoadLibraryA<crlf>GetProcAddress<crlf>VirtualAllocExNuma<crlf>gdi32.dll<crlf>ole32.dll<crlf>user32.dll<crlf>psapi.dll<crlf>BCRYPT.DLL<crlf>BCryptCloseAlgorithmProvider<crlf>BCryptDestroyKey<crlf>BCryptOpenAlgorithmProvider<crlf>BCryptSetProperty<crlf>BCryptGenerateSymmetricKey<crlf>BCryptDecrypt<crlf>CRYPT32.DLL<crlf>CryptUnprotectData<crlf>CryptStringToBinaryA<crlf>C:\\\\ProgramData\\\\nss3.dll<crlf>NSS_Init<crlf>NSS_Shutdown<crlf>PK11_GetInternalKeySlot<crlf>PK11_FreeSlot<crlf>PK11_Authenticate<crlf>PK11SDR_Decrypt<crlf>advapi32.dll<crlf>RegOpenKeyExA<crlf>RegQueryValueExA<crlf>RegCloseKey<crlf>RegOpenKeyExW<crlf>RegGetValueW<crlf>RegEnumKeyExA<crlf>RegGetValueA<crlf>GetUserNameA<crlf>GetCurrentHwProfileA<crlf>wininet.dll<crlf>InternetCloseHandle<crlf>InternetReadFile<crlf>HttpSendRequestA<crlf>HttpOpenRequestA<crlf>InternetConnectA<crlf>InternetOpenA<crlf>HttpAddRequestHeadersA<crlf>HttpQueryInfoA<crlf>InternetSetFilePointer<crlf>InternetOpenUrlA<crlf>InternetSetOptionA<crlf>DeleteUrlCacheEntry<crlf>CreateCompatibleBitmap<crlf>SelectObject<crlf>BitBlt<crlf>DeleteObject<crlf>CreateDCA<crlf>GetDeviceCaps<crlf>CreateCompatibleDC<crlf>CoCreateInstance<crlf>CoUninitialize<crlf>GetDesktopWindow<crlf>ReleaseDC<crlf>GetKeyboardLayoutList<crlf>CharToOemA<crlf>GetDC<crlf>wsprintfA<crlf>EnumDisplayDevicesA<crlf>GetSystemMetrics<crlf>GetModuleFileNameExA<crlf>GetModuleBaseNameA<crlf>EnumProcessModules",
+                    "html": "<p>Wallets\nPlugins\n*wallet*.dat\n\\\\Wallets\\\\\nkeystore\nEthereum\\\n\\\\Ethereum\\\\\nElectrum\n\\\\Electrum\\\\wallets\\\\\nElectrumLTC\n\\\\Electrum-LTC\\\\wallets\\\\\nExodus\n\\\\Exodus\\\\\nexodus.conf.json\nwindow-state.json\n\\\\Exodus\\\\exodus.wallet\\\\\npassphrase.json\nseed.seco\ninfo.seco\nElectronCash\n\\\\ElectronCash\\\\wallets\\\\\ndefault_wallet\nMultiDoge\n\\\\MultiDoge\\\\\nmultidoge.wallet\nJAXX\n\\\\jaxx\\\\Local Storage\\\\\nfile__0.localstorage\nAtomic\n\\\\atomic\\\\Local Storage\\\\leveldb\\\\\n000003.log\nCURRENT\nLOCK\nLOG\nMANIFEST-000001\n0000*\nBinance\n\\\\Binance\\\\\napp-store.json\nCoinomi\n\\\\Coinomi\\\\Coinomi\\\\wallets\\\\\n*.wallet\n*.config\nwallet_path\nSOFTWARE\\\\monero-project\\\\monero-core\n\\\\Monero\\\\\nSELECT fieldname, value FROM moz_formhistory\n\\\\files\\\\Soft\n\\\\files\\\\Soft\\\\Authy\n\\\\Authy Desktop\\\\Local Storage\\\\\n\\\\Authy Desktop\\\\Local Storage\\\\*.localstorage\n\\\\Opera Stable\\\\Local State\nINSERT_KEY_HERE\nJohnDoe\nHAL9TH\napi.faceit.com\n/core/v1/nicknames/\nabout\nMozilla/5.0 (iPhone; CPU iPhone OS 6_0 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10A5376e Safari/8536.25\nC:\\\\ProgramData\\\\\n.exe\n:Zone.Identifier\n[ZoneTransfer] ZoneId=2\nWindows\nProgramData\nRECYCLE.BIN\nConfig.Msi\nSystem Volume Information\nmsdownld.tmp\nRecovery\nLocal\\\\Temp\nProgram Files\nRecycle.Bin\nAll Users\nMicrosoftEdge\\\\Cookies\nUsers\\\\Public\nLocal\\\\Packages\nLocal\\\\NuGet\nRoaming\\\\WinRAR\nLocal\\\\Microsoft\nMicrosoft\nfee_estimates\npeers\nmempool\nbanlist\ngovernance\nmncache\nmnpayments\nnetfulfilled\npasswords.txt\nLogin Data\nCookies\nWeb Data\n\\\\files\\\\Autofill\n\\\\files\\\\Cookies\n\\\\files\\\\CC\n\\\\files\\\\History\n\\\\files\\\\Downloads\n\\\\files\\\\\n\\\\files\\\\Files\nhwid\nos\nplatform\nprofile\nuser\ncccount\nfcount\ntelegram\nver\nvaultcli.dll\nVaultOpenVault\nVaultCloseVault\nVaultEnumerateItems\nVaultGetItem\nVaultFree\nSELECT url FROM moz_places\n%s\\\\Mozilla\\\\Firefox\\\\profiles.ini\n\\\\signons.sqlite\nSELECT encryptedUsername, encryptedPassword, formSubmitURL FROM moz_logins\n\\\\logins.json\nformSubmitURL\nusernameField\nencryptedUsername\nencryptedPassword\nguid\nSELECT host, name, value FROM moz_cookies\nSELECT origin_url, username_value, password_value FROM logins\nSELECT name, value FROM autofill\nSELECT name_on_card, expiration_month, expiration_year, card_number_encrypted FROM credit_cards\nSELECT target_path, tab_url from downloads\nSELECT url, title from urls\nSELECT HOST_KEY, is_httponly, path, is_secure, (expires_utc/1000000)-11644480800, name, encrypted_value from cookies\nC:\\\\Users\\\\\n\\\\AppData\\\\Roaming\\\\FileZilla\\\\recentservers.xml\n&lt;Host&gt;\n&lt;Port&gt;\n&lt;User&gt;\n&lt;Pass encoding=\\\nSoft: FileZilla\\n\n\\\\AppData\\\\Roaming\\\\.purple\\\\accounts.xml\n&lt;protocol&gt;\n&lt;name&gt;\n&lt;password&gt;\nSoft: Pidgin\\n\n\\\\Thunderbird\\\\Profiles\\\\\nC:\\\\Program Files (x86)\\\\Mozilla Thunderbird\nAPPDATA\nLOCALAPPDATA\nThunderbird\n\\\\files\\\\Telegram\n\\\\Telegram Desktop\\\\tdata\\\\*\nD877F783D5D3EF8C*\n\\\\Telegram Desktop\\\\tdata\\\\\nkey_datas\n\\\\Telegram Desktop\\\\tdata\\\\D877F783D5D3EF8C\\\\*\nmap*\n\\\\Telegram Desktop\\\\tdata\\\\D877F783D5D3EF8C\\\\\nfirefox.exe\nplugin-container.exe\nupdate_notifier.exe\nMozilla Firefox\n\\\\Mozilla\\\\Firefox\\\\Profiles\\\\\nPale Moon\n\\\\Moonchild Productions\\\\Pale Moon\\\\Profiles\\\\\nWaterfox\n\\\\Waterfox\\\\Profiles\\\\\nCyberfox\n\\\\8pecxstudios\\\\Cyberfox\\\\Profiles\\\\\nBlackHawk\n\\\\NETGATE Technologies\\\\BlackHawk\\\\Profiles\\\\\nIceCat\n\\\\Mozilla\\\\icecat\\\\Profiles\\\\\nK-Meleon\n\\\\K-Meleon\\\\\nGoogle Chrome\n\\\\Google\\\\Chrome\\\\User Data\\\\\nChromium\n\\\\Chromium\\\\User Data\\\\\nKometa\n\\\\Kometa\\\\User Data\\\\\nAmigo\n\\\\Amigo\\\\User Data\\\\\nTorch\n\\\\Torch\\\\User Data\\\\\nOrbitum\n\\\\Orbitum\\\\User Data\\\\\nComodo Dragon\n\\\\Comodo\\\\Dragon\\\\User Data\\\\\nNichrome\n\\\\Nichrome\\\\User Data\\\\\nMaxthon5\n\\\\Maxthon5\\\\Users\\\\\nSputnik\n\\\\Sputnik\\\\User Data\\\\\nEpic Privacy Browser\n\\\\Epic Privacy Browser\\\\User Data\\\\\nVivaldi\n\\\\Vivaldi\\\\User Data\\\\\nCocCoc\n\\\\CocCoc\\\\Browser\\\\User Data\\\\\nURAN\n\\\\uCozMedia\\\\Uran\\\\User Data\\\\\nQIP Surf\n\\\\QIP Surf\\\\User Data\\\\\nCent Browser\n\\\\CentBrowser\\\\User Data\\\\\nElements Browser\n\\\\Elements Browser\\\\User Data\\\\\nTorBro Browser\n\\\\TorBro\\\\Profile\\\\\nSuhba Browser\n\\\\Suhba\\\\User Data\\\\\nMustang Browser\n\\\\Rafotech\\\\Mustang\\\\User Data\\\\\nChedot Browser\n\\\\Chedot\\\\User Data\\\\\nBrave_Old\n\\\\brave\\\\\n7Star\n\\\\7Star\\\\7Star\\\\User Data\\\\\nMicrosoft Edge\n\\\\Microsoft\\\\Edge\\\\User Data\\\\\n360 Browser\n\\\\360Browser\\\\Browser\\\\User Data\\\\\nQQBrowser\n\\\\Tencent\\\\QQBrowser\\\\User Data\\\\\nOpera\n\\\\Opera Software\\\\Opera Stable\\\\\nOperaGX\n\\\\Opera Software\\\\Opera GX Stable\\\\\nLocal State\nCookies\n%s_%s.txt\nTRUE\nFALSE\n\\\\Microsoft\\\\Windows\\\\Cookies\\\\Low\\\\\nCookies\\\\IE_Cookies.txt\n\\\\Packages\\\\Microsoft.MicrosoftEdge_8wekyb3d8bbwe\\\\AC\\\\#!001\\\\MicrosoftEdge\\\\Cookies\\\\\nCookies\\\\Edge_Cookies.txt\n\\\\files\\\\Wallets\n%USERPROFILE%\n%DESKTOP%\nKERNEL32.DLL\nLoadLibraryA\nGetProcAddress\nVirtualAllocExNuma\ngdi32.dll\nole32.dll\nuser32.dll\npsapi.dll\nBCRYPT.DLL\nBCryptCloseAlgorithmProvider\nBCryptDestroyKey\nBCryptOpenAlgorithmProvider\nBCryptSetProperty\nBCryptGenerateSymmetricKey\nBCryptDecrypt\nCRYPT32.DLL\nCryptUnprotectData\nCryptStringToBinaryA\nC:\\\\ProgramData\\\\nss3.dll\nNSS_Init\nNSS_Shutdown\nPK11_GetInternalKeySlot\nPK11_FreeSlot\nPK11_Authenticate\nPK11SDR_Decrypt\nadvapi32.dll\nRegOpenKeyExA\nRegQueryValueExA\nRegCloseKey\nRegOpenKeyExW\nRegGetValueW\nRegEnumKeyExA\nRegGetValueA\nGetUserNameA\nGetCurrentHwProfileA\nwininet.dll\nInternetCloseHandle\nInternetReadFile\nHttpSendRequestA\nHttpOpenRequestA\nInternetConnectA\nInternetOpenA\nHttpAddRequestHeadersA\nHttpQueryInfoA\nInternetSetFilePointer\nInternetOpenUrlA\nInternetSetOptionA\nDeleteUrlCacheEntry\nCreateCompatibleBitmap\nSelectObject\nBitBlt\nDeleteObject\nCreateDCA\nGetDeviceCaps\nCreateCompatibleDC\nCoCreateInstance\nCoUninitialize\nGetDesktopWindow\nReleaseDC\nGetKeyboardLayoutList\nCharToOemA\nGetDC\nwsprintfA\nEnumDisplayDevicesA\nGetSystemMetrics\nGetModuleFileNameExA\nGetModuleBaseNameA\nEnumProcessModules</p>"
+                },
+                {
+                    "id": "<sentence_0x716dbd99>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x57383623>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc10c879a>": "https://www.zscaler.com/blogs/security-research",
+                        "<a_0xe6443cb9>": "https://www.zscaler.com/blogs/insights-and-research"
+                    },
+                    "text": "Security Research<crlf>Insights and Research",
+                    "html": "<ul class=\"zp-0 zm-0 category-tags\"><li class=\"d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8\"> <a class=\"h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag\" href=\"https://www.zscaler.com/blogs/security-research\">Security Research</a></li><li class=\"d-block d-md-inline-block zmt-8 zmt-md-0 zmb-8 zmx-md-8\"> <a class=\"h4 fw-400 fg-color-white bg-color-blue zpy-10 zpx-16 zmb-0 rounded d-inline-block category-tag\" href=\"https://www.zscaler.com/blogs/insights-and-research\">Insights and Research</a></li></ul>"
+                },
+                {
+                    "id": "<sentence_0x56762fb1>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5655ebe>": "https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3wiy68Z",
+                        "<a_0x6e0515e8>": "https://www.linkedin.com/sharing/share-offsite/?title=Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram&url=https://bit.ly/3wiy68Z",
+                        "<a_0x18b36b51>": "https://twitter.com/intent/tweet?text=https://bit.ly/3wiy68Z%20%E2%80%94%20Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram",
+                        "<a_0x56b76d46>": "https://www.zscaler.com/blogs/feeds/security-research"
+                    },
+                    "text": "",
+                    "html": "<ul class=\"w-100 text-center text-md-left sharing-buttons zp-0 zm-0\"><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"mailto:?subject=Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram&amp;body=https://bit.ly/3wiy68Z\" title=\"Share via email\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://www.facebook.com/sharer/sharer.php?u=https://bit.ly/3wiy68Z\" target=\"_blank\" title=\"Share on facebook\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://www.linkedin.com/sharing/share-offsite/?title=Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram&amp;url=https://bit.ly/3wiy68Z\" target=\"_blank\" title=\"Share on linkedin\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"https://twitter.com/intent/tweet?text=https://bit.ly/3wiy68Z%20%E2%80%94%20Vidar%20distributed%20through%20backdoored%20Windows%2011%20downloads%20and%20abusing%20Telegram\" target=\"_blank\" title=\"Tweet\"> </a></li><li class=\"d-inline-block zmr-16\"> <a class=\"d-flex sharing-link text-left fg-color-blue\" href=\"/blogs/feeds/security-research\" title=\"Check feeds\"> </a></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe5bd0f1c>",
+            "title": "Sudeep Singh",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5f786c82>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x3459ee04>": "https://www.linkedin.com/in/sudeep-singh-96559026/"
+                    },
+                    "text": "",
+                    "html": "<a class=\"zmx-12 author-social d-inline-block\" href=\"https://www.linkedin.com/in/sudeep-singh-96559026/\" target=\"_blank\" title=\"Check linkedin profile\"> </a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1b314e11>",
+            "title": "Santiago Vicente",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x31ced410>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x24c67f17>": "https://twitter.com/smvicente"
+                    },
+                    "text": "",
+                    "html": "<a class=\"zmx-12 author-social d-inline-block\" href=\"https://twitter.com/smvicente\" target=\"_blank\" title=\"Visit twitter handle\"> </a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xfb9552b3>",
+            "title": "Brett Stone-Gross",
+            "title_level": 3,
+            "sentences": []
+        }
+    ]
+}

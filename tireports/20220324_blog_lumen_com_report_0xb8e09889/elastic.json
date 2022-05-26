@@ -1,0 +1,197 @@
+[
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x4c88b3ea",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "text": "Facebook\nTwitter\nLinkedIn\nPinterest\nEmail\nShare"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x5affa1b7",
+            "title": "Executive Summary",
+            "text": "Last fall, Black Lotus Labs discovered in the wild what had until then only been theorized: Linux binaries were being used as loaders in Windows Subsystem for Linux (WSL). Since our initial report, Black Lotus Labs continues to monitor the WSL attack surface for new developments. In the last few months, we have identified several different samples that indicate the capability is evolving. Custom developed and open-source tools (OSTs) have added functionality ranging from shellcode injection to keylogging and password stealing that could be used by actors to evade detection while gaining access into endpoints and computer networks. Given the demonstrated interest and the fact that even the samples with valid command and control (C2) infrastructure are evading general detection by AV providers, it is clear this newly proven type of attack remains one to be watched. In particular, because the types of users running WSL tend to have greater network privileges, organizations that utilize WSL as part of their day-to-day operations should take note to better bolster defenses."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x2c699442",
+            "title": "Introduction",
+            "text": "Since September 2021, as part of our proactive threat hunting process, Black Lotus Labs has been monitoring malware repositories for compiled ELF binaries that utilize either Windows API calls or file paths embedded in the executable. Because they were obtained through these repositories, the initial access vectors into the machines or networks are not yet known. As WSL requires domain administrative access to install, it is likely the targeted environments already had WSL loaded prior to the attacks.\nOf the roughly 100 samples weve inspected over the last six months, we grouped a subset of the most noteworthy into two categories: the first group is comprised of custom developed tools and the second group consists of tools either taken completely from open-source frameworks or very lightly modified versions of open-source tools. By sharing how these samples work, how they persist and how they leverage C2 channels, we hope to keep the industry updated on the evolution of this attack vector and to aid in network-based detection, where possible. Some of the samples contained non-routable, or private IP addresses: we included them to showcase the techniques that are being developed for broader awareness."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x63441220",
+            "title": "Custom Modules",
+            "text": "Several samples we analyzed were custom-built modules exhibiting a range of functionality that included keylogging, shellcode injection, a stager and even a cross-platform agent that worked in both Windows and Linux. The increase in custom modules suggests the WSL attack surface is a growing area of interest. While many of the samples did not yet appear to be fully functional due to the use of internal or non-routable IPs, they demonstrate attack methods that are actively being tested and refined."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x32ead128",
+            "title": "Keyjeek Keylogger Utilizing Gmail",
+            "text": "One of the payloads we analyzed was a keylogger written in Python that the developer named Keyjeeklogger. This sample wrote the recorded keyboard and mouse events to a text file named LogFile.txt. It then used hard-coded credentials for the email account nomotikag33n@gmail[.]com and a predefined password to transfer the LogFile.txt file to the actor. One function it displayed was the ability to edit a registry key (HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run), a common method used by threat actors to persist on an infected machine past reboot. This sample appeared to be the most developed of those in the custom modules and is likely active in the wild given its routable C2 mechanism. This sample had a detection rate of only 1/60 on VirusTotal when it was found."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0xc8adecdc",
+            "title": "Shellcode Injector",
+            "text": "One of the samples we analyzed included a shellcode injector. This malware created a new thread to download shellcode from a remote resource such as a domain or IP address, and then execute the shellcode. While the sample we analyzed was only comprised of a stager with a non-routable IP address, it could easily be augmented to download a more sophisticated in-memory agent such as Cobalt Strike or a custom framework. The method of injecting the payload directly into memory can be elusive and complicate host-based detection since the agent is not written to disk.\nFigure 1: Shellcode injector sample screenshot"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0xf31ef97d",
+            "title": "Stub.py Stager",
+            "text": "Among the samples we analyzed was a more traditional stager the actor named stub.py. This sample launched a Python script using the bash terminal and reached out for a remote resource. If it was unable to retrieve the next payload, it went to sleep for one second and then tried again. To further evade detection, the next agent was downloaded as a Python file, rather than an executable. Once downloaded onto the infected host Python file decrypted the data using a hard-coded key, and the script changed the file extension from Python to an executable. It then copied the payload to the \\Microsoft\\Windows\\Start Menu\\Programs\\Startup folder, granting persistence by initiating the executable whenever the machine was powered on. Lastly, it executed the payload via the command shell. This sample contained a non-routable IP address suggesting it is still in development."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x435c0d65",
+            "title": "Windows and Linux Cross-Platform Lee Agent",
+            "text": "One malware sample that stood out from the rest contained logic to run on either Linux or WSL machines. This sample appeared to be the closest to a fully functional agent, with the ability to remotely upload and download files, as well as run arbitrary commands. However, as it did not contain a routable C2 mechanism, it appeared to still be in the development phase. Notably, it was the only sample Black Lotus Labs analyzed that was written in Python 2, whereas all the other samples were compiled in Python 3. Additionally, the Lee agent contained a PDB path from the developers machine: /home/dirty/Desktop/lee/master/agent/d/agent.py.\nThis agent contained predefined logic to perform the following functions:\nThe Lee agent also had the ability to persist on Linux and Windows machines. In Linux machines it edited the AutoStart directory path: ~/.config/autostart/gedit.desktop.\nIn a Windows machine, it modified the run key in the Windows registry to add a task named lee:\nreg add HKCU\\\\Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Run /f /v lee /t REG_SZ /d %s."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x39f8cfd3",
+            "title": "Open-Source Tools and Modules",
+            "text": "While we were evaluating samples, we found several agents that were largely based on OSTs found on websites like GitHub. OSTs offer tooling that minimizes the need for actors to develop their own, which can increase the cost. One interesting observation was that all of the OST-based samples also relied upon third-party services such as Discord and Telegram. We suspect that by using third-party network services and operating in a nebulous subsystem space, threat actors may be trying to evade some standard detection mechanisms."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x889b3d34",
+            "title": "DiscordRAT",
+            "text": "One of the samples leveraged a project called DiscordRAT, a remote administration tool (RAT) that is controlled over Discord and contains more than 20 post-exploitation modules. This sample exhibited a range of functions that appear to have been copied straight from the tool, such as:\nCheck if running as admin\nExecute arbitrary commands\nUpload/download files\nTake screenshots and access webcam\nStart/stop a keylogger\nCopy the contents of the clipboard\nKill the current session with the RAT\nThis was one of the two fully functional RATs that we observed using WSL and signals that at least some actors are now capable of leveraging OSTs to execute a WSL-based attack. The detection rate of this sample on VirusTotal was 3/61."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x29ddbbbc",
+            "title": "Discord Token Grabber",
+            "text": "Some of files that Black Lotus Labs detected performed more limited functions. The Discord token grabber module was designed to harvest authentication tokens saved to disk from various web browsers, including: Discord, Google Chrome, Opera, Brave and Yandex. The functionality and file paths correlate to the Discord Token Grabber GitHub project. Once the authentication token was obtained, it sent the information from the infected Windows device to an actor-controlled Discord account with a hard-coded Linux-based User-Agent string. This module had the highest detection rate of 9/62 when it was found on VirusTotal.\nFigure 2: Token grabber sample screenshot"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x399b7f7c",
+            "title": "Keylogger",
+            "text": "We observed one module that communicated via Discord and functioned as a keylogger. This sample was different than the Keyjeek logger covered previously, as it would just send the data from the infected machine to the C2 via the URL: https[:]//discord[.]com/api/webhooks/928513925610352650/iC7G5SFTzUmf4qQYyzXIhTSuA0bBrsME6cWwBnxvV-qa3inFESh3F4iF6Nkq05crHn5J. With this method, the data was not written to disk, making it harder to detect from a host-based prospective. Like the other Discord modules, it had a detection rate of 9/62 when first discovered."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x483f65ac",
+            "title": "Telegram-Based Bot",
+            "text": "Discord was not the only third-party service we observed being utilized for C2s. One RAT communicated via the Telegram API, which we suspect was used to better blend in with the target environment. This appeared to be a lightly modified version of Telegram-RAT. As with the other RATs, this GitHub project included the ability to run commands, upload/download files and retrieve stored credentials, among other functions. We extracted the Rat.py file which acts as the configuration file by identifying the Telegram token, designating the ChatID for C2, determining the task name and designating the location to place the trojan itself. The contents of that file can be found below:\n# Token/ID\nTelegramToken = 2064338791:AAHUdTkYnC38Igw7Rrf9PWRRcZGS03-Bx0g\nTelegramChatID = 1987910945\n#Haha\n# Run the script as administrator\nAdminRightsRequired = False\n# Disable Task Manager at first start\nDisableTaskManager = False\n# Disable Registry Editor at first start\nDisableRegistryTools = False\\3\n#HEEHEHEHEHRGREF\n# Process protection from termination and deletion\nProcessBSODProtectionEnabled = True\n#efrgGgrg\n# Add to startup at first start\nAutorunEnabled = True\n# Installation directory\nInstallPath = C:\\\\ProgramData\\\\\n# Task name in Task Scheduler\nAutorunName = OneDrive Update\n# The name of the process in the Task Manager\nProcessName = System.exe\n#fdgdfgeghhthth\n# Display a message at first start\nDisplayMessageBox = True\n# Your Message (will be displayed at start)\nMessage = Done\n#lololololo\n#danksDFdsf\n# Directory for saving trojan temporary files\nDirectory = C:\\\\Windows\\\\Temp\\\\Temp_data\\\\"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x93b16c45",
+            "title": "Password Dumper Module",
+            "text": "One other sample that piqued our interest was named dump-passwords.py. We assess that at least part of the code was based upon a Proof-of-Concept (PoC) to retrieve stored passwords. While this particular sample did not contain a mechanism for external communications, it allowed the threat actor to harvest stored credentials on the infected machine in this case from the Chrome login database. These stored credentials could be used later to retrieve information or help the actor move laterally if the victim reused passwords. One benefit to this approach over the Discord token grabber is that this module had a detection rate of zero.\nFigure 3: Password dumper sample screenshot"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb8e09889",
+            "date": "20220324",
+            "title": "Windows Subsystem for Linux (WSL): Threats Still Lurk Below the (Sub)Surface",
+            "url": "https://blog.lumen.com/windows-subsystem-for-linux-wsl-threats/?utm_source=rss&utm_medium=rss&utm_campaign=windows-subsystem-for-linux-wsl-threats"
+        },
+        "chapter": {
+            "id": "chapter_0x9beca758",
+            "title": "Conclusion",
+            "text": "Threat actors are continuing to take advantage of the blurring boundaries between operating systems by developing this new class of WSL-based attack. If your corporate environment uses WSL, we recommend that you enable system monitoring (Sysmon) tools to help audit commands run via the WSL terminal. To learn more about how to monitor a Windows system with WSL installed for indicators of malicious activity, read this SANS whitepaper.\nBlack Lotus Labs will continue to follow the WSL attack surface to detect similar campaigns. As new and potent samples become available, we will continue to alert the information security community to these developments. We encourage other organizations to alert on this and similar activity in their environments.\nFor additional IOCs such as file hashes associated with these campaigns, please visit our GitHub page.\nIf you would like to collaborate on similar research, please contact us on Twitter @BlackLotusLabs.\nThis analysis was performed by Danny Adamitis and Steve Rudd.\nThis information is provided as is without any warranty or condition of any kind, either express or implied. Use of this information is at the end users own risk."
+        }
+    }
+]

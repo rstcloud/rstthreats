@@ -1,0 +1,143 @@
+<div>
+<a class="hs-featured-image-link" href="https://blog.minerva-labs.com/suncrypt-ransomware-gains-new-abilities-in-2022" title="">
+<img class="hs-featured-image" src="https://blog.minerva-labs.com/hubfs/suncrypt%20feature-1.jpg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<h2>SunCrypt Ransomware Gains New Capabilities in 2022</h2>
+						 March 28, 2022
+					 | 
+					 
+						
+							Natalie Zargarov
+						
+					 
+<ul class="hs-blog-social-share-list">
+<li class="hs-blog-social-share-item hs-blog-social-share-item-twitter">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-linkedin">
+</li>
+<li class="hs-blog-social-share-item hs-blog-social-share-item-facebook">
+</li>
+</ul>
+<p>SunCrypt is a RaaS (Ransomware as a Service) group that was first seen in October 2019, and was one of the first groups to apply triple extortion<a href="#tripleextortion" rel="noopener">*</a> tactics to their attacks. Unlike other RaaS groups, SunCrypt runs a small and closed affiliate program. The first version of this ransomware was written in GO, but after C and C++ versions were released in mid-2020, the group became much more active. SunCrypt mostly affects the Services, Technology, and Retail industries. Our researchers recently identified an updated version of this ransomware which includes additional capabilities. </p>
+<p>SunCrypt often uses the PowerShell loader for delivery and deployment. Our sample was dropped by .zip file. This is not a very sophisticated or fast ransomware, but differs from others with its unique encryption routine which barely makes any use of the system API. Almost all of the API functions used by SunCrypt are statically imported, with a small number that are dynamically imported. </p>
+<p>As in most ransomware cases, the encryption routine runs in several threads. It uses an I/O Completion Ports model to achieve faster encryption. According to Microsoft: “I/O completion ports provide an efficient threading model for processing multiple asynchronous I/O requests on a multiprocessor system. When a process creates an I/O completion port, the system creates an associated queue object for requests whose sole purpose is to service these requests. Processes that handle many concurrent asynchronous I/O requests can do so more quickly and efficiently by using I/O completion ports in conjunction with a pre-allocated thread pool than by creating threads at the time they receive an I/O request.” </p>
+<p>There are several files and directories that are whitelisted by SunCrypt: </p>
+<ol>
+<li>Windows directory </li>
+<li>$Recycle.bin directory </li>
+<li>System Volume Information directory </li>
+<li>ntdetect.com </li>
+<li>ntldr </li>
+<li>bootfont.bin </li>
+<li>boot.ini </li>
+<li>.exe extension files </li>
+<li>.dll extension files </li>
+<li>.ocx extension files </li>
+<li>.sys extension files </li>
+<li>AppData directory </li>
+<li>Application Data directory </li>
+<li>YOUR_FILES_ARE_ENCRYPTED.HTML – ransom note </li>
+<li>Bootmgr directory </li>
+<li>..\Efi\microsoft\boot\bootmgr.efi file </li>
+</ol>
+<p>Encrypted files are renamed to add random 64-byte hex string extensions: <img alt="encrypted files" src="https://blog.minerva-labs.com/hs-fs/hubfs/encrypted%20files.png?width=650&amp;name=encrypted%20files.png" style="max-width:800px;height:auto;width:auto;" width="650"/></p>
+<p>Figure 1 - Encrypted files </p>
+<p>As its previous versions, SunCrypt encrypts the local volumes as well as found network shares. It also creates a “\Sessions\2\BaseNamedObjects\0c91c96fd7124f21a0193cf842e3495f6daf84a394f44013e92a87ad9d2ef4a0ceec9dd2e2eca22e” mutex on the infected machine. </p>
+<h3>New Capabilities </h3>
+<p>While the 2022 SunCrypt version has gained new capabilities, it seems like the ransomware is still under development. New capabilities allow the ransomware to terminate processes, stop services and clean the machine from any evidence of the ransomware execution. The ransomware also uses a winlogon.exe access token and sets it to its main thread by using SetThreadToken API call. </p>
+<p>There also appears to be an Anti-VM feature that is not present in our sample but might be added in future versions. We noticed that 2022 version lacks C&amp;C connection capabilities, while there is still an option to pass an argument that will stop the reporting to C&amp;C. </p>
+<p>SunCrypt uses an undocumented “ProcessIOPriority” (0x21) information class to increase an I/O priority of the process to “High”, which will to speed up its execution: <img alt="set processiopriority" src="https://blog.minerva-labs.com/hs-fs/hubfs/set%20processiopriority.png?width=272&amp;name=set%20processiopriority.png" width="272"/></p>
+<p>Figure 2 - I/O priority setting </p>
+<p>Process Termination: </p>
+<p>SunCrypt terminates the following processes before initiating the encryption routine: </p>
+<ul>
+<li>Ocssd.exe </li>
+</ul>
+<ul>
+<li>Dbsnmp.exe </li>
+<li>Synctime.exe </li>
+<li>Agntsvc.exe </li>
+<li>Isqlplussvc.exe </li>
+<li>Xfssvccon.exe </li>
+</ul>
+<ul>
+<li>Mydesktopservice.exe </li>
+<li>Ocautoupds.exe </li>
+<li>Encsvc.exe </li>
+<li>Firefox.exe </li>
+<li>Tbirdconfig.exe </li>
+</ul>
+<ul>
+<li>Mydesktopqos.exe </li>
+<li>Ocomm.exe </li>
+<li>dbeng50.exe </li>
+<li>sqbcoreservice.exe </li>
+<li>excel.exe </li>
+</ul>
+<ul>
+<li>infopath.exe </li>
+<li>msaccess.exe </li>
+<li>mspub.exe </li>
+<li>onenote.exe </li>
+<li>outlook.exe </li>
+</ul>
+<ul>
+<li>powerpnt.exe </li>
+<li>steam.exe </li>
+<li>thebat.exe </li>
+<li>thunderbird.exe </li>
+<li>visio.exe </li>
+</ul>
+<ul>
+<li>winword.exe </li>
+<li>wordpad.exe </li>
+<li>ssms.exe </li>
+<li>notepad/notepad++.exe </li>
+<li>fdhost.exe </li>
+</ul>
+<ul>
+<li>fdlauncher.exe </li>
+<li>launchpad.exe </li>
+<li>sqlceip.exe </li>
+<li>sqlwriter.exe </li>
+</ul>
+<h4>Service Stop: </h4>
+<p>While the service stopping code is present in our sample, it doesn't appear to be used. In addition, there is no service list to be stopped that is present in the sample. </p>
+<h4>Clean: </h4>
+<p>At the end of the encryption routine, SunCrypt clears the event log using ClearEventLogA and a combination of EvtOpenChannelEnum/EvtNextChannelPath/EvtClearLog API calls. Just using one of these techniques is usually enough, as each of them works for different OS versions, but in our sample, the author decide to use both techniques irrespective of the OS version. After clearing the event log, the ransomware deletes itself from disk by executing cmd.exe with the following command: <code>“</code><code>cmd.exe /C ping 127.0.0.1 -n 10 &gt; nul &amp; del /f /q “path to the currently running process” &gt; nul” </code><code> </code><img alt="clear event log-1" src="https://blog.minerva-labs.com/hs-fs/hubfs/clear%20event%20log-1.png?width=410&amp;name=clear%20event%20log-1.png" width="410"/></p>
+<p>Figure 3 - Event Log Clear </p>
+<p>Upon initial execution, the ransomware checks the command line arguments that were passes to the process. There are eight arguments that were defined by the ransomware authors in our version: </p>
+<ol>
+<li>-noshares – if this argument is passed, the ransomware only encrypts local volumes. </li>
+<li>-nomutex – in older versions, passing this parameter skips the mutex check, but in our version, it does not seem to affect the execution flow at all. </li>
+<li>-noreport – based on older versions, if this argument is passed, the ransomware stops reporting to the C&amp;C. </li>
+<li>-noservices – apparenrly, if this argument passed, the ransomware does not stop services. </li>
+<li>-vm – we do not know yet if this argument is supposed to activate or deactivate VM checks as we did not find any VM detection capabilities in our sample. </li>
+<li>-path - if this argument is passed, the ransomware will only encrypt the files under a passed path. </li>
+<li>-justcrypt – if this argument is passed, the ransomware does not terminate processes, duplicate winlogon.exe token, prioritize the running process and as we assume, stop services.</li>
+<li>-keep_exe – if this argument is passed, the ransomware executable is not be deleted at the end of the flow. </li>
+</ol>
+<p><img alt="arguments could be passed or c2 commands" src="https://blog.minerva-labs.com/hs-fs/hubfs/arguments%20could%20be%20passed%20or%20c2%20commands.png?width=394&amp;name=arguments%20could%20be%20passed%20or%20c2%20commands.png" width="394"/></p>
+<p>Figure 4 - Arguments that might be passed to the ransomware </p>
+<p>SunCrypt, much like most ransomware groups nowadays, claims to exfiltrate victim data before encrypting it and offer the victim the option of uploading an encrypted file to prove decryption capabilities:</p>
+<p> <img alt="192.168.12.218 - Remote Desktop Connection 24_03_2022 0_51_26-1" src="https://blog.minerva-labs.com/hs-fs/hubfs/192.168.12.218%20-%20Remote%20Desktop%20Connection%2024_03_2022%200_51_26-1.png?width=870&amp;name=192.168.12.218%20-%20Remote%20Desktop%20Connection%2024_03_2022%200_51_26-1.png" style="max-width:800px;height:auto;width:auto;" width="870"/></p>
+<p>Figure 5 - Ransom Note </p>
+<p>One of the most recent victims is Migros, Switzerland's largest retail company and largest supermarket chain with over 100K employees.</p>
+<p>While our sample looks like a “work in progress” it might indicate the threat actor’s intent to significantly increase their victims list and catch up with already familiar capabilities of other competing ransomware groups. </p>
+<p> </p>
+<a id="tripleextortion"></a>
+<p>* Triple extortion is a relatively new practice among ransomware operators where the first two extortions of file encryption and publication to the world are not enough. In this case, if the victim still fails to comply and pay the ransom, the ransomware operator will DDOS the victim, making it even more difficult for them to return to operation.</p>
+<p> </p>
+<p>Resources: </p>
+<p><a href="https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports">https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports</a> </p>
+<p> </p>
+<p>IOC’s: </p>
+<p>Mutex: </p>
+<ul>
+<li>“\Sessions\2\BaseNamedObjects\0c91c96fd7124f21a0193cf842e3495f6daf84a394f44013e92a87ad9d2ef4a0ceec9dd2e2eca22e “ </li>
+</ul>
+<p> </p>
+<a href="malware-evasion-techniques-living-off-the-land?hsLang=en-us">
+« Previous Post
+ </a>
+</div>

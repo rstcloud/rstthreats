@@ -1,0 +1,431 @@
+[
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xb39f21fc",
+            "title": "Zloader 2: The Silent Night",
+            "text": "In this study we are considering one of Zeus successors Zloader 2. Well show how it works and its code peculiarities. Well present the result of our deep dive into the botnets and campaigns and show some interesting connections between Zloader and other malware families."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x303bd623",
+            "title": "Introduction",
+            "text": "Zloader 2 (also known as Silent Night) is a multifunctional modular banking malware, aimed at providing unauthorized access to online banking systems, payment systems and other financial-related services. In addition to these functions its able to download and execute arbitrary files, steal files, inject arbitrary code to visited HTML pages and so on."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x43d45ab0",
+            "title": "History",
+            "text": "According to ZeusMuseum, first versions of Zeus were observed in 2006-2008. Later, in 2011 its source code leaked. As a result, new versions and variants appeared. One of the Zeus successors named Zloader appeared at the turn of 2016 and 2017. Finally, another successor named Silent Night appeared in 2019. It was for sale on the underground market.\nThe earliest version of this variant we found has a SHA256:\n384f3719ba4fbcf355cc206e27f3bfca94e7bf14dd928de62ab5f74de90df34a\nTimestamp 4 December 2019 and version number 1.0.2.0. In the middle of July 2021 the version 2.0.0.0 was spotted.\nMicrosoft recently announced a joint investigation of multiple security companies and information sharing and analysis centers (ISACs) with the aim to take down the Zloader botnet and took the whole case to court.\nAlthough the original name of the malware likely was Silent Night and the ZeusMuseum calls it Zloader 2 we are simply going to use the name Zloader."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xc4c13519",
+            "title": "Technical analysis",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x1f6de44b",
+            "title": "Modules and components",
+            "text": "Zloader consists of different modules and components:\nDownloader initial infector\nBackdoor main module, exists in x86 and x64 versions\nVNC module (x86 and x64)\nWeb Injects received from C&C\nAdditional libraries (openssl, sqlite, zlib, Mozilla libraries)\nBackdoors, VNC modules and additional libraries have assigned module IDs that are used by other components to refer to them."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x770db081",
+            "title": "Distribution",
+            "text": "Zloader was distributed using classic email spam. In 2021 the attackers abused Google AdWords to advertise sites with fake Zoom communication tool which actually installed Zloader. Another campaign in 2021 used fake pornsites, where users needed to download additional software to watch video. Downloaders are distributed in a packed form sometimes signed with a valid digital signature.\nMap showing the distribution of infected systems:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x82e46761",
+            "title": "Code peculiarities",
+            "text": "Zloader code is very recognizable. First of all, it is diluted with functions which will never be called. Downloader module may contain functions from the Backdoor module and vice versa. In total, about a half of the code will never be called.\nSecond, simple x86 instructions like CMP, ADD and XOR are replaced with special functions. These functions contain a lot of useless code to complicate the analysis and they can call other replacement functions. To add more insult to the injury multiple replacement functions exist for a particular instruction. Also some constants are calculated in runtime using aforementioned replacement functions.\nStrings are encrypted with a simple XOR algorithm.\nSamples have very little imported functions. APIs are resolved in runtime by the hashes of their names.\nAs a result, more than a half of the file size is useless and serves as an obfuscation of simple operations."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x92ad6ece",
+            "title": "Configuration",
+            "text": "Both Downloader and Backdoor modules have built in configuration encrypted with RC4. The decryption key is stored in a plaintext and looks like vcvslrpvwwfanquofupxt. The structure of earlier versions (1.0.x, for example) differs from later versions (1.6.x and 1.8.x). Modern versions store the following information in config:\nBotnet name (divader on the picture below)\nCampaign name (xls_s_2010)\nList of hardcoded C&Cs\nRC4 key (03d5ae30a0bd934a23b6a7f0756aa504)"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xf347da30",
+            "title": "BinStorage",
+            "text": "We have to briefly cover the BinStorage the data format used by Zloader to communicate with C&Cs and to store various data: web injects, system information, stolen data and logs. BinStorages consists of the header and records (also called fields). Main header stores information about the number of records, data size (in bytes) and their MD5. Records have their own small headers, containing FieldID - DWORD describing the meaning of the data.\nSome FieldIDs are hardcoded. For example, in FieldID=0x4E20 the last working C&C is stored. Other FieldIDs are derived from file paths (used to store stolen files)."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xa5e9a80e",
+            "title": "Registry usage",
+            "text": "Zloader modules (at least Downloaders and Backdoors) use a registry to store various data necessary for their work. The ROOT_KEY for this data is\nThe most important and interesting data structure, stored by the Zloader in the registry is called MAIN_STRUCT. Its subkey in the ROOT_KEY and the value name is derived from the RC4 key found in the configuration. We suppose that bots from one actor use the same RC4 key, so they can easily find and read the MAIN_STRUCT.\nMAIN_STRUCT is encrypted using RC4 with the key from the configuration. It stores:\nRegistry paths to other storages, used by Zloader\nFiles and directories path, used by Zloader\nEncryption key(s) to decrypt those storages"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xba55ae94",
+            "title": "Files usage",
+            "text": "Root path is %APPDATA%. Zloader creates directories with random names inside it to store modules, stolen data and logs. These paths are stored into the MAIN_STRUCT."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xf5b25f85",
+            "title": "Networking",
+            "text": "As was mentioned before, communication between the bot and C&C is done using BinStorages. Depending on the actual type of the message, field list may be changed, but there are 5 constant fields sent to C&C:\nSome DWORD from the Configuration\nBotnet name from the Configuration\nBotID, derived from the system information\nDebug flag from the Configuration\n16 random bytes\nRequests are encrypted using the RC4 key from the Configuration. C&C responses are signed with RSA."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x4a787a55",
+            "title": "PING request",
+            "text": "This request is used to check if C&C is alive. Response contains only random bytes sent by a bot."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x238688b4",
+            "title": "DOWNLOAD MODULE request",
+            "text": "This request is used to download modules by their ID from the C&C. The response is not in a BinStorage form!"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x39cad61e",
+            "title": "GET CONFIG request",
+            "text": "Used to receive configuration updates: new C&Cs, WebInjects, tasks for downloading etc."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x33f398e0",
+            "title": "C&Cs and DGA",
+            "text": "As was shown before, built in configuration has a list of hardcoded C&Cs. Actually, these lists have not changed for years. To bypass blocking of these hardcoded C&Cs, Zloader uses DGA Domain Generation Algorithm. In the Zloader, DGA produces 32 domains, based on the current date and RC4 key from the configuration.\nThere is a 3rd type of C&Cs received in the response from the server. Theyre stored into the Registry."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xa8e31d25",
+            "title": "Downloader module",
+            "text": "Analysis based on version 1.6.28.0,\nFunction of Downloader is to download, install and run the next module the Backdoor."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x486dcaa9",
+            "title": "Main function",
+            "text": "Just after the start of the Downloader module, junk code is started. It consists of many junk functions, which forms a kind of a network. In the image below there is a call graph from just a single junk function. These functions also trying to read, write and delete some *.txt files %TEMP%. The purpose of this is to delay the execution of the payload and, We suppose, to complicate the emulation, debugging and analysis.\nThe second and the last task of the Main function is to start msiexec.exe and perform the PE injection of the code into it. Injected data consists of two buffers: the big one, where the Downloader is stored in the encrypted form and the small one (0x42 bytes) with decryption code. Just after the injection Downloader terminates himself."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x303faf8d",
+            "title": "Injected code",
+            "text": "Control flow passed to the small buffer, which decrypts the Downloader in the address space of msiexec.exe After the decryption, Downloader begins to execute its main task.\nFirst of all, the injected code tries to read MAIN_STRUCT from the registry. If this fails, it thinks it was not installed on this system and the installation process begins: MAIN_STRUCT is created, Downloader module is copied into %APPDATA% and added to the autorun key HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run with random value name.\nIn any case, the Backdoor module is requested from the disk or from the network and executed."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xef8d3850",
+            "title": "Backdoor module",
+            "text": "Analysis based on version 1.6.28.0,\nThere are actually two Backdoor modules: for 32-bit systems (moduleID 0x3EE) and for 64-bit systems (moduleID 0x3E9). Downloader always requests a 32-bit Backdoor.\nBackdoors are much more complicated than Downloaders. If we compare the size of our samples (after unpacking), Backdoor will be twice bigger.\nKey Backdoor abilities:\nStarting VNC module\nInjecting WebInjects into the pages visited using browsers\nDownloading and execute arbitrary file\nKeylogging\nMaking screenshots\nStealing files and sending to C&C"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x54d5473e",
+            "title": "Stealing files",
+            "text": "The largest group of software from which Zloader steal files is crypto wallets:\nElectrum\nEthereum\nExodus cryptowallet\nZcash\nBitcoin-Qt\nEtc.\nIt also steals data from browsers: cookies from Chrome, Firefox and IE; saved logins from Chrome. And, finally, it is able to steal accounts information from Microsoft Outlook."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x5754e62e",
+            "title": "Hooking",
+            "text": "To achieve his goals, Zloader performs WinAPI hooking. In order to perform it, Backdoor module enumerates processes and injects itself into the following ones:\nexplorer.exe\nmsiexec.exe\niexplore.exe\nfirefox.exe\nchrome.exe\nmsedge.exe\n64-bit version of Backdoor is injected into 64-bit processes, 32-bit version into 32-bit processes.\nInjected code hooks the following WinAPI functions:\nNtCreateUserProcess\nNtCreateThread\nZwDeviceIoControlFile\nTranslateMessage\nCertGetCertificateChain\nCertVerifyCertificateChainPolicy\nHooks might be divided in 3 groups, depending on the purpose:\nNtCreateUserProcess and NtCreateThread are hooked to inject a Backdoor module to newly created threads and processes.\nZwDeviceIoControlFile, CertGetCertificateChain and CertVerifyCertificateChainPolicy are hooked to support WebInjection mechanism\nTranslateMessage is hooked to log the keys pressed and to create screenshots"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xcf31e019",
+            "title": "Web Injecting",
+            "text": "First of all, browsers must have a Backdoor module injected. At this moment, there are multiple instances of Backdoor Modules running in the system: one, started by Downloader which is Main Instance and others, running in browsers. Main Instance starts Man-in-the-browser proxy, other modules hooks ZwDeviceIoControlFile and cert-related WinAPIs (see above). Proxy port number is stored in the BinStorage structure into the Registry, so it is synchronized between Backdoor instances.\nHooked ZwDeviceIoControlFile function is waiting for IOCTL_AFD_CONNECT or IOCTL_AFD_SUPER_CONNECT and routing connections to the proxy. Hooked cert-related functions inform browsers what everything is good with certificates."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x2bf6c8ff",
+            "title": "Botnets, Campaigns and their activity",
+            "text": "Most active botnets and campaigns use RC4 key 03d5ae30a0bd934a23b6a7f0756aa504 and well focus on them in our analysis. Samples with the aforementioned key have versions 1.x, usually 1.6.28, but some have even 1.0.x."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xa3089e58",
+            "title": "Botnet and Campaign names",
+            "text": "Among botnet names it is worth mentioning the following groups:\nDLLobnova, AktualizacjaDLL, googleaktualizacija, googleaktualizacija1, obnovlenie19, vasja, ivan\n9092zi, 9092ti, 9092ca, 9092us, 909222, 9092ge\nThe first one contains transliterated Slavic words and names (vasja, ivan), maybe with errors. It sheds light on the origins of bad guys they are definitely Slavs.\nSamples with botnet names from the second group were first observed in November 2021 and we found 6 botnet names from this group in the next two months. Letters after numbers, like ca and us might be country codes.\nWe see the same picture with campaign names: quite a big amount of Slavic words and the same 9092* group."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xa96a397c",
+            "title": "WebInjects",
+            "text": "We analyzed webinjects and can confirm that they are targeting financial companies: banks, brokerage firms, insurance companies, payment services, cryptocurrency-related services etc.\nInjected code is usually small: from dozens of bytes up to 20 kb. To perform its tasks, it loads JavaScript code from external domains, controlled by bad guys. Analysis of these domains allowed us to find connections between Zloader operators and other cybercrime gangs."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xccd6a24a",
+            "title": "Download tasks",
+            "text": "Zloader is able to download and execute arbitrary files by the commands from his C&Cs, but for a long time we havent seen these commands at all. Things changed on 24 November 2021, when botnet 9092ca received a command to download and execute the file from teamworks455[.]com. This domain was mentioned in [6].\nAnother two download tasks contained braves[.]fun and"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x5cba330e",
+            "title": "Connections",
+            "text": "During our tracking we have noticed links to other malware families we originally thought were unrelated."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x71cb8a02",
+            "title": "Raccoon Stealer",
+            "text": "Two out of three download tasks contained links to Raccoon Stealer. Downloaded samples have the following sha256 hashes:\n5da3db74eee74412c1290393a0a0487c63b2c022e57aebcd632f0c3caf23d8bc\n5b731854c58c2c1316633e570c9ec82474347e64b07ace48017d0be2b6331eed\nBoth of them have the same Raccoon configuration with Telegram channel kumchakl1.\nMoreover, Raccoon was mentioned in [6] before we received commands from C&Cs with links to Raccoon. We are lost in conjecture why Zloader operators used Raccoon Stealer? You can read our dive into Racoon stealer here."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x1fcc1606",
+            "title": "Ursnif",
+            "text": "Ursnif, also known as Gozi and ISFB is another banking malware family with similar functions."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x387d923f",
+            "title": "Digital Signatures",
+            "text": "It was quite a big surprise when we found Zloader samples and Ursnif samples signed with the same digital signature!\nAs an example, consider a signature:\nIssuer BABJNCXZHQCJUVWAJJ\nThumbprint 46C79BD6482E287647B1D6700176A5F6F5AC6D57.\nZloader sample signed with it has a SHA256 hash:\n2a9ff0a0e962d28c488af9767770d48b9128b19ee43e8df392efb2f1c5a696f.\nSigned Ursnif sample has a SHA256 hash:\nIt is not the only digital signature, shared among Ursnif and Zloader samples."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0xba33435e",
+            "title": "Infrastructure",
+            "text": "As we mentioned before, the first observed download command contained a link to teamworks455[.]com. We checked the TLS certificate for this site and realized that it was for another site dotxvcnjlvdajkwerwoh[.]com. We saw this hostname on 11 November 2021 in Ursnif webinjects, it was used to receive stolen data.\nAnother example aerulonoured[.]su host used by Zloader to receive stolen data at least from August 2021. It also appeared in Ursnif webinjects in November 2021.\nThird example qyfurihpsbhbuvitilgw[.]com which was found in Zeus configuration update, received from C&C on 20 October 2021. It must be added to a C&C list and then used by Zloader bots. The same domain was found in Ursnif webinjects on 1 November 2021\nAnd, finally, 4th example etjmejjcxjtwweitluuw[.]com This domain was generated using DGA from key 03d5ae30a0bd934a23b6a7f0756aa504 and date 22 September 2021. We have very strong evidence that it was active on that date as a Zloader C&C. The same host was found in Ursnif WebInjects on 1 November 2021"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0x93ac6a00",
+            "date": "20220414",
+            "title": "Zloader 2: The Silent Night",
+            "url": "https://decoded.avast.io/vladimirmartyanov/zloader-the-silent-night/?utm_source=rss&utm_medium=rss&utm_campaign=zloader-the-silent-night"
+        },
+        "chapter": {
+            "id": "chapter_0x6d31e7f9",
+            "title": "Conclusion",
+            "text": "We are proud we could be part of the investigation as we continue our mission to make the world a safer place for everybody. We hope for a successful takedown of the Zloader botnet and prosecution of people who created and operated it.\nTagged as\nanalysis\n,\nbotnet\n,\nmalware\n,\nreversing\n,\ntakedown\nShare:\nTwitter\nFacebook"
+        }
+    }
+]

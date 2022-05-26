@@ -1,0 +1,487 @@
+<div>
+<table id="amazon-polly-audio-table">
+<tbody><tr>
+<td id="amazon-polly-audio-tab">
+</td>
+</tr>
+</tbody></table><p>By James Haughom, Antonis Terefos, Jim Walter, Jeff Cavanaugh, Nick Fox, and Shai Tilias</p>
+<h2 id="heading-0">Overview</h2>
+<p>In a recent IR engagement, our team happened upon a rather interesting packer (aka crypter or obfuscator) that was ultimately utilized to construct and execute shellcode responsible for downloading a Cobalt Strike Beacon. The sample at the end of this chain is not necessarily sophisticated or particularly novel, but it does leverage an interesting obfuscation technique that we have dubbed “IPfuscation”.</p>
+<p>In this post, we describe this novel technique as it is used across several variants of malware. Along with the IPfuscation technique, we have identified a number of markers which have allowed us to pivot into additional discoveries around the actor or group behind this campaign.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65270" height="628" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/Hive-Ransomware-Deploys-Novel-IPfuscation-Technique-To-Avoid-Detection-5.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1200"/></p>
+<h2 id="heading-1">Technical Details</h2>
+<p>The samples in question are 64-bit Windows Portable Executables, each containing an obfuscated payload used to deliver an additional implant. The obfuscated payload masquerades itself as an array of ASCII IPv4 addresses. Each one of these IPs is passed to the <a href="https://docs.microsoft.com/en-us/windows/win32/api/ip2string/nf-ip2string-rtlipv4stringtoaddressa" rel="noopener noreferrer" target="_blank">RtlIpv4StringToAddressA</a> function, which will translate the ASCII IP string to binary. The binary representation of all of these IPs is combined to form a blob of shellcode.</p>
+<p>The general flow is:</p>
+<ol>
+<li>Iterate through “IPs” (ASCII strings)</li>
+<li>Translate “IPs” to binary to reveal shellcode</li>
+<li>Execute shellcode either by:
+<ul>
+<li>Proxying execution via callback param passed to <a href="https://docs.microsoft.com/en-us/windows/win32/api/winnls/nf-winnls-enumuilanguagesa" rel="noopener noreferrer" target="_blank">EnumUILanguagesA</a></li>
+<li>Direct SYSCALLs</li>
+</ul>
+</li>
+</ol>
+<p>Using byte sequences, sequences of WinAPI calls, and some hardcoded metadata affiliated with the malware author, we were able to identify a handful of other variants of this loader (hashes provided below with the IOCs), one of which we have dubbed “UUIDfuscation” and was also recently reported on by <a href="https://medium.com/walmartglobaltech/cobaltstrike-uuid-stager-ca7e82f7bb64" rel="noopener" target="_blank">Jason Reaves</a>. A Golang Cobalt Strike loader was also discovered during the investigation, which had a hardcoded source code path similar to what we have already seen with the ‘IPfuscated’ samples, suggesting that the same author may be responsible for both.</p>
+<h2 id="heading-2">Tools, COTS, LOLBINs and More</h2>
+<p>The TTPs uncovered during the incident align with previous reporting of the Hive Ransomware Affiliate Program, with the attackers having a preference for publicly available Penetration Testing frameworks and tooling (see TTPs table). Like many other ransomware groups, pre-deployment Powershell and BAT scripts are used to prepare the environment for distribution of the ransomware, while ADFind, SharpView, and BloodHound are used for Active Directory enumeration. Password spraying was performed with SharpHashSpray and SharpDomainSpray, while Rubeus was used to request TGTs. Cobalt Strike remains their implant of choice, and several different Cobalt Strike loaders were identified including: IPfuscated loader, Golang loader, and a vanilla Beacon DLL. Finally, GPOs and Scheduled Tasks are used to deploy digitally signed ransomware across the victim’s network.</p>
+<h2 id="heading-3">IPfuscated Cobalt Strike Loader</h2>
+<p>Our team discovered and analyzed a 64-bit PE (4fcc141c13a4a67e74b9f1372cfb8b722426513a) with a hardcoded PDB path matching the project structure of a Visual Studio project. </p>
+C:\Users\Administrator\source\repos\ConsoleApplication1\x64\Release\ConsoleApplication1.pdb
+<p>This particular sample leverages the IPfuscation technique. Within the binary is what appears to be an array of IP addresses.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65251" height="1022" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image15-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1156"/></p>
+<p>Each of these “IP addresses” is passed to <code>RtlIpv4StringToAddressA</code> and then written to heap memory.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65249" height="1232" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image13-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1474"/></p>
+<p>What is interesting is that these “IP addresses” are not used for network communication, but instead represent an encoded payload. The binary representation of these IP-formatted strings produced by <code>RtlIpv4StringToAddressA</code> is actually a blob of shellcode.</p>
+<p>For example, the first hardcoded IP-formatted string is the ASCII string “252.72.131.228”, which has a binary representation of 0xE48348FC (big endian), and the next “IP” to be translated is “240.232.200.0”, which has a binary representation of 0xC8E8F0. Together, they create the below sequence of bytes.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65243" height="78" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image7-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="916"/></p>
+<p>Disassembling these “binary representations” shows the start of shellcode generated by common pentesting frameworks.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65248" height="68" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image12-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="642"/></p>
+<p>Once the shellcode has finished being deobfuscated in this manner, the malware proxies invocation of the shellcode by passing its address to the <code>EnumUILanguagesA</code> WinAPI function. This is achieved by supplying the shellcode address as the <code>UILanguageEnumProc</code>, which is a callback routine to be executed.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65237" height="328" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image1-4.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1206"/></p>
+<p>The shellcode is the common Cobalt Strike stager to download and execute Beacon. Here is a look at the PEB traversal to find one of the modules lists, followed by the ROT13 hash being calculated for target WinAPIs to execute.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65254" height="790" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image18-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1466"/></p>
+<h2 id="heading-4">Hell’s Gate Variant</h2>
+<p>A handful of additional samples were found with a similar sequence of functions and static properties, including the same error message. The Hell’s Gate variant (d83df37d263fc9201aa4d98ace9ab57efbb90922) is different from the previous sample in that it uses <a href="https://github.com/am0nsec/HellsGate" rel="noopener noreferrer" target="_blank">Hell’s Gate</a> (direct SYSCALLs) rather than <code>EnumUILanguagesA</code> to execute the deobfuscated shellcode. This sample’s PDB path is:</p>
+E:\Users\PC\source\repos\HellsGate+ipv4\x64\Release\HellsGate+ipv4.pdb
+<p>In this variant, the IP-formatted strings are procedurally placed in local variables, rather than being looped through as seen previously.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65238" height="1246" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image2-3.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="840"/></p>
+<p>Once all the IP strings have been defined within the scope of this function, memory is allocated with <code>NtAllocateVirtualMemory</code> via a direct SYSCALL, and the deobfuscation loop commences.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65250" height="1270" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image14-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1130"/></p>
+<p>Following the loop, a few SYSCALLs are made to pass control flow to the deobfuscated shellcode.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65246" height="1170" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image10-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1404"/></p>
+<h2 id="heading-5">IPfuscation Variants</h2>
+<p>Among the discovered variants were three additional obfuscation methods using techniques very similar to IPfuscation. Rather than using IPv4 addresses, the following were also found being used to hide the payload:</p>
+<ul>
+<li>IPfuscation – IPv6 addresses</li>
+<li>UUIDfuscation – UUIDs &amp; base64 encoded UUIDs</li>
+<li>MACfuscation – MAC addresses</li>
+</ul>
+<p>Here we can see the original IPfuscated sample versus the UUID variant being translated via <code>UuidFromStringA</code>.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65239" height="270" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image3-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1229"/></p>
+<p>The UUID variant stores the obfuscated payload in the same manner as IPfuscated samples.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65241" height="495" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image5-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1243"/></p>
+<p>The MAC address variant translates the shellcode via <code>RtlEthernetStringToAdressA</code> and then uses a callback function, a parameter to <code>EnumWindows</code>, to pass control flow to the shellcode. Again, the MAC addresses forming the payload are stored the same as with previous variants.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65255" height="346" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image19-1.jpg?lossy=0&amp;strip=1&amp;webp=0" width="598"/></p>
+<p>The IPv6 variants operate almost identically to the original IPfuscated sample. The only difference is that IPv6-style address are used, and <code>RtlIpv6StringToAddressA</code> is called to translate the string to binary data.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65247" height="485" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image11-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1117"/></p>
+<h2 id="heading-6">Golang Cobalt Strike Loader</h2>
+<p>Among other samples discovered during the incident was a Golang-compiled EXE (3a743e2f63097aa15cec5132ad076b87a9133274) with a reference to a source code Golang file that follows the same syntax as one of the identified IPfuscated samples.</p>
+[0x0045d2c0]&gt; iz~go~Users
+4542 0x000d62e9 0x004d78e9 27 28 .rdata ascii 
+C:/Users/76383/tmp/JzkFF.go
+<p><code>GetProcAddress</code> is called repeatedly, with 8 byte stack strings being used to form the WinAPI names to be located in memory.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65242" height="1290" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image6-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="892"/></p>
+<p>The shellcode is stored as a cleartext hexadecimal string in the <code>.rdata</code> section.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65244" height="546" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image8-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1108"/></p>
+<p>This string is read into a buffer and translated into binary, somewhat similar to the IPfuscated flow.</p>
+<p><img alt="" class="aligncenter size-full wp-image-65240" height="1358" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image4-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="938"/></p>
+<p>Before translation into binary:</p>
+<p><img alt="" class="aligncenter size-full wp-image-65245" height="408" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image9-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1152"/></p>
+<p>After translation into binary:</p>
+<p><img alt="" class="aligncenter size-full wp-image-65253" height="406" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/03/image17-1.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1156"/></p>
+<p>Control flow is then passed to the shellcode, which is yet another Cobalt Strike stager attempting to download Beacon.</p>
+<h2 id="heading-7">Conclusion</h2>
+<p>Our incident response team is constantly intercepting early-use tactics, techniques and artifacts, with IPfuscation just the latest such technique deployed by malware authors. Such techniques prove that oftentimes a creative and ingenious approach can be just as effective as a highly sophisticated and advanced one, particularly when enterprise defense is based on security tools that rely on <a href="https://www.sentinelone.com/blog/what-is-a-malware-file-signature-and-how-does-it-work/" rel="noopener noreferrer" target="_blank">static signatures</a> rather than on <a href="https://www.sentinelone.com/blog/active-edr-feature-spotlight/" rel="noopener noreferrer" target="_blank">behavioral detection</a>.</p>
+<p>If you would like to learn how SentinelOne can help protect your organization regardless of the attack vector, <a href="https://www.sentinelone.com/contact/" rel="noopener noreferrer" target="_blank">contact us</a> or request a <a href="https://www.sentinelone.com/request-demo/" rel="noopener noreferrer" target="_blank">free demo</a>.</p>
+<h2 id="heading-8">Indicators of Compromise</h2>
+<table>
+<tbody>
+<tr>
+<td>SHA1</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>d83df37d263fc9201aa4d98ace9ab57efbb90922</td>
+<td>IPfuscated Cobalt Strike stager (Hell’s Gate variant)</td>
+</tr>
+<tr>
+<td>49fa346b81f5470e730219e9ed8ec9db8dd3a7fa</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>fa8795e9a9eb5040842f616119c5ab3153ad71c8</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>6b5036bd273d9bd4353905107755416e7a37c441</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>8a4408e4d78851bd6ee8d0249768c4d75c5c5f48</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>49fa346b81f5470e730219e9ed8ec9db8dd3a7fa</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>6e91cea0ec671cde7316df3d39ba6ea6464e60d9</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>24c862dc2f67383719460f692722ac91a4ed5a3b</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>415dc50927f9cb3dcd9256aef91152bf43b59072</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+<td>2ded066d20c6d64bdaf4919d42a9ac27a8e6f174</td>
+<td>IPfuscated Cobalt Strike stager (Hell’s Gate variant)</td>
+</tr>
+<tr>
+<td>27b5d056a789bcc85788dc2e0cc338ff82c57133</td>
+<td>IPfuscated Cobalt Strike stager</td>
+</tr>
+<tr>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td>SHA 256</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>065de95947fac84003fd1fb9a74123238fdbe37d81ff4bd2bff6e9594aad6d8b</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>0809e0be008cb54964e4e7bda42a845a4c618868a1e09cb0250210125c453e65</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>12d2d3242dab3deca29e5b31e8a8998f2a62cea29592e3d2ab952fcc61b02088</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>130c062e45d3c35ae801eb1140cbf765f350ea91f3d884b8a77ca0059d2a3c54</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>39629dc6dc52135cad1d9d6e70e257aa0e55bd0d12da01338306fbef9a738e6b</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>5086cc3e871cf99066421010add9d59d321d76ca5a406860497faedbb4453c28</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>56c5403e2afe4df8e7f98fd89b0099d0e2f869386759f571de9a807538bad027</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>60cfce921a457063569553d9d43c2618f0b1a9ab364deb7e2408a325e3af2f6f</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>6240193f7c84723278b9b5e682b0928d4faf22d222a7aa84556c8ee692b954b0</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>6a222453b7b3725dcf5a98e746f809e02af3a1bd42215b8a0d606c7ce34b6b2b</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>6bdd253f408a09225dee60cc1d92498dac026793fdf2c5c332163c68d0b44efd</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>9c90c72367526c798815a9b8d58520704dc5e9052c41d30992a3eb13b6c3dd94</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>9cd407ea116da2cda99f7f081c9d39de0252ecd8426e6a4c41481d9113aa523e</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>a586efbe8c627f9bb618341e5a1e1cb119a6feb7768be076d056abb21cc3db66</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>c384021f8a68462348d89f3f7251e3483a58343577e15907b5146cbd4fa4bd53</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>c76671a06fd6dd386af102cf2563386060f870aa8730df0b51b72e79650e5071</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>e452371750be3b7c88804ea5320bd6a2ac0a7d2c424b53a39a2da3169e2069e9</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>e9bb47f5587b68cd725ab4482ad7538e1a046dd41409661b60acc3e3f177e8c4</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>e9da9b5e8ebf0b5d2ea74480e2cdbd591d82cd0bdccbdbe953a57bb5612379b0</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>efbdb34f208faeaebf62ef11c026ff877fda4ab8ab31e99b29ff877beb4d4d2b</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>f248488eedafbeeb91a6cfcc11f022d8c476bd53083ac26180ec5833e719b844</td>
+<td>UUID variant</td>
+</tr>
+<tr>
+<td>e61ecd6f2f8c4ba8c6f135505005cc867e1eea7478a1cbb1b2daf22de25f36ce</td>
+<td>MAC Address Variant</td>
+</tr>
+<tr>
+<td>f07a3c6d9ec3aeae5d51638a1067dda23642f702a7ba86fc3df23f0397047f69</td>
+<td>MAC Address Variant</td>
+</tr>
+<tr>
+<td>7667d0e90b583da8c2964ba6ca2d3f44dd46b75a434dc2b467249cd16bf439a0</td>
+<td>IPv6 Variant</td>
+</tr>
+<tr>
+<td>75244059f912d6d35ddda061a704ef3274aaa7fae41fdea2efc149eba2b742b3</td>
+<td>x86 IPv4 Variant</td>
+</tr>
+<tr>
+<td>7e8dd90b84b06fabd9e5290af04c4432da86e631ab6678a8726361fb45bece58</td>
+<td>x86 IPv4 Variant</td>
+</tr>
+<tr>
+</tr>
+</tbody>
+</table>
+<table>
+<tbody>
+<tr>
+<td>C2</td>
+<td>Description</td>
+</tr>
+<tr>
+<td>103.146.179.89</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>service-5inxpk6g-1304905614.gz.apigw.tencentcs[.]com</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>service-kibkxcw1-1305343709.bj.apigw.tencentcs[.]com:80</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>103.146.179.89</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>1.15.80.102</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>175.178.62.140</td>
+<td>Cobalt Strike server</td>
+</tr>
+<tr>
+<td>84.32.188.238</td>
+<td>Cobalt Strike server</td>
+</tr>
+</tbody>
+</table>
+<h2 id="heading-9">YARA Rules</h2>
+import "pe"
+rule IPfuscatedCobaltStrike
+{
+	meta:
+		description = "IPfuscated Cobalt Strike shellcode" 
+		author = "James Haughom @ SentinelLabs"
+		date = "2022-3-24"
+		hash = "49fa346b81f5470e730219e9ed8ec9db8dd3a7fa"
+		reference = "https://s1.ai/ipfuscation"
+	strings:
+		/*
+			This rule will detect IPfuscated Cobalt Strike shellcode
+			in PEs.
+			For example:
+				IPfuscated | binary representation | instruction
+				++++++++++++++++++++++++++++++++++++++++++++++++++++++
+				"252.72.131.228" | 0xE48348FC | CLD ...
+				"240.232.200.0" | 0xC8E8F0 | CALL ... 
+		*/
+		$ipfuscated_payload_1 = "252.72.131.228"
+		$ipfuscated_payload_2 = "240.232.200.0"
+		$ipfuscated_payload_3 = "0.0.65.81"
+		$ipfuscated_payload_4 = "65.80.82.81"
+		$ipfuscated_payload_5 = "86.72.49.210"
+		$ipfuscated_payload_6 = "101.72.139.82"
+		$ipfuscated_payload_7 = "96.72.139.82"
+		$ipfuscated_payload_8 = "24.72.139.82"
+		$ipfuscated_payload_9 = "32.72.139.114"
+		$ipfuscated_payload_10 = "80.72.15.183"
+		$ipfuscated_payload_11 = "74.74.77.49"
+		$ipfuscated_payload_12 = "201.72.49.192"
+		$ipfuscated_payload_13 = "172.60.97.124"
+		$ipfuscated_payload_14 = "2.44.32.65"
+		$ipfuscated_payload_15 = "193.201.13.65"
+		$ipfuscated_payload_16 = "1.193.226.237"
+		$ipfuscated_payload_17 = "82.65.81.72"
+		$ipfuscated_payload_18 = "139.82.32.139"
+		$ipfuscated_payload_19 = "66.60.72.1"
+		$ipfuscated_payload_20 = "208.102.129.120"
+	condition:
+		// sample is a PE
+		uint16(0) == 0x5A4D and uint32(uint32(0x3C)) == 0x00004550 and
+		5 of ($ipfuscated_payload_*)
+}
+rule IPfuscationEnumUILanguages
+{
+	meta:
+		description = "IPfuscation with execution via EnumUILanguagesA"
+		author = "James Haughom @ SentinelLabs"
+		date = "2022-3-24"
+		hash = "49fa346b81f5470e730219e9ed8ec9db8dd3a7fa"
+		reference = "https://s1.ai/ipfuscation"
+	strings:
+		// hardcoded error string in IPfuscated samples
+		$err_msg = "ERROR!"
+	condition:
+		// sample is a PE
+		uint16(0) == 0x5A4D and uint32(uint32(0x3C)) == 0x00004550 and
+		$err_msg and
+		// IPfuscation deobfuscation
+		pe.imports("ntdll.dll", "RtlIpv4StringToAddressA") and
+		// shellcode execution
+		pe.imports ("kernel32.dll", "EnumUILanguagesA")
+}
+rule IPfuscationHellsGate
+{
+	meta:
+		description = "IPfuscation with execution via Hell's Gate"
+		author = "James Haughom @ SentinelLabs"
+		date = "2022-3-24"
+		hash = "d83df37d263fc9201aa4d98ace9ab57efbb90922"
+		reference = "https://s1.ai/ipfuscation"
+	strings:
+		$err_msg = "ERROR!"
+		/*
+			Hell's Gate / direct SYSCALLs for calling system routines
+			4C 8B D1 mov r10, rcx
+			8B 05 36 2F 00 00 mov eax, cs:dword_140005000
+			0F 05 syscall 
+			C3 retn
+		*/
+		$syscall = { 4C 8B D1 8B 05 ?? ?? 00 00 0F 05 C3 }
+		/*
+			SYSCALL codes are stored in global variable
+			C7 05 46 2F 00 00 00 00 00 00 mov cs:dword_140005000, 0
+			89 0D 40 2F 00 00 mov cs:dword_140005000, ecx
+			C3 retn
+		*/
+		$set_syscall_code = {C7 05 ?? ?? 00 00 00 00 00 00 89 0D ?? ?? 00 00 C3}
+	condition:
+		// sample is a PE
+		uint16(0) == 0x5A4D and uint32(uint32(0x3C)) == 0x00004550 and
+		all of them and
+		// IPfuscation deobfuscation
+		pe.imports("ntdll.dll", "RtlIpv4StringToAddressA")
+}
+rule IPfuscatedVariants
+{
+ meta:
+ 	author = "@Tera0017/@SentinelOne"
+ 	description = "*fuscation variants"
+ 	date = "2022-3-28"
+	hash = "2ded066d20c6d64bdaf4919d42a9ac27a8e6f174"
+	reference = "https://s1.ai/ipfuscation"
+ strings:
+ 	// x64 Heap Create/Alloc shellcode
+ 	$code1 = {33 D2 48 8B [2-3] FF 15 [4] 3D 0D 00 00 C0}
+ 	// x64 RtlIpv4StringToAddressA to shellcode
+ 	$code2 = {B9 00 00 04 00 FF [9] 41 B8 00 00 10 00}
+ 
+ condition:
+ 	any of them
+}
+<h2 id="heading-10">MITRE ATT&amp;CK – Hive Ransomware Gang</h2>
+<table>
+<tbody>
+<tr>
+<td>TTP</td>
+<td>Description</td>
+<td>MITRE ID</td>
+</tr>
+<tr>
+<td>BAT/Powershell scripts</td>
+<td>Automate pre-ransomware deployment actions</td>
+<td>T1059</td>
+</tr>
+<tr>
+<td>Scheduled Tasks</td>
+<td>Execute the ransomware payload</td>
+<td>T1053</td>
+</tr>
+<tr>
+<td>Cobalt Strike</td>
+<td>Primary implant / backdoor</td>
+<td>S0154</td>
+</tr>
+<tr>
+<td>ADFind</td>
+<td>Active Directory enumeration</td>
+<td>S0552 / T1087</td>
+</tr>
+<tr>
+<td>SharpHashSpray</td>
+<td>Password spraying</td>
+<td>T1110.003</td>
+</tr>
+<tr>
+<td>DomainHashSpray</td>
+<td>Password spraying </td>
+<td>T1110.003</td>
+</tr>
+<tr>
+<td>Bloodhound/SharpHound</td>
+<td>Active Directory enumeration</td>
+<td>S0521 / T1087</td>
+</tr>
+<tr>
+<td>Signed Ransomware</td>
+<td>Ransomware payload is digitally signed</td>
+<td>T1587.002</td>
+</tr>
+<tr>
+<td>Domain Policy GPO</td>
+<td>Deploy ransomware via GPO</td>
+<td>T1484</td>
+</tr>
+<tr>
+<td>Net-GPPPassword</td>
+<td>Steal cleartext passwords from Group Policy Preferences</td>
+<td>T1552.006</td>
+</tr>
+<tr>
+<td>Rubeus</td>
+<td>Request Kerberos Ticket Granting Tickets</td>
+<td>T1558</td>
+</tr>
+<tr>
+<td>Sharpview</td>
+<td>Active Directory enumeration</td>
+<td>T1087</td>
+</tr>
+<tr>
+<td>RDP</td>
+<td>Lateral movement via RDP</td>
+<td>T1021.001</td>
+</tr>
+<tr>
+<td>SAM Dump</td>
+<td>Credential theft</td>
+<td>T1003.002</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+</div>

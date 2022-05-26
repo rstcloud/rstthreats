@@ -1,0 +1,104 @@
+<div>
+<figure class="c-article__figure u-hidden@md">
+<img alt="" class="attachment-securelist-2020-thumbnail size-securelist-2020-thumbnail wp-post-image" height="450" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/18094112/abstract_decrypt_ransom-800x450.jpg" style="max-width:800px;height:auto;width:auto;" width="800"/> </figure>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/malware-descriptions/">Malware descriptions</a>
+</p>
+<h1 class="c-article__title">How to recover files encrypted by Yanlouwang</h1>
+<p>
+<a class="c-tag c-tag--primary" href="https://securelist.com/category/malware-descriptions/">Malware descriptions</a>
+</p>
+<p>18 Apr 2022</p>
+<p>
+ 3 minute read								</p>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories.svg" style="max-width:80%;height:auto;width:auto;"/>
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/icon/icon-categories--invert.svg" style="max-width:80%;height:auto;width:auto;"/>
+<p>Table of Contents</p>
+<ul class="c-list-links"><li><a href="#yanluowang-description">Yanluowang description</a></li><li><a href="#files-decryption">Files decryption</a></li><li><a href="#indicators-of-compromise">Indicators of Compromise</a></li><li><a href="#piece-of-advice">Piece of advice</a></li></ul>
+<figure class="c-article__figure u-hidden u-block@md">
+<img alt="" class="attachment-securelist-2020-thumbnail-large size-securelist-2020-thumbnail-large wp-post-image" height="600" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/18094112/abstract_decrypt_ransom-1200x600.jpg" style="max-width:800px;height:auto;width:auto;" width="1200"/> </figure>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/amr/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_2.png" style="max-width:80%;height:auto;width:auto;"/>
+AMR</a>
+</li>
+</ul>
+<p>Yanluowang is a type of targeted ransomware discovered by the Symantec Threat Hunter team as they were investigating an incident on a large corporate network. Kaspersky experts have found a vulnerability in the Yanluowang encryption algorithm and created a free decryptor to help victims of this ransomware with recovering their files.</p>
+<h2 id="yanluowang-description">Yanluowang description</h2>
+<p>The ransomware is relatively recent, its name a reference to the Chinese deity Yanluo Wang, one of the Ten Kings of Hell. Unfortunately, we do not know much about the victims. According to Kaspersky Security Network data, attacks have been carried out in the United States, Brazil, Turkey and a few other countries. The low number of infections is due to the targeted nature of the ransomware: threat actors prepare and implement attacks on specific companies only.</p>
+<p>Geography of the Yanluowang attacks, December 4th, 2021 – April 8th, 2022 (<a href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15153446/01-en-yanlouwang-ransomware.png">download</a>)</p>
+<p>In the ransom note, the cybercriminals demand not to contact law enforcement and not ‘keep them for fools’:</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152339/Yanlouwang_ransomware_01.png"><img alt="" class="aligncenter size-large wp-image-106335" height="456" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152339/Yanlouwang_ransomware_01-1024x456.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a></p>
+<p>The ransomware program has the functionality to terminate virtual machines, processes and services. This is necessary to make files used by other programs available for encryption. The main parts of stopped services and processes include databases, email services, browsers, programs for working with documents, security solutions, backups and shadow copy services.</p>
+<table border="0">
+<tbody>
+<tr>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152826/Yanlouwang_ransomware_02.png"><img alt="Lists of stopped services and processes" class="aligncenter size-large wp-image-106336" height="1024" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152826/Yanlouwang_ransomware_02-926x1024.png" style="max-width:800px;height:auto;width:auto;" width="926"/></a></td>
+<td><a class="magnificImage" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152848/Yanlouwang_ransomware_03.png"><img alt="Lists of stopped services and processes" class="aligncenter size-full wp-image-106337" height="1020" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152848/Yanlouwang_ransomware_03.png" style="max-width:800px;height:auto;width:auto;" width="724"/></a></td>
+</tr>
+</tbody>
+</table>
+<p>Lists of stopped services and processes</p>
+<p>According to public information about the ransomware, it is only used in targeted attacks rather than in other RaaS families. Yanluowang itself needs parameters to be executed in the system, meaning it will be executed either manually or through a combination of scripts in the compromised system. The available syntax in the ransomware is:</p>
+<table class="crayon-table">
+<tbody><tr class="crayon-row">
+<td class="crayon-nums">
+1
+</td>
+<td class="crayon-code">encrypt.exe [(-p,-path,--path)&lt;path&gt;]</td>
+</tr>
+</tbody></table>
+<p>
+The Sosemanuk stream cipher is used to encrypt files, its key then encrypted using the RSA-1024 asymmetric algorithm. The RSA public key itself is embedded in the program but additionally encrypted with the RC4 stream cipher whose key is a string and also embedded in ransomware. Files before and after encryption:</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152957/Yanlouwang_ransomware_04.png"><img alt="When the encryption process is completed, the file extensions will be changed to .yanluowang" class="aligncenter size-full wp-image-106338" height="426" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15152957/Yanlouwang_ransomware_04.png" style="max-width:800px;height:auto;width:auto;" width="737"/></a>
+When the encryption process is completed, the file extensions will be changed to .yanluowang</p>
+<p>Yanluowang divides files into big and small along a 3 GB threshold. Small files are encrypted completely from beginning to end, big files are encrypted in stripes: 5 megabytes after every 200 megabytes.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15153031/Yanlouwang_ransomware_05.png"><img alt="The encryption code for big files" class="aligncenter size-large wp-image-106339" height="774" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15153031/Yanlouwang_ransomware_05-1024x774.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a>
+The encryption code for big files</p>
+<p>After a file is encrypted, an RSA-encrypted Sosemanuk key is written to the end of it. The encrypted endfile block has a size of 1024 bytes.</p>
+<p><a class="magnificImage c-article__image-link" href="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15153110/Yanlouwang_ransomware_06.png"><img alt="An encrypted block with a Sosemanuk key" class="aligncenter size-large wp-image-106340" height="287" src="https://media.kasperskycontenthub.com/wp-content/uploads/sites/43/2022/04/15153110/Yanlouwang_ransomware_06-1024x287.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></a>
+An encrypted block with a Sosemanuk key</p>
+<h2 id="files-decryption">Files decryption</h2>
+<p>Kaspersky experts have analyzed the ransomware and found a vulnerability that allows decrypting files of affected users via a known-plaintext attack. All that was required for this to work was added to <a href="https://support.kaspersky.com/8547">the Rannoh decryption tool</a>.</p>
+<p>To decrypt a file, you should have at least one original file. As mentioned earlier, the Yanluowang ransomware divides files into big and small files along a 3 gigabyte threshold. This creates a number of conditions that must be met in order to decrypt certain files:</p>
+<ul>
+<li>To decrypt small files (less than or equal to 3 GB), you need a pair of files with a size of 1024 bytes or more. This is enough to decrypt all other small files.</li>
+<li>To decrypt big files (more than 3 GB), you need a pair of files (encrypted and original) no less than 3 GB in size each. This will be enough to decrypt both big and small files.</li>
+</ul>
+<p>By virtue of the above points, if the original file is larger than 3 GB, it is possible to decrypt all files on the infected system, both big and small. But if there is an original file smaller than 3 GB, then only small files can be decrypted.</p>
+<h2 id="indicators-of-compromise">Indicators of Compromise</h2>
+<p>Kaspersky solutions detect and protect against this ransomware, detecting it as Trojan-Ransom.Win32.Yanluowang with File Threat Protection and proactively as PDM:Trojan.Win32.Generic with Behavior Detection.</p>
+<p>MD5
+<a href="https://opentip.kaspersky.com/afaf2d4ebb6dc47e79a955df5ad1fc8a/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL">afaf2d4ebb6dc47e79a955df5ad1fc8a</a>
+<a href="https://opentip.kaspersky.com/ba95a2f1f1f39a24687ebe3a7a7f7295/?utm_source=SL&amp;utm_medium=SL&amp;utm_campaign=SL">ba95a2f1f1f39a24687ebe3a7a7f7295</a></p>
+<h2 id="piece-of-advice">Piece of advice</h2>
+<p>Still, it is important for a company to have a security solution that would enable instant response to such ransomware threats in order to avoid large financial losses. Yanluowang was deployed in targeted human-operated attacks. As usual in such cases, we would like to remind you that a comprehensive cybersecurity strategy is required to protect against this type of threats.</p>
+<p>Here are Kaspersky’s recommendations for staying safe from ransomware attacks:</p>
+<ul>
+<li>Do not expose remote desktop services (such as RDP) to public networks unless absolutely necessary, and always use strong passwords.</li>
+<li>Promptly install available patches for commercial VPN solutions that provide access for remote employees and act as gateways to your network.</li>
+<li>Always keep software up to date on all your devices to prevent ransomware from exploiting vulnerabilities.</li>
+<li>Focus your defense strategy on detecting lateral movement and data exfiltration to the Internet. Pay special attention to outgoing traffic to detect cybercriminals’ connections.</li>
+<li>Back up data regularly. Make sure you can quickly access your backups in an emergency.</li>
+<li>To protect the corporate environment, educate your employees. Dedicated training courses can help, such as the ones provided on <a href="https://www.kaspersky.com/small-to-medium-business-security/security-awareness-platform">Kaspersky Automated Security Awareness Platform</a>.</li>
+<li>Use the latest <a href="https://www.kaspersky.com/enterprise-security/threat-intelligence">Threat Intelligence</a> information to stay on top of actual TTPs used by threat actors.</li>
+<li>Use solutions like <a href="https://www.kaspersky.com/enterprise-security/endpoint-detection-response-edr">Kaspersky Endpoint Detection and Response</a> and <a href="https://www.kaspersky.com/enterprise-security/managed-detection-and-response">Kaspersky Managed Detection and Response</a> service which help to identify and stop an attack in the early stages, before attackers can achieve their objectives.</li>
+<li>Use a reliable endpoint security solution, such as Kaspersky Endpoint Security for Business, that is powered by exploit prevention, behavior detection and a remediation engine capable of rolling back malicious actions. KESB also has self-defense mechanisms that can prevent its removal by cybercriminals.</li>
+</ul>
+<ul class="c-list-tags">
+<li><a class="c-link-tag" href="https://securelist.com/tag/cybercrime/">Cybercrime</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/malware-technologies/">Malware Technologies</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/ransomware/">Ransomware</a></li>
+<li><a class="c-link-tag" href="https://securelist.com/tag/trojan/">Trojan</a></li>
+</ul>
+<p>Authors</p>
+<ul class="c-list-authors">
+<li>
+<a href="https://securelist.com/author/amr/">
+<img src="https://securelist.com/wp-content/themes/securelist2020/assets/images/avatar-default/avatar_default_2.png" style="max-width:80%;height:auto;width:auto;"/>
+AMR</a>
+</li>
+</ul>
+</div>

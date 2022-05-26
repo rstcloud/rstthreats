@@ -1,0 +1,2052 @@
+<html lang="en"><head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>俄乌危机中的数字证书：吊销、影响、缓解</title>
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css?v=d28f5eb4c2">
+
+    <link rel="shortcut icon" href="/favicon.png" type="image/png">
+    <link rel="canonical" href="https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <link rel="amphtml" href="https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/amp/">
+    
+    <meta property="og:site_name" content="360 Netlab Blog - Network Security Research Lab at 360">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="俄乌危机中的数字证书：吊销、影响、缓解">
+    <meta property="og:description" content="背景
+当前这场始于2021的俄乌危机已经注定载入史册，不仅因为危机中的冲突会对传统政治地缘产生深远影响，也因为这些冲突历史性的全面蔓延到网络空间。我们（360Netlab）从独立采集到的数据出发，观察分析并呈现冲突中各利益相关方采取的行动和反制行动，希望有利于安全社区思考自身在网络空间中的定位、态度和行动。
+
+本文中的观察分析基于网络资产的SSL证书数据库CertDB，它是360Netlab
+运营的网络空间基础数据之一，它采集了几乎全部活跃的网络空间中的网站证书。证书是整个现代webPKI系统的最核心的部分之一。如果说DNS数据标识了网络资产的地址，那么证书就是网络资产的身份证。丢失或者没有证书数据，就没有办法证明“我”就是“我”。因此作为互联网安全运营的基础数据，重要性不言而喻。
+
+> 360Netlab同时运营着的网络空间基础数据库包括描述域名注册的WhoisDB、域名解析的PassiveDNS、网站页面的WebDB等等。这些基础数据库的条目以十亿或千亿为单位计，共同构成了用以描述全球网络空间变迁的DNSMon系统。
+在CertDB的支持下，我们有足够坚实的数据基础来解读本次俄乌危">
+    <meta property="og:url" content="https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/">
+    <meta property="article:published_time" content="2022-04-02T10:42:19.000Z">
+    <meta property="article:modified_time" content="2022-04-02T11:53:13.000Z">
+    <meta property="article:tag" content="DNSMon">
+    <meta property="article:tag" content="CertDB">
+    <meta property="article:tag" content="PassiveDNS">
+    
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="俄乌危机中的数字证书：吊销、影响、缓解">
+    <meta name="twitter:description" content="背景
+当前这场始于2021的俄乌危机已经注定载入史册，不仅因为危机中的冲突会对传统政治地缘产生深远影响，也因为这些冲突历史性的全面蔓延到网络空间。我们（360Netlab）从独立采集到的数据出发，观察分析并呈现冲突中各利益相关方采取的行动和反制行动，希望有利于安全社区思考自身在网络空间中的定位、态度和行动。
+
+本文中的观察分析基于网络资产的SSL证书数据库CertDB，它是360Netlab
+运营的网络空间基础数据之一，它采集了几乎全部活跃的网络空间中的网站证书。证书是整个现代webPKI系统的最核心的部分之一。如果说DNS数据标识了网络资产的地址，那么证书就是网络资产的身份证。丢失或者没有证书数据，就没有办法证明“我”就是“我”。因此作为互联网安全运营的基础数据，重要性不言而喻。
+
+> 360Netlab同时运营着的网络空间基础数据库包括描述域名注册的WhoisDB、域名解析的PassiveDNS、网站页面的WebDB等等。这些基础数据库的条目以十亿或千亿为单位计，共同构成了用以描述全球网络空间变迁的DNSMon系统。
+在CertDB的支持下，我们有足够坚实的数据基础来解读本次俄乌危">
+    <meta name="twitter:url" content="https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/">
+    <meta name="twitter:label1" content="Written by">
+    <meta name="twitter:data1" content="Zhang Zaifeng">
+    <meta name="twitter:label2" content="Filed under">
+    <meta name="twitter:data2" content="DNSMon, CertDB, PassiveDNS">
+    <meta name="twitter:site" content="@360Netlab">
+    <meta name="twitter:creator" content="@redbad2">
+    
+    <script async="" src="https://www.google-analytics.com/analytics.js"></script><script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "publisher": {
+        "@type": "Organization",
+        "name": "360 Netlab Blog - Network Security Research Lab at 360",
+        "logo": "https://blog.netlab.360.com/content/images/2019/02/netlab-brand-5.png"
+    },
+    "author": {
+        "@type": "Person",
+        "name": "Zhang Zaifeng",
+        "image": {
+            "@type": "ImageObject",
+            "url": "https://blog.netlab.360.com/content/images/2016/09/ant.jpg",
+            "width": 212,
+            "height": 220
+        },
+        "url": "https://blog.netlab.360.com/author/zhangzaifeng-2/",
+        "sameAs": [
+            "https://twitter.com/redbad2"
+        ]
+    },
+    "headline": "俄乌危机中的数字证书：吊销、影响、缓解",
+    "url": "https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/",
+    "datePublished": "2022-04-02T10:42:19.000Z",
+    "dateModified": "2022-04-02T11:53:13.000Z",
+    "keywords": "DNSMon, CertDB, PassiveDNS",
+    "description": "背景\n当前这场始于2021的俄乌危机已经注定载入史册，不仅因为危机中的冲突会对传统政治地缘产生深远影响，也因为这些冲突历史性的全面蔓延到网络空间。我们（360Netlab）从独立采集到的数据出发，观察分析并呈现冲突中各利益相关方采取的行动和反制行动，希望有利于安全社区思考自身在网络空间中的定位、态度和行动。\n\n本文中的观察分析基于网络资产的SSL证书数据库CertDB，它是360Netlab\n运营的网络空间基础数据之一，它采集了几乎全部活跃的网络空间中的网站证书。证书是整个现代webPKI系统的最核心的部分之一。如果说DNS数据标识了网络资产的地址，那么证书就是网络资产的身份证。丢失或者没有证书数据，就没有办法证明“我”就是“我”。因此作为互联网安全运营的基础数据，重要性不言而喻。\n\n&gt; 360Netlab同时运营着的网络空间基础数据库包括描述域名注册的WhoisDB、域名解析的PassiveDNS、网站页面的WebDB等等。这些基础数据库的条目以十亿或千亿为单位计，共同构成了用以描述全球网络空间变迁的DNSMon系统。\n在CertDB的支持下，我们有足够坚实的数据基础来解读本次俄乌危",
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://blog.netlab.360.com/"
+    }
+}
+    </script>
+
+    <script src="/public/ghost-sdk.min.js?v=d28f5eb4c2"></script>
+<script>
+ghost.init({
+	clientId: "ghost-frontend",
+	clientSecret: "2a7213b591a9"
+});
+</script>
+    <meta name="generator" content="Ghost 2.13">
+    <link rel="alternate" type="application/rss+xml" title="360 Netlab Blog - Network Security Research Lab at 360" href="https://blog.netlab.360.com/rss/">
+    
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-83587830-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<!-- Fix first paragraph font size -->
+<style type="text/css">
+ .post-template .post-content > p:first-child {font-size: 1em;}
+</style>
+
+<script src="https://blog-netlab-360.disqus.com/embed.js" data-timestamp="1648900899292"></script><style id="fit-vids-style">.fluid-width-video-container{flex-grow: 1;width:100%;}.fluid-width-video-wrapper{width:100%;position:relative;padding:0;}.fluid-width-video-wrapper iframe,.fluid-width-video-wrapper object,.fluid-width-video-wrapper embed {position:absolute;top:0;left:0;width:100%;height:100%;}</style><link rel="prefetch" as="style" href="https://c.disquscdn.com/next/embed/styles/lounge.63860eb743c7d9d2adf0fa435788abe7.css"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/common.bundle.9450cde9dd2c9d366781a8fc5ff6e933.js"><link rel="prefetch" as="script" href="https://c.disquscdn.com/next/embed/lounge.bundle.90614da243fa6052a038b5539f5086e5.js"><link rel="prefetch" as="script" href="https://disqus.com/next/config.js"><script src="https://c.disquscdn.com/next/embed/alfie_v4.63f1ab6d6b9d5807dc0c94ef3fe0b851.js" async="" charset="UTF-8"></script></head>
+<body class="post-template tag-dnsmon tag-certdb tag-pdns">
+
+    <div class="site-wrapper">
+
+             <header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+                <a class="site-nav-logo" href="https://blog.netlab.360.com"><img src="https://blog.netlab.360.com/content/images/2019/02/netlab-brand-5.png" alt="360 Netlab Blog - Network Security Research Lab at 360"></a>
+            <ul class="nav" role="menu">
+    <li class="nav-botnet" role="menuitem"><a href="https://blog.netlab.360.com/tag/botnet/">Botnet</a></li>
+    <li class="nav-dnsmon" role="menuitem"><a href="https://blog.netlab.360.com/tag/dnsmon/">DNSMon</a></li>
+    <li class="nav-ddos" role="menuitem"><a href="https://blog.netlab.360.com/tag/ddos/">DDoS</a></li>
+    <li class="nav-passivedns" role="menuitem"><a href="https://blog.netlab.360.com/tag/pdns/">PassiveDNS</a></li>
+    <li class="nav-mirai" role="menuitem"><a href="https://blog.netlab.360.com/tag/mirai/">Mirai</a></li>
+    <li class="nav-dta" role="menuitem"><a href="https://blog.netlab.360.com/tag/dta/">DTA</a></li>
+</ul>
+
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+                <a class="social-link social-link-tw" href="https://twitter.com/360Netlab" title="Twitter" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+</a>
+        </div>
+            <a class="rss-button" href="https://feedly.com/i/subscription/feed/https://blog.netlab.360.com/rss/" title="RSS" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="6.18" cy="17.82" r="2.18"></circle><path d="M4 4.44v2.83c7.03 0 12.73 5.7 12.73 12.73h2.83c0-8.59-6.97-15.56-15.56-15.56zm0 5.66v2.83c3.9 0 7.07 3.17 7.07 7.07h2.83c0-5.47-4.43-9.9-9.9-9.9z"></path></svg>
+</a>
+    </div>
+</nav>
+    </div>
+    </header>
+
+
+    <main id="site-main" class="site-main outer">
+        <div class="inner">
+
+            <article class="post-full post tag-dnsmon tag-certdb tag-pdns no-image">
+
+                <header class="post-full-header">
+                    <section class="post-full-meta">
+                        <time class="post-full-meta-date" datetime="2022-04-02">2 April                            2022</time>
+                        <span class="date-divider">/</span> <a href="/tag/dnsmon/">DNSMon</a>
+                    </section>
+                    <h1 class="post-full-title">俄乌危机中的数字证书：吊销、影响、缓解</h1>
+                </header>
+
+
+                <section class="post-full-content">
+                    <div class="post-content">
+                        <h2 id="">背景</h2>
+<p>当前这场始于2021的俄乌危机已经注定载入史册，不仅因为危机中的冲突会对传统政治地缘产生深远影响，也因为这些冲突历史性的全面蔓延到网络空间。我们（360Netlab）从独立采集到的数据出发，观察分析并呈现冲突中各利益相关方采取的行动和反制行动，希望有利于安全社区思考自身在网络空间中的定位、态度和行动。</p>
+<p>本文中的观察分析基于网络资产的SSL证书数据库CertDB，它是360Netlab 运营的网络空间基础数据之一，它采集了几乎全部活跃的网络空间中的网站证书。证书是整个现代webPKI系统的最核心的部分之一。如果说DNS数据标识了网络资产的地址，那么证书就是网络资产的身份证。丢失或者没有证书数据，就没有办法证明“我”就是“我”。因此作为互联网安全运营的基础数据，重要性不言而喻。</p>
+<blockquote>
+<p>360Netlab同时运营着的网络空间基础数据库包括描述域名注册的WhoisDB、域名解析的PassiveDNS、网站页面的WebDB等等。这些基础数据库的条目以十亿或千亿为单位计，共同构成了用以描述全球网络空间变迁的DNSMon系统。<br>
+在CertDB的支持下，我们有足够坚实的数据基础来解读本次俄乌危机中俄罗斯网络空间中网站证书的变化情况。</p>
+</blockquote>
+<p>3月初,乌克兰政府向互联网域名管理机构ICANN书面请求将俄罗斯相关顶级域名“.ru”, “.рф” 和“.su”从互联网撤销[1]，但ICANN并没有认同这份请求[2]。近日，我们注意到俄罗斯相关的一些国家基础设施网站的证书被证书机构陆续吊销。本文利用DNSMon的证书数据库，从数据角度来更准确的衡量这个现象在实际数据中的表现。</p>
+<h2 id="">数据筛选</h2>
+<p>我们从DNSMon系统中筛选了如下条件的证书：<br>
+1. 在最近3个月活跃的<br>
+2. 非Let's Encrypt签发的<br>
+3. 证书主体国家是俄罗斯或者证书主体的CommonName的域名以.RU或者.SU[3]结尾<br>
+4. 非自签名或者其他不被认为是安全的证书<br>
+通过以上方法，共计得到336,330个证书。</p>
+<blockquote>
+<p>证书以及以上证书筛选条件的说明：</p>
+<ul>
+<li>如果证书超过3个月没有活跃，我们认为这些证书所承载的网站的业务已经停止或者极度小，证书即使被吊销的影响有限。</li>
+<li>Let's Encrypt签发的免费证书是现在证书数据的绝对大头。不过因为Let's Encrypt签发的是DV证书，并没有提供OV或者EV证书[5]（关于证书级别本文后续有简要解释，读者也可自行搜索），所以重要机构和用户目前不会使用Let's Encrypt签发的证书。</li>
+</ul>
+</blockquote>
+<h2 id="">数据分析</h2>
+<h3 id="">基本数据</h3>
+<p>在 336,330个证书中：<br>
+签发的国家（证书数据中签发者的国家信息）有近30个，从下图可以看出主要集中在美，英，奥地利，比利时和拉脱维亚，占比达到了97.6%。俄罗斯自身的证书签发机构占比只有0.2%左右：<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/----------1.png" width="860px"></p>
+<p>在这些所有的证书里面，涉及到的签发的机构有50+，其中top5的签发机构签发的证书占总数的95.6%。如下图所示：<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/------------2.png" width="860px"></p>
+<p>在靠前的六家签发机构中，我们考察了其上游证书提供商及所属国别：</p>
+<ol>
+<li>cPanel是一家美国的做web系统托管服务的公司，严格来说并不是CA厂商，不过它的证书是由comodo(已被如下排名第二的sectigo收购)签发的。</li>
+<li>Sectigo是美国专门做证书服务的公司，也是使用范围最广的CA之一。它既是根证书机构，也是面向最终消费者的中间证书机构。</li>
+<li>DigiCert是美国专业的证书服务公司。同Sectigo一样，也是使用范围最广的CA，既是根证书机构，也提供中间证书服务。</li>
+<li>GlobalSign是比利时的专业证书服务公司，后来被日本GMO集团收购。同样既是根证书机构，也提供中间证书服务。</li>
+<li>Zerossl是一家专门做SSL证书服务的位于奥地利的公司，不过其父公司被美国公司Idera收购，我们注意到该公司公告根据美国出口法规限制从2020年11月就不再给.ru的顶级域颁发证书了[11]。但从我们的数据来看，证书一直没有中断颁发，这其中尚不确定具体原因是什么。</li>
+<li>GoGetSSL是一家专门做SSL证书服务的位于拉脱维亚的中间证书提供商。是DigiCert的白金合作伙伴和Sectigo的战略合作伙伴，在证书撤销方面本文后续可以看到它和Sectigo具有一致行动性。</li>
+</ol>
+<p>如上，如果从中间证书的上游根证书所属国别来看，俄罗斯的证书签发机构所属的国家分布就变成了下图这样，即美国独自占85%，日本占12%。俄罗斯的选择余地实在很小。<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/-----CA----.png" width="860px"></p>
+<p>在这336,330个证书中，来自俄罗斯的签发机构只有如下3个并且它们都不是根证书机构，也就是说俄罗斯并没有全球公认的根CA：</p>
+<table>
+<thead>
+<tr>
+<th>name</th>
+<th>upstream</th>
+<th>upstrem_country</th>
+<th>issued certficate number</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RU-Center (ЗАО Региональный Сетевой Информационный Центр)</td>
+<td>The USERTRUST Network</td>
+<td>US</td>
+<td>530</td>
+</tr>
+<tr>
+<td>Yandex LLC</td>
+<td>Unizeto Technologies S.A.</td>
+<td>PL</td>
+<td>192</td>
+</tr>
+<tr>
+<td>VTB BANK (PJSC)</td>
+<td>GlobalSign</td>
+<td>GB</td>
+<td>27</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>证书相关小百科：根证书，中间证书</p>
+<ul>
+<li>什么是根证书机构<br>
+根证书是内置在浏览器或者操作系统中的可信证书文件，是整个PKI系统可信上诉链条的顶点，是PKI系统的锚点。全世界只有数量较少的根证书颁发机构。比如在<a href="https://ccadb-public.secure.force.com/mozilla/CACertificatesInFirefoxReport">这里</a>firefox列出了其使用的跟证书列表，总共只有49个根证书机构，颁发了138个根证书。windows系统，macOS系统等也类似都有自己的根证书列表。</li>
+<li>什么是中间证书机构<br>
+根证书RootCA不会直接面向企业或者个人用户颁发证书。这些证书数量少，影响范围广，万一出现密钥泄漏，影响太大。所以为了保护根证书，CAs通常会颁发所谓的中间根。CA使用它的私钥对中间根签名，使它受到信任，即所谓中间CA（Intermediate CA）或者中间根。然后中间根使用中间证书的私钥签署和颁发终端用户SSL证书。这个过程可以执行多次，其中一个中间根对另一个中间根进行签名，然后CA使用该根对证书进行签名。这些链接，从根到中间到叶子，都是证书链。上面提到的俄罗斯的3个证书签发机构都是中间根。<br>
+值得提的一点是中间证书机构尽管可以签发证书，不过其在运营策略上会受控于上游RootCA。</li>
+</ul>
+</blockquote>
+<h3 id="">吊销数据</h3>
+<p>通过对整体数据进行分析，我们发现：</p>
+<ol>
+<li>
+<p>目前有265个证书被吊销，其中2022年吊销了228个。</p>
+</li>
+<li>
+<p>从吊销时间上来看，主要集中在2022年的0228～0307这个段时间，这段时间共吊销了172个证书，占总数的64.9%。<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/-----------.png" width="860px"></p>
+</li>
+<li>
+<p>我们查看了对应证书吊销列表文件(CRL)中对吊销证书的吊销原因，发现绝大部分(95%)都没有明确的原因。</p>
+</li>
+<li>
+<p>从证书级别上来看，这次撤销的证书整体比较高，EV，OV的证书占比达到了84%。<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/------.png" width="860px"></p>
+</li>
+</ol>
+<blockquote>
+<p>证书相关小百科：证书级别</p>
+<ul>
+<li>目前主流的证书验证级别分为三种，分别是Domain Validated(DV), Organization Validation(OV)和Extended Validation(EV)：
+<ul>
+<li>DV验证是身份验证最少的SSL证书，即使是恶意程序也可以快速的轻松获取。这类证书主要用在个人网站，自媒体以及不包含个人敏感数据的网站。</li>
+<li>OV证书需要验证企业身份信息后颁发。OV SSL证书是当前最常见的证书类型，适用于行政、企业、科研、邮箱、论坛等各类大中型网站。</li>
+<li>EV顶级SSL证书，又称扩展验证型SSL证书。安全级别最高，验证审核最严格，网站部署EV SSL证书后，浏览器地址栏将变成绿色并显示企业名称。EV SSL证书一般应用于金融、银行、电商等安全需求较高的网站。</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<ol start="5">
+<li>
+<p>这些被吊销的证书CA集中在少数几个CA上，总结情况如下：<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/--RU---CA.png" width="860px"><br>
+这其中排名前4的分别是：Digicert，GlobalSign nv-sa，GoGetSSL和Sectigo。<br>
+DigiCert撤销了126个（占DigiCert签发的俄罗斯的证书总数的0.5%），占总撤销总数的47.54%，更是占了2022年之后撤销总数的55.26%左右。</p>
+</li>
+<li>
+<p>我们将DigiCert，Globalsign nv-sa，GoGetSSL和Sectigo以及其他的涉及的CA拆分开，统计了其在小时级时间粒度上撤销证书的数量，见下图。<img src="https://blog.netlab.360.com/content/images/2022/03/------------CA-----.png" width="860px"><br>
+从图上看，在2022-02-28之前，每个CA吊销的证书数量还比较平稳，但从2.28 18:00之后，先是Globalsign nv-sa开始吊销了18个证书，接下来从21：00开始持续到3.1, DigiCert开始了其大量的吊销，最高达到每小时38个，接下来是GoGetSSL和Sectigo后两者在时间上有一致性。<br>
+我们进一步拨开这些数据看一下，发现Globalsign nv-sa撤销的证书和其他三家CA有着显著的不同。</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>首先是证书的域名不同。Globalsign的撤销的证书的域名是新注册的域名，并且子域名有着相似的特征(都包含有owa,audodiscovery,mail,www等子域)，可能是某些特定业务的域名。而其他三家撤销的则是老域名(域名列表见本文后面)。<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/globalsign_revoke_domains.jpg" width="860px"></p>
+</li>
+<li>
+<p>Globalsing撤销的证书的域名通过搜索引擎搜索发现其并非特定或者关键行业的域名，其他三家撤销的证书的域名则是绝大多数都涉及到银行，保险等金融行业，还有一个证书涉及铁路行业。</p>
+</li>
+</ul>
+<p>考虑到证书吊销在时间上的集中性以及所属行业的特点，我们合理判断总数265个证书中的144个是因为对俄罗斯制裁所产生的。撤销涉及DigiCert，GoGetSSL和Sectigo三个证书签发机构。</p>
+<ol start="7">
+<li>
+<p>被吊销之后域名使用的新的证书<br>
+在被吊销之后，正常的业务访问会受限，比如浏览器会提示证书已经被吊销从而无法进一步访问业务。为了维持业务的正常运作，这些受影响的网站必须寻找替代的解决方案。因此我们考察了这些受影响网站是否启用了新的证书。如果启用了的话，是用的哪家，以及这个过程需要多长时间。<br>
+经过我们统计之后发现受影响的俄罗斯金融机构大致有四种选择（详细信息见下表）：</p>
+<ul>
+<li>原先有些单位本身就是中间根证书签发机构，这类单位现在使用的是自己单位签发的中间证书，其授权上游证书来自GlobalSign，因为有被浏览器承认的RootCA，所以这类证书使用起来没有问题。这类代表是俄罗斯外贸银行VTB集团。同类型的单位包括：VTB集团相关的所有域名。</li>
+<li>使用Let's Encrypt签发的证书。Let's Encrypt是美国的一家免费证书提供机构，但是其不能提供OV和EV类型的证书，并且其证书的有效期也比较短。使用这类证书在某种程度上是被迫对证书安全性做了降级。这类的代表是跟保险行业较为紧密相关的sovcomins.ru，以及俄罗斯农业银行rgsbank.ru等相关的域名。</li>
+<li>还有一类则从DigiCert切换到了 GlobalSign nv-sa 签发的证书。这类很好理解，弃用了DigiCert，转用了GlobalSign，业务暂时也不受影响。比如俄罗斯联邦中央银行crb.ru，以及部分rgsbank.ru的域名，open.ru的域名等.</li>
+<li>还有少数金融机构比如vostbank.ru，vtbindia.com，psbinvest.ru等域名还在使用被吊销的证书，没有采取任何动作。目前访问的话，会提示证书被吊销，业务受到了影响。比如vtb印度的网站就会被chrome提示证书已经撤销，无法继续进行访问：<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/vtbindia_chrome_revoke-2.png" widht="860px"></li>
+</ul>
+</li>
+<li>
+<p>证书切换对业务的影响<br>
+我们调查了这些受影响的域名在证书吊销之后启用新的证书之前，到底花了多长时间。从我们获取的数据来看，平均要花711分钟，也就是接近12个小时才能完成证书的切换。其中最快的用了109分钟(1.8小时)，最慢的则用了1346分钟（22.4小时）。<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/------------.png" width="860px"></p>
+</li>
+</ol>
+<p>同时我们也对比了新证书的级别和老证书的级别发现：</p>
+<pre><code>    * 53%的网站的证书出现了降级
+    * 45%的网站证书级别保持不变
+    * 2%的网站证书级别进行了提升
+</code></pre>
+<h4 id="">被吊销证书的列表</h4>
+<p>从2022-02-28之后在2022-03-11之前吊销和俄乌危机所引发的制裁相关的证书，涉及到DigiCert，Sectigo和GoGetSSL三个证书提供商，共包含144个证书。详细的证书列表见本文最后。</p>
+<h2 id="">签发机构的态度和俄罗斯的动作</h2>
+<p>根据目前的消息[7]， Sectigo和DigiCert已经开始限制来自俄罗斯和白俄罗斯的业务。所以如果俄罗斯没有自己的证书签发机构和对应的可信RootCA的话，并且同时面对经济制裁的情况下，通用的付费方法可能也无法进行支付。所以即使目前的证书不吊销，现有证书过期之后仍然面临无证书可用的尴尬境地。</p>
+<p>为了解决这个问题，俄罗斯推出了自己的CA:www.gosuslugi.ru [8]<br>
+<img src="https://blog.netlab.360.com/content/images/2022/03/russia_own_CA.png" width="860px"></p>
+<p>但即便俄罗斯做了如此举动，仍然无法绕过一个核心问题，RootCA如果需要被广泛的用户终端/基础软件缺省内置是需要经过一系列庞杂繁琐的流程。在俄罗斯被广泛制裁的前提下，这个RootCA被外界广泛承认的可能性是0。比如从浏览器的角度来说，常见的chrome，Firefox，IE，opera等不支持此根，这个根的意义形同虚设。</p>
+<p>值得提的一点是 <a class="vglnk" href="http://www.gosuslugi.ru" rel="nofollow"><span>www</span><span>.</span><span>gosuslugi</span><span>.</span><span>ru</span></a> 自身使用的证书仍然是来自于Sectigo的签发。</p>
+<p>目前网上流传着一份据说是俄官方的名单,要求198个重点域名使用这个CA[9]。我们注意到这这个列表里面的6个域名（二级域）已经是在我们这次看到的吊销的域名里面。</p>
+<h2 id="">基本结论</h2>
+<p>目前来看，本文得到了如下的几个结论：</p>
+<ol>
+<li>受影响的网站比例并不高，被撤销的证书约为俄罗斯在用证书的0.04%左右；</li>
+<li>受影响的行业主要集中在银行及金融相关的行业，可能会对相关企业的客户带来一定程度的混乱，尤其是尚未部署新证书的业务；</li>
+<li>证书的主要撤销者是DigiCert，接下来是Sectigo和GoGetSSL。</li>
+</ol>
+<h2 id="">参考资料</h2>
+<ol>
+<li><a href="https://pastebin.com/DLbmYahS">https://pastebin.com/DLbmYahS</a></li>
+<li><a href="https://www.icann.org/en/system/files/correspondence/marby-to-fedorov-02mar22-en.pdf">https://www.icann.org/en/system/files/correspondence/marby-to-fedorov-02mar22-en.pdf</a></li>
+<li><a href="https://www.iana.org/domains/root/db/su.html">https://www.iana.org/domains/root/db/su.html</a></li>
+<li><a href="https://thehackernews.com/2020/09/ssl-tls-certificate-validity-398.html">https://thehackernews.com/2020/09/ssl-tls-certificate-validity-398.html</a></li>
+<li><a href="https://letsencrypt.org/docs/faq/">https://letsencrypt.org/docs/faq/</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Certificate_authority">https://en.wikipedia.org/wiki/Certificate_authority</a></li>
+<li><a href="https://www.gogetssl.com/news/27.html">https://www.gogetssl.com/news/27.html</a></li>
+<li><a href="https://www.gosuslugi.ru/tls">https://www.gosuslugi.ru/tls</a></li>
+<li><a href="https://www.documentcloud.org/documents/21408455-tls_list2?responsive=1&amp;title=1">https://www.documentcloud.org/documents/21408455-tls_list2?responsive=1&amp;title=1</a></li>
+<li><a href="https://www.bleepingcomputer.com/news/security/russia-creates-its-own-tls-certificate-authority-to-bypass-sanctions/">https://www.bleepingcomputer.com/news/security/russia-creates-its-own-tls-certificate-authority-to-bypass-sanctions/</a></li>
+<li><a href="https://help.zerossl.com/hc/en-us/articles/360060119833-Restricted-Countries">https://help.zerossl.com/hc/en-us/articles/360060119833-Restricted-Countries</a></li>
+</ol>
+<h2 id="">证书吊销列表</h2>
+<table>
+<thead>
+<tr>
+<th>revoke_time</th>
+<th>subject_CommonName</th>
+<th>sha1</th>
+<th>issuer_O</th>
+<th>industry</th>
+<th>new_cert_issuer</th>
+<th>new_cert_issuer_time</th>
+<th>gap_time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2022-02-28 21:17:23</td>
+<td>ibank.mmbank.ru</td>
+<td>0e2574eee86f03bad8737975c8e8c6b0cb4d86bf</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 13:07:02</td>
+<td>949.6</td>
+</tr>
+<tr>
+<td>2022-02-28 21:17:43</td>
+<td>*.bvb.by</td>
+<td>747347ce6f5206d4abe44984beb222faf621fc5b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-02-28 22:02:32</td>
+<td>3dsp.vtb.ru</td>
+<td>1ff80de2b0a83fadca20512c77625a38862a1701</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 08:46:09</td>
+<td>643.6</td>
+</tr>
+<tr>
+<td>2022-02-28 22:06:28</td>
+<td>3dsp2.vtb.ru</td>
+<td>95af9277b6ed216dc0734cd1e2c79253dc158c18</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 08:46:15</td>
+<td>639.8</td>
+</tr>
+<tr>
+<td>2022-02-28 22:06:38</td>
+<td>*.vtbf.ru</td>
+<td>11aa6e2bf223fcc4aa83ef40fc40c563d89fca1a</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-09 08:22:51</td>
+<td>616.2</td>
+</tr>
+<tr>
+<td>2022-02-28 22:08:33</td>
+<td>*.customscard.ru</td>
+<td>db4a27987a5cedfcbf4cd78144a74e2980061d00</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 07:56:57</td>
+<td>588.4</td>
+</tr>
+<tr>
+<td>2022-02-28 22:10:57</td>
+<td>online.customscard.ru</td>
+<td>82aa023ce89f3ea2406e3721dc77ecc829445537</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>ZeroSSL</td>
+<td>2022-03-01 00:00:00</td>
+<td>109.0</td>
+</tr>
+<tr>
+<td>2022-02-28 22:55:15</td>
+<td>*.cbr.ru</td>
+<td>23280fa352673271c377dec3041dee535095eb19</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 10:16:07</td>
+<td>680.9</td>
+</tr>
+<tr>
+<td>2022-02-28 22:55:30</td>
+<td>*.cbr.ru</td>
+<td>7aafcfc6c359f1184b686a2f57d5100f7280ede5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 10:16:07</td>
+<td>680.6</td>
+</tr>
+<tr>
+<td>2022-02-28 23:02:21</td>
+<td>rgsbank.ru</td>
+<td>f9756126c514426771c1ee2280fcc670659d158d</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-10 11:37:45</td>
+<td>755.4</td>
+</tr>
+<tr>
+<td>2022-02-28 23:08:44</td>
+<td>open.ru</td>
+<td>c2b40abb6e79744796d65887cc782f3e6aa4310b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-04 14:37:19</td>
+<td>928.6</td>
+</tr>
+<tr>
+<td>2022-03-01 00:12:35</td>
+<td>smtp1.open.ru</td>
+<td>905ee42c2722e5e1659e8896f656e52b2e62e622</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-04 14:37:19</td>
+<td>928.6</td>
+</tr>
+<tr>
+<td>2022-03-01 00:13:34</td>
+<td>mc.vtb.ru</td>
+<td>bde9131020e014bbd71d7048ba2fe2ea1c7d060d</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:56:07</td>
+<td>702.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:13:39</td>
+<td>ipoteka.vtb.ru</td>
+<td>37f4bc7254c469b0e8d3698aa299bc346bd9d567</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 10:01:08</td>
+<td>587.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:13:49</td>
+<td>*.vtb.ru</td>
+<td>29ffe2f41fc0cdbac7addaf74f27804734f00662</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 10:01:08</td>
+<td>587.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:14:47</td>
+<td>mob.vtb.ru</td>
+<td>314daea50add8da4289367b4653fccf7d0bead0f</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 10:01:08</td>
+<td>587.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:15:18</td>
+<td>dachatbot.vtb.ru</td>
+<td>393e42d01f8bf9aa5c2986fc27bf82ab731fc7fb</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-04 07:31:08</td>
+<td>435.8</td>
+</tr>
+<tr>
+<td>2022-03-01 00:16:40</td>
+<td>lk.olb.ru</td>
+<td>2b6186e5471cb85d0b2b446f4357576baf1f7630</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-04 07:31:08</td>
+<td>435.8</td>
+</tr>
+<tr>
+<td>2022-03-01 00:16:45</td>
+<td>dbo.vtb.ru</td>
+<td>9d5aa3fe0690d19de24629226f23abefdf93414b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:51:07</td>
+<td>694.4</td>
+</tr>
+<tr>
+<td>2022-03-01 00:16:49</td>
+<td>idemo.vtb.ru</td>
+<td>9ef7ab4ed17786ea152f1a152e2c347c8c4abe20</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:56:14</td>
+<td>699.4</td>
+</tr>
+<tr>
+<td>2022-03-01 00:16:54</td>
+<td>webquik.vtb.ru</td>
+<td>4c192c7bcb57ff52993fd71bdd688e1a55880ee9</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 19:41:07</td>
+<td>1164.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:17:11</td>
+<td>komission.vtb.ru</td>
+<td>b9761633e595a6ca9eb651adb38601fc7871a753</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 20:41:07</td>
+<td>1223.9</td>
+</tr>
+<tr>
+<td>2022-03-01 00:17:29</td>
+<td>epa.api.vtb.ru</td>
+<td>a0a6c1ba28fd7d70a306cace89a15230d3a14ebf</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 20:41:07</td>
+<td>1223.9</td>
+</tr>
+<tr>
+<td>2022-03-01 00:17:44</td>
+<td>mail.vtbstrana.ru</td>
+<td>3d2b0ee0665bfeddf1ccf7194cd8968097b3d55b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 15:41:15</td>
+<td>923.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:17:48</td>
+<td><a class="vglnk" href="http://mail.vtb.com" rel="nofollow"><span>mail</span><span>.</span><span>vtb</span><span>.</span><span>com</span></a></td>
+<td>e8d152170944f18b74e0895fb40c43e60de1b757</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 10:11:07</td>
+<td>593.3</td>
+</tr>
+<tr>
+<td>2022-03-01 00:17:55</td>
+<td>db.vtb.ru</td>
+<td>4af34f0f8ed1bb975b3ff3842131cc4a9c3331d3</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:16:07</td>
+<td>658.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:18:37</td>
+<td>mx101.vtb.ru</td>
+<td>5a7170b3966d23634024b31fe4b373cf435cbd1b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:16:07</td>
+<td>658.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:18:41</td>
+<td>mx102.vtb.ru</td>
+<td>3df103b57e5f392c71df6f303e4777b9839596ec</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:16:07</td>
+<td>658.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:18:46</td>
+<td>mx201.vtb.ru</td>
+<td>4dac367f4357fc8e85a69105d9a73e716a465e7c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:16:07</td>
+<td>658.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:18:57</td>
+<td>mx202.vtb.ru</td>
+<td>5144a93d057eafbcd85bc24e52ecef9235ea1f27</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 11:16:07</td>
+<td>658.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:19:39</td>
+<td>*.vtbbo.ru</td>
+<td>9ec889fb87ba7df2a5d9f670253175db3f6d1f2f</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 15:56:15</td>
+<td>936.6</td>
+</tr>
+<tr>
+<td>2022-03-01 00:19:55</td>
+<td>vtbbo.ru</td>
+<td>459c6cf187b637ddaf7315b0437adb3fc4fdf430</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 15:56:15</td>
+<td>936.6</td>
+</tr>
+<tr>
+<td>2022-03-01 00:23:51</td>
+<td>cl.vtb.ru</td>
+<td>86d51be25b4cea05a351cbd7cf99d69b21f0a540</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 19:26:09</td>
+<td>1142.3</td>
+</tr>
+<tr>
+<td>2022-03-01 00:24:10</td>
+<td>mb-partner.bm.ru</td>
+<td>b8b4490db23d10416b0d7b8bbdfd4cb00e375904</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-02 17:21:18</td>
+<td>1017.1</td>
+</tr>
+<tr>
+<td>2022-03-01 00:24:42</td>
+<td>ipoteka-online.vtb.ru</td>
+<td>b4968f1c438b6054603f07e0f491b36ca1d5ee37</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 09:56:11</td>
+<td>571.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:24:53</td>
+<td>vtbrussia.ru</td>
+<td>24eb584f1e1e27c86bfa12eacf9867bdd5760dff</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 00:25:10</td>
+<td>Sbc-proxy.vtb.ru</td>
+<td>0867b10049bf1e005647befb83ee1bb96e846a04</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-03 08:41:14</td>
+<td>496.1</td>
+</tr>
+<tr>
+<td>2022-03-01 00:27:40</td>
+<td>bo.vtb.ru</td>
+<td>d40c4b34b82519deb6ca811ecd4eea02ddedf8e5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 10:41:08</td>
+<td>613.5</td>
+</tr>
+<tr>
+<td>2022-03-01 00:28:04</td>
+<td>vb.vtb.ru</td>
+<td>7a3df1ce19a88f71741a5f176ded585fe9efa688</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-03 20:06:07</td>
+<td>1178.0</td>
+</tr>
+<tr>
+<td>2022-03-01 00:28:14</td>
+<td>data-fusion.ru</td>
+<td>b571526a75cc3141abd0e928e8df358914326071</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>Mulit_certs</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 00:34:54</td>
+<td><a class="vglnk" href="http://vtbindia.com" rel="nofollow"><span>vtbindia</span><span>.</span><span>com</span></a></td>
+<td>e7dfeda2ad46f54335b0da72aacc9dc9d02539f7</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 00:35:49</td>
+<td>acquiring.vtb.ru</td>
+<td>b5447f597aaf078a7cadae3b22d9a88658fa4a47</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-16 08:16:07</td>
+<td>460.3</td>
+</tr>
+<tr>
+<td>2022-03-01 00:36:06</td>
+<td><a class="vglnk" href="http://www.vtb.com" rel="nofollow"><span>www</span><span>.</span><span>vtb</span><span>.</span><span>com</span></a></td>
+<td>5573f1f57aedf665e6c3da73f702e8b81a8d160c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-16 08:16:07</td>
+<td>460.3</td>
+</tr>
+<tr>
+<td>2022-03-01 00:36:21</td>
+<td>lk.vtb.ru</td>
+<td>58295cf4e89be3be322474dc0028d129d94617aa</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-16 08:16:07</td>
+<td>460.3</td>
+</tr>
+<tr>
+<td>2022-03-01 00:36:27</td>
+<td>crm.vtb.ru</td>
+<td>0f88adf4ab1b3599d3b60e4cc3887a44bf3078a8</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 00:36:52</td>
+<td>mobi1.vtb24.ru</td>
+<td>c2ac9dc39ea9e9c7fa276a02b379995301751f9b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 20:46:07</td>
+<td>1209.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:39:21</td>
+<td>*.zapsibkombank.ru</td>
+<td>8f22318ed13d74026e621796ddae0fd5491ef05e</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 20:46:07</td>
+<td>1209.2</td>
+</tr>
+<tr>
+<td>2022-03-01 00:39:26</td>
+<td>newbusiness.psbank.ru</td>
+<td>49332bdaeb5270f425b5d6245e72806c40bc14dc</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 13:56:11</td>
+<td>796.8</td>
+</tr>
+<tr>
+<td>2022-03-01 00:39:41</td>
+<td>*.exiar.ru</td>
+<td>f9b9ea6d9e4a66ce1431d7d8a8f526a1ad67229b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:27:31</td>
+<td>*.psbank.ru</td>
+<td>7c68142b2cdd1630223055ddc86ae20b303a31a7</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:31:28</td>
+<td>psbinvest.ru</td>
+<td>9f1398b5b7c9692b42b693523873aa8955c7dccf</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:32:23</td>
+<td>*.payment.ru</td>
+<td>d7ec65409697d900acc5af14d1e49a48686f2da2</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:33:04</td>
+<td>ib.psbank.ru</td>
+<td>9e171b1269ae6defa889bfe4aee007435688ac57</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>DigiCert Inc</td>
+<td>2020-03-16 00:00:00</td>
+<td>1346.9</td>
+</tr>
+<tr>
+<td>2022-03-01 01:33:08</td>
+<td>*.exportcenter.ru</td>
+<td>8fd06cdae2dee7357c2453e2747f93717165679d</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:33:41</td>
+<td>*.round.ru</td>
+<td>f25d7f41847e1728d358df6b03072feddafc3e50</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 11:53:00</td>
+<td>619.3</td>
+</tr>
+<tr>
+<td>2022-03-01 01:34:16</td>
+<td>online.rgsbank.ru</td>
+<td>7d15927eedff53fb2255a32ac61ec4fd2a322b03</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 07:27:59</td>
+<td>353.7</td>
+</tr>
+<tr>
+<td>2022-03-01 01:34:21</td>
+<td>ib.rgsbank.ru</td>
+<td>5e20dc4665c1ff3c32ffe6a8d9b0dc73a83ba11e</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 11:57:03</td>
+<td>622.7</td>
+</tr>
+<tr>
+<td>2022-03-01 01:34:39</td>
+<td>*.veb-leasing.ru</td>
+<td>3594e8d133ee4b40dbe422f57488a31c4f0a6045</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 01:35:15</td>
+<td>index.vtbcapital.ru</td>
+<td>05a89c6f02cf8d6af1b07bfe4ecedc08e28b89b3</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-02-22 11:34:09</td>
+<td>598.9</td>
+</tr>
+<tr>
+<td>2022-03-01 01:41:54</td>
+<td>*.pib.ua</td>
+<td>a8f0b2ee09757d5c1c078a8ab09d02adaf2fb90a</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-01 20:49:38</td>
+<td>*.rdif.ru</td>
+<td>0aa035b197adec963573943750b8722613c6f32d</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-14 14:28:08</td>
+<td>1058.5</td>
+</tr>
+<tr>
+<td>2022-03-02 00:17:47</td>
+<td><a class="vglnk" href="http://www.vtbcapital.ru" rel="nofollow"><span>www</span><span>.</span><span>vtbcapital</span><span>.</span><span>ru</span></a></td>
+<td>cd833e8b6c3bd7ba6ef82863e2d455f36115d887</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 10:48:02</td>
+<td>630.2</td>
+</tr>
+<tr>
+<td>2022-03-02 00:48:49</td>
+<td>divrating.ru</td>
+<td>ad6f7d3f3cf19b2f7d2bd8046d4b282164c11ee3</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-02 00:50:35</td>
+<td>retail-tst.payment.ru</td>
+<td>7382892d1cda4062c3c36fe9f7cb3aa98c91f192</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Promsvyazbank Public Joint-Stock Company</td>
+<td>2022-02-09 06:27:00</td>
+<td>336.4</td>
+</tr>
+<tr>
+<td>2022-03-02 00:51:23</td>
+<td>business.psbank.ru</td>
+<td>0d7a666e2b8096bd855ee04cecaaaf7bb0bad65b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 13:56:11</td>
+<td>784.8</td>
+</tr>
+<tr>
+<td>2022-03-02 00:52:44</td>
+<td>*.fintender.ru</td>
+<td>590a671a7b999524da77eacfe7a01f6f3a6e78b5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 10:25:28</td>
+<td>572.7</td>
+</tr>
+<tr>
+<td>2022-03-02 00:53:11</td>
+<td>elf.sovcombank.ru</td>
+<td>51f335b5dc8dfcedd053595ce7efdd0e1d7847a5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-02 00:53:27</td>
+<td>*.sovcomins.ru</td>
+<td>96e64d494478f94437fa0ec80c654cb3540ccf3b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 11:28:03</td>
+<td>634.6</td>
+</tr>
+<tr>
+<td>2022-03-02 00:53:39</td>
+<td>*.sovcomins.ru</td>
+<td>5130c18cf167288432cb5e682fc75f020e6c6184</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 11:28:03</td>
+<td>634.4</td>
+</tr>
+<tr>
+<td>2022-03-02 00:53:54</td>
+<td>*.halvacard.ru</td>
+<td>6e714e73b0e2aeaeb8570882268bc135481e27ae</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 10:32:27</td>
+<td>578.5</td>
+</tr>
+<tr>
+<td>2022-03-02 00:54:52</td>
+<td>*.sovcombank-leasing.ru</td>
+<td>377d73b8debb805775e5d54a92a6ed9a2d59d7f7</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 11:21:44</td>
+<td>626.9</td>
+</tr>
+<tr>
+<td>2022-03-02 01:00:22</td>
+<td>*.sovcombank.ru</td>
+<td>095949796378475fab907593078f31171426211b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-02 10:35:47</td>
+<td>575.4</td>
+</tr>
+<tr>
+<td>2022-03-02 01:01:05</td>
+<td><a class="vglnk" href="http://www.russiacalling.ru" rel="nofollow"><span>www</span><span>.</span><span>russiacalling</span><span>.</span><span>ru</span></a></td>
+<td>4da16dec1f8f94ad4054827da076e7ed6c616ed4</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-02-18 10:57:33</td>
+<td>596.5</td>
+</tr>
+<tr>
+<td>2022-03-02 19:21:51</td>
+<td>vtbcapital-pr.ru</td>
+<td>33e79ce3e482ec54b6e64bd4b7d79bf43790b7f8</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 09:08:48</td>
+<td>827.0</td>
+</tr>
+<tr>
+<td>2022-03-02 19:25:11</td>
+<td>online.vtbcapital-pr.ru</td>
+<td>ed33db76b7411f47914b801b9821a86dc79d661a</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-03 09:12:07</td>
+<td>826.9</td>
+</tr>
+<tr>
+<td>2022-03-02 19:26:08</td>
+<td>factorext.sovcomfactoring.ru</td>
+<td>74ffb8eb4fc7d16df780e01bcb37a335fa33700d</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-10 08:38:54</td>
+<td>792.8</td>
+</tr>
+<tr>
+<td>2022-03-02 19:28:06</td>
+<td>sovcomfactoring.ru</td>
+<td>e8aa6b085b51750279b4995c43f61084713616a1</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-09 13:26:46</td>
+<td>1078.7</td>
+</tr>
+<tr>
+<td>2022-03-02 19:31:12</td>
+<td>3ds.payment.ru</td>
+<td>d416e7e0a63a3aee630ff53c771538bbd4757fc2</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>ZeroSSL</td>
+<td>2022-03-01 00:00:00</td>
+<td>268.8</td>
+</tr>
+<tr>
+<td>2022-03-02 19:33:43</td>
+<td><a class="vglnk" href="http://www.upravlyaem.ru" rel="nofollow"><span>www</span><span>.</span><span>upravlyaem</span><span>.</span><span>ru</span></a></td>
+<td>6666da94e3dab49d944b0c8277e99fc28c3add20</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-04 14:24:05</td>
+<td>1130.4</td>
+</tr>
+<tr>
+<td>2022-03-02 19:44:46</td>
+<td>esg.vtbcapital-am.ru</td>
+<td>376f20fe0b9864c93aeadf592946ff5814986a20</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-02 19:47:40</td>
+<td>online.vtbcapital-am.ru</td>
+<td>1c41fb355d03aeb0c9b8ae774d82f479376d5169</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-02 19:51:07</td>
+<td>vtbcapital-am.ru</td>
+<td>7d3d2993421c7a36e29efff424deffa9a6fc41ff</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:09:27</td>
+<td>mobile.broker.vtb.ru</td>
+<td>9c28db643025e0d19ab43f5d1d3b6529c0ffd668</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:10:37</td>
+<td>m.komission.vtb.ru</td>
+<td>b9581d97f46630c0b3fa1e44abc3b87a18f1fe45</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-09 13:36:28</td>
+<td>625.9</td>
+</tr>
+<tr>
+<td>2022-03-04 03:11:17</td>
+<td>broker.vtb.ru</td>
+<td>bfd4503f97fc6e0cbc6ad343749c3f537df04c5e</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>VTB BANK (PJSC)</td>
+<td>2022-03-01 12:51:08</td>
+<td>579.9</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:19</td>
+<td>nh.open.ru</td>
+<td>5e30d7f5433f04335da04a3937a60ffca9c0f573</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 13:34:34</td>
+<td>613.2</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:20</td>
+<td>drive.rgsbank.ru</td>
+<td>b857c6db95e11a2a8fd8035830d0eaa939119821</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-11 05:21:11</td>
+<td>119.8</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:20</td>
+<td>flexy.open.ru</td>
+<td>3d680c9008191aa5af8559ffd19f0b68a81dc80c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 13:35:16</td>
+<td>613.9</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:20</td>
+<td>*.sovcomlife.ru</td>
+<td>d7ca302ca85fd90ed27e7d67bfad871e3aa5d2b1</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-01 11:25:06</td>
+<td>483.8</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:20</td>
+<td>wyse.open.ru</td>
+<td>cadc73ba8feb33dda75771916cf2b06f4e69fa95</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 13:34:46</td>
+<td>613.4</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>aramis-mp.open.ru</td>
+<td>170bc71f8654b595a54e1510dfdd9ae4c05955f5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-12 08:47:50</td>
+<td>326.5</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>htfx.calc-csp.rgsbank.ru</td>
+<td>85f1d60f52b7675a7f303ee3f98d9bf23e21def9</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 13:21:46</td>
+<td>600.4</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>htfx.front-csp.rgsbank.ru</td>
+<td>41586bef0b15f80b8599251eb6566c08f6239e25</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 13:21:46</td>
+<td>600.4</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>htfx.photo-csp.rgsbank.ru</td>
+<td>60f9ec76418a966d0c1df5df0f13bc6197d6f5c0</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 13:21:46</td>
+<td>600.4</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>htfx.pms-csp.rgsbank.ru</td>
+<td>52eb5e8380c18902d330200a1659c7100cd2162a</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 13:21:46</td>
+<td>600.4</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td><a class="vglnk" href="http://mx1.vtbcapital.com" rel="nofollow"><span>mx1</span><span>.</span><span>vtbcapital</span><span>.</span><span>com</span></a></td>
+<td>5e71797ed517cb6b849b416da0a13a43b74b0e59</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td><a class="vglnk" href="http://mx2.vtbcapital.com" rel="nofollow"><span>mx2</span><span>.</span><span>vtbcapital</span><span>.</span><span>com</span></a></td>
+<td>48117270c174d1f612c94ea8ca2e5691d2b9bbea</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td><a class="vglnk" href="http://mx3.vtbcapital.com" rel="nofollow"><span>mx3</span><span>.</span><span>vtbcapital</span><span>.</span><span>com</span></a></td>
+<td>9d7864b28da25ce62c482153df67e7cc2af479ff</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td><a class="vglnk" href="http://mx4.vtbcapital.com" rel="nofollow"><span>mx4</span><span>.</span><span>vtbcapital</span><span>.</span><span>com</span></a></td>
+<td>4aaac0294ce0f2738e77d32ad6d06c49db49065c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:21</td>
+<td>private.fintender.ru</td>
+<td>2e835225e225caa7513c58673b56b47a859531e3</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:22</td>
+<td>ctx-mdm.open.ru</td>
+<td>3a30376b94476adfbb6dca5cabe4da140863cad5</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-03 13:34:58</td>
+<td>613.6</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:22</td>
+<td>tst-ctx-mdm.open.ru</td>
+<td>d575be8cfa22ee2819721a0e83efbeb02b45742c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:23</td>
+<td>static.mobapp-daily.open.ru</td>
+<td>22ad762875824d98e74ad61d245002c6c9e1aaff</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-12 08:47:40</td>
+<td>326.3</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:25</td>
+<td>calculator.csp.rgsbank.ru</td>
+<td>325a187de3994fac667498c2fb604353082588ab</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 16:29:54</td>
+<td>788.5</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:25</td>
+<td>front.csp.rgsbank.ru</td>
+<td>3ce8b3fae0fa1fa747c48fac6c40bfff6f72ef6e</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 16:29:54</td>
+<td>788.5</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:25</td>
+<td>photo.csp.rgsbank.ru</td>
+<td>d86f49038701c42c5719887fced0990ad1d27182</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-05 16:29:54</td>
+<td>788.5</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:26</td>
+<td>bi.rgsbank.ru</td>
+<td>010f750d54eb3ed9b557b1f5b5a2d89758d159b0</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 03:21:26</td>
+<td>*.university.cbr.ru</td>
+<td>c41d962ddf81f3e46eb2ebc0727212d1830933d9</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-01 10:16:07</td>
+<td>414.7</td>
+</tr>
+<tr>
+<td>2022-03-04 08:05:19</td>
+<td>vonage.ru</td>
+<td>5757ed730113c3dba2b72e9b91cac869901306cb</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>DigiCert Inc</td>
+<td>Mulit_certs</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 19:48:24</td>
+<td>*.vtb.ge</td>
+<td>10be80e75a31324fb62e72400721a01fb6d74a49</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>DigiCert Inc</td>
+<td>Mulit_certs</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 19:48:54</td>
+<td>ivtb.ge</td>
+<td>5a8b15c09ee02f8cbf453dc054531df249031e9c</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-04 22:07:50</td>
+<td>138.9</td>
+</tr>
+<tr>
+<td>2022-03-04 20:02:11</td>
+<td>online.vostbank.ru</td>
+<td>ae5dbf5b47fbf0e6f7c180696f73c26de83acb4b</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>revoke_state</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-04 20:02:24</td>
+<td>vostbank.ru</td>
+<td>3089301610a7d4f3d6af3410375860e7ac17c109</td>
+<td>DigiCert Inc</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-10 06:22:00</td>
+<td>619.6</td>
+</tr>
+<tr>
+<td>2022-03-07 18:55:59</td>
+<td>open.ru</td>
+<td>e3d4bcbb295c4e2801c2652e5bbee37612db6757</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-04 14:37:19</td>
+<td>1181.3</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:00</td>
+<td>*.urozhai.rshb.ru</td>
+<td>9c2db763f9fbb10b02a325ee001200b09466df11</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 11:52:19</td>
+<td>1016.3</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:01</td>
+<td>business.rgsbank.ru</td>
+<td>c4be431e66306ee421c830e3a84f0a1b1307ad7f</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-09 10:11:12</td>
+<td>915.2</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:02</td>
+<td>acs.rshb.ru</td>
+<td>85de94c42a694d79a2aeea2a4c7cae381827ecb8</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-09 08:48:16</td>
+<td>832.2</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:02</td>
+<td>rshb.ru</td>
+<td>8b9aff36b06a60ce3031947f2a370c859af8fb99</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 08:31:30</td>
+<td>815.5</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:04</td>
+<td>online.rshb.ru</td>
+<td>d027380e5c0a0ab27967e886bcfee70fef4f31bf</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 08:31:30</td>
+<td>815.4</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:05</td>
+<td>*.rshb.ru</td>
+<td>dcf6fc810d4a66b7582ea01461ddc9ad5e209828</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 08:31:30</td>
+<td>815.4</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:06</td>
+<td>*.mes.rshb.ru</td>
+<td>91fba72984fb02fa86690ab86cba991686feb89f</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:08</td>
+<td>ecom.alfabank.ru</td>
+<td>81d4da7893e9c2f7e0ce89361d856706d2ebbf54</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>Let's Encrypt</td>
+<td>2022-03-09 10:55:38</td>
+<td>959.5</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:08</td>
+<td>*.sbud.rshb.ru</td>
+<td>ad297055882cb67f39e1fd8155ad79335aa8706c</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>coins.rshb.ru</td>
+<td>3c724fca6a93b4a793f58e539dc6420f3bada12a</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-09 09:21:49</td>
+<td>865.7</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>ebs-bio.rshb.ru</td>
+<td>06275cd5f4fb577f65084811edd9ceb8bddbe270</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>factoring.rshb.ru</td>
+<td>19d403511413170b32609c23bce7a412d63b6bf1</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GoGetSSL</td>
+<td>2022-01-08 00:00:00</td>
+<td>303.9</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>finradar.rshb.ru</td>
+<td>f45b8bbb777d7edd267c50aebf438a5d9bed6218</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-14 14:55:32</td>
+<td>1199.4</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>lk.factoring.rshb.ru</td>
+<td>517b298ccf43a18b55334929b268578ab65f8dfd</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GoGetSSL</td>
+<td>2022-02-01 00:00:00</td>
+<td>303.9</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>mx1.rshb.ru</td>
+<td>6af4f13c7bad1eca2909a7ce73852c2c971eca59</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>mx2.rshb.ru</td>
+<td>03c96fb7670b4d1e38e062e231cf6067e8d92632</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>rrdg.factoring.rshb.ru</td>
+<td>6c765c5105719c9f0001e7dabf49acd81a6b8dc0</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>*.sbud.rshb.ru</td>
+<td>3a41b87715bc4d4fe106aad7e6d78be7e50bb6aa</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>smx.rshb.ru</td>
+<td>49ada6266390ab055b6d0f09593eae200377aaa3</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>travelergo.rshb.ru</td>
+<td>a9edd5ac03f386d04ef4b853028bb1b7ec5c7fa5</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:09</td>
+<td>travelerrf.rshb.ru</td>
+<td>e7d5b471a3705abf7082124ce7fe3f859e238113</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:10</td>
+<td>merchant-api.sbp.rshb.ru</td>
+<td>5ab3718a93beda27f449b32b042473e69a6cb994</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 11:55:47</td>
+<td>1019.6</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:10</td>
+<td>mx1.rshb.ru</td>
+<td>2288b60c7d3e48657985ce904d59a6fb46070971</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:10</td>
+<td>*.plc.rshb.ru</td>
+<td>097d0a314edbc0804996b31050cbe759ec8807ce</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:10</td>
+<td>test07.rshb.ru</td>
+<td>f4774d7c5dc4d566eb31785e475714a59f1d4ecb</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>Sectigo Limited</td>
+<td>2022-01-20 00:00:00</td>
+<td>303.8</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:10</td>
+<td>xapi.factoring.rshb.ru</td>
+<td>bdd72b1e18d71c3b11530c744b87529a01d60407</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GoGetSSL</td>
+<td>2022-02-01 00:00:00</td>
+<td>303.8</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:11</td>
+<td>broker.rshb.ru</td>
+<td>172a20e5fa0950478f0550971461a5b5724d5961</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 15:17:48</td>
+<td>1221.6</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:11</td>
+<td>*.crimearw.ru</td>
+<td>9a8305c0f610a8ae6f6fd3a21c58b65521fad5ec</td>
+<td>Sectigo Limited</td>
+<td>state-enterprise</td>
+<td>timed out</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>2022-03-07 18:56:11</td>
+<td>quik.rshb.ru</td>
+<td>af736621443bec16668533737afc2435fdd5bcbf</td>
+<td>GoGetSSL</td>
+<td>financial/bank</td>
+<td>GlobalSign nv-sa</td>
+<td>2022-03-08 15:06:56</td>
+<td>1210.8</td>
+</tr>
+<tr>
+<td>2022-03-11 19:26:00</td>
+<td>sberinsur.ru</td>
+<td>93b10cb245f35e7d2c9ecbba5c10d7b5adf0f778</td>
+<td>Sectigo Limited</td>
+<td>financial/bank</td>
+<td>connect_error</td>
+<td>None</td>
+<td>None</td>
+</tr>
+</tbody>
+</table>
+
+                    </div>
+                </section>
+
+
+                <footer class="post-full-footer">
+
+
+                    
+<section class="author-card">
+        <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2016/09/ant.jpg" alt="Zhang Zaifeng">
+    <section class="author-card-content">
+        <h4 class="author-card-name"><a href="/author/zhangzaifeng-2/">Zhang Zaifeng</a></h4>
+            <p>Read <a href="/author/zhangzaifeng-2/">more posts</a> by this author.</p>
+    </section>
+</section>
+<div class="post-full-footer-right">
+    <a class="author-card-button" href="/author/zhangzaifeng-2/">Read More</a>
+</div>
+
+
+                </footer>
+
+                <div id="disqus_thread"><iframe id="dsq-app623" name="dsq-app623" allowtransparency="true" frameborder="0" scrolling="no" tabindex="0" title="Disqus" width="100%" src="https://disqus.com/embed/comments/?base=default&amp;f=blog-netlab-360&amp;t_i=ghost-622d67e3a5c41b00078fc75f&amp;t_u=https%3A%2F%2Fblog.netlab.360.com%2Freview-revoke-russia-ssl-certificates%2F&amp;t_d=%E4%BF%84%E4%B9%8C%E5%8D%B1%E6%9C%BA%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%9A%E5%90%8A%E9%94%80%E3%80%81%E5%BD%B1%E5%93%8D%E3%80%81%E7%BC%93%E8%A7%A3&amp;t_t=%E4%BF%84%E4%B9%8C%E5%8D%B1%E6%9C%BA%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%9A%E5%90%8A%E9%94%80%E3%80%81%E5%BD%B1%E5%93%8D%E3%80%81%E7%BC%93%E8%A7%A3&amp;s_o=default#version=31cd6fbd4797db790bc183cea2909ab5" style="width: 1px !important; min-width: 100% !important; border: none !important; overflow: hidden !important; height: 394px !important;" horizontalscrolling="no" verticalscrolling="no"></iframe></div>
+                <script>
+                    var disqus_config = function () {
+                        this.page.url = "https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/";
+                        this.page.identifier = "ghost-622d67e3a5c41b00078fc75f"
+                    };
+                    (function () {
+                        var d = document, s = d.createElement('script');
+                        s.src = 'https://blog-netlab-360.disqus.com/embed.js';
+                        s.setAttribute('data-timestamp', +new Date());
+                        (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+
+            </article>
+
+        </div>
+    </main>
+
+    <aside class="read-next outer">
+        <div class="inner">
+            <div class="read-next-feed">
+                <article class="read-next-card" style="background-image: url(https://blog.netlab.360.com/content/images/size/w600/2019/02/astronomy-constellation-dark-998641-4.jpg)">
+                    <header class="read-next-card-header">
+                        <small class="read-next-card-header-sitetitle">— 360 Netlab Blog - Network Security Research Lab at 360 —</small>
+                        <h3 class="read-next-card-header-title"><a href="/tag/dnsmon/">DNSMon</a></h3>
+                    </header>
+                    <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"></path></svg>
+</div>
+                    <div class="read-next-card-content">
+                        <ul>
+                            <li><a href="/shu-zi-zheng-shu-zuo-wei-ji-chu-she-shi-de-shi-yong-qing-kuang-fen-xi/">商业数字证书签发和使用情况简介(删减版)</a></li>
+                            <li><a href="/an-assessment-of-non-authorized-domain-name-resolution-provided-by-dns-resolution-service-provider/">An assessment of Non-Authorized Domain Name Resolution provided by DNS Resolution Service Provider</a></li>
+                            <li><a href="/analysis-of-popular-domain-names-by-non-authorized-resolvers/">解析服务提供商对非授权域名解析情况的评估</a></li>
+                        </ul>
+                    </div>
+                    <footer class="read-next-card-footer">
+                        <a href="/tag/dnsmon/">See all 28 posts →</a>
+                    </footer>
+                </article>
+
+
+                <article class="post-card post tag-dnsmon tag-pdns tag-certdb no-image">
+
+
+    <div class="post-card-content">
+
+        <a class="post-card-content-link" href="/shu-zi-zheng-shu-zuo-wei-ji-chu-she-shi-de-shi-yong-qing-kuang-fen-xi/">
+
+            <header class="post-card-header">
+                    <span class="post-card-tags">DNSMon</span>
+                <h2 class="post-card-title">商业数字证书签发和使用情况简介(删减版)</h2>
+            </header>
+
+            <section class="post-card-excerpt">
+                <p>概要数字证书是整个现代webPKI系统的最核心的部分之一。如果说DNS数据标识了网络资产的地址，那么数字证书就是网络资产的身份证。没有,丢失或者被吊销数字证书，就没有办法证明“我”就是“我”。因此PKI系统及其数据已经成为网络真正的基础设施，作为互联网安全运营的基础数据，重要性不言而喻。 3月初,乌克兰政府向互联网域名管理结构ICANN书面请求将俄罗斯相关顶级域名“.ru”, “.рф” 和“.su”从互联网撤销[1]，但ICANN并没有认同这份请求[2]。近日，我们注意到俄罗斯相关的一些国家基础设施网站的证书被证书机构陆续吊销。 360Netlab成立之后不久就通过主动、被动相结合的方式收集网络数字证书，并以此为基础构建了网络证书数据库CertDB。目前该库包含证书规模和涉及的IP端口数据达到十亿级，历史数据可追溯超过5年，是360Netlab基础数据分析系统DNSMon的重要组成部分。此外360Netlab同时运营着的网络空间基础数据库包括描述域名注册的WhoisDB、域名解析的PassiveDNS、网站页面的WebDB等等。</p>
+            </section>
+
+        </a>
+
+        <footer class="post-card-meta">
+
+            <ul class="author-list">
+                <li class="author-list-item">
+
+                    <div class="author-name-tooltip">
+                        Zhang Zaifeng
+                    </div>
+
+                        <a href="/author/zhangzaifeng-2/" class="static-avatar">
+                            <img class="author-profile-image" src="https://blog.netlab.360.com/content/images/size/w100/2016/09/ant.jpg" alt="Zhang Zaifeng">
+                        </a>
+                </li>
+            </ul>
+
+            <span class="reading-time">14 min read</span>
+
+        </footer>
+
+    </div>
+
+</article>
+
+            </div>
+        </div>
+    </aside>
+
+    <div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://blog.netlab.360.com">
+                <img src="https://blog.netlab.360.com/content/images/size/w30/2019/02/netlab_xs-2.png" alt="360 Netlab Blog - Network Security Research Lab at 360 icon">
+            <span>360 Netlab Blog - Network Security Research Lab at 360</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">—</span>
+    <div class="floating-header-title">俄乌危机中的数字证书：吊销、影响、缓解</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"></path>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=%E4%BF%84%E4%B9%8C%E5%8D%B1%E6%9C%BA%E4%B8%AD%E7%9A%84%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6%EF%BC%9A%E5%90%8A%E9%94%80%E3%80%81%E5%BD%B1%E5%93%8D%E3%80%81%E7%BC%93%E8%A7%A3&amp;url=https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/" onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"></path></svg>
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://blog.netlab.360.com/review-revoke-russia-ssl-certificates/" onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"></path></svg>
+        </a>
+    </div>
+    <progress id="reading-progress" class="progress" value="0" max="17225">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+
+
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://blog.netlab.360.com">360 Netlab Blog - Network Security Research Lab at 360</a> © 2022</section>
+                <nav class="site-footer-nav">
+                    <a href="https://blog.netlab.360.com">Latest Posts</a>
+                    
+                    <a href="https://twitter.com/360Netlab" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+
+    <script>
+        var images = document.querySelectorAll('.kg-gallery-image img');
+        images.forEach(function (image) {
+            var container = image.closest('.kg-gallery-image');
+            var width = image.attributes.width.value;
+            var height = image.attributes.height.value;
+            var ratio = width / height;
+            container.style.flex = ratio + ' 1 0%';
+        })
+    </script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/built/jquery.fitvids.js?v=d28f5eb4c2"></script>
+
+
+        <script>
+
+        // NOTE: Scroll performance is poor in Safari
+        // - this appears to be due to the events firing much more slowly in Safari.
+        //   Dropping the scroll event and using only a raf loop results in smoother
+        //   scrolling but continuous processing even when not scrolling
+        $(document).ready(function () {
+            // Start fitVids
+            var $postContent = $(".post-full-content");
+            $postContent.fitVids();
+            // End fitVids
+
+            var progressBar = document.querySelector('#reading-progress');
+            var header = document.querySelector('.floating-header');
+            var title = document.querySelector('.post-full-title');
+
+            var lastScrollY = window.scrollY;
+            var lastWindowHeight = window.innerHeight;
+            var lastDocumentHeight = $(document).height();
+            var ticking = false;
+
+            function onScroll() {
+                lastScrollY = window.scrollY;
+                requestTick();
+            }
+
+            function onResize() {
+                lastWindowHeight = window.innerHeight;
+                lastDocumentHeight = $(document).height();
+                requestTick();
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    requestAnimationFrame(update);
+                }
+                ticking = true;
+            }
+
+            function update() {
+                var trigger = title.getBoundingClientRect().top + window.scrollY;
+                var triggerOffset = title.offsetHeight + 35;
+                var progressMax = lastDocumentHeight - lastWindowHeight;
+
+                // show/hide floating header
+                if (lastScrollY >= trigger + triggerOffset) {
+                    header.classList.add('floating-active');
+                } else {
+                    header.classList.remove('floating-active');
+                }
+
+                progressBar.setAttribute('max', progressMax);
+                progressBar.setAttribute('value', lastScrollY);
+
+                ticking = false;
+            }
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', onResize, false);
+
+            update();
+
+        });
+    </script>
+
+
+    
+
+
+
+<iframe style="display: none;"></iframe></body></html>

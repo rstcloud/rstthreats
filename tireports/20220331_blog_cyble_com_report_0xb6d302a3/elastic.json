@@ -1,0 +1,213 @@
+[
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xbc8fbc91",
+            "title": "Phishing pages used for Malware Delivery",
+            "text": ""
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x2ad01f46",
+            "title": "Fake Patanjali Yoga Gram Payment Page delivers SMS stealer malware",
+            "text": "Patanjali Yoga Gram is a center in India that provides holistic treatment through the integrated use of Yoga, Naturopathy, herbs, and medicinal plants.\nDuring our routine Open-Source Intelligence (OSINT) research, Cyble Research Labs came across a Twitter post wherein researchers have mentioned a Phishing URL that is also used to deliver SMS stealer malware.\nOur analysis found that the Threat Actors (TAs) have hosted phishing pages where they pretend to assist users with failed Patanjali Yoga Gram Registration or payment issues.\nThese TAs further exploit these pages by stealing sensitive banking information such as card details, net banking credentials, etc., and dropping an APK file capable of stealing incoming SMSs and sending them to a number provided by the TAs server without the victims knowledge."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x47ac901a",
+            "title": "Technical Analysis",
+            "text": "Cyble Research Labs believes that the user could have received a spam email containing the phishing URL that steals sensitive banking information and would serve to deliver the malware to unsuspecting users.\nWhen a user first visits the URL: hxxps://srqc[.]online/, they will see a page with the Patanjali logo and a form that requests the patients full name, failed transaction type (i.e., ATM card, net banking), and registered mobile number. Refer to Figure 1.\nFigure 1 Requesting Users Information\nWhile monitoring the traffic, we identified that these details were being uploaded to the server through URL: hxxps://srqc[.]online/controller/api/common/insert2.php, as shown in the below figure.\nFigure 2 User Information Sent to the Server\nAs this malicious activity is based on the Patanjali Yoga Gram payment process, in this phase, it redirects to a page where it asks users to confirm the refund mode for online money transfer. Refer to Figure 3.\nFigure 3 Refund Type\nIn the next stage, the malware asks for banking information such as card details or net-banking credentials as per the users selection and uploads them to the server through URL: hxxps://srqc[.]online/controller/api/common/update.php as shown in Figures 4 & 5.\nFigure 4 Banking Information being requested\nFigure 5 Uploads the Banking Details to the Server\nAfter the user has provided card details such as card number, expiry date, and CVV, the malware also requests and uploads the PIN for these cards. Refer to Figures 6 & 7.\nFigure 6 Requests for PIN\nFigure 7 Uploads PIN to the Server\nAfter gaining access to these banking credentials, the malware drops an Android APK with the name Customer_Support from the server URL: hxxps://srqc[.]online/Customer_Support.apk, as shown in the below figure.\nFigure 8 Drops APK File\nThe malware also requests for the OTP sent by the banks to the users registered mobile number or email ID and sends it to the server, as shown in Figures 9 & 10.\nFigure 9 Requests for OTP\nFigure 10 Sends OTP to the Server"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xa3cf1e17",
+            "title": "APK Analysis",
+            "text": "While analyzing the dropped APK file, we observed it has a package name that contains a string related to a major international bank. This leads us to believe that the TAs could possibly also be involved in other malicious activities related to various banks."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x72fa76e7",
+            "title": "APK Metadata Information",
+            "text": "App Name: Customer Support\nPackage Name: com.helpdev.[redacted]_support\nSHA256 Hash: 87a9b872cd82d56f02632949a5af82f700125692f5f1561c088b5ace317b5abf\nFigure 11 shows the metadata information of an application.\nFigure 11 App Metadata Information\nThe figure below shows the application icon and name displayed on the Android device.\nFigure 12 App Icon and Name"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x6f1e69a2",
+            "title": "Manifest Description",
+            "text": "The malware requests users for 8 different permissions, out of which it abuses 5. These dangerous permissions are listed below.\nAs shown below, we observed a defined launcher activity in the malicious apps manifest file, which loads the applications first screen.\nFigure 13 Launcher Activity",
+            "table": "0;1\nPermissions;Description\nREAD_SMS;Access SMSs from the victim\u2019s device.\nRECEIVE_SMS;Intercept SMSs received on the victim\u2019s device\nSEND_SMS;Allows an application to send SMS messages.\nREAD_PHONE_STATE;Allows access to phone state, including the current cellular network information, the phone number and the serial number of this phone, the status of any ongoing calls, and a list of any Phone Accounts registered on the device.\nREAD_PHONE_NUMBERS;Allows read access to the device\u2019s phone number\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xc762953b",
+            "title": "Source Code Review",
+            "text": "During our analysis, we observed that the malware initially requests the users to allow the READ_SMS permission. After that, it hides its icon from the devices screen.\nThe malware uses the code snippet shown in the below image to hide its icon from the device screen.\nFigure 14 Code to Hide Icon\nThe malware reads the incoming SMSs and sends their content to the number provided by the TAs server. Refer to Figure 15.\nFigure 15 Code to Send Received SMS\nThe below code snippet shows that the malware sends the incoming SMSs to the number provided by the TAs.\nFigure 16 Sends Incoming SMSs to the Number\nThe below figure shows the open directory of TAs website, which shows that TAs have been active since February 2022.\nFigure 17 Open Directory of TAs Website"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xab6c3715",
+            "title": "Conclusion",
+            "text": "Patanjali Yoga Gram provides treatment for various health issues and diseases through the integrated use of Yoga, Naturopathy, herbs, and medicinal plants. It is one of the largest providers of Ayurvedic/Yogic treatment in the world. Yoga is a set of physical, mental, and spiritual practices or disciplines that originated in ancient India and aims to control and still the mind as well as improve physical fitness. It has since gained popularity across the world.\nThe TAs behind this particular malware perform malicious activities to steal sensitive information to exploit the patients and users of Patanjali products; in this case, the attackers are stealing banking information. There is also the ever-present threat of TAs using this sensitive data to commit financial fraud and further propagate the malware to other devices."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x1f49612d",
+            "title": "Our Recommendations",
+            "text": "We have listed some essential cybersecurity best practices that create the first line of control against attackers. We recommend that our readers follow the best practices given below:"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xc2dc30f5",
+            "title": "How to prevent malware infection?",
+            "text": "Download and install software only from official app stores like Google Play Store or the iOS App Store.\nUse a reputed anti-virus and internet security software package on your connected devices, such as PCs, laptops, and mobile devices.\nUse strong passwords and enforce multi-factor authentication wherever possible.\nEnable biometric security features such as fingerprint or facial recognition for unlocking the mobile device where possible.\nBe wary of opening any links received via SMS or emails delivered to your phone.\nEnsure that Google Play Protect is enabled on Android devices.\nBe careful while enabling any permissions.\nKeep your devices, operating systems, and applications updated."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x32156984",
+            "title": "How to identify whether you are infected?",
+            "text": "Regularly check the Mobile/Wi-Fi data usage of applications installed on mobile devices.\nKeep an eye on the alerts provided by Anti-viruses and Android OS and take necessary actions accordingly."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xd922a12",
+            "title": "What to do when you are infected?",
+            "text": "Disable Wi-Fi/Mobile data and remove SIM card as in some cases, the malware can re-enable the Mobile Data.\nPerform a factory reset.\nRemove the application in case a factory reset is not possible.\nTake a backup of personal media Files (excluding mobile applications) and perform a device reset."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x9c3dbc8f",
+            "title": "What to do in case of any fraudulent transaction?",
+            "text": "In case of a fraudulent transaction, immediately report it to the concerned bank."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0xe287e741",
+            "title": "What should banks do to protect their customers?",
+            "text": "Banks and other financial entities should educate customers on safeguarding themselves from malware attacks via telephone, SMSs, or emails."
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x619786c0",
+            "title": "MITRE ATT&CK Techniques",
+            "text": "",
+            "table": "0;1;2\nTactic;Technique ID;Technique Name\nInitial Access;T1476;Deliver Malicious App via Other Mean.\nInitial Access;T1444;Masquerade as Legitimate Application\nExecution;T1575;Native Code\nCollection;T1412;Capture SMS Messages\n"
+        }
+    },
+    {
+        "report": {
+            "id": "report_0xb6d302a3",
+            "date": "20220331",
+            "title": "Phishing pages used for Malware Delivery",
+            "url": "https://blog.cyble.com/2022/03/31/phishing-pages-used-for-malware-delivery"
+        },
+        "chapter": {
+            "id": "chapter_0x534d0da4",
+            "title": "Indicators of Compromise (IOCs)",
+            "text": "",
+            "table": "0;1;2\nIndicators;Indicator Type;Description\n87a9b872cd82d56f02632949a5af82f700125692f5f1561c088b5ace317b5abf;SHA256;APK Targeting Patanjali Customers\nba434d1e60524b9fd47f229bcc342c20e577346a;SHA1;APK Targeting Patanjali Customers\n1af3daa6e97082ba13524e960eb73135;MD5;APK Targeting Patanjali Customers\nhxxps://srqc[.]online/;URL;Server URL Used to Upload Data and Drop Malicious APK\n"
+        }
+    }
+]

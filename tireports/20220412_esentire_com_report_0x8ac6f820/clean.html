@@ -1,0 +1,87 @@
+<div>
+<p>Adversaries don’t work 9-5 and neither do we. At eSentire, our <a href="https://www.esentire.com/what-we-do/security-operations-center">24/7 SOCs</a> are staffed with Elite Threat Hunters and Cyber Analysts who hunt, investigate, contain and respond to threats within minutes.</p>
+<p>We have discovered some of the most dangerous threats and nation state attacks in our space – including the Kaseya MSP breach and the more_eggs malware.</p>
+<p>Our Security Operations Centers are supported with Threat Intelligence, Tactical Threat Response and Advanced Threat Analytics driven by our Threat Response Unit – the TRU team.</p>
+<p>In TRU Positives, eSentire’s Threat Response Unit (TRU) provides a summary of a recent threat investigation. We outline how we responded to the confirmed threat and what recommendations we have going forward.</p>
+<p>Here’s the latest from our TRU Team…</p>
+<h2>What did we find?</h2>
+<ul><li>An information stealing malware called Mars Stealer in a customer’s environment within the consumer services industry.</li></ul>
+<h2>Summary of the Incident</h2>
+<ul><li>The victim downloaded and executed a fake Chrome installer (<a href="https://www.virustotal.com/gui/file/b683168a7df182ec4cfc046d17fc02c59dff1edacbf21c047b47e1f503165309">chromesetup.iso</a>) from &gt;hxxps[:]//googleglstatupdt[.]com/LEND/ChromeSetup.iso. </li><li>The ISO contains <a href="https://www.virustotal.com/gui/file/625265b4ee161c1e04c6d06904463666a2cc579d0c0cefec060db6d5ed4c4118">chromesetup.exe</a>. <ul><li>When manually executed by the victim, the fake setup process initializes the NetSupportManager RAT (remote access tool) and the legitimate Chrome setup as a decoy (Figure 1). <ul><li>NetSupportManager is commonly used to remotely control systems for malicious purposes.</li></ul></li><li>A shortcut is also added to the user’s startup directory for persistence. </li><img class="MaxWidth" src="https://s3.ca-central-1.amazonaws.com/esentire-dot-com-assets/assetsV3/Blog/Blog-Images/TRU-April7-Picture1.png" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 1 Endpoint view of NetSupportManager execution and decoy payload.</figcaption>
+<li>Using the NetSupportManager RAT session, the threat actor copied obfuscated scripts with a .wmd extension that are responsible for creating a renamed AutoIT binary and an loading an obfuscated version of Mars Stealer from %TEMP%/IXP&lt;3-digit number&gt; .TMP. </li><li>One of the obfuscated scripts contains an embedded payload encrypted with RC4 using the hardcoded key ‘344868553478223918282826525’ (Figure 2).</li><img class="MaxWidth" src="https://s3.ca-central-1.amazonaws.com/esentire-dot-com-assets/assetsV3/Blog/Blog-Images/TRU-April7-Picture2.png" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 2 Snippets from AutoIT script showing embedded payload and decryption routine.</figcaption>
+<li>Once loaded, Mars Stealer performs several HTTP requests to retrieve configuration and DLL (Dynamic Link Library) files required for Mars Stealer to operate successfully and upload stolen data (Figure 3).</li><img class="MaxWidth" src="https://s3.ca-central-1.amazonaws.com/esentire-dot-com-assets/assetsV3/Blog/Blog-Images/TRU-April7-Picture3.png" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 3 Mars Stealer network communications.</figcaption>
+<li>Lastly, Base64 decoded part of the configuration retrieved from /7AgkTb5xcS.php:
+1|1|1|1|0|5qDlPuVKoR|Telegram|0|%APPDATA%\Telegram 
+Desktop\tdata\|*D877F783D5D3EF8C*,*map*,*configs*|1|0|0|rdp|3|%DESKTOP%\
+|*.rdp|0|1|0|cer|3|%DESKTOP%\|*.cer|0|1|0
+</li></ul></li></ul>
+<h2>Background on Mars Stealer</h2>
+<ul><li>In June 2022, Mars Stealer was advertised on XSS, the Russian-language criminal forum, by MarsTeam for $140/month or $800 for a lifetime subscription.</li><li>Mars Stealer’s capabilities include:<ul><li>Cryptocurrency theft (“Our software was developed taking into account the wishes of people working in crypto, so at Mars you can find everything you need to work with crypto and more.” – MarsTeam post on XSS forum). <ul><li>The stealer supports dozens of popular browser plugins for popular cryptocurrency platforms, such as Coinbase. </li><li>Additionally, in December 2021, MarsTeam announced the release of “Mars ClipboardChanger”, which substitutes crypto wallet addresses in the victim’s clipboard cache to hijack payments.</li></ul></li><li>Data theft from major web browsers, including two-factor authentication (2FA) Chrome-based browser extensions (“Collects passwords, cookies, cc, autocomplete, browsing history, file download history.” - MarsTeam post on XSS forum).</li><li>Profiling or fingerprinting the infected system.</li><li>Exfiltrating files from the infected system.</li></ul></li></ul>
+<figure><img class="MaxWidth" src="https://s3.ca-central-1.amazonaws.com/esentire-dot-com-assets/assetsV3/Blog/Blog-Images/TRU-April7-Picture4.png" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 4 Mars Stealer admin panel</figcaption></figure>
+<h2>How did we find it?</h2>
+<ul>
+<li><a href="https://www.esentire.com/how-we-do-it/signals/endpoint">MDR for Endpoint</a> identified the tactics, techniques, and procedures (TTPs) associated with NetSupportManager RAT and AutoIT malware deployment.</li></ul>
+<h2>What did we do?</h2>
+<ul><li>Our team of <a href="https://www.esentire.com/what-we-do/security-operations-center">24/7 SOC Cyber Analysts</a> alerted the customer of the activity.</li></ul>
+<h2>What can you learn from this TRU positive?</h2>
+<ul><li>Drive-by attacks involving malware masquerading as legitimate software are becoming increasingly common since they require no exploits and rely on a victim running code on the attacker’s behalf.</li><li>Mars Stealer has seen continued development since its release, and targets a wide array of credentials, particularly those used for cryptocurrency exchanges. </li><li>Identifying information stealing malware as early as possible is critical to minimize losses from fraud and hijacked accounts.</li></ul>
+<h2>Recommendations from our Threat Response Unit (TRU) Team:</h2>
+<p>While rapid identification and containment of successful exploits is necessary to limit impact, unsuccessful attempts still present an opportunity to shore up defenses. The best approach to preventing drive-by attacks is by using a layered defense, such as:</p>
+<ul><li>Ensure antivirus signatures are up-to-date.</li><li>Use a Next-Gen AV (NGAV) or Endpoint Detection and Response (EDR) product to detect and contain threats.</li><li>Audit your environment and endpoints regularly to ensure endpoints are patched with the latest vendor security updates.</li><li>Increase awareness of social engineering threat tactics with your users through <a href="https://www.esentire.com/what-we-do/managed-vulnerability-and-risk/technical-testing/security-awareness-training-managed-phishing-training">phishing and security awareness training.</a><ul><li>Ensure users are aware of risks associated with downloading applications from the web. </li><li>Always ensure software is downloaded from a legitimate source.</li></ul></li>
+<h2>Ask Yourself</h2>
+<ul><li>Do you have the capability to rapidly identify and contain malicious code executed unwittingly by users in your environment?</li>
+<li>Are you monitoring your endpoints 24/7 and what degree of control do you have to initiate a kill switch when required?</li><li>What level of managed endpoint support do you have in place?</li></ul>
+<h2>Indicators of Compromise</h2>
+<table class="table-bordered">
+<tbody>
+<tr>
+<td>Value</td>
+<td>Note</td>
+</tr>
+<tr>
+<td>googleglstatupdt[.]com</td>
+<td>Hosting fake Chrome setup ISO</td>
+</tr>
+<tr>
+<td>zrianevakn1[.]com</td><td>NetSupportManager RAT C2</td>
+</tr>
+<tr>
+<td>115d1ae8b95551108b3a902e48b3f163</td><td>‘ChromeSetup.iso’</td>
+</tr>
+<tr>
+<td>b15e0db8f65d7df27c07afe2981ff5a755666dce</td><td>ChromeSetup.exe</td>
+</tr>
+<tr>
+<td>37c24b4b6ada4250bc7c60951c5977c0</td><td>NetSupportManager RAT</td>
+</tr>
+<tr>
+<td>5[.]45.84.214</td><td>Mars Stealer C2</td>
+</tr>
+<tr>
+<td>71672a495b4603ecfec40a65254cb3ba8766bbe0</td><td>Esitanza.exe.pif (renamed AutoIt)</td>
+</tr>
+<tr>
+<td>e3c91b6246b2b9b82cebf3700c0a7093bacaa09b</td><td>ANpRAHx.exe (disguised as 3uAirPlayer, drops Mars Stealer and obfuscated AutoIt scripts)</td>
+</tr>
+<tr>
+<td>5c4e3e5fda232c31b3d2a2842c5ea23523b1de1a</td><td>Installer_ovl.exe</td>
+</tr>
+<tr>
+<td>2a2b00d0555647a6d5128b7ec87daf03a0ad568f</td><td>consoleappmrss.exe</td>
+</tr>
+<tr>
+<td>3c80b89e7d4fb08aa455ddf902a3ea236d3b582a</td><td>Fervore.wmd (obfuscated AutoIt script)</td>
+</tr>
+<tr>
+<td>26136c59afe28fc6bf1b3aeba8946ac2c3ce61df</td><td>Vai.wmd (obfuscated AutoIt script)</td>
+</tr>
+<tr>
+<td>e6f18804c94f2bca5a0f6154b1c56186d4642e6b</td><td>Una.wmd (obfuscated AutoIt script)</td>
+</tr>
+</tbody>
+</table>
+<p>eSentire’s Threat Response Unit (TRU) is a world-class team of threat researchers who develop new detections enriched by original threat intelligence and leverage new machine learning models that correlate multi-signal data and automate rapid response to advanced threats.
+If you are not currently engaged with an MDR provider, eSentire MDR can help you reclaim the advantage and put your business ahead of disruption.</p>
+<p>Learn what it means to have an elite team of Threat Hunters and Researchers that works for you. <a href="https://www.esentire.com/get-started" rel="noreferrer" target="_blank">Connect</a> with an eSentire Security Specialist.</p>
+</ul>
+</div>

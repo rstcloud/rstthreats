@@ -1,0 +1,158 @@
+<div>
+<p> <a class="action-button action-like" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" title="Like"> 0 </a> <a class="action-button action-repost" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#" title="Repost"> 0 </a> </p>
+<h1 class="passle-headline">Operation RestyLink: Targeted attack campaign targeting Japanese companies</h1>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/u/102hmk8/ryu-hiyoshi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank">Ryu Hiyoshi</a>
+ May 11, 2022 
+ 
+ https://www.passle.net/Content/Images/passle_logo-186px.png Passle https://passle.net 
+<a class="istatoy-button web-istatoy" href="#"></a>
+<a class="social-sharing-button linkedin" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#"></a>
+<a class="social-sharing-button twitter has-count" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#"></a>1298
+<a class="social-sharing-button facebook has-count" href="https://insight--jp-nttsecurity-com.translate.goog/post/102ho8o/operation-restylink?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp#"></a>47 47
+<img alt="Post contributor: Ryu Hiyoshi, NTT Security" class="avatar avatar-medium" src="https://images.passle.net/200x200/assets/images/no_avatar.png" style="max-width:80%;height:auto;width:auto;"/>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/u/102hmk8/ryu-hiyoshi?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noopener" target="_blank">Ryu Hiyoshi</a>
+<ul class="tags">
+</ul>
+<p>Today's article is from SOC analyst Rintaro Koike.</p>
+<p>---</p>
+<p>Since mid- April 2022 , multiple organizations have been observing targeted attack campaigns targeting Japanese companies. This attack campaign is believed to have been active in March 2022 , and it is possible that a related attack was also underway in October 2021 . For this reason, it is possible that attacks will continue in the future, rather than short-term, one-off attack campaigns. </p>
+<p>In this article, we will analyze this attack campaign in detail and consider the attribution of the attacking subject. </p>
+<h2>Attack summary</h2>
+<p>The flow of attacks observed in mid- April 2022 is as follows. </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-00-54-708-627a1bb6f636e91ba432eac6.png" style="max-width:80%;height:auto;width:auto;"/>
+</p>
+<p>When you access the URL written in the spear phishing email, the ZIP file is downloaded from the server managed by the attacker . When the user executes the LNK file in the ZIP file, they use Windows commands to download the DOT file from the attacker server and place it in the Microsoft Word startup directory. At that time, the user will be shown the PDF file that will be the decoy . </p>
+<p>From the next time onwards, the next time the user opens the Word file, the DOT file located in the startup directory will be loaded and the loaded macro will fire. The macro also downloads and executes the DOT file from the attacker server , but this DOT file was not available at the time of our investigation . </p>
+<h2>Detailed analysis</h2>
+<h3>LNK file </h3>
+<p>The icon of the LNK file is a PDF file, but in reality, ScriptRunner.exe is used and two main processes are performed. </p>
+<ol start="1">
+<li><p>View decoy PDF file </p></li>
+</ol>
+<ol start="2">
+<li><p>DOTファイルをダウンロードし、Microsoft Wordのスタートアップディレクトリへ配置 </p></li>
+</ol>
+<p>表示されるデコイのPDFファイルは2種類ありますが、ともに日韓関係に関するものでした。黒塗りしているところには実在する人物の名前が書かれていました。 </p>
+<p><img class="fr-fic fr-dib" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-11-00-55-14-361-627b0972f636e919e0fa65ff.png" style="max-width:80%;height:auto;width:auto;"/>
+</p>
+<h3>DOTファイル </h3>
+<p>ユーザがWordファイルを開くと、スタートアップディレクトリに配置されたDOTファイルが読み込まれます。DOTファイルには以下のようなマクロが仕込まれていました。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-03-49-478-627a1c65f636e908302c0895.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>マクロは更にDOTファイルを読み込み、実行します。この際、ファイル名にユーザ名を含んでおり、攻撃者が被害ユーザの環境を把握していたことが分かります。調査時点で、追加のDOTファイルは入手できませんでした。 </p>
+<h2>関連した攻撃 </h2>
+<h3>2022年4月下旬の事例 </h3>
+<p>2022年4月下旬、今回の攻撃キャンペーンと同一のインフラからISOファイルがダウンロードできたことを確認しています。攻撃の流れは以下のようになっています。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-04-45-382-627a1c9df636e919e0f90fd0.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>そのISOファイルにはデコイファイルの他に、正規のMicrosoft WordのEXEファイルと、悪意のあるDLLファイルが含まれていました。DLLファイルはEXEファイルを実行時にサイドロードされ、実行されます。 </p>
+<p>DLLファイルはUPXでパックされていますが、Golangで書かれたダウンローダでした。DLLファイルはサーバ上からCobalt StrikeのStagerをダウンロードし、実行します。攻撃者はCobalt Strikeを使用して様々なコマンドを実行し、環境の調査などを行いました。 </p>
+<p>実行されたCobalt Strike StagerのConfigは以下のとおりです。 </p>
+<p><img alt="Text Automatically generated description" class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-06-09-753-627a1cf1f636e91ba432ebef.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<h3>2022年4月上旬の事例 </h3>
+<p>2022年4月上旬、日本企業において、本攻撃キャンペーンのインフラ（IPアドレス）に対するアクセスを確認しました。詳細は不明ですが、標的・時期・インフラの重複から、同一の攻撃キャンペーンである可能性が高いと考えられます。 </p>
+<h3>2022年3月の事例 </h3>
+<p>VirusTotal上には今回の攻撃と極めて類似したLNKファイルが2022年3月時点で日本から投稿されています。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-07-39-205-627a1d4bf636e91ba432ec38.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>2022年3月の検体はScriptRunner.exeではなくcmd.exeを使用していますが、実行されるコマンドや攻撃インフラは重複しており、これらは高い確度で同一の攻撃キャンペーンであると言えます。 </p>
+<p>調査時点で1段階目のDOTファイルは入手できませんでした。デコイとして表示されるPDFファイルは以下のように、東アジアにおける日本の外交に関する文書でした。 </p>
+<p><img class="fr-fic fr-dib" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-11-01-34-28-442-627b12a4f636e90888113d95.png" style="max-width:80%;height:auto;width:auto;"/>
+</p>
+<h3>2022年1月の事例 </h3>
+<p>2022年4月下旬の事例で使用されたGolang製のダウンローダは奇妙なUser-Agentを使用し、 /Events というパスからCobalt Strike Stagerをダウンロードします。このUser-AgentはロシアのYandex Browserのもので、日本では一般的な値ではありません。これと同様の特徴を持つサンプルが2022年1月に日本からVirusTotalへ投稿されました。インフラも近く、本攻撃キャンペーンと関連している可能性があります。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-09-28-367-627a1db8f636e908302c09f4.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>また、異なるサブドメインに紐づくIPアドレスを調査した結果、オープンソースのC2フレームワークであるCovenantの痕跡を発見しました。攻撃者はCobalt Strike以外にも、Covenantを使用していた可能性があります。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-09-47-167-627a1dcbf636e91ba432ecc5.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>
+</p>
+<h3>2021年11月の事例 </h3>
+<p>2022年1月と4月下旬のCobalt Strikeの事例に関連して、2021年11月に取得された differentfor[.]com というドメインが挙げられます。インフラやドメイン、ファイルパス、HTTPヘッダ、Cobalt StrikeのConfigなどが重複しており、本攻撃キャンペーンと関連している可能性があります。 </p>
+<p><img alt="Text Automatically generated description" class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-10-16-954-627a1de8f636e91ba432ece5.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<h3>2021年10月の事例 </h3>
+<p>本攻撃キャンペーンについて調査を行った結果、今回と類似した攻撃インフラを使用した攻撃が2021年10月下旬に行われていた可能性があることを発見しました。 </p>
+<p>調査時点では攻撃ファイルを入手することはできませんでしたが、笹川平和財団のWebサイトのように見せかけたWebサイトから悪性ファイルがダウンロードされた可能性があります。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-10-53-328-627a1e0df636e91ba432ed07.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<h2>帰属 </h2>
+<p>本攻撃キャンペーンについて、その特徴を整理します。 </p>
+<p><img class="fr-fic fr-dii" src="https://passle-net.s3.amazonaws.com/Passle/5b867b1c2a1ea202080db5cc/MediaLibrary/Images/62550e94f636e910a8fdf5fe/2022-05-10-08-11-23-944-627a1e2bf636e908302c0a72.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>様々な特徴がありますが、特に注目すべきは明確に日本を標的としていることです。標的ユーザを絞り込み、自然な日本語を扱い、日本のIPアドレスを使用するなど、単なる流れ弾的な攻撃ではなく、日本を標的とすべきモチベーションが高いと考えられます。また、本攻撃キャンペーンで使用されるWebサーバは地理的情報によってアクセス制御を行っている可能性があり、攻撃者の慎重さ、狡猾さを感じます。日本に対する高い攻撃モチベーションと能力を兼ね備えた攻撃グループは少なく、候補は限られてきます。 </p>
+<p>これらのことから、私達が関連性を疑っている標的型攻撃グループを4つ挙げます。本稿では言及していない様々な要素を考慮した上で、私達はDarkHotelである可能性を他の候補よりも検討していますが、どの場合でも決定的な要素はないため確度は低く、今後のリサーチで大きく変化する可能性があります。 </p>
+<h3>DarkHotel </h3>
+<p>DarkHotelは韓国に帰属すると言われている標的型攻撃グループ[1]で、日本でも度々攻撃を観測しています[2][3][4][5][6]。DarkHotelは日本のメディア企業やシンクタンクを執拗に攻撃し続けており、日本語のメールとデコイファイルを用いてスピアフィッシングを行い、LNKファイルを用いて多段のダウンローダ・ローダを実行します。これらの特徴は本攻撃キャンペーンと近しく、関連性が疑われます。 </p>
+<h3>Kimsuky </h3>
+<p>Kimsukyは北朝鮮に帰属すると言われている攻撃グループ[7]で、日本でも時折攻撃を観測しています[8][9]。Kimsukyは脱北者やそれに関わる組織を標的としているとされ、日本のメディア企業が標的となったこともあります。 また、直近ではLNKファイルを用いた攻撃も報告[10]されており、これらの特徴は本攻撃キャンペーンと類似しています。 </p>
+<h3>APT29 </h3>
+<p>APT29はロシアに帰属すると言われている標的型攻撃グループ[11]で、日本ではほとんどその攻撃について報告されることはありません。しかし、昨今のウクライナ情勢から攻撃の動機となりうると考えられます。 また、APT29はLNKファイル[12]やISOファイル[13]を用いた攻撃が既に報告されており、さらにCobalt Strike[14]やGolangマルウェア [15]を使用することも知られています。これらは本攻撃キャンペーンと類似しています。 </p>
+<h3>TA416 </h3>
+<p>TA416は中国に帰属すると言われている標的型攻撃グループ[16]で、日本では時折攻撃を観測しています。TA416はLNKファイルやCobalt Strikeを使用して攻撃[17][18]を行いますが、これらは本攻撃キャンペーンと類似しています。 </p>
+<h2>おわりに </h2>
+<p>2022年4月現在、日本企業を狙った標的型攻撃キャンペーンが観測されています。本攻撃キャンペーンはいくつかの帰属が考えられますが、明確な要素は発見できていません。類似した攻撃は数ヶ月前から行われていた可能性があり、今後も継続的に注視していく必要があります。 </p>
+<p>
+</p>
+<h2>IoCs </h2>
+<ul>
+<li><p>*.disknxt[.]com </p></li>
+<li><p>*.officehoster[.]com </p></li>
+<li><p>*.youmiuri[.]com </p></li>
+<li><p>*.spffusa[.]org </p></li>
+<li><p>*.sseekk[.]xyz </p></li>
+<li><p>*.mbusabc[.]com </p></li>
+<li><p>*.differentfor[.]com </p></li>
+<li><p>103[.]29.69.155 </p></li>
+<li><p>149[.]28.16.63 </p></li>
+<li><p>172[.]104.122.93 </p></li>
+<li><p>172[.]105.229.93 </p></li>
+<li><p>172[.]105.229.216 </p></li>
+<li><p>207[.]148.91.243 </p></li>
+<li><p>45[.]77.179.110 </p></li>
+</ul>
+<h2>References </h2>
+<p>[1] MITRE ATT&amp;CK, "Darkhotel", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://attack.mitre.org/groups/G0012/" rel="noreferrer noopener" target="_blank">https://attack.mitre.org/groups/G0012/</a> </p>
+<p>[2] NTTセキュリティ・ジャパン, "マルウエアが含まれたショートカットファイルをダウンロードさせる攻撃のさらにその先", <a href="https://insight--jp-nttsecurity-com.translate.goog/post/102fmlc/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="noreferrer noopener" target="_blank">https://insight-jp.nttsecurity.com/post/102fmlc/untitled</a> </p>
+<p>[3] JPCERT/CC, "マルウエアが含まれたショートカットファイルをダウンロードさせる攻撃", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blogs.jpcert.or.jp/ja/2019/05/darkhotel_lnk.html" rel="noreferrer noopener" target="_blank">https://blogs.jpcert.or.jp/ja/2019/05/darkhotel_lnk.html</a> </p>
+<p>[4] マクニカ, "標的型攻撃の実態と対策アプローチ 第3版", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2019_2_nopw.pdf" rel="noreferrer noopener" target="_blank">https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2019_2_nopw.pdf</a> </p>
+<p>[5] マクニカ, "標的型攻撃の実態と対策アプローチ 第5版", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2020_5.pdf" rel="noreferrer noopener" target="_blank">https://www.macnica.co.jp/business/security/manufacturers/files/mpressioncss_ta_report_2020_5.pdf</a> </p>
+<p>[6] IPA, "サイバーレスキュー隊（J-CRAT） 活動状況 [2019 年度下半期]", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.ipa.go.jp/files/000083013.pdf" rel="noreferrer noopener" target="_blank">https://www.ipa.go.jp/files/000083013.pdf</a> </p>
+<p>[7] Mandiant, "Not So Lazarus: Mapping DPRK Cyber Threat Groups to Government Organizations", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.mandiant.com/resources/mapping-dprk-groups-to-government" rel="noreferrer noopener" target="_blank">https://www.mandiant.com/resources/mapping-dprk-groups-to-government</a> </p>
+<p>[8] IPA, "サイバーレスキュー隊（J-CRAT） 活動状況 [2021 年度上半期]", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.ipa.go.jp/files/000094548.pdf" rel="noreferrer noopener" target="_blank">https://www.ipa.go.jp/files/000094548.pdf</a> </p>
+<p>[9] Cybereason, "Kimsukyが利用しているKGHスパイウェアスイートの内部解析", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.cybereason.co.jp/blog/cyberattack/5373/" rel="noreferrer noopener" target="_blank">https://www.cybereason.co.jp/blog/cyberattack/5373/</a> </p>
+<p>[10] Stairwell, "The ink-stained trail of GOLDBACKDOOR", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://stairwell.com/news/threat-research-the-ink-stained-trail-of-goldbackdoor/" rel="noreferrer noopener" target="_blank">https://stairwell.com/news/threat-research-the-ink-stained-trail-of-goldbackdoor/</a> </p>
+<p>[11] MITRE ATT&amp;CK, "APT29", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://attack.mitre.org/groups/G0016/" rel="noreferrer noopener" target="_blank">https://attack.mitre.org/groups/G0016/</a> </p>
+<p>[12] Volexity, "Suspected APT29 Operation Launches Election Fraud Themed Phishing Campaigns", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.volexity.com/blog/2021/05/27/suspected-apt29-operation-launches-election-fraud-themed-phishing-campaigns/" rel="noreferrer noopener" target="_blank">https://www.volexity.com/blog/2021/05/27/suspected-apt29-operation-launches-election-fraud-themed-phishing-campaigns/</a> </p>
+<p>[13] Microsoft, "Breaking down NOBELIUM’s latest early-stage toolset", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.microsoft.com/security/blog/2021/05/28/breaking-down-nobeliums-latest-early-stage-toolset/" rel="noreferrer noopener" target="_blank">https://www.microsoft.com/security/blog/2021/05/28/breaking-down-nobeliums-latest-early-stage-toolset/</a> </p>
+<p>[14] Mandiant, "Not So Cozy: An Uncomfortable Examination of a Suspected APT29 Phishing Campaign", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.mandiant.com/resources/not-so-cozy-an-uncomfortable-examination-of-a-suspected-apt29-phishing-campaign" rel="noreferrer noopener" target="_blank">https://www.mandiant.com/resources/not-so-cozy-an-uncomfortable-examination-of-a-suspected-apt29-phishing-campaign</a> </p>
+<p>[15] JPCERT/CC, "LinuxとWindowsを狙うマルウエアWellMess(2018-06-28)", <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blogs.jpcert.or.jp/ja/2018/06/wellmess.html" rel="noreferrer noopener" target="_blank">https://blogs.jpcert.or.jp/ja/2018/06/wellmess.html</a> </p>
+<p>[16] Proofpoint, “The Good, the Bad, and the Web Bug: TA416 Increases Operational Tempo Against European Governments as Conflict in Ukraine Escalates”, <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.proofpoint.com/us/blog/threat-insight/good-bad-and-web-bug-ta416-increases-operational-tempo-against-european" rel="noreferrer noopener" target="_blank">https://www.proofpoint.com/us/blog/threat-insight/good-bad-and-web-bug-ta416-increases-operational-tempo-against-european</a> </p>
+<p>[17] CrowdStrike, “Meet CrowdStrike’s Adversary of the Month for June: MUSTANG PANDA”, <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.crowdstrike.com/blog/meet-crowdstrikes-adversary-of-the-month-for-june-mustang-panda/" rel="noreferrer noopener" target="_blank">https://www.crowdstrike.com/blog/meet-crowdstrikes-adversary-of-the-month-for-june-mustang-panda/</a> </p>
+<p>[18] Cisco, “Mustang Panda deploys a new wave of malware targeting Europe”, <a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://blog.talosintelligence.com/2022/05/mustang-panda-targets-europe.html" rel="noreferrer noopener" target="_blank">https://blog.talosintelligence.com/2022/05/mustang-panda-targets-europe.html</a> </p>
+ More posts by Ryu Hiyoshi 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102hojk/operation-restylink-apt-campaign-targeting-japanese-companies?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="featured image" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hojk/operation-restylink-apt-campaign-targeting-japanese-companies?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Operation RestyLink: APT campaign targeting Japanese companies</a>
+ Ryu Hiyoshi 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102hncg/ratthailand-pass?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="featured image" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hncg/ratthailand-pass?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Spearfishing of Thailand Pass application system to spread RAT</a>
+ Ryu Hiyoshi 
+ 
+ Recent posts from NTT Security Japan 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102hmhv/edr?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hmhv/edr?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Things to watch out for when analyzing EDR logs</a>
+ Shogo Hayashi 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102hf3q/flagpro-the-new-malware-used-by-blacktech?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hf3q/flagpro-the-new-malware-used-by-blacktech?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Flagpro: The new malware used by BlackTech</a>
+ Hiroki Hada 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu1/ntt-2021?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu1/ntt-2021?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">NTT Security Japan 2021 Advent Calendar Closing</a>
+ Shinji Abe 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102hez7/hack-the-boxhard?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102hez7/hack-the-boxhard?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">Problem explanation of Hack The Box (Hard)</a>
+ Hiroki Hada 
+ 
+<a class="post-block__image-container post-block__none post-block__none-none" href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu4/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"> <img alt="" src="https://images.passle.net/178x100/Passle/5b867b1c2a1ea202080db5cc/DefaultShareImages/2022-05-09-13-21-11-994-62791547f636ea0bc421ce63.png" style="max-width:80%;height:auto;width:auto;"/> </a>
+<a href="https://insight--jp-nttsecurity-com.translate.goog/post/102heu4/untitled?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp">The morning of the editor-in-chief of the e-mail magazine is early</a>
+ Hiroki Hada 
+ 
+</div>

@@ -1,0 +1,109 @@
+<div>
+<h1 class="entry-title">Industroyer2: Nozomi Networks Labs Analyzes the IEC 104 Payload</h1>
+<p> by <a href="https://www.nozominetworks.com/author/nn-labs/" rel="author" title="Posts by Nozomi Networks Labs"></a><a class="author url fn" href="https://www.nozominetworks.com/author/nn-labs/" rel="author" title="Posts by Nozomi Networks Labs">Nozomi Networks Labs</a> | Apr 27, 2022</p><img alt="Industroyer2: Nozomi Networks Labs Analyzes the IEC 104 Payload" class="" height="9999" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer2-IEC-104-blog.jpg" style="max-width:800px;height:auto;width:auto;" width="9999"/>
+ 
+In a <a href="https://www.nozominetworks.com/blog/industroyer2-targets-ukraines-electric-grid-heres-how-companies-can-stay-protected-and-resilient/">previous blog</a> we gave a high-level overview of Industroyer2, the latest tool that advanced persistent threat (APT) group Sandworm used to target the Ukrainian power grid. As the name coined by ESET suggests, this sample presents many commonalities with its predecessor Industroyer, which was used in the notorious December 2016 attack on Ukraine’s grid. In this blog, we will compare the two samples by providing a side-by-side analysis to uncover the similarities, which helps us gain more insight into the mind of the attacker. <p></p>
+<p>Before we present evidence that will link the two samples, we will first focus on the main task of Industroyer2, namely manipulating IEC-104 Information Object Address (IOA).</p>
+<p>Unlike Industroyer, which targeted IEC-101, IEC-104, IEC 61850 and OPC Data Access mostly through different Dynamic-link libraries (DLLs) (i.e.101.dll, 104.dll, 61850.dll, OPC.exe and OPCClientDemo.dll), the malware dubbed Industroyer2 is a standalone executable which exclusively targets IEC-104.</p>
+<p>During the analysis of the sample, we came across something unusual in modern malware: the authors did not bother hiding its activity, nor perform any form of obfuscation. The core of the malware consists of its configuration which, among other parameters described below, contains a hardcoded list of IOAs to manipulate. This configuration is not protected in the executable, rather it is embedded as a regular Unicode string.</p>
+<p>This lack of concern for detection on the endpoint suggests that the threat actor had a fairly complete understanding of the security measures deployed in the target environment. At the same time, the hardcoded list of IOAs indicates two things:</p>
+<ol>
+<li>The operators had a thorough understanding of the Operational Technology (OT) environment; and</li>
+<li>The Industroyer2 sample is designed to be executed in a privileged environment with direct access to the target devices.</li>
+</ol>
+<p>The window between initial access and when Industroyer2 was launched is unknown. However, we can assume that the window between access and attack was within days rather than hours, based on the malicious activity.</p>
+<img alt="Nozomi Networks Labs’ analysis of Industroyer2 suggests that the threat actors had a fairly complete understanding of the security measures deployed in the target environment." class="lazy lazy-hidden wp-image-85243" height="533" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="industroyer2-IEC-104-blog" width="800"/><img alt="Nozomi Networks Labs’ analysis of Industroyer2 suggests that the threat actors had a fairly complete understanding of the security measures deployed in the target environment." class="wp-image-85243" height="533" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer2-IEC-104-blog.jpg" style="max-width:800px;height:auto;width:auto;" title="industroyer2-IEC-104-blog" width="800"/>
+<p>Nozomi Networks Labs’ analysis of Industroyer2 suggests that the threat actors had a fairly complete understanding of the security measures deployed in the target environment.</p>
+<h3>IEC-104 Configuration</h3>
+<p>The sample that we analyzed contains hardcoded configurations for three different stations. For each station the configuration includes:</p>
+<ol>
+<li>Station Configuration Header: Header to configure the station interaction</li>
+<li>IOA Configuration Format: Table containing multiple IOAs and their corresponding parameters</li>
+</ol>
+<p>Station Configuration Header </p>
+<p>The configuration for one of the stations uses the following header:</p>
+<p>10.x.y.z 2404 3 0 1 1 PService_PPD.exe 1 “D:\OIK\DevCounter” 0 1 0 0 1 0 0 44</p>
+<p>10.x.y.z → Controlled station local IP address</p>
+<p>2404 → Controlled station port</p>
+<p>3 → ASDU address</p>
+<p>0 → Operation mode. If set to 0, the hardcoded table of IOA is used. If set to 1, two arguments need to follow specifying a start and an end IOA number, which are then used to set a range of IOA to iterate through.</p>
+<p>1 → Switch that requires 9 arguments:</p>
+<p>a) 1 → Boolean, accepted values: 0, 1</p>
+<p>b) PService_PPD.exe → Name of the process to be killed</p>
+<p>c) 1 → Controls if the filename rename should happen, accepted values: 0 (skip rename), 1 (rename)</p>
+<p>d) “D:\OIK\DevCounter” → Folder where the executable targeted for killing and rename is stored</p>
+<p>e) 0 → Sleep time in minutes, executed prior to initiating interaction with the station</p>
+<p>f) 1 → Sleep time in seconds</p>
+<p>g) 0 → Sleep time in seconds</p>
+<p>h) 0 → Sleep time in seconds</p>
+<p>i) 1 → Boolean, accepted values: 0, 1</p>
+<p>0 → If set, it will interact with each IOA again, with SCO/DCO On/Off inverted</p>
+<p>44 → Number of IOA following header</p>
+<p>IOA Configuration Format</p>
+<a class="et_pb_lightbox_image" href="https://www.nozominetworks.com/wp-content/uploads/2022/04/ioa_config.png" title="IOA Configuration"><img alt="IOA Configuration" class="lazy lazy-hidden wp-image-85228" height="529" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="ioa_config" width="1600"/><img alt="IOA Configuration" class="wp-image-85228" height="529" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/ioa_config.png" style="max-width:800px;height:auto;width:auto;" title="ioa_config" width="1600"/></a>
+<p>Figure 1. IOA Configuration.</p>
+<p>160921 1 0 1 1 2</p>
+<ul>
+<li>160921 → IOA address</li>
+<li>1 → Sets single or double command, accepted values: 0 (Double), 1 (Single)</li>
+<li>0 → Sets SCO/DCO Select/Execute, accepted values: 0 (Execute), 1 (Select)</li>
+<li>1 → Sets SCO/DCO On/Off, accepted values: 0 (Off), 1 (On)</li>
+<li>1 → Priority</li>
+<li>2 → IOA entry index in the configuration list</li>
+</ul>
+<h3>Operation</h3>
+<a class="et_pb_lightbox_image" href="https://www.nozominetworks.com/wp-content/uploads/2022/04/wireshark.png" title="IEC 104 Interaction "><img alt="IEC 104 Interaction " class="lazy lazy-hidden wp-image-85229" height="830" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="wiresharkIEC 104 Interaction " width="858"/><img alt="IEC 104 Interaction " class="wp-image-85229" height="830" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/wireshark.png" style="max-width:800px;height:auto;width:auto;" title="wiresharkIEC 104 Interaction " width="858"/></a>
+<p>Figure 2. IEC 104 Interaction.</p>
+After terminating <code>PServiceControl.exe</code>, and based on the configuration, <code>PService_PPD.exe</code> which is then renamed with <code>.MZ</code> appended to its name, the sample begins IEC 104 interaction (Figure 2). <p></p>
+<p>Traffic sent from the malicious sample to the substation is prefixed with MASTER -&gt;&gt; SLV in the sample’s debugging output and vice versa. The interaction begins with a sequence of TESTFR frames: <code>TESTFR act</code> sent from the malicious sample, which is then acknowledged by a <code>TESTFR con</code> frame. TESTFR frames are used to check if there are connectivity problems between two nodes. </p>
+<p>The next frame sent to the receiving station is <code>STARTDT act</code>, which is a data transfer activation request, expecting back a <code>STARTDT con</code> reply as confirmation. Once data transfer is enabled it is followed by interrogation command <code>(C_IC_NA_1)</code>. </p>
+<p>The next step that the sample performs using its hardcoded station configuration is to iterate through the hardcoded list of IOA per station and send <code>C_SC_NA_1 or C_DC_NA_1</code> type frames, depending on each IOA’s configuration. Apart from specifying whether an IOA is meant to be used with a single or double command, as detailed in the configuration above, it is possible to specify the bits used to control Single/Double (SCO/DCO), On/Off, and Select/Execute. </p>
+<h3>Industroyer vs Industroyer2: Side-by-side Analysis</h3>
+<p>The Industroyer2 sample with <code>sha256 d69665f56ddef7ad4e71971f06432e59f1510a7194386e5f0e8926aea7b88e00</code> has an overwhelming number of similarities with the Industroyer sample called 104.dll and <code>sha256 7907dd95c1d36cf3dc842a1bd804f0db511a0f68f4b3d382c23a3c974a383cad</code>. This is a strong indication that the same threat actor had access to the source code.</p>
+<p>The following screenshot (Figure 3) presents an example of these similarities with a side-by-side comparison of the decompiled main thread of both samples. On the left side we have the Industroyer sample from 2016, while on the right we have the Industroyer2 sample from 2022.</p>
+<a class="et_pb_lightbox_image" href="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer_comparison_1.png" title=" Industroyer (left) and Industroyer2 (right) technical comparison of decompiled main thread of both samples."><img alt=" Industroyer (left) and Industroyer2 (right) technical comparison of decompiled main thread of both samples." class="lazy lazy-hidden wp-image-85230" height="1450" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="industroyer_comparison_1" width="3080"/><img alt=" Industroyer (left) and Industroyer2 (right) technical comparison of decompiled main thread of both samples." class="wp-image-85230" height="1450" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer_comparison_1.png" style="max-width:800px;height:auto;width:auto;" title="industroyer_comparison_1" width="3080"/></a>
+<p>Figure 3. Industroyer (left) and Industroyer2 (right) technical comparison of decompiled main thread of both samples.</p>
+The “process killing” functionality that Industroyer implements in the main thread, in Industroyer2 has been factored out into the thread that eventually spawns this main thread. What stands out the most though, is the usage of a structure that we renamed “main_config” in both the samples which stores data used globally throughout the execution. The “main_config” structure as found in Industroyer2 has been updated to hold additional fields, but it shares the same “blueprint” of Industroyer.<p></p>
+<p>The following screenshot (Figure 4) contains the decompiled code responsible for the creation of the <code>STARTDT</code> frame. The similarities between the two samples are once again clear, with the “main_config” structure being passed as an argument from one function to another.</p>
+<a class="et_pb_lightbox_image" href="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer_comparison_2.png" title="Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame."><img alt="Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame." class="lazy lazy-hidden wp-image-85231" height="910" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame." width="3122"/><img alt="Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame." class="wp-image-85231" height="910" src="https://www.nozominetworks.com/wp-content/uploads/2022/04/industroyer_comparison_2.png" style="max-width:800px;height:auto;width:auto;" title="Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame." width="3122"/></a>
+Figure 4. Industroyer (left) and Industroyer2 (right) technical comparison of decompiled code which creates STARTDT frame. 
+We can conclude that the threat actor does not aspire to be stealthy and is not concerned about obfuscating the malware activity or the similarities between Industroyer and Industroyer2.<p></p>
+<h3>Recommendations</h3>
+<p>Here are some ways companies can increase their protection:</p>
+<ul>
+<li>
+<ul>
+<li>
+<ul>
+<li>Basic cyber hygiene: reset passwords, check employee and vendor account/network access and permissions, scan the network for any open ports and close/secure them, etc.</li>
+<li>Utilize YARA rules to search for and generate alerts on associated malware activity</li>
+<li>Use anomaly detection tools to detect any changes or variations to malware, as well as any irregular activity occurring in OT environments</li>
+<li>Use an automated firewall in conjunction with an anomaly detection tool to stop further attack commands</li>
+<li>Threat hunt for suspicious activity in your network; this can potentially help to discover attackers early on</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>We also recommend adhering to <a href="https://www.cisa.gov/uscert/ncas/alerts/TA17-163A" rel="nofollow noopener" target="_blank">CISA’s 2017 advisory</a> if those security measures have not been implemented already.</p>
+<p>Nozomi Networks will continue to monitor the situation and provide updates on what we are seeing, as well as recommendations the OT industry can use to protect their networks.</p>
+Related Content
+<a href="https://www.nozominetworks.com/ot-iot-security-report/" target="_blank"><img alt="Nozomi Networks Labs’ new OT/IoT Security Report covers cyberattack trends, vulnerability research, and best practices in remediation efforts." class="lazy lazy-hidden wp-image-82626" height="533" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:800px;height:auto;width:auto;" title="nozomi-networks-labs-new-OTt-IoT-security-report" width="800"/><img alt="Nozomi Networks Labs’ new OT/IoT Security Report covers cyberattack trends, vulnerability research, and best practices in remediation efforts." class="wp-image-82626" height="533" src="https://www.nozominetworks.com/wp-content/uploads/2022/01/nozomi-networks-labs-new-OTt-IoT-security-report.jpg" style="max-width:800px;height:auto;width:auto;" title="nozomi-networks-labs-new-OTt-IoT-security-report" width="800"/></a>
+<h6>RESEARCH REPORT</h6>
+<h3><a href="https://www.nozominetworks.com/ot-iot-security-report/" rel="noopener noreferrer" target="_blank">OT/IoT Security Report</a></h3>
+<p>Trends and Countermeasures for Critical Infrastructure Attacks </p>
+<ul>
+<li>Insights on ransomware and software supply chain attacks in 2H 2021</li>
+<li>OT/IoT vulnerability research and exploitation trends</li>
+<li>Suggested remediation strategies</li>
+</ul>
+<a class="et_pb_button et_pb_button_0 et_pb_bg_layout_dark" href="https://www.nozominetworks.com/ot-iot-security-report/" target="_blank">Download</a>
+Related Links
+<ul>
+<li>Blog: <a href="https://www.nozominetworks.com/blog/industroyer2-targets-ukraines-electric-grid-heres-how-companies-can-stay-protected-and-resilient/" rel="noopener" target="_blank">Industroyer2 Targets Ukraine’s Electric Grid: How Companies Can Stay Protected and Resilient </a></li>
+<li>Blog: <a href="https://www.nozominetworks.com/blog/new-botenago-variant-discovered-by-nozomi-networks-labs/" rel="noopener" target="_blank">New BotenaGo Variant Discovered by Nozomi Networks Labs</a></li>
+<li>Blog: <a href="https://www.nozominetworks.com/blog/incontroller-acting-to-protect-customers-from-unknown-threats/" rel="noopener" target="_blank">INCONTROLLER: Acting to Protect Customers from Unknown Threats</a></li>
+<li>Blog: <a href="https://www.nozominetworks.com/blog/critical-log4shell-apache-log4j-zero-day-attack-analysis/" rel="noopener" target="_blank"> Critical Log4Shell (Apache Log4j) Attack Analysis</a></li>
+</ul>
+<img alt="" class="lazy lazy-hidden" height="100" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="100"/><img alt="" height="100" src="https://www.nozominetworks.com/wp-content/uploads/2020/09/labs-updatedsicon.png" width="100"/><a class="vcard author" href="https://www.nozominetworks.com/author/nn-labs/" rel="author">Nozomi Networks Labs</a><p>Nozomi Networks Labs is dedicated to reducing cyber risk for the world’s industrial and critical infrastructure organizations. Through our cybersecurity research and collaboration with industry and institutions, we’re helping defend the operational systems that support everyday life.</p>
+</div>

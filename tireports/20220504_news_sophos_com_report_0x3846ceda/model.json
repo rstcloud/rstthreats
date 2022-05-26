@@ -1,0 +1,845 @@
+{
+    "id": "<report_0x3846ceda>",
+    "url": "https://news.sophos.com/en-us/2022/05/04/attacking-emotets-control-flow-flattening",
+    "title": "Attacking Emotets Control Flow Flattening",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0x69eb49ec>",
+            "title": "Attacking Emotets Control Flow Flattening",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd9afb165>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Sweeping aside one obfuscation technique in a notorious strain of malware<crlf>Written by",
+                    "html": "\n\t\t\t\t\t\tSweeping aside one obfuscation technique in a notorious strain of malware\t\t\t\t\t\n\t\tWritten by \t\t\t\t\n"
+                },
+                {
+                    "id": "<sentence_0xb337aa55>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x98fef5c>": "https://news.sophos.com/en-us/author/andreas-klopsch/"
+                    },
+                    "text": "Andreas Klopsch",
+                    "html": "<a class=\"author url fn\" href=\"https://news.sophos.com/en-us/author/andreas-klopsch/\" rel=\"author\" title=\"Posts by Andreas Klopsch\">Andreas Klopsch</a>"
+                },
+                {
+                    "id": "<sentence_0x6db6b164>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf74402f8>": "https://news.sophos.com/en-us/2022/05/04/attacking-emotets-control-flow-flattening/"
+                    },
+                    "text": "May 04, 2022",
+                    "html": "<a href=\"https://news.sophos.com/en-us/2022/05/04/attacking-emotets-control-flow-flattening/\" rel=\"bookmark\">May 04, 2022</a>"
+                },
+                {
+                    "id": "<sentence_0xfc8b3f27>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x543a1a5d>": "https://news.sophos.com/en-us/category/threat-research/sophoslabs-uncut/"
+                    },
+                    "text": "SophosLabs Uncut",
+                    "html": "<a class=\"category-tag-pill\" href=\"https://news.sophos.com/en-us/category/threat-research/sophoslabs-uncut/\">SophosLabs Uncut</a>"
+                },
+                {
+                    "id": "<sentence_0x9476e7fc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x152723b3>": "https://news.sophos.com/en-us/tag/emotet/"
+                    },
+                    "text": "emotet",
+                    "html": "<a class=\"category-tag-pill\" href=\"https://news.sophos.com/en-us/tag/emotet/\">emotet</a>"
+                },
+                {
+                    "id": "<sentence_0xa2a66f5c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa6945bca>": "https://news.sophos.com/en-us/tag/obfuscation/"
+                    },
+                    "text": "obfuscation",
+                    "html": "<a class=\"category-tag-pill\" href=\"https://news.sophos.com/en-us/tag/obfuscation/\">obfuscation</a>"
+                },
+                {
+                    "id": "<sentence_0x5111d205>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2fc5c74a>": "https://news.sophos.com/en-us/tag/secops/"
+                    },
+                    "text": "SecOps",
+                    "html": "<a class=\"category-tag-pill\" href=\"https://news.sophos.com/en-us/tag/secops/\">SecOps</a>"
+                },
+                {
+                    "id": "<sentence_0x43ecc743>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet has been one of the most professional and long-lasting cybercrime services and malware infections in the threat landscape. Notorious since shortly after its debut in 2014, the botnet was disrupted in January 2021 by a multinational law enforcement effort that sidelined its activity for almost a year. Unfortunately, in November 2021 the botnet re-emerged and once again began to appear on Sophos radar.",
+                    "html": "<p>Emotet has been one of the most professional and long-lasting cybercrime services and malware infections in the threat landscape. Notorious since shortly after its debut in 2014, the botnet was disrupted in January 2021 by a multinational law enforcement effort that sidelined its activity for almost a year. Unfortunately, in November 2021 the botnet re-emerged and once again began to appear on Sophos\u2019 radar.</p>"
+                },
+                {
+                    "id": "<sentence_0x16e6df02>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To protect our customers, SophosLabs is always looking for the most significant techniques, tactics, and procedures used to distribute and deliver Emotet. In this post, well look at Control Flow Flattening (CFF), one of several obfuscation tactics Emotets developers use to make detection and reverse engineering of the malwares payload more difficult. Well provide a brief example of CFF applied to a simple hello-world program, and then discuss how Sophos researchers address CFF in Emotets code. Well finish by summarizing the challenges and problems we encountered during research.",
+                    "html": "<p>To protect our customers, SophosLabs is always looking for the most significant techniques, tactics, and procedures used to distribute and deliver Emotet. In this post, we\u2019ll look at Control Flow Flattening (CFF), one of several obfuscation tactics Emotet\u2019s developers use to make detection and reverse engineering of the malware\u2019s payload more difficult. We\u2019ll provide a brief example of CFF applied to a simple hello-world program, and then discuss how Sophos researchers address CFF in Emotet\u2019s code. We\u2019ll finish by summarizing the challenges and problems we encountered during research.</p>"
+                },
+                {
+                    "id": "<sentence_0x75c64dd1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotets internals have been covered by many researchers, but we have not seen discussions on de-obfuscating its use of Control Flow Flattening so far.",
+                    "html": "<p>Emotet\u2019s internals have been covered by many researchers, but we have not seen discussions on de-obfuscating its use of Control Flow Flattening so far.</p>"
+                },
+                {
+                    "id": "<sentence_0xcdb3068>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet: Resurgence and Tenacity",
+                    "html": "<p>Emotet: Resurgence and Tenacity </p>"
+                },
+                {
+                    "id": "<sentence_0x4c310410>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1 shows the volume of Emotet payloads detected in our sandbox systems in the first quarter of 2022. As the chart shows, we receive multiple Emotet submissions daily; we believe that the recurring larger spikes result from large-scale campaigns being kicked off by the malwares distributors. This is a sensible assumption; Emotet is mainly distributed via email spam, and more malicious emails naturally lead to more sandbox submissions.",
+                    "html": "<p>Figure 1 shows the volume of Emotet payloads detected in our sandbox systems in the first quarter of 2022. As the chart shows, we receive multiple Emotet submissions daily; we believe that the recurring larger spikes result from large-scale campaigns being kicked off by the malware\u2019s distributors. This is a sensible assumption; Emotet is mainly distributed via email spam, and more malicious emails naturally lead to more sandbox submissions. </p>"
+                },
+                {
+                    "id": "<sentence_0x36760599>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd37e7197>": "https://news.sophos.com/wp-content/uploads/2022/04/PIcture1-1a.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/PIcture1-1a.png\"><img alt=\"Timeline showing Emotet sandbox trends during the first quarter of 2022\" class=\"alignnone size-full wp-image-84355\" height=\"239\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/PIcture1-1a.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x1463e786>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1: Timeline of 2022 Emotet detections in SophosLabs sandbox systems",
+                    "html": "<p>Figure 1: Timeline of 2022 Emotet detections in SophosLabs\u2019 sandbox systems </p>"
+                },
+                {
+                    "id": "<sentence_0xf38c283e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In addition to Emotets delivery mechanism and prevalence, we also analyze the final payload in depth. Thus, we noticed Control Flow Flattening in an unpacked Emotet sample. Control Flow Flattening hides program flow by putting all function blocks next to each other. It is a well-known obfuscation technique used to conceal the purpose of software. While extracting the original code from a flattened binary is inherently challenging, we have successfully adapted some existing toolsets to deobfuscate the majority of Emotet payload functionality.",
+                    "html": "<p>In addition to Emotet\u2019s delivery mechanism and prevalence, we also analyze the final payload in depth. Thus, we noticed Control Flow Flattening in an unpacked Emotet sample. Control Flow Flattening hides program flow by putting all function blocks next to each other. It is a well-known obfuscation technique used to conceal the purpose of software. While extracting the original code from a flattened binary is inherently challenging, we have successfully adapted some existing toolsets to deobfuscate the majority of Emotet payload functionality. </p>"
+                },
+                {
+                    "id": "<sentence_0x2852eb27>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "What is Control Flow Flattening?",
+                    "html": "<p>What is Control Flow Flattening?</p>"
+                },
+                {
+                    "id": "<sentence_0x79cdaaa0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Control Flow Flattening is a technique that aims to obfuscate program flow by taking away tidy program structures in favor of putting the program blocks inside a loop with a single switch statement controlling program flow.",
+                    "html": "<p>Control Flow Flattening is a technique that aims to obfuscate program flow by taking away tidy program structures in favor of putting the program blocks inside a loop with a single switch statement controlling program flow.</p>"
+                },
+                {
+                    "id": "<sentence_0x45a4ce9>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf0d6bb60>": "https://github.com/obfuscator-llvm/obfuscator/wiki",
+                        "<a_0x5455feb1>": "http://tigress.cs.arizona.edu/"
+                    },
+                    "text": "First, the body of the function is broken into basic blocks, and then the blocks are put next to each other on the same level. A visualization of this transformation can be seen in Figure 2. Control Flow Flattening can be combined with other obfuscation techniques, such as API Hashing or String Encryption. Some of the most prominent obfuscators for flattening functions are OLLVM and Tigress.",
+                    "html": "<p>First, the body of the function is broken into basic blocks, and then the blocks are put next to each other on the same level. A visualization of this transformation can be seen in Figure 2. Control Flow Flattening can be combined with other obfuscation techniques, such as API Hashing or String Encryption. Some of the most prominent obfuscators for flattening functions are <a href=\"https://github.com/obfuscator-llvm/obfuscator/wiki\">OLLVM</a> and <a href=\"http://tigress.cs.arizona.edu/\">Tigress</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x4abea37>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x40130ec9>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture2-1.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture2-1.png\"><img alt=\"Comparing a flattened and non-flattened control flow graph (CFG)\" class=\"alignnone size-full wp-image-84224\" height=\"305\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture2-1.png\" width=\"606\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x27d05981>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 2: Comparing a flattened and non-flattened control flow graph (CFG)",
+                    "html": "<p>Figure 2: Comparing a flattened and non-flattened control flow graph (CFG)</p>"
+                },
+                {
+                    "id": "<sentence_0x539abde2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Lets take a quick look at a simplified example of CFF in action.",
+                    "html": "<p>Let\u2019s take a quick look at a simplified example of CFF in action.</p>"
+                },
+                {
+                    "id": "<sentence_0x3a8a8ae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Flattening Hello World",
+                    "html": "<p>Flattening Hello World</p>"
+                },
+                {
+                    "id": "<sentence_0x6653e90b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For demonstration purposes, weve compiled a simple program written in C. On the left side of Figure 3, an annotated control flow graph (CFG) of the binary is shown. On the right side you can see the decompiled output generated by the Hex-Rays Decompiler.",
+                    "html": "<p>For demonstration purposes, we\u2019ve compiled a simple program written in C. On the left side of Figure 3, an annotated control flow graph (CFG) of the binary is shown. On the right side you can see the decompiled output generated by the Hex-Rays Decompiler.</p>"
+                },
+                {
+                    "id": "<sentence_0xa316ca82>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this figure, no obfuscation techniques have been applied. The Hex-Rays Decompiler has no trouble generating an easy-to-read high-level language representation of the disassembly. Even without a decompiler, an experienced reverse engineer can simply follow the control flow graph to understand its purpose.",
+                    "html": "<p>In this figure, no obfuscation techniques have been applied. The Hex-Rays Decompiler has no trouble generating an easy-to-read high-level language representation of the disassembly. Even without a decompiler, an experienced reverse engineer can simply follow the control flow graph to understand its purpose.</p>"
+                },
+                {
+                    "id": "<sentence_0x2eab9438>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7d19a639>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture3-1.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture3-1.png\"><img alt=\"Control Flow Graph and decompiled output of sample program\" class=\"alignnone size-full wp-image-84225\" height=\"315\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture3-1.png\" width=\"602\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xe8748cb5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 3: Control Flow Graph and decompiled output of sample program",
+                    "html": "<p>Figure 3: Control Flow Graph and decompiled output of sample program</p>"
+                },
+                {
+                    "id": "<sentence_0x1ee34dec>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Now well flatten the function and compare the results. Figure 4 displays the CFG and decompiled output after Control Flow Flattening was applied. On the left side, we see that the number of basic blocks has more than doubled, and reading the decompiled output is not possible any more without spending a significant amount of time analyzing it.",
+                    "html": "<p>Now we\u2019ll flatten the function and compare the results. Figure 4 displays the CFG and decompiled output after Control Flow Flattening was applied. On the left side, we see that the number of basic blocks has more than doubled, and reading the decompiled output is not possible any more without spending a significant amount of time analyzing it.</p>"
+                },
+                {
+                    "id": "<sentence_0x9cd24d2f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x30840c9a>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture4-1.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture4-1.png\"><img alt=\"Annotated example of a flattened function\" class=\"alignnone size-full wp-image-84227\" height=\"245\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture4-1.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x1d48b925>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 4: Annotated example of a flattened function",
+                    "html": "<p>Figure 4: Annotated example of a flattened function</p>"
+                },
+                {
+                    "id": "<sentence_0xd7259a4c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Overall, CFF introduces the following problems to hamper our analysis:",
+                    "html": "<p>Overall, CFF introduces the following problems to hamper our analysis:</p>"
+                },
+                {
+                    "id": "<sentence_0xf219a78a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The control flow is concealed. Instead of being able to follow the blocks, a control flow dispatcher block is implemented. This block determines which blocks are executed next.<crlf>A state variable annotated as stateVar in the decompiled output is updated with high entropy variables throughout the function. The state variable is used by the control flow dispatcher to decide which block gets executed next.<crlf>The two problems above lead to a highly complex decompiled output. While it is still possible to follow the execution flow, the time and effort needed to understand the function is significantly larger than it would be compared to the decompiled output in Figure 3.",
+                    "html": "<ul>\n<li>The control flow is concealed. Instead of being able to follow the blocks, a control flow dispatcher block is implemented. This block determines which blocks are executed next.</li>\n<li>A state variable annotated as <code>stateVar </code>in the decompiled output is updated with high entropy variables throughout the function. The state variable is used by the control flow dispatcher to decide which block gets executed next.</li>\n<li>The two problems above lead to a highly complex decompiled output. While it is still possible to follow the execution flow, the time and effort needed to understand the function is significantly larger than it would be compared to the decompiled output in Figure 3.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x537c6f71>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Unflattening Emotet",
+                    "html": "<p>Unflattening Emotet</p>"
+                },
+                {
+                    "id": "<sentence_0xb4543b8a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To deobfuscate Emotets use of Control Flow Flattening, we started with a review of existing tools and research on CFG deobfuscation. Some of those include:",
+                    "html": "<p>To deobfuscate Emotet\u2019s use of Control Flow Flattening, we started with a review of existing tools and research on CFG deobfuscation. Some of those include:</p>"
+                },
+                {
+                    "id": "<sentence_0x1ebbc4e3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa289afa6>": "https://hex-rays.com/blog/hex-rays-microcode-api-vs-obfuscating-compiler/",
+                        "<a_0x25aeffc6>": "https://blogs.vmware.com/security/2019/02/defeating-compiler-level-obfuscations-used-in-apt10-malware.html",
+                        "<a_0x3742c374>": "https://blog.quarkslab.com/deobfuscation-recovering-an-ollvm-protected-program.html",
+                        "<a_0x91add666>": "https://eshard.com/posts/D810-a-journey-into-control-flow-unflattening"
+                    },
+                    "text": "Hex-Rays Microcode API vs. Obfuscating Compiler by Rolf Rolles<crlf>Defeating Compiler-Level Obfuscations used in APT10 Malware by VMWares Threat Analysis Unit<crlf>Deobfuscation: recovering an OLLVM-protected program by Francis Gabriel of Quarkslab<crlf>D810: A journey into control flow unflattening by Boris Batteaux of eShard",
+                    "html": "<ul>\n<li><a href=\"https://hex-rays.com/blog/hex-rays-microcode-api-vs-obfuscating-compiler/\">Hex-Rays Microcode API vs. Obfuscating Compiler</a> by Rolf Rolles</li>\n<li><a href=\"https://blogs.vmware.com/security/2019/02/defeating-compiler-level-obfuscations-used-in-apt10-malware.html\">Defeating Compiler-Level Obfuscations used in APT10 Malware</a> by VMWare\u2019s Threat Analysis Unit</li>\n<li><a href=\"https://blog.quarkslab.com/deobfuscation-recovering-an-ollvm-protected-program.html\">Deobfuscation: recovering an OLLVM-protected program</a> by Francis Gabriel of Quarkslab</li>\n<li><a href=\"https://eshard.com/posts/D810-a-journey-into-control-flow-unflattening\">D810: A journey into control flow unflattening</a> by Boris Batteaux of eShard</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x990e4a4b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For deeper dives into the algorithm behind CFG Unflattening, the articles referenced above provide a wealth of information.",
+                    "html": "<p>For deeper dives into the algorithm behind CFG Unflattening, the articles referenced above provide a wealth of information.</p>"
+                },
+                {
+                    "id": "<sentence_0x463b4dcd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In Figure 5 you can see the decompiled output and CFG of a function in an unpacked Emotet sample. Excluding the Control Flow Flattening applied here, the output might seem confusing, because Emotet applies more than just one obfuscation technique. (If you are not familiar with those other techniques, an appendix at the end of this article briefly explains the other obfuscation techniques .)",
+                    "html": "<p>In Figure 5 you can see the decompiled output and CFG of a function in an unpacked Emotet sample. Excluding the Control Flow Flattening applied here, the output might seem confusing, because Emotet applies more than just one obfuscation technique. (If you are not familiar with those other techniques, an appendix at the end of this article briefly explains the other obfuscation techniques .)</p>"
+                },
+                {
+                    "id": "<sentence_0x320ca722>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, the function calls OpenSCManagerA to retrieve a handle to the Service Control Manager. Next, it calls OpenServiceW to open an existing service. If opening the service succeeds, the opened service will be deleted via DeleteService. Finally, the opened handles will be closed. If the service was deleted successfully, the function returns 1, otherwise 0.",
+                    "html": "<p>First, the function calls OpenSCManagerA to retrieve a handle to the Service Control Manager. Next, it calls OpenServiceW to open an existing service. If opening the service succeeds, the opened service will be deleted via DeleteService. Finally, the opened handles will be closed. If the service was deleted successfully, the function returns 1, otherwise 0.</p>"
+                },
+                {
+                    "id": "<sentence_0xa4e4062f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xcf32a26d>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture5-1.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture5-1.png\"><img alt=\"Annotated example of a flattened function\" class=\"alignnone size-full wp-image-84228\" height=\"300\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture5-1.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x98110b91>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 5: Annotated example of a flattened function",
+                    "html": "<p>Figure 5: Annotated example of a flattened function</p>"
+                },
+                {
+                    "id": "<sentence_0xc02e8cae>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x5f4e8893>": "stateVar"
+                    },
+                    "text": "If we compare the decompiled output of Figure 3 and Figure 4, we can see multiple similarities, and we can identify the CFG dispatcher again. In the decompiled output, we see a variable we annotated as stateVar. Like the output in Figure 3, this is our state variable that is constantly updated and used by the dispatcher to determine which block is executed next.",
+                    "html": "<p>If we compare the decompiled output of Figure 3 and Figure 4, we can see multiple similarities, and we can identify the CFG dispatcher again. In the decompiled output, we see a variable we annotated as <code>stateVar</code>. Like the output in Figure 3, this is our state variable that is constantly updated and used by the dispatcher to determine which block is executed next.</p>"
+                },
+                {
+                    "id": "<sentence_0x850e5e4a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "On a high level, if we want to restore the control flow, we need to:",
+                    "html": "<p>On a high level, if we want to restore the control flow, we need to:</p>"
+                },
+                {
+                    "id": "<sentence_0xcd455fce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Identify the dispatcher block and states<crlf>For each block, identify the corresponding constant and find the address of the next block to execute based on dispatcher and state variable value<crlf>Patch the outbound dispatcher blocks to jump to the address of the original next block",
+                    "html": "<ol>\n<li>Identify the dispatcher block and states</li>\n<li>For each block, identify the corresponding constant and find the address of the next block to execute based on dispatcher and state variable value</li>\n<li>Patch the outbound dispatcher blocks to jump to the address of the original next block</li>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0xea74941c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Instead of patching and operating on the disassembly directly, we make use of the Hex-Rays Microcode API. Microcode is an intermediate language used by the Hex-Rays decompiler. During decompilation, the decompiler steps through different maturity phases. The different phases are displayed in Figure 6 below. The API allows us to hook the decompilation progress and operate on the microcode instead of patching the disassembly directly.",
+                    "html": "<p>Instead of patching and operating on the disassembly directly, we make use of the Hex-Rays Microcode API. Microcode is an intermediate language used by the Hex-Rays decompiler. During decompilation, the decompiler steps through different maturity phases. The different phases are displayed in Figure 6 below. The API allows us to hook the decompilation progress and operate on the microcode instead of patching the disassembly directly.</p>"
+                },
+                {
+                    "id": "<sentence_0x78c170bc>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x71ac913f>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture6.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture6.png\"><img alt=\"IDA Microcode maturity levels\" class=\"alignnone size-full wp-image-84229\" height=\"363\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture6.png\" width=\"601\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xb56c7c01>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 6: IDA Microcode maturity levels",
+                    "html": "<p>Figure 6: IDA Microcode maturity levels</p>"
+                },
+                {
+                    "id": "<sentence_0xcdbde080>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Adjusting the Tool",
+                    "html": "<p>Adjusting the Tool</p>"
+                },
+                {
+                    "id": "<sentence_0x55dd0305>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We used an IDAPython fork of the Rolf Rolles HexRaysDeob tool as our foundation. Like the fork, we are operating solely on the maturity level MMAT_LOCOPT, the third level in the figure above. As seen in Figure 6, that maturity level includes information about inbound and outbound blocks, which are necessary to correctly identify dispatcher blocks. Furthermore, the original code was based around the MMAT_LOCOPT layer. Changing the layer would have required plenty more investigation, verification, and adjustments of the existing code than keeping the layer. Below is a summarization of changes we applied on the existing code base.",
+                    "html": "<p>We used an IDAPython fork of the Rolf Rolles\u2019 HexRaysDeob tool as our foundation. Like the fork, we are operating solely on the maturity level MMAT_LOCOPT, the third level in the figure above. As seen in Figure 6, that maturity level includes information about inbound and outbound blocks, which are necessary to correctly identify dispatcher blocks. Furthermore, the original code was based around the MMAT_LOCOPT layer. Changing the layer would have required plenty more investigation, verification, and adjustments of the existing code than keeping the layer. Below is a summarization of changes we applied on the existing code base.</p>"
+                },
+                {
+                    "id": "<sentence_0xb9aac7b7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Handling Multiple/Related Dispatchers",
+                    "html": "<p>Handling Multiple/Related Dispatchers</p>"
+                },
+                {
+                    "id": "<sentence_0xa9f61c81>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In multiple functions, running the deobfuscation algorithm on a single dispatcher did not generate an output we were satisfied with. Analysis showed that more complex functions might contain multiple nested dispatchers instead of one. We added additional logic to identify and run the algorithm on multiple dispatchers. This option can be turned on or off by setting the RUN_MLTPL_DISPATCHERS flag to True or False. In Figure 7 below, you can see an example of a function with two potential dispatchers.",
+                    "html": "<p>In multiple functions, running the deobfuscation algorithm on a single dispatcher did not generate an output we were satisfied with. Analysis showed that more complex functions might contain multiple nested dispatchers instead of one. We added additional logic to identify and run the algorithm on multiple dispatchers. This option can be turned on or off by setting the RUN_MLTPL_DISPATCHERS flag to True or False. In Figure 7 below, you can see an example of a function with two potential dispatchers.</p>"
+                },
+                {
+                    "id": "<sentence_0xe24beb19>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xad665d74>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture7.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture7.png\"><img alt=\"Example of a function of two potential dispatchers\" class=\"alignnone size-full wp-image-84231\" height=\"406\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture7.png\" width=\"598\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x4e3d14e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 7: Example of a function with two potential dispatchers",
+                    "html": "<p>Figure 7: Example of a function with two potential dispatchers</p>"
+                },
+                {
+                    "id": "<sentence_0xf2018d96>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Risky Search for the Cluster Head",
+                    "html": "<p>Risky Search for the Cluster Head </p>"
+                },
+                {
+                    "id": "<sentence_0xb5e0b874>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A flattened block might be implemented by multiple microcode blocks. To find the end of the region, the original algorithm by Rolf Rolles generates a dominator tree and uses the generated information to determine the end of a region, or the beginning of a cluster. In some cases, the algorithm failed to find the cluster head. We added an additional function to determine the cluster head as a fallback. We believe that the original algorithm by Rolf Rolles is more reliable; however, evaluation showed that the fallback algorithm still led to good results and improved the decompiled output.",
+                    "html": "<p>A flattened block might be implemented by multiple microcode blocks. To find the end of the region, the original algorithm by Rolf Rolles generates a dominator tree and uses the generated information to determine the end of a region, or the beginning of a cluster. In some cases, the algorithm failed to find the cluster head. We added an additional function to determine the cluster head as a fallback. We believe that the original algorithm by Rolf Rolles is more reliable; however, evaluation showed that the fallback algorithm still led to good results and improved the decompiled output.</p>"
+                },
+                {
+                    "id": "<sentence_0x711883f4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Adding Additional Patterns and Small Code Updates",
+                    "html": "<p>Adding Additional Patterns and Small Code Updates</p>"
+                },
+                {
+                    "id": "<sentence_0x1b434f61>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In some cases, the existing logic failed in patching all flattened blocks. After analyzing multiple functions, we identified various patterns that reoccurred throughout the whole binary. We added additional logic to identify and unflatten blocks following these patterns to the existing code base. Finally, we adjusted the overall code a little. Some of the changes include:",
+                    "html": "<p>In some cases, the existing logic failed in patching all flattened blocks. After analyzing multiple functions, we identified various patterns that reoccurred throughout the whole binary. We added additional logic to identify and unflatten blocks following these patterns to the existing code base. Finally, we adjusted the overall code a little. Some of the changes include:</p>"
+                },
+                {
+                    "id": "<sentence_0x7d498915>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The IDAPython fork of Rolf Rolles HexRaysDeob tool was based on Python2.7. We updated several parts of the code to match Python3 standards.<crlf>In the original version of the tool, if the run function was invoked once, the plugin got activated and if the tool determined the function as flattened via an algorithm, it attempted to unflatten it. During implementation and testing, we experienced crashes of IDA Pro when using the IDAPython microcode API. This might lead to a corrupted IDB database. As an additional safety mechanism, the address of the target function must be added to the array white_list to allow unflattening. Overall, we recommend saving often and keeping a separate IDB copy when using the tool.",
+                    "html": "<ul>\n<li>The IDAPython fork of Rolf Rolles\u00b4 HexRaysDeob tool was based on Python2.7. We updated several parts of the code to match Python3 standards.</li>\n<li>In the original version of the tool, if the \u201crun\u201d function was invoked once, the plugin got activated and if the tool determined the function as flattened via an algorithm, it attempted to unflatten it. During implementation and testing, we experienced crashes of IDA Pro when using the IDAPython microcode API. This might lead to a corrupted IDB database. As an additional safety mechanism, the address of the target function must be added to the array \u201cwhite_list\u201d to allow unflattening. Overall, we recommend saving often and keeping a separate IDB copy when using the tool.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x30072510>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Out of 254 functions, we categorized 68 functions as flattened. From these 68 functions, we were able to unflatten 38 successfully. Nineteen functions were partially flattened, and 11 functions failed. By unflattened successfully, we mean cases in which our script failed to unflatten a maximum of 3 states. Partially unflattened means that most of the function remains flattened, but our tool was able to unflatten some blocks. Finally, failed means that we were not able to deobfuscate a single block in the function.",
+                    "html": "<p>Out of 254 functions, we categorized 68 functions as flattened. From these 68 functions, we were able to unflatten 38 successfully. Nineteen functions were partially flattened, and 11 functions failed. By \u201cunflattened successfully,\u201d we mean cases in which our script failed to unflatten a maximum of 3 states. \u201cPartially unflattened\u201d means that most of the function remains flattened, but our tool was able to unflatten some blocks. Finally, \u201cfailed\u201d means that we were not able to deobfuscate a single block in the function.</p>"
+                },
+                {
+                    "id": "<sentence_0xf49626d3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 8 below shows the function from Figure 5 after our script was applied.",
+                    "html": "<p>Figure 8 below shows the function from Figure 5 after our script was applied.</p>"
+                },
+                {
+                    "id": "<sentence_0x5a065fce>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb323758c>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture8.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture8.png\"><img alt=\"Analyzed function after the CFG unflattening tool was applied\" class=\"alignnone size-full wp-image-84232\" height=\"404\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture8.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xfab2cf07>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 8: Analyzed function after the CFG unflattening tool was applied",
+                    "html": "<p>Figure 8: Analyzed function after the CFG unflattening tool was applied</p>"
+                },
+                {
+                    "id": "<sentence_0x3b2f1e5e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "IoCs",
+                    "html": "<p>IoCs</p>"
+                },
+                {
+                    "id": "<sentence_0x8ed3fac7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xe5ebe30>": {
+                            "0": {
+                                "0": "Description",
+                                "1": "Packed Emotet",
+                                "2": "Unpacked Emotet"
+                            },
+                            "1": {
+                                "0": "SHA256",
+                                "1": "9a0286ec0a3e7ea346759c9497c8b5c7c212fa2c780a1cabb094134bf492a51b",
+                                "2": "1bbce395c839c737fdc983534b963a1521ab9693a5b585f15b8a4950adea5973"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td width=\"301\">\n<p>Description</p>\n</td>\n<td width=\"301\">\n<p>SHA256</p>\n</td>\n</tr>\n<tr>\n<td width=\"301\">\n<p>Packed Emotet</p>\n</td>\n<td width=\"301\">\n<p>9a0286ec0a3e7ea346759c9497c8b5c7c212fa2c780a1cabb094134bf492a51b</p>\n</td>\n</tr>\n<tr>\n<td width=\"301\">\n<p>Unpacked Emotet</p>\n</td>\n<td width=\"301\">\n<p>1bbce395c839c737fdc983534b963a1521ab9693a5b585f15b8a4950adea5973</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0xd966fbc1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x378f9ed0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc9544986>": "https://github.com/sophoslabs/emotet_unflatten_poc",
+                        "<a_0x9d12adb>": "https://github.com/eset/stadeo"
+                    },
+                    "text": "Our unflattening tool is now available on the SophosLabs Github. (For those interested in such things, we also recommend to your attention a CFF-unpacking tool released by ESET several years back to address control-flow flattening in the Stantinko botnet another example of why, since attackers freely share tactics, techniques, and procedures among themselves, defenders are wise to do the same.)",
+                    "html": "<p>Our unflattening tool is <a href=\"https://github.com/sophoslabs/emotet_unflatten_poc\">now available</a> on the SophosLabs Github. (For those interested in such things, we also recommend to your attention a <a class=\"Hyperlink SCXW235147564 BCX0\" href=\"https://github.com/eset/stadeo\" rel=\"noreferrer noopener\" target=\"_blank\">CFF-unpacking tool</a> released by ESET several years back to address control-flow flattening in the Stantinko botnet \u2013 another example of why, since attackers freely share tactics, techniques, and procedures among themselves, defenders are wise to do the same.)</p>"
+                },
+                {
+                    "id": "<sentence_0x613dc052>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Conclusion and Limitations",
+                    "html": "<p>Conclusion and Limitations</p>"
+                },
+                {
+                    "id": "<sentence_0x42de1992>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Control Flow Flattening is a complex topic, and the purpose of this article is to share our experience and results attacking Emotets Control Flow Flattening. While we made multiple adjustments and met with some success, our solution is not able to deobfuscate all functions completely. Among the outstanding issues:",
+                    "html": "<p>Control Flow Flattening is a complex topic, and the purpose of this article is to share our experience and results attacking Emotet\u2019s Control Flow Flattening. While we made multiple adjustments and met with some success, our solution is not able to deobfuscate all functions completely. Among the outstanding issues:</p>"
+                },
+                {
+                    "id": "<sentence_0x9cfc2630>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The algorithm to detect nested dispatchers is simple. Therefore, we have added an option to turn it on and off. In rare cases, a faulty output is generated if the nested dispatcher is enabled.<crlf>In many functions, we had to deal with conditional states. Depending on the outcome of, for example, a WINAPI function, the state variable changes to a different value at runtime. Additional patching and insertion of microcode instructions would be needed to unflatten these conditional blocks.<crlf>Our main approach was to add logic for reoccurring patterns in the binary. As our work progressed, we realized that a microcode emulator might have been a better choice, or would have been an adjustment that led to more unflattened blocks.<crlf>During development and evaluation, we experienced multiple crashes. We are all humans and we make mistakes, so some crashes will result from bugs in our code. However, judging from the error messages, we believe that there is a deeper-rooted problem in the Python port of the Microcode API. Therefore, we recommend saving often and keeping a copy of the IDB file.",
+                    "html": "<ul>\n<li>The algorithm to detect nested dispatchers is simple. Therefore, we have added an option to turn it on and off. In rare cases, a faulty output is generated if the nested dispatcher is enabled.</li>\n<li>In many functions, we had to deal with conditional states. Depending on the outcome of, for example, a WINAPI function, the state variable changes to a different value at runtime. Additional patching and insertion of microcode instructions would be needed to unflatten these conditional blocks.</li>\n<li>Our main approach was to add logic for reoccurring patterns in the binary. As our work progressed, we realized that a microcode emulator might have been a better choice, or would have been an adjustment that led to more unflattened blocks.</li>\n<li>During development and evaluation, we experienced multiple crashes. We are all humans and we make mistakes, so some crashes will result from bugs in our code. However, judging from the error messages, we believe that there is a deeper-rooted problem in the Python port of the Microcode API. Therefore, we recommend saving often and keeping a copy of the IDB file.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xcd9c7ef4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Overall, we recommend that researchers always cross-check their results and not trust the output blindly. Control Flow Flattening used in conjunction with other obfuscation techniques certainly complicates the process of reverse engineering Emotet, but the technique weve described helps to even the odds against researchers examining this high-profile malware.",
+                    "html": "<p>Overall, we recommend that researchers always cross-check their results and not trust the output blindly. Control Flow Flattening used in conjunction with other obfuscation techniques certainly complicates the process of reverse engineering Emotet, but the technique we\u2019ve described helps to even the odds against researchers examining this high-profile malware.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x45ecbcff>",
+            "title": "Attacking Emotets Control Flow Flattening",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa9cfc1c3>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfe8e3ac>": "https://news.sophos.com/wp-content/uploads/2022/04/shutterstock_105181163.jpg?w=1000"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" class=\"object-cover wp-post-image\" height=\"680\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/shutterstock_105181163.jpg?w=1000\" width=\"1000\"/>"
+                },
+                {
+                    "id": "<sentence_0x88a8a1a8>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb9cdacd8>": "https://news.sophos.com/wp-content/uploads/2021/05/Category-Icon-Threat-Research@2x.min_.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"SophosLabs Uncut\" src=\"https://news.sophos.com/wp-content/uploads/2021/05/Category-Icon-Threat-Research@2x.min_.png\"/>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x575e5eb1>",
+            "title": "Appendix: Emotet and Code Obfuscation",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc7a1c850>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When sharing the decompiled output of functions in an Emotet sample, it is impossible not to encounter other Emotet obfuscation techniques beyond CFF. This appendix covers the most prevalent obfuscation techniques we have identified in an unpacked Emotet sample. Keep in mind that Emotet is usually delivered in a packed form and needs to be unpacked first.",
+                    "html": "<p>When sharing the decompiled output of functions in an Emotet sample, it is impossible not to encounter other Emotet obfuscation techniques beyond CFF. This appendix covers the most prevalent obfuscation techniques we have identified in an unpacked Emotet sample. Keep in mind that Emotet is usually delivered in a packed form and needs to be unpacked first.</p>"
+                },
+                {
+                    "id": "<sentence_0xe7982051>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "String Encryption",
+                    "html": "<p>String Encryption</p>"
+                },
+                {
+                    "id": "<sentence_0x70147376>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet contains encrypted strings in its unpacked form. Before usage, strings will be decrypted and freed again right after each serves its purpose.",
+                    "html": "<p>Emotet contains encrypted strings in its unpacked form. Before usage, strings will be decrypted and freed again right after each serves its purpose.</p>"
+                },
+                {
+                    "id": "<sentence_0x49d676e9>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x974c79c9>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture9.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture9.png\"><img alt=\"Cross references of DecryptString function with corresponding decrypted string\" class=\"alignnone size-full wp-image-84233\" height=\"156\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture9.png\" width=\"632\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x7e8d8cc9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 9: Cross references of DecryptString function with corresponding decrypted string",
+                    "html": "<p>Figure 9: Cross references of DecryptString function with corresponding decrypted string</p>"
+                },
+                {
+                    "id": "<sentence_0x49e73b7c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "API Hashing",
+                    "html": "<p>API Hashing</p>"
+                },
+                {
+                    "id": "<sentence_0x6d24bd7d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet uses API Hashing to conceal the usage of API functions. The malware calculates the hash of exported function names for a given DLL. If the calculated hash matches the constant pushed onto the stack at method invocation, the pointer to the exported function will be retrieved.",
+                    "html": "<p>Emotet uses API Hashing to conceal the usage of API functions. The malware calculates the hash of exported function names for a given DLL. If the calculated hash matches the constant pushed onto the stack at method invocation, the pointer to the exported function will be retrieved.</p>"
+                },
+                {
+                    "id": "<sentence_0x647b0551>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x31734b04>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture10.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture10.png\"><img alt=\"Disassembly of ApiHash function invocation\" class=\"alignnone size-full wp-image-84235\" height=\"314\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture10.png\" width=\"503\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x1458b468>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 10: Disassembly of ApiHash function invocation",
+                    "html": "<p>Figure 10: Disassembly of ApiHash function invocation</p>"
+                },
+                {
+                    "id": "<sentence_0x8c9963dd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In most cases, API Hashing calls and their corresponding dynamic call are wrapped into separate functions. We have automated this analysis, and functions with prefix DYN_ are functions determined at runtime via API Hashing.",
+                    "html": "<p>In most cases, API Hashing calls and their corresponding dynamic call are wrapped into separate functions. We have automated this analysis, and functions with prefix DYN_ are functions determined at runtime via API Hashing.</p>"
+                },
+                {
+                    "id": "<sentence_0x24c1c7ed>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Junk Instructions",
+                    "html": "<p>Junk Instructions</p>"
+                },
+                {
+                    "id": "<sentence_0x51630ed2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emotet embeds junk instructions to confuse reverse engineers. Junk instructions are instructions that do not serve any purpose except to complicate and slow down analysis. Figure 11 below shows an example of a junk instruction block.",
+                    "html": "<p>Emotet embeds junk instructions to confuse reverse engineers. Junk instructions are instructions that do not serve any purpose except to complicate and slow down analysis. Figure 11 below shows an example of a junk instruction block.</p>"
+                },
+                {
+                    "id": "<sentence_0xdcca5b01>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xed927697>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture11.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture11.png\"><img alt=\"Example of junk instructions in unpacked Emotet sample\" class=\"alignnone size-full wp-image-84236\" height=\"292\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture11.png\" width=\"410\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0x2e72a254>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 11: Example of junk instructions in unpacked Emotet sample",
+                    "html": "<p>Figure 11: Example of junk instructions in unpacked Emotet sample</p>"
+                },
+                {
+                    "id": "<sentence_0x87f874c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Stack Obfuscation",
+                    "html": "<p>Stack Obfuscation</p>"
+                },
+                {
+                    "id": "<sentence_0xd45bb516>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Another interesting technique that confuses the IDA decompiler is the way in which Emotet passes parameters to functions. In Figure 12 below, we show how DYN_BCryptEncrypt is invoked.",
+                    "html": "<p>Another interesting technique that confuses the IDA decompiler is the way in which Emotet passes parameters to functions. In Figure 12 below, we show how DYN_BCryptEncrypt is invoked.</p>"
+                },
+                {
+                    "id": "<sentence_0x5f0c6e89>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "DYN_BCryptEncrypt first resolves the API function BCryptEncrypt and stores the pointer to this function in register EAX. The function is then called via call EAX. Instead of just pushing the necessary parameters, this method pushes values onto the stack not being used by the actual EAX call. This leads to generation of a function signature that is much harder to read than normal.",
+                    "html": "<p>DYN_BCryptEncrypt first resolves the API function BCryptEncrypt and stores the pointer to this function in register EAX. The function is then called via call EAX. Instead of just pushing the necessary parameters, this method pushes values onto the stack not being used by the actual EAX call. This leads to generation of a function signature that is much harder to read than normal.</p>"
+                },
+                {
+                    "id": "<sentence_0x2424e94e>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xaae31714>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture12.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture12.png\"><img alt=\"Multiple values being pushed onto the stack before DYN_BCryptEncrypt is invoked\" class=\"alignnone size-full wp-image-84237\" height=\"255\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture12.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xa7e1cbd0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 12: Multiple values being pushed onto the stack before DYN_BCryptEncrypt is invoked",
+                    "html": "<p>Figure 12: Multiple values being pushed onto the stack before DYN_BCryptEncrypt is invoked</p>"
+                },
+                {
+                    "id": "<sentence_0x78d0544d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfdbd1415>": "https://news.sophos.com/wp-content/uploads/2022/04/Picture13.png"
+                    },
+                    "text": "",
+                    "html": "<p><a href=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture13.png\"><img alt=\"Corresponding generated function signature\" class=\"alignnone size-full wp-image-84238\" height=\"212\" src=\"https://news.sophos.com/wp-content/uploads/2022/04/Picture13.png\" width=\"640\"/></a></p>"
+                },
+                {
+                    "id": "<sentence_0xb3ebb1e4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 13: Corresponding generated function signature",
+                    "html": "<p>Figure 13: Corresponding generated function signature</p>"
+                },
+                {
+                    "id": "<sentence_0x3b5ace9b>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xc1c7f30d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x1926d44e>": "http://www.facebook.com/share.php?u=https://news.sophos.com/?p=84215&title=Attacking%20Emotet%E2%80%99s%20Control%20Flow%20Flattening",
+                        "<a_0x5e465117>": "http://twitter.com/intent/tweet?text=Attacking%20Emotet%E2%80%99s%20Control%20Flow%20Flattening%20https%3A%2F%2Fnews.sophos.com%2F%3Fp%3D84215",
+                        "<a_0xb0698412>": "http://www.linkedin.com/shareArticle?mini=true&url=https://news.sophos.com/en-us/2022/05/04/attacking-emotets-control-flow-flattening/"
+                    },
+                    "text": "Share on Facebook<crlf>Share on Twitter<crlf>Share on LinkedIn",
+                    "html": "<ul class=\"flex justify-center items-center space-x-6\" id=\"social-sharing\">\n<li class=\"facebook\">\n<a class=\"js-share-modal\" href=\"http://www.facebook.com/share.php?u=https://news.sophos.com/?p=84215&amp;title=Attacking%20Emotet%E2%80%99s%20Control%20Flow%20Flattening\" title=\"Share on Facebook\">\nShare on Facebook\n</a>\n</li>\n<li class=\"twitter\">\n<a class=\"js-share-modal\" href=\"http://twitter.com/intent/tweet?text=Attacking%20Emotet%E2%80%99s%20Control%20Flow%20Flattening%20https%3A%2F%2Fnews.sophos.com%2F%3Fp%3D84215\" title=\"Share on Twitter\">\nShare on Twitter\n</a>\n</li>\n<li class=\"linkedin\">\n<a href=\"http://www.linkedin.com/shareArticle?mini=true&amp;url=https://news.sophos.com/en-us/2022/05/04/attacking-emotets-control-flow-flattening/\" title=\"Share on LinkedIn\">\nShare on LinkedIn\n</a>\n</li>\n<li class=\"comments\">\n<a class=\"flex items-center space-x-1\" href=\"#comments\" title=\"Leave a Reply\">\n</a>\n</li>\n</ul>"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,266 @@
+<div>
+<a name="8010266687542500890"></a>
+<h1 class="post-title entry-title">
+Threat Spotlight: AsyncRAT campaigns feature new version of 3LOSH crypter
+</h1>
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg002elDOaMqyg25r1qn1kdqi4jASDqBLbBvtCJbojFT-PLhq8E_CsbglgexEYXl61cbKcoWlQI7x9eD_2jiPKmOit8SaTGy3KDDQKFvRPin-KttW8J_dvRJTsO9EEX0G4TyYvNkDeSBYSt5YBZOZCS-9E59bjeAuIoT7_9lH03zZ-4y0xIC1ndeYPSGQ/s1999/image5.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg002elDOaMqyg25r1qn1kdqi4jASDqBLbBvtCJbojFT-PLhq8E_CsbglgexEYXl61cbKcoWlQI7x9eD_2jiPKmOit8SaTGy3KDDQKFvRPin-KttW8J_dvRJTsO9EEX0G4TyYvNkDeSBYSt5YBZOZCS-9E59bjeAuIoT7_9lH03zZ-4y0xIC1ndeYPSGQ/s600/image5.png" width="600"/></a>
+By <a href="https://twitter.com/b4n1shed">Edmund Brumaghin</a>, with contributions from <a href="https://www.linkedin.com/in/alex-karkins-8208b710">Alex Karkins</a>.
+<ul>
+<li>
+Ongoing malware distribution campaigns are using ISO disk images to deliver <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.asyncrat">AsyncRAT</a>, <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.limerat">LimeRAT</a> and other commodity malware to victims.</li>
+<li>
+The infections leverage process injection to evade detection by endpoint security software.</li>
+<li>
+These campaigns appear to be linked to a new version of the 3LOSH crypter, previously covered <a href="https://blog.talosintelligence.com/2021/08/rat-campaign-targets-latin-america.html">here</a>.</li>
+</ul>
+Malware distributors often leverage tools to obfuscate their binary payloads and make detection and analysis more difficult. These tools often combine functionality normally associated with packers and crypters and, in many cases, are not directly tied to the malware payload itself. Over the past several months we have observed a series of campaigns that leverage a new version of one of these tools, referred to as 3LOSH crypter. The threat actor(s) behind these campaigns have been using 3LOSH to generate the obfuscated code responsible for the initial infection process. Based on analysis of the embedded configuration stored within the samples associated with these campaigns, we have identified that the same operator is likely distributing a variety of commodity RATs, such as AsyncRAT and LimeRAT. These RATs feature various functionality that enables them to be used to gain access to systems and exfiltrate sensitive information from victims. 
+<a name="more"></a>
+<h2 id="h.a3rqo68jp7iy">Infection process</h2>
+The infection process begins with an ISO that contains a malicious VBScript that, when executed, initiates a multi-stage infection process. The file naming convention for the ISO and the VBS match and typically follow a convention consistent with the following:
+^[A-Z]{5}[0-9]{6}\.(VBS|ISO)$
+<h3 id="h.wcqm7sckre9c">Stage 1 Execution</h3>
+The VBS contains junk data and uses string replacement to attempt to obfuscate the executed code. An example of this is shown below.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivXaNBWoo0gFo6T3isHhfo5twHMBHdkXppN-keww-YwAZkP789dogcoDoz9EvM4iaA-H50sBZClaYgzCk8kbp5QwmDk9Fn0Xo1VqIuL6uGUDdPtyHGHdajzMO7dlApzHubiknZoJ8sUq2BWPV_ZGTQ9WnpI40SGp2ZoKGtG-klTCAWE_xwj9MnYvahMA/s1075/image13.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivXaNBWoo0gFo6T3isHhfo5twHMBHdkXppN-keww-YwAZkP789dogcoDoz9EvM4iaA-H50sBZClaYgzCk8kbp5QwmDk9Fn0Xo1VqIuL6uGUDdPtyHGHdajzMO7dlApzHubiknZoJ8sUq2BWPV_ZGTQ9WnpI40SGp2ZoKGtG-klTCAWE_xwj9MnYvahMA/s600/image13.png" width="600"/></a>
+Obfuscated VBS.
+Once deobfuscated, the VBS execution is straightforward: It retrieves and executes the next stage from an attacker-controlled server. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-O5VpCuj-e0EJiOXA_lT2HjFCvpYy1p3eWJNxMSvsfDgJ4Ik0AhKgEIYb6yKx5y415KpZEHyUud9XdyWmrRhJITidE5ZQmjaXRbmDt1-ZCsg-BX-EVrf4zffdtEI9AQHpwxF85weDfgWdmZvtsirly60VYtLVdq77CVOX5xlNju_LbDj7pp8viLdpRw/s779/image4.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi-O5VpCuj-e0EJiOXA_lT2HjFCvpYy1p3eWJNxMSvsfDgJ4Ik0AhKgEIYb6yKx5y415KpZEHyUud9XdyWmrRhJITidE5ZQmjaXRbmDt1-ZCsg-BX-EVrf4zffdtEI9AQHpwxF85weDfgWdmZvtsirly60VYtLVdq77CVOX5xlNju_LbDj7pp8viLdpRw/s600/image4.png" width="600"/></a>
+Deobfuscated VBS.
+<h3 id="h.b3j5mjnnkmmy">Stage 2 retrieval</h3>
+As expected, the retrieved content is a PowerShell script passed to the Invoke-Expression (IEX) cmdlet and executed to continue the infection process. It is mainly responsible for creating a series of scripts that are executed and carry out various tasks needed for the malware to function. 
+Across various samples analyzed, the directory locations and file names vary, but are functionally equivalent.
+First, the script checks for the existence of a directory at the following location:
+C:\ProgramData\Facebook\System32\Microsoft\SystemData
+If it doesn't already exist, the directory is created. This folder is used as the working directory for the malware and stores all the components used throughout the rest of the infection process.
+The script then creates several additional scripts, writing content into each of them using a format similar to the following example. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3R8B26-NjXxxaEx0rZMpeKy4OQxne8MxGl57MlNib4fRQrTDt00nu43uqJ1wH43kvYbVSm1nJNSss2eP91cUkMWgUmNWDQ0qO0L50fxhMH_HgQ08Ckmv5JAJzvtqOgIclcWPG5aKaHf6XK9nwipg7nrNsQTJLNcTmQAKasMdYU5omYuOggLi7FKs3EQ/s761/image9.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi3R8B26-NjXxxaEx0rZMpeKy4OQxne8MxGl57MlNib4fRQrTDt00nu43uqJ1wH43kvYbVSm1nJNSss2eP91cUkMWgUmNWDQ0qO0L50fxhMH_HgQ08Ckmv5JAJzvtqOgIclcWPG5aKaHf6XK9nwipg7nrNsQTJLNcTmQAKasMdYU5omYuOggLi7FKs3EQ/s600/image9.png" width="600"/></a>
+Script creation code example.
+The following files are created in this manner:
+<ul>
+<li>
+Office.bat</li>
+<li>
+Office.vbs</li>
+<li>
+Office.ps1</li>
+<li>
+Microsofd.bat</li>
+<li>
+Microsofd.vbs</li>
+<li>
+Microsofd.ps1</li>
+</ul>
+All of these scripts are stored in the previously created directory. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcNDHnksg4_Y05ttnjx_ujqik--DdY15GyvwFE4ysZZF5vM2Fi9tHMHfO_ao25WzKgSyBsuo7CgcVLUeUEoh5JvNpmTZM8YnWqXGBJi7HJh6uv2xdS902Y09suWVXA2_fvEGMggeEC8MOgGz14uh7spjvwQN7HwKHnBEaFBjj0WWta68XEzvnEhuUy5w/s591/image11.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjcNDHnksg4_Y05ttnjx_ujqik--DdY15GyvwFE4ysZZF5vM2Fi9tHMHfO_ao25WzKgSyBsuo7CgcVLUeUEoh5JvNpmTZM8YnWqXGBJi7HJh6uv2xdS902Y09suWVXA2_fvEGMggeEC8MOgGz14uh7spjvwQN7HwKHnBEaFBjj0WWta68XEzvnEhuUy5w/s600/image11.png" width="600"/></a>
+Malicious script components.
+Finally, the Stage 2 PowerShell executes "Office.vbs" to begin the next step of the infection process.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwVS0IVpixmiPSqDm6xnwmP4iXPyzLa_QjupmVdfoJNSkTzqmiAUbr_xdaFy2i7LeHVutCXiFuoTIVfcdCMXYR6Zr9OoX0To6bTaG8YyGBL8upxJB2NylFYDvvYEiH0PFZDIo65B2aJXeAf4nF1ZUwTVsajuiSyrtQ899Y5yDc_1VwQp4YzS0WOyN3DQ/s642/image14.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhwVS0IVpixmiPSqDm6xnwmP4iXPyzLa_QjupmVdfoJNSkTzqmiAUbr_xdaFy2i7LeHVutCXiFuoTIVfcdCMXYR6Zr9OoX0To6bTaG8YyGBL8upxJB2NylFYDvvYEiH0PFZDIo65B2aJXeAf4nF1ZUwTVsajuiSyrtQ899Y5yDc_1VwQp4YzS0WOyN3DQ/s600/image14.png" width="600"/></a>
+VBS execution.
+<h3 id="h.krpqffi3u20w">Stage 3 operations</h3>
+Stage 3 is responsible for the majority of malicious activities performed on infected systems. The first script, "Office.vbs," is executed by the Stage 2 PowerShell and invokes WScript to execute a batch file called "Office.bat" to continue the infection process.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoE7I9mmhAfjJ3_cnR7efkMQozv97X2EDgPWETjT4mRz7NpZfryq7-WdcWjr3ampkVt-K1bejZCt_PUvEXcJUpUQXukF3cvVaYtIzIi4DUweBUTZdpDCk_2kj2fW80ySnx6UuZI_QCEvvlaynotV5QO-JnU-46GNrU1-k8zr_tX7ByvaXdqCis1N1szA/s754/image7.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhoE7I9mmhAfjJ3_cnR7efkMQozv97X2EDgPWETjT4mRz7NpZfryq7-WdcWjr3ampkVt-K1bejZCt_PUvEXcJUpUQXukF3cvVaYtIzIi4DUweBUTZdpDCk_2kj2fW80ySnx6UuZI_QCEvvlaynotV5QO-JnU-46GNrU1-k8zr_tX7ByvaXdqCis1N1szA/s600/image7.png" width="600"/></a>
+WScript batch file execution.
+This batch file, in turn, executes a PowerShell script called 'Office.ps1'.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPA43OH86Xb-TbyTOGrKUwjHaxMR1qcGxDh6DNLZcMtCA6XXDuHHSbyplJBG-NG5Sa76Cu24Qm0eaFv_FyJwaW5EIL5Tj-Ph3nydmWkNuUuFQ2npUY4VJUdWQGnS7G1aQMyGSsfNmkxepouH3aDu8w3qdUHE7k6swClEysYrC6vJgwlOXKav3VCNaeYA/s755/image15.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhPA43OH86Xb-TbyTOGrKUwjHaxMR1qcGxDh6DNLZcMtCA6XXDuHHSbyplJBG-NG5Sa76Cu24Qm0eaFv_FyJwaW5EIL5Tj-Ph3nydmWkNuUuFQ2npUY4VJUdWQGnS7G1aQMyGSsfNmkxepouH3aDu8w3qdUHE7k6swClEysYrC6vJgwlOXKav3VCNaeYA/s600/image15.png" width="600"/></a>
+PowerShell script execution.
+The next PowerShell script attempts to achieve persistence by creating a new Scheduled Task called "Office" that is executed immediately and then repeated every two minutes, as shown below.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjO3KqI6aRfAX-hHilVDjg9jffbpBM8J8Dd4tUXfClIBVeYxBXd6SFZiJIiEKhtA69NizlTzFu-MPeEy38aU31BNd4f45bCqRpNLsr88pr9JxPhQFXXwGECqhnllTWSNdYj2ObPKsVTYbRgYAMrFXAzrZ9KsTjtvBWmdp1e0vl19Rr9slq9IIKSuIwgaw/s767/image17.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjO3KqI6aRfAX-hHilVDjg9jffbpBM8J8Dd4tUXfClIBVeYxBXd6SFZiJIiEKhtA69NizlTzFu-MPeEy38aU31BNd4f45bCqRpNLsr88pr9JxPhQFXXwGECqhnllTWSNdYj2ObPKsVTYbRgYAMrFXAzrZ9KsTjtvBWmdp1e0vl19Rr9slq9IIKSuIwgaw/s600/image17.png" width="600"/></a>
+Scheduled task creation.
+This scheduled task then executes "Microsofd.vbs" as part of the creation process. This next VBS initiates a short sleep before continuing. It is only responsible for executing "Microsofd.bat" to continue the infection process.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgo1S61YPdRZbOcBEvnm_jx1y0EI8y4Ll3uVv-9NTYrwmXrv5B6u09nKpsJOoOBTH7bToYeonShNf-nknvnXUd4qd9DSKjdiqQif_sipLX-03DwZYfNoYrZzt9Nhdl5-hdAYtW6Ueea1kfpjXuvzz3DybIXHdcuJ_h9pYf-OURhy4DZABpnDlUnuMtWyA/s757/image6.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgo1S61YPdRZbOcBEvnm_jx1y0EI8y4Ll3uVv-9NTYrwmXrv5B6u09nKpsJOoOBTH7bToYeonShNf-nknvnXUd4qd9DSKjdiqQif_sipLX-03DwZYfNoYrZzt9Nhdl5-hdAYtW6Ueea1kfpjXuvzz3DybIXHdcuJ_h9pYf-OURhy4DZABpnDlUnuMtWyA/s600/image6.png" width="600"/></a>
+WScript execution.
+This next batch file only contains a single line, which invokes PowerShell and executes 'Microsofd.ps1'
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDWDPIUuAptgnWC-mzh_lq4pFjdFhEmzvUKFnJRseSj4WPzlpBiXRr0xd7f9gOnmyuMS0XK92_aoHPbEtByUYWBkmPBcF_Syoc3n6nu00r8T-_ImCNp_ahik_61PdF5BqCLZ5z0ywD1wU34dVhKx1YJHpqnwlXf9DjiQK76JVOJD4u96pOyHSellmK8Q/s722/image2.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDWDPIUuAptgnWC-mzh_lq4pFjdFhEmzvUKFnJRseSj4WPzlpBiXRr0xd7f9gOnmyuMS0XK92_aoHPbEtByUYWBkmPBcF_Syoc3n6nu00r8T-_ImCNp_ahik_61PdF5BqCLZ5z0ywD1wU34dVhKx1YJHpqnwlXf9DjiQK76JVOJD4u96pOyHSellmK8Q/s600/image2.png" width="600"/></a>PowerShell execution.
+This PowerShell script is the final script executed in this chain. It was written by the Stage 2 PowerShell, along with the other scripts that we've described. This script contains two large GZIP blobs and another function responsible for decompressing them. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjKpg7C6HKMQ4QXvdxmrorw_EGVpOulXwoYU3xmlBnc2KmLyb_39PhiXnVgZuUBa6AnwBMNK7Cb3Nk49-hBlSF5I5w-gkFgVlp5gQfQoVj1q8Nz0T02pNbIltwKGPYDPHUQO-Bd7SAxut6335wM1aDgivUp5PNmAw_SomDHqSXw_ExMZ8a1-z_6K-7Reg/s673/image1.png"><img alt="" border="0" height="600" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjKpg7C6HKMQ4QXvdxmrorw_EGVpOulXwoYU3xmlBnc2KmLyb_39PhiXnVgZuUBa6AnwBMNK7Cb3Nk49-hBlSF5I5w-gkFgVlp5gQfQoVj1q8Nz0T02pNbIltwKGPYDPHUQO-Bd7SAxut6335wM1aDgivUp5PNmAw_SomDHqSXw_ExMZ8a1-z_6K-7Reg/s600/image1.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Stage 3 decompression function.
+One of the blobs is an injector and the other is the final payload that is injected and executed. This is accomplished by invoking aspnet_compiler.exe, injecting the final payload, and executing it. 
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkNmSNa84fkNQcEfSud009-d3_rImkvtA0eyXqS8kF9iSzUaoNVd7UIYjP03nU3mUBN4i94ZZxrWw1KUGkcDdPkNzbbwqS4ginhXGGITCbj4KowLoRl04WFITLiAh_af8rJs85vuQCNw--1HFkb0Dwv-EgdnqjWqqBjiPOuXldrlnndwDPWF_EpOAmBw/s704/image12.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhkNmSNa84fkNQcEfSud009-d3_rImkvtA0eyXqS8kF9iSzUaoNVd7UIYjP03nU3mUBN4i94ZZxrWw1KUGkcDdPkNzbbwqS4ginhXGGITCbj4KowLoRl04WFITLiAh_af8rJs85vuQCNw--1HFkb0Dwv-EgdnqjWqqBjiPOuXldrlnndwDPWF_EpOAmBw/s600/image12.png" width="600"/></a>
+Stage 3 injection process.
+The diagram below shows the execution flow.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcXYP83-1wKQPbp8UXeXci6EfEOUOQi1ljTNEssw-_PiT2ZKddJtFgCde6G36Ky4Nc0Ba7N_jcq4ivEUc7BiPJY7fiT5LWQQ5WHD4uI6NENRDt6hgxlsddLQ8VXiFAToD0id4JLuF8kRizymuHjMEvIvl6Hin2pHeGUtpkNoQryBr8-L8Ik2Zl06prQw/s1999/image16.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgcXYP83-1wKQPbp8UXeXci6EfEOUOQi1ljTNEssw-_PiT2ZKddJtFgCde6G36Ky4Nc0Ba7N_jcq4ivEUc7BiPJY7fiT5LWQQ5WHD4uI6NENRDt6hgxlsddLQ8VXiFAToD0id4JLuF8kRizymuHjMEvIvl6Hin2pHeGUtpkNoQryBr8-L8Ik2Zl06prQw/s600/image16.png" width="600"/></a>
+Infection flow diagram.
+The final payload varied across samples analyzed, the majority of which were AsyncRAT and LimeRAT. Based on the RAT configuration embedded in the samples, we believe with high confidence that the same threat actor(s) are likely leveraging both RATs in these campaigns.
+<h3 id="h.arrp9gq59ibv">Links to 3LOSH crypter</h3>
+During our analysis of the samples, infrastructure and final payloads associated with these campaigns, we identified several characteristics that indicated a new version of the 3LOSH builder/crypter used to obfuscate the RAT payloads and facilitate the infection process. 3LOSH crypter is a malware crypter we previously analyzed <a href="https://blog.talosintelligence.com/2021/08/rat-campaign-targets-latin-america.html">here</a>. 
+In analyzing the code execution of the Stage 2 PowerShell, we noticed some similarities with later stages of the infection process described in our previous analysis of the 3LOSH builder. The code present in our initial sample set featured a significant amount of similarities and overlap with samples we identified associated with a new version of 3LOSH. This new version of the crypter features the following notable changes from previous versions.
+<ul>
+<li>
+Binary payloads are now embedded using GZIP compression rather than simply Base64 encoded and scripts feature a decompression function that is the same across both sample clusters. </li>
+<li>
+The infection chain is more complicated, featuring the use of multiple script-based components (BAT, VBS, PS1) that facilitate the infection process.</li>
+</ul>
+While there are also differences between the two clusters, this may be due to the threat actor only utilizing the portion of the builder output required for their purposes, or this may be due to options selected during the build process. 
+Additionally, while analyzing our original sample cluster and new samples created using the 3LOSH crypter, we identified several final payloads in both clusters that use the same infrastructure for post-compromise C2 communications.
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiciieYhKsv6YAQfLBZzlNCadAi8UjCFUwcP6wUS1qdx-tXEm3KDmTnxf0QvHiem02eTLv9hcnDfHyRw_Oi4ePpc0k1SgcWAhmDrt3Rvx1omz_L6idCE7aOkiiTESnUckuC0fIi5tDhx8BDXQvzHL3S0PHib2ERHdQ25aOurpIodyxVimulxLjXO5BOmA/s700/image3.png"><img alt="" border="0" height="600" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiciieYhKsv6YAQfLBZzlNCadAi8UjCFUwcP6wUS1qdx-tXEm3KDmTnxf0QvHiem02eTLv9hcnDfHyRw_Oi4ePpc0k1SgcWAhmDrt3Rvx1omz_L6idCE7aOkiiTESnUckuC0fIi5tDhx8BDXQvzHL3S0PHib2ERHdQ25aOurpIodyxVimulxLjXO5BOmA/s600/image3.png" style="max-width:80%;height:auto;width:auto;"/></a>
+Matching RAT configs in both sample clusters.
+While analyzing one of the AsyncRAT payloads in our original sample cluster, we also observed that the Group_ID in the embedded RAT configuration was set to "3LOSH."
+<a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgyPMy5Ojw2MD8PWDyy-ZyFIA-1OurqkfES5HWkdRaOgUNkxVSVrU4pB7wEstLC7jSJ1tcT0yBT89JzBw6OlT3eJQbN1x3Y9UzhT7YGZ1mK8gofKhUZ0gQExR7j-9SyywSxevn669OFY4Xloqtuuh2DCHLCSkF07lTk4c4UoWwPbs2aNr_uZnEpn9HbaA/s517/image8.png"><img alt="" border="0" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgyPMy5Ojw2MD8PWDyy-ZyFIA-1OurqkfES5HWkdRaOgUNkxVSVrU4pB7wEstLC7jSJ1tcT0yBT89JzBw6OlT3eJQbN1x3Y9UzhT7YGZ1mK8gofKhUZ0gQExR7j-9SyywSxevn669OFY4Xloqtuuh2DCHLCSkF07lTk4c4UoWwPbs2aNr_uZnEpn9HbaA/s600/image8.png" width="600"/></a>
+3LOSH group identifier
+3LOSH continues to be under active development and in use by threat actors distributing a variety of commodity RATs. We expect that this activity will continue and organizations should ensure they maintain the ability to detect malicious activity associated with 3LOSH, independent of the final payload itself.
+<h2 id="h.30ifzg7o2pgg">Conclusion</h2>
+These malware distribution campaigns have been ongoing for the past several months, with new samples being uploaded to public repositories on a daily basis. The 3LOSH crypter continues to be actively maintained and improved by its author and will likely continue to be used by various threat actors attempting to evade detection in corporate environments. Organizations should be aware that even commodity malware can take advantage of the complexity and evasiveness offered by crypters to increase their operational effectiveness as adversaries attempt to leverage them to achieve their mission objectives. A layered defense-in-depth security architecture should be implemented to ensure that organizations maintain the ability to successfully defend against these threats. 
+<h2 id="h.cppg99goporo">Coverage</h2>
+Ways our customers can detect and block this threat are listed below.
+<a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/index.html">Cisco Secure Endpoint</a> (formerly AMP for Endpoints) is ideally suited to prevent the execution of the malware detailed in this post. Try Secure Endpoint for free <a href="https://www.cisco.com/c/en/us/products/security/amp-for-endpoints/free-trial.html?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Damp-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Damp-free-trial">here.</a><a href="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhi8OtaNlveV_CTsGJrcy2EkiCU4NEt1CHk1-wDUtRyx7pl0GTuU_ZtqtzDN97q_jTKcJMM2vC2bsVdik7LyJgN1coERklWPG9XwHa0ukr_Ry7chWgdabpWapwgi9gQ1nhefM4Jy0yLuSroP5l2Bm1xpmqLmdZJdlYZ147DDnXaXWYox8zGQMytYEuXKA/s1196/image10.png"><img alt="" border="0" height="311" src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhi8OtaNlveV_CTsGJrcy2EkiCU4NEt1CHk1-wDUtRyx7pl0GTuU_ZtqtzDN97q_jTKcJMM2vC2bsVdik7LyJgN1coERklWPG9XwHa0ukr_Ry7chWgdabpWapwgi9gQ1nhefM4Jy0yLuSroP5l2Bm1xpmqLmdZJdlYZ147DDnXaXWYox8zGQMytYEuXKA/w320-h311/image10.png" width="320"/></a>
+<a href="https://www.cisco.com/c/en/us/products/security/web-security-appliance/index.html">Cisco Secure Web Appliance</a> web scanning prevents access to malicious websites and detects malware used in these attacks.
+<a href="https://www.cisco.com/c/en/us/products/security/email-security/index.html">Cisco Secure Email</a> (formerly Cisco Email Security) can block malicious emails sent by threat actors as part of their campaign. You can try Secure Email for free <a href="https://www.cisco.com/c/en/us/products/security/cloud-mailbox-defense?utm_medium%3Dweb-referral%26utm_source%3Dcisco%26utm_campaign%3Dcmd-free-trial-request%26utm_term%3Dpgm-talos-trial">here</a>.
+<a href="https://www.cisco.com/c/en/us/products/security/firewalls/index.html">Cisco Secure Firewall</a> (formerly Next-Generation Firewall and Firepower NGFW) appliances such as <a href="https://www.cisco.com/c/en/us/products/collateral/security/firepower-ngfw-virtual/datasheet-c78-742858.html">Threat Defense Virtual</a>, <a href="https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html">Adaptive Security Appliance</a> and <a href="https://meraki.cisco.com/products/appliances">Meraki MX</a> can detect malicious activity associated with this threat.
+<a href="https://www.cisco.com/c/en/us/products/security/threat-grid/index.html">Cisco Secure Malware Analytics</a> (Threat Grid) identifies malicious binaries and builds protection into all Cisco Secure products.
+<a href="https://umbrella.cisco.com/">Umbrella</a>, Cisco's secure internet gateway (SIG), blocks users from connecting to malicious domains, IPs and URLs, whether users are on or off the corporate network. Sign up for a free trial of Umbrella <a href="https://signup.umbrella.com/?utm_medium%3Dweb-referral?utm_source%3Dcisco%26utm_campaign%3Dumbrella-free-trial%26utm_term%3Dpgm-talos-trial%26utm_content%3Dautomated-free-trial">here</a>.
+<a href="https://www.cisco.com/c/en/us/products/security/web-security-appliance/index.html">Cisco Secure Web Appliance</a> (formerly Web Security Appliance) automatically blocks potentially dangerous sites and tests suspicious sites before users access them. 
+Additional protections with context to your specific environment and threat data are available from the <a href="https://www.cisco.com/c/en/us/products/security/firepower-management-center/index.html">Firewall Management Center</a>.
+<a href="https://signup.duo.com/?utm_source%3Dtalos%26utm_medium%3Dreferral%26utm_campaign%3Dduo-free-trial">Cisco Duo</a> provides multi-factor authentication for users to ensure only those authorized are accessing your network. 
+Open-source Snort Subscriber Rule Set customers can stay up to date by downloading the latest rule pack available for purchase on <a href="https://www.snort.org/products">Snort.org</a>. Snort SIDs: 58087, 58773. 
+<h4 id="h.yty1f9c9rjge">Orbital Queries</h4>
+Cisco Secure Endpoint users can use <a href="https://orbital.amp.cisco.com/help/">Orbital Advanced Search</a> to run complex OSqueries to see if their endpoints are infected with this specific threat. For specific OSqueries on this threat, click <a href="https://github.com/Cisco-Talos/osquery_queries/blob/master/win_malware/malware_asyncrat_mutex_detected.yaml">here</a> and <a href="https://github.com/Cisco-Talos/osquery_queries/blob/master/win_malware/malware_limerat_mutex.json">here</a>.
+<h2 id="h.d7789d4yzlzz">Indicators of Compromise</h2>
+The following indicators of compromise have been observed to be associated with these malware campaigns.
+<h3 id="h.8qf9qqpumayp">Stage 1 ISOs</h3>
+The following ISOs have been observed to be associated with these malware campaigns.
+4567abc4645a8f9414c6d642763d47a2678bf00fefe9e02677664b1c1b35c226
+64836303a8eb58b7c5660211e085e3e42b2f4a068aeee88ede30eaa1b9cc4898
+c174daa66473073d55fca74107642b43938c832b6c57a2e35c5b6998b89becc8
+ed22a3a0314aa108d3e2a5f89fc90eb4d32a07a83e4a16a0e778ec3dae8e3406
+<h3 id="h.224kcw58c03n">Stage 1 VBS</h3>
+The following VBS have been observed to be associated with these malware campaigns.
+0e1d80e1868067b61194539818ac5cd517fb17ab6644492b8d9926f7c400efbb
+15ebbc7c74e36fdfb677c56fb94db874a29ed995548c226fc38bd2977f4462c6
+1a072171f489d1ae560368b82eeaf6dc4797fcfc7c0a8e53a635311c33fd061d
+1cecb3e057afa5ad2150c74e1db583d5fda9780cba9d0e3bbaf2c6a4a345173a
+26716b84938ec82bd3847d6c45fa2b2b502d1475dc31e735fd443b7a7c70dd44
+2b9229dd6d60c44b28afea7fddd30ec889583184ff51cba03b156d8a96a41c92
+336d41e4e6380dccd03791f4b25c840de9268f750b7e9db1e842f5cea60342d5 
+4fb011aa84514cd8cf5896134383b327abe213d28f2bb4bff614e8beb03540b5
+8595efa76a38e37ee168f811382cb46b801582cedc6a11b6399e50eaa3c92f2d
+b8fb2174816014c9033236a62469308542aa02d76c9219f8569ac3a4e4db3b7e
+c0a62c7b8100381f3562413a33b8edcdcf7996ce6663918a1f0e08a0a14c0632
+c137cb7cc4bdd9fa2376b8fc4329b31a6cf5fbff2c094e820d73929e2215af94
+df710408a6c93ad71c6bca3133ac6e767c269908be26352793b11b2fdee56f68
+fd664f3203418b3188ef00dac1b17bf1c4322946797cfdcce6ff10c0f50ca560
+<h3 id="h.qvyyb06oexo0">Stage 2 Retrieval</h3>
+The following URLs have been observed hosting malicious content retrieved during the infection process.
+hXXp[:]//ia801400[.]us[.]archive[.]org/26/items/auto_20220216/auto.txt
+hXXps[:]//afomas[.]com/wp-admin/images/Feb_MA2.mp3
+hXXps[:]//archive[.]org/download/auto_20220216/auto.txt
+hXXps[:]//archive[.]org/download/my44_20220211/my44.txt
+hXXps[:]//blankinstall[.]info/build/x.mp3
+hXXps[:]//cdn[.]discordapp[.]com/attachments/777508363029184525/935168254744358952/log.mp3
+hXXps[:]//cozumreklamkayseri[.]com/.Fainl.txt
+hXXps[:]//isoeducationjo[.]com/.well-known/mo.mp3
+hXXps[:]//kediricab[.]dindik[.]jatimprov[.]go[.]id/wp-admin/x.txt
+hXXps[:]//onedrive[.]live[.]com/Download?cid=358166AEFCA69E90&amp;resid=358166AEFCA69E90!124&amp;authkey=AGvLNowfByqo5eo
+hXXps[:]//usaymaboutique[.]com/assets/assets.txt
+hXXps[:]//uxsingh[.]com/uxsingh.jpg
+hXXps[:]//v3-fastupload[.]s3-accelerate[.]amazonaws[.]com/1643406871-d.mp3
+hXXps[:]//www[.]atgame888[.]com/wp-admin/Feb_MO2.mp3
+hXXps[:]//www[.]wordpressthemesall[.]com/wp-admin/Feb_MA2.mp3
+hXXps[:]//y-menu[.]com/wp-admin/MA.txt
+<h3 id="h.s8vv7y4pnfrf">Stage 2 PowerShell</h3>
+The following PowerShell scripts have been observed to be associated with these malware campaigns.
+056ad376ac33b673ff42800ff76e46858a6962330c385764aee28a867561f1fa
+08c71c3b57502a3fca75c1b99c26a41dadc4ff306faf4d4826776b158cb9a0ae
+095157229bfad3a0e9a11be7c0b091a42ae4d25738bb3bfefb53b9321d223a6f
+14e2b83be56385a2ac35417bcc0a7c7e2feb82e2cc80bdc99d83e64c6f46de74
+1b994d16f099959bae626c1eaac7d0dd4118e54d09f717e05471c7637eea3a3b
+1f1190402f67e1550f635954b97a0d1da066081a2b5d0036f5bac638762b695a
+24cc7e002bbfb6abacfd457c8fc3163f999647aa7e84ac638928cb4b1c8ce696
+33181a1409ebbe46bdf1e7f15654d7aab84a5f421e7990b87a2db39e108fc0fc
+348482bf977f22e407b002abeca1da976efae9d90a7574fe902493e86eef9a87
+3adcf1c2e12f0666d98e79cd0877d98ddc7f66a6f8b39a0507662d003ce1e90b
+5078576d59522e8c145238e611d51e55fa89844c3cf7b7331ee02546cb77d59b
+5c753437ffac8d5b6e0540916d1679959f2d256fff338cd037d3decee3cf1143
+5e0e49c1faea3e1d0017d0ed76f09bb7fa50c8497e6535b9dc8c38dbf056e7f8
+61c2da0eedb3628ec28a9b472d530bba555ba96fcde46fe234b6cfb6d4296440
+65662716c873a01e216c8370eac2fe946a20f805a205e46d68f01a163f48104e
+6b9eb5ffb1bf9a7a8d2a3e9a5ab4805324805bc7206f60ad039b0a6cd36d9940
+6df53c77b343a597de566fa9e2ec1bcfbb25e4f7c7e7a104ed48887daee29533
+7226d29a62bfc505a5cd9c8d13603237821caa5075bea311f095272334827e58
+740805cc00932464b414afc340856d83a8b8fe4e42c3ad147a5b6c93aba124ef
+76688a6433408e165ccdbbd9d2ba655c2684a59efe4a2c7c6c2a257c3111d175
+794f760e12ecd8a2fe4a3229542403c6090b98886a0eb5166f9dbfc6972f6a11
+7d823dffc0086373d053686fdb01308d8e18d403a66b1f1d64360aba391a2c15
+91d5b515b82fc61a6fcc7d433a1fd2434d2d9ff0dbb4da9a25fb972ac700ac3a
+939afa2234d2545a8a41c3ed2d3a2e1fd3d58f4586ac10d62f83e9a09bf33375
+93e32c6fd08dbf798c0242f953eb0cb7b8470d4b0430ac4b2837d1e0382ab4d2
+a6238fb73d70a1a6b050afc265306b5232b89793bd129a76b8daf7f5220fea61
+b323f59257425527c4137c629f430944e8236950717e86f33158c94ef6260a1c
+b89e4e8c11df06410f73ff1f4b545d0ef1bf561f14ddb95d2b04ec253911e922
+bf275f267ea61ecb3d1b26f58df6d26be00eabe521d2c2801f9c788e084b2f72
+c489721f00041183f9ff770d2274ec71325bf0211842e12e56218f5b55db980c
+cc08a2291dcdf40026e70a28d4b1ce30909d53e5a03727207c8b86e63365f101
+cde8a2b658ab6276143cc78a2c72487e963fefad522a7eaf218fd6920f57748a
+f143993fb7625d0ed1b840a07a79004fcb112c6d02d9f1147d2495d4d75b41ee
+f5dfb4f2a705382febc62f4fdb7ae2169a98898830325186663954d05903b8fb
+<h3 id="h.gcwd615n7kjt">Stage 3 Binaries</h3>
+The following executables have been observed to be associated with these malware campaigns.
+0303634830257bc5c3dfcf18c143286e212bd9034b29976e6349b05b5389c8a5
+0e6a1e936ae9dac9856a86091c237537e72d2e8547596dab99e902ccd51be10f
+10af68c3aac1062fa57580c6c5bc6b424cd7bdb1ce343d3b492797ce12225e5b
+134547b06fbbed959078cea590d4b9ec0840dd243b666fec48ca17ca46f7483a
+285f00996ccc5181b488a48cfb06a1c502f0bfb05d5e5dd9395ea08ff71931ee
+30defa2c31255690a794a30a58c865b8782cb5f312b77aaa447ebe19f30a3f47
+39502d41bc6ef654cf6de2e83e359efb8e165cf0207a05d34359df912a545ff3
+3efd7f5f6baa977538b14c6bf2f8e6db5bf184a3426a1f5ae8e05055e4f74f13
+56cc64a44c317a21a047d657d06206a81e1e69649734618996390adc6f94c3bb
+5bd6ea920506cb3fb78bca78ea2b119549ed41747a67659b61ccd4ac8407f5e5
+6153296afbae79678f9881e36cb06ad7ae8d24bd8b3a7e7f5232a035848429d3
+6182c770438dccb334e03ea33cfacefd14ac7481de7b05725e62f5fe1c42b744
+81e6bf9154859d5969dc52358a837b8a8bf935d4aa4a7fc9de9c4adbc9fd1a82
+86f28e4f9082153f67ccad25fe90ab356d67ee3d37fdfd47cb9f1314d2ce0e27
+8a8959f6db5e131c40d3adbe37f4e0a8bad4710839e37143787c8f4c217527ef
+909548989b139eeabd58d8dc870597f564ffd7d1ce2e3ac51514d29bbaf29521
+954012293bc09af071c459e75758497243722889b592881aed9b08cd14df187e
+954a98f159cf1b3c284121c1e2d4c41402d94d9c0c2a88b66334108992917da6
+a038fcf860aea94e4212ac5754b3e0f3d0dac8ca4254e4f7b2140ed45da089a1
+b598aea572ab51e15dfd3242ec2f140ec72c7148678587b50e6a0ec10504990f
+b5ceba46321ae47006571c16f7f5248b774d32bd88d991fd1a043e862c1c33d9
+cd76236956f087fc11bc2aefe1b12f623f46a7f041ecb07b05aa699ba1f1b300
+df63df19dfd21af2f3064d6577c0ef09a07cd7367f8242b9e252d5d59712c26f
+eaeef725cb557891ae598da5cece9bf41bae46a65876491c835e3821b23f54a2
+eb3e27121f8ff722665e647ca4eb72a648d72ab56dc07f07379ad1ae3035256d
+efb02cc006bebad4e092e6c550a89fe055558ef24755a6b72c022ef669bec191
+f7c9fa1c6da6b6f4eb7ebbf3c03da49a6bc4e083dd19b7419c0acbcd76e9251f
+fbcbb275913b8765b2ba9bf96ec5e7b536483854c75f156bc68d3539df6469e6
+fded0549398bec1ef6fab78b3219ef894349ec3cdd07b1bf3bdf1c7c6a0e303b
+<h3 id="h.3pbc3qa3xkca">C2 Servers</h3>
+The following domains have been observed to be associated with these malware campaigns.
+141[.]95[.]89[.]79
+3laallah[.]myvnc[.]com
+94[.]130[.]207[.]164
+anderione[.]com
+invoice-update[.]myiphost[.]com
+mekhocairos[.]linkpc[.]net
+n[.]myvnc[.]com
+python[.]blogsyte[.]com
+Posted by
+<a class="g-profile" href="https://www.blogger.com/profile/10442669663667294759" rel="author" title="author profile">
+Edmund Brumaghin
+</a>
+at
+<a class="timestamp-link" href="http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html" rel="bookmark" title="permanent link">8:00 AM</a>
+<a href="https://www.blogger.com/post-edit.g?blogID=1029833275466591797&amp;postID=8010266687542500890&amp;from=pencil" title="Edit Post">
+<img alt="" class="icon-action" height="18" src="https://img2.blogblog.com/img/icon18_edit_allbkg.gif" width="18"/>
+</a>
+Labels:
+<a href="http://blog.talosintelligence.com/search/label/3losh" rel="tag">3losh</a>,
+<a href="http://blog.talosintelligence.com/search/label/asyncRAT" rel="tag">asyncRAT</a>,
+<a href="http://blog.talosintelligence.com/search/label/crypters" rel="tag">crypters</a>,
+<a href="http://blog.talosintelligence.com/search/label/Malware" rel="tag">Malware</a>,
+<a href="http://blog.talosintelligence.com/search/label/threat%20spotlight" rel="tag">threat spotlight</a>
+Share This Post
+<a class="facebook" href="https://www.facebook.com/sharer.php?u=http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html&amp;text=Threat%20Spotlight:%20AsyncRAT%20campaigns%20feature%20new%20version%20of%203LOSH%20crypter" rel="nofollow" target="_blank" title="Share This On Facebook">
+<img alt="Facebook share" border="0" src="https://www.talosintelligence.com/assets/icon_fb-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="twitter" href="https://twitter.com/share?url=http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html&amp;text=Threat%20Spotlight:%20AsyncRAT%20campaigns%20feature%20new%20version%20of%203LOSH%20crypter" rel="nofollow" target="_blank" title="Tweet This">
+<img alt="Twitter share" border="0" src="https://www.talosintelligence.com/assets/icon_tw-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="linkedin" href="https://www.linkedin.com/sharing/share-offsite/?url=http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html&amp;text=Threat%20Spotlight:%20AsyncRAT%20campaigns%20feature%20new%20version%20of%203LOSH%20crypter" rel="nofollow" target="_blank" title="Share This On Linkedin">
+<img alt="Linkedin share" border="0" src="https://www.talosintelligence.com/assets/icon_li-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="reddit" href="https://www.reddit.com/submit?url=http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html&amp;title=Threat%20Spotlight:%20AsyncRAT%20campaigns%20feature%20new%20version%20of%203LOSH%20crypter" rel="nofollow" target="_blank" title="Reddit This">
+<img alt="Reddit share" border="0" src="https://www.talosintelligence.com/assets/icon_re-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a href="mailto:?body=http://blog.talosintelligence.com/2022/04/asyncrat-3losh-update.html&amp;subject=Threat%20Spotlight:%20AsyncRAT%20campaigns%20feature%20new%20version%20of%203LOSH%20crypter">
+<img alt="Email This" border="0" src="https://www.talosintelligence.com/assets/icon_em-share_grey.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+</div>

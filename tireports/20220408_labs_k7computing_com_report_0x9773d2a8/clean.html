@@ -1,0 +1,59 @@
+<div>
+<img alt="" class="hidden-social-img" src="https://labs.k7computing.com/wp-content/uploads/2022/04/CryptoClipWatcher.png" style="max-width:80%;height:auto;width:auto;"/>
+<a class="uncategorized" href="https://labs.k7computing.com/index.php/category/cryptocurrency/">Cryptocurrency</a><a class="uncategorized" href="https://labs.k7computing.com/index.php/category/social-networking-apps/">Social Networking Apps</a>
+<h1 class="entry-title">CryptoClip Hijacker</h1>
+By Vigneshwaran PApril 8, 2022
+ 
+<p></p><p>Stealing crypto-currency is not new to threat actors. Thinner profit margins from mining makes stealing the coins from wallets more lucrative. One of the common techniques is to scrape the clipboard for wallet addresses and replace them with that of the attacker’s own address. The victim is left with no knowledge of the theft happening.</p>
+<p>In this blog, we will be looking at one such CryptoClip hijacker malware, that was generally seen to be spammed out via Discord. Discord is one of the ways to stay in touch with people of a common interest. Hence spamming out CryptoClip hijacker malware to Discord servers that discuss crypto trading, mining would mean the malware reaches people who are actively dealing with crypto currency.</p>
+<p>An unsuspecting user could download and execute these binaries. This malware could be spammed out via the traditional e-mail attachment technique too. We found one such malware that had the filename CryptoClipWatcher.exe, probably trying to pose as the safe CryptoClipWatcher tool.</p>
+<h3>Binary Overview</h3>
+<p>This binary is .NET compiled</p>
+<figure class="wp-caption aligncenter" id="attachment_23761"><img alt="" class="wp-image-23761 size-full" height="535" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-1.png" width="474"/><figcaption class="wp-caption-text" id="caption-attachment-23761">Figure 1: Version info of the malware</figcaption></figure>
+<p>This file’s version information and the internal name was spoofed to be like svchost.exe. Legitimate svchost.exe file would be Microsoft Visual C++ 8 compiled, and not .NET as observed in Figure 1. The file is also signed with a fake digital certificate as shown Figure 3.</p>
+<figure class="wp-caption aligncenter" id="attachment_23763"><img alt="" class="wp-image-23763 size-full" height="200" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-2.png" width="376"/><figcaption class="wp-caption-text" id="caption-attachment-23763">Figure 2: Digital Certificate information</figcaption></figure>
+<p>The malware uses a simple decryption logic for all its encrypted data. First the encrypted string and a key ( ‘UUdkUzZTQkFtMXlKTkE3Zw==’) is decoded in base64 format. Then the decoded string is XORed with the decoded key. Figure 3 depicts this decryption process.</p>
+<figure class="wp-caption aligncenter" id="attachment_23764"><img alt="" class="wp-image-23764 size-full" height="224" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-3.png" width="486"/><figcaption class="wp-caption-text" id="caption-attachment-23764">Figure 3: Code to decrypt/decode</figcaption></figure>
+<p>Even the file’s original filename was seen as base64 encoded and XOR encrypted. The decoded value was EjUdI0I8AS0EQS4rOiJfAiM=: crypto clip watcher. which as mentioned earlier is the name of a legitimate crypto tool.</p>
+<figure class="wp-caption aligncenter" id="attachment_23765"><img alt="" class="wp-image-23765 size-full" height="112" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-4.png" width="614"/><figcaption class="wp-caption-text" id="caption-attachment-23765">Figure 4: Original file name</figcaption></figure>
+<h2>Persistence technique used in this binary file</h2>
+<p>On statically analyzing the decompiled IL binary we found the reference to a persistence entry in %APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup where the malware self copies and executes itself under the guise of svchost32.exe. Adds the same filepath to the run entry as well, under the subkey “Host Process for Windows Services” as shown in Figure 5.</p>
+<figure class="wp-caption aligncenter" id="attachment_23771"><img alt="" class="wp-image-23771 size-full" height="159" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-5-1.png" style="max-width:800px;height:auto;width:auto;" width="729"/><figcaption class="wp-caption-text" id="caption-attachment-23771">Figure 5: Persistence entry in registry</figcaption></figure>
+<p>Uses one another standard technique of adding scheduled tasks using cmd.exe.</p>
+<figure class="wp-caption aligncenter" id="attachment_23772"><img alt="" class="wp-image-23772 size-full" height="71" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-6-1.png" width="238"/><figcaption class="wp-caption-text" id="caption-attachment-23772">Figure 6: Process tree of the malware</figcaption></figure>
+<p>The self-copied file svchost32.exe is scheduled to be executed every minute by creating a job file as shown in Figure 7.</p>
+<figure class="wp-caption aligncenter" id="attachment_23773"><img alt="" class="wp-image-23773 size-full" height="167" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-7-1.png" style="max-width:800px;height:auto;width:auto;" width="893"/><figcaption class="wp-caption-text" id="caption-attachment-23773">Figure 7: The previous command line as seen statically in the decompiled binary</figcaption></figure>
+<h2>Malware Mechanism</h2>
+<p>This file has 38 crypto wallet addresses of the attacker, few of the shown in Figure 8. This addresses are also encoded with base64 and XORed with the key.</p>
+<figure class="wp-caption aligncenter" id="attachment_23774"><img alt="" class="wp-image-23774 size-full" height="513" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-8-1.png" width="305"/><figcaption class="wp-caption-text" id="caption-attachment-23774">Figure 8: List of crypto currency that are targeted by the malware</figcaption></figure>
+<p>Some of the transactions to this wallet are shown below in Figure 9.</p>
+<figure class="wp-caption aligncenter" id="attachment_23775"><img alt="" class="wp-image-23775 size-full" height="127" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-9.png" style="max-width:800px;height:auto;width:auto;" width="801"/><figcaption class="wp-caption-text" id="caption-attachment-23775">Figure 9: Encoded wallet address in decompiled code and decoded address.</figcaption></figure>
+<p>A regex pattern(“\b(79|380)[0-9]{9}\b”) is used by this malware to scrape for crypto wallet addresses. Once that is done the malware validates to which currency the scraped wallet is relevant to, using the currency wallet specific regex. These regexes are also encoded as shown in Figure 10.</p>
+<figure class="wp-caption aligncenter" id="attachment_23778"><img alt="" class="wp-image-23778 size-full" height="129" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-10.png" style="max-width:800px;height:auto;width:auto;" width="874"/><figcaption class="wp-caption-text" id="caption-attachment-23778">Figure 10: Currency specific regex encoded/decoded</figcaption></figure>
+<p>The user wallet address in the clipboard is replaced with the malware author’s wallet address. The code snippet to find and replace the clipboard content is shown in Figure 11.</p>
+<figure class="wp-caption aligncenter" id="attachment_23779"><img alt="" class="wp-image-23779 size-full" height="122" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-11_1.png" width="592"/><figcaption class="wp-caption-text" id="caption-attachment-23779">Figure11: Get/Set text from clipboard</figcaption></figure>
+<p>We checked one of the attacker’s crypto wallet addresses and found a couple of transactions being made to it, which roughly translates to about 100$.</p>
+<h2>Transactions</h2>
+<figure class="wp-caption aligncenter" id="attachment_23780"><img alt="" class="wp-image-23780 size-full" height="388" src="https://labs.k7computing.com/wp-content/uploads/2022/04/figure-12.png" style="max-width:800px;height:auto;width:auto;" width="1068"/><figcaption class="wp-caption-text" id="caption-attachment-23780">Figure 12: Transaction showing transfer of the crypto to the attackers’ wallet address</figcaption></figure>
+<p>It is always advisable to download tools or applications from reputable sources and exercise caution while using any such binaries. It is also always advisable to use a security software like K7 Total Security.</p>
+<h2>Indicators Of Compromise (IOCs) and Detections</h2>
+<p>Hash 3488617002B1652F487D5AD410CB92AF</p>
+<p>Detection Name Trojan(00545fd01)</p>
+<p>Original File Name crypto clip watcher.exe</p>
+<p>Mutex 2c092895c2e64adb</p>
+<p>Behavior suspicious program (ID 700018)</p>
+<p></p>
+<h3 class="comment-reply-title">Like what you're reading? Subscribe to our top stories.</h3>
+<p>If you want to subscribe to our monthly newsletter, please submit the form below.</p> Email* : 
+<ul class="controls">
+<li class="previous-post mouse-leaving">
+<h3>Previous Post« <a href="https://labs.k7computing.com/index.php/the-discord-token-grab/" rel="prev">The Discord Token Grab</a>
+</h3>
+</li>
+<li class="next-post mouse-leaving">
+<h3>Next Post
+</h3>
+</li>
+</ul>
+<h3 class="related-title">More Posts</h3>
+</div>

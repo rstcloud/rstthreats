@@ -1,0 +1,2092 @@
+{
+    "id": "<report_0xc7324147>",
+    "url": "https://chuongdong.com/reverse%20engineering/2022/01/06/RookRansomware",
+    "title": "Rook Ransomware. Static Code Analysis",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0x906569b1>",
+            "title": "Rook Ransomware",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xaf7fcbbc>",
+            "title": "Static Code Analysis",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xf162ad9>",
+            "title": "Rook Ransomware",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xadee35eb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdbdb054b>": "https://chuongdong.com/categories/#reverse%20engineering"
+                    },
+                    "text": "Reverse Engineering",
+                    "html": "<a href=\"/categories/#reverse%20engineering\">Reverse Engineering</a>"
+                },
+                {
+                    "id": "<sentence_0x258c7b28>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "06 Jan 2022",
+                    "html": "\n \n \u00b7 06 Jan 2022\n"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8e13d3dd>",
+            "title": "Contents",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x106b2081>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Rook Ransomware Contents Overview IOCS Ransom Note<crlf>Contents<crlf>Overview<crlf>IOCS<crlf>Ransom Note<crlf>Static Code Analysis RSA Key Generation Anti-Detection: Alternate Data Streams Command-line Arguments Logging Stopping Services Terminating Processes Deleting Shadow Copies Multithreading Setup Network Resource Traversal Drives Traversal Shares Traversal Child Thread File Encryption References<crlf>RSA Key Generation<crlf>Anti-Detection: Alternate Data Streams<crlf>Command-line Arguments<crlf>Logging<crlf>Stopping Services<crlf>Terminating Processes<crlf>Deleting Shadow Copies<crlf>Multithreading Setup<crlf>Network Resource Traversal<crlf>Drives Traversal<crlf>Shares Traversal<crlf>Child Thread<crlf>File Encryption<crlf>References",
+                    "html": "<ul>\n<li>\n<a href=\"#rook-ransomware\">Rook Ransomware</a>\n<ul>\n<li><a href=\"#contents\">Contents</a></li>\n<li><a href=\"#overview\">Overview</a></li>\n<li><a href=\"#iocs\">IOCS</a></li>\n<li><a href=\"#ransom-note\">Ransom Note</a></li>\n</ul>\n</li>\n<li>\n<a href=\"#static-code-analysis\">Static Code Analysis</a>\n<ul>\n<li><a href=\"#rsa-key-generation\">RSA Key Generation</a></li>\n<li><a href=\"#anti-detection-alternate-data-streams\">Anti-Detection: Alternate Data Streams</a></li>\n<li><a href=\"#command-line-arguments\">Command-line Arguments</a></li>\n<li><a href=\"#logging\">Logging</a></li>\n<li><a href=\"#stopping-services\">Stopping Services</a></li>\n<li><a href=\"#terminating-processes\">Terminating Processes</a></li>\n<li><a href=\"#deleting-shadow-copies\">Deleting Shadow Copies</a></li>\n<li><a href=\"#multithreading-setup\">Multithreading Setup</a></li>\n<li><a href=\"#network-resource-traversal\">Network Resource Traversal</a></li>\n<li><a href=\"#drives-traversal\">Drives Traversal</a></li>\n<li><a href=\"#shares-traversal\">Shares Traversal</a></li>\n<li><a href=\"#child-thread\">Child Thread</a></li>\n<li><a href=\"#file-encryption\">File Encryption</a></li>\n<li><a href=\"#references\">References</a></li>\n</ul>\n</li>\n</ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5587564>",
+            "title": "Overview",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xac3bd18f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This is my analysis for ROOK Ransomware.",
+                    "html": "<p>This is my analysis for ROOK Ransomware.</p>"
+                },
+                {
+                    "id": "<sentence_0x2b209e85>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7ca88466>": "https://github.com/ARMmbed/mbedtls"
+                    },
+                    "text": "ROOK is a relatively new ransomware that has been coming up in the last few months. With the Mbed TLS library, the malware uses a hybrid cryptography scheme to encrypt files using AES and protect its keys with RSA-2048.",
+                    "html": "<p>ROOK is a relatively new ransomware that has been coming up in the last few months. With the <a href=\"https://github.com/ARMmbed/mbedtls\">Mbed TLS library</a>, the malware uses a hybrid cryptography scheme to encrypt files using AES and protect its keys with RSA-2048.</p>"
+                },
+                {
+                    "id": "<sentence_0xa6c51363>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For execution speed, ROOK is quite fast since it uses a decently good method of multithreading with two global lists for file and directory traversal.",
+                    "html": "<p>For execution speed, ROOK is quite fast since it uses a decently good method of multithreading with two global lists for file and directory traversal.</p>"
+                },
+                {
+                    "id": "<sentence_0x26774621>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As it has been claimed by other researchers, ROOK borrows some of the code from the leaked BABUK source code. To be more specific, the ROOK developers copied and pasted the code for services & processes termination as well as deleting shadow copies. ROOKs multithreading approach is a reimplementation and an upgrade from that of BABUK version 3, which is now more efficient for directory traversal.",
+                    "html": "<p>As it has been claimed by other researchers, ROOK borrows some of the code from the leaked BABUK source code. To be more specific, the ROOK developers copied and pasted the code for services &amp; processes termination as well as deleting shadow copies. ROOK\u2019s multithreading approach is a reimplementation and an upgrade from that of BABUK version 3, which is now more efficient for directory traversal.</p>"
+                },
+                {
+                    "id": "<sentence_0x992f9ecb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "However, unlike BABUK devs who are big fans of using ECDH curves and eSTREAM portfolio Profile 1 ciphers such as ChaCha and HC-128 for hybrid-encryption, ROOK devs stick with the traditional choice of RSA and AES.",
+                    "html": "<p>However, unlike BABUK devs who are big fans of using ECDH curves and eSTREAM portfolio Profile 1 ciphers such as ChaCha and HC-128 for hybrid-encryption, ROOK devs stick with the traditional choice of RSA and AES.</p>"
+                },
+                {
+                    "id": "<sentence_0xc54ff3a7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8c1bcf6c>": "https://chuongdong.com/uploads/rook01.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook01.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x5b9edcc3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1: ROOK Leak Site.",
+                    "html": "<p>Figure 1: ROOK Leak Site.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xbf444d5d>",
+            "title": "IOCS",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd4e1b16b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The analyzed sample is a 64-bit Windows executable.",
+                    "html": "<p>The analyzed sample is a 64-bit Windows executable.</p>"
+                },
+                {
+                    "id": "<sentence_0xa929b55d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MD5: 6d87be9212a1a0e92e58e1ed94c589f9",
+                    "html": "<p>MD5: 6d87be9212a1a0e92e58e1ed94c589f9</p>"
+                },
+                {
+                    "id": "<sentence_0x148958ec>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "SHA256: c2d46d256b8f9490c9599eea11ecef19fde7d4fdd2dea93604cee3cea8e172ac",
+                    "html": "<p>SHA256: c2d46d256b8f9490c9599eea11ecef19fde7d4fdd2dea93604cee3cea8e172ac</p>"
+                },
+                {
+                    "id": "<sentence_0xe6fb5c08>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x76d7e8fa>": "https://bazaar.abuse.ch/sample/c2d46d256b8f9490c9599eea11ecef19fde7d4fdd2dea93604cee3cea8e172ac/"
+                    },
+                    "text": "Sample: MalwareBazaar",
+                    "html": "<p>Sample: <a href=\"https://bazaar.abuse.ch/sample/c2d46d256b8f9490c9599eea11ecef19fde7d4fdd2dea93604cee3cea8e172ac/\">MalwareBazaar</a></p>"
+                },
+                {
+                    "id": "<sentence_0x3bba32f5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x85e836d9>": "https://chuongdong.com/uploads/rook02.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook02.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x2bd72f06>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 2: VirusTotal Result.",
+                    "html": "<p>Figure 2: VirusTotal Result.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x830a032f>",
+            "title": "Ransom Note",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb6328741>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The content of the default ransom note is stored in plaintext in ROOKs executable.",
+                    "html": "<p>The content of the default ransom note is stored in plaintext in ROOK\u2019s executable.</p>"
+                },
+                {
+                    "id": "<sentence_0x8bdb8ac7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOKs ransom note filename is HowToRestoreYourFiles.txt, which is really similar to BABUKs How To Restore Your Files.txt.",
+                    "html": "<p>ROOK\u2019s ransom note filename is \u201cHowToRestoreYourFiles.txt\u201d, which is really similar to BABUK\u2019s \u201cHow To Restore Your Files.txt\u201d.</p>"
+                },
+                {
+                    "id": "<sentence_0x31b580ed>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd5dc078c>": "https://chuongdong.com/uploads/rook03.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook03.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xd7f2cd4c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 3: ROOKs Ransom Note.",
+                    "html": "<p>Figure 3: ROOK\u2019s Ransom Note.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x2dc1f316>",
+            "title": "RSA Key Generation",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x2dc2ba37>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The first thing ROOK does upon execution is setting up the RSA keys for asymmetric encryption.",
+                    "html": "<p>The first thing ROOK does upon execution is setting up the RSA keys for asymmetric encryption.</p>"
+                },
+                {
+                    "id": "<sentence_0xe088b6d6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xca50cd9>": "https://tls.mbed.org/api/structmbedtls__ctr__drbg__context.html",
+                        "<a_0xb27c89a5>": "https://tls.mbed.org/api/ctr__drbg_8h.html"
+                    },
+                    "text": "First, the malware initializes a CTR_DRBG context using the Mbed TLS library, which is used to build a pseudo-RNG to later randomly generate AES keys.",
+                    "html": "<p>First, the malware initializes a CTR_DRBG <a href=\"https://tls.mbed.org/api/structmbedtls__ctr__drbg__context.html\">context</a> using the <a href=\"https://tls.mbed.org/api/ctr__drbg_8h.html\">Mbed TLS library</a>, which is used to build a pseudo-RNG to later randomly generate AES keys.</p>"
+                },
+                {
+                    "id": "<sentence_0x1d5039d7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x88b9db24>": "https://chuongdong.com/uploads/rook04.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook04.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x51525742>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 4: CTR_DRBG Initialization.",
+                    "html": "<p>Figure 4: CTR_DRBG Initialization.</p>"
+                },
+                {
+                    "id": "<sentence_0xba7ed828>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xcacd0b1e>": "https://tls.mbed.org/api/pk_8h.html#ade680bf8e87df7ccc3bb36b52e43972b"
+                    },
+                    "text": "Next, it calls mbedtls_pk_parse_public_key to parse the TAs RSA public key into a mbedtls_pk_context struct. The ROOKs public key context is then extracted from the pk_ctx field on the newly populated mbedtls_pk_context struct.",
+                    "html": "<p>Next, it calls <a href=\"https://tls.mbed.org/api/pk_8h.html#ade680bf8e87df7ccc3bb36b52e43972b\">mbedtls_pk_parse_public_key</a> to parse the TA\u2019s RSA public key into a mbedtls_pk_context struct. The ROOK\u2019s public key context is then extracted from the pk_ctx field on the newly populated mbedtls_pk_context struct.</p>"
+                },
+                {
+                    "id": "<sentence_0xb42dadf4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the raw content of the public key.",
+                    "html": "<p>Below is the raw content of the public key.</p>"
+                },
+                {
+                    "id": "<sentence_0xf2fa243b>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x164b9370>": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4g06WvN+BRr9GeeOkZ4y\nnnK1uHreCPZyEsc43g3ftVXqsq2Kbdy7Z+XORqxmBi8D5nhDfw3eHRzH8wpcUos3\nszWKyJLOeKhN6DM5M4FppD8hyuKDTcgsa70Nhapc1Oyjfh3kf3Kc/2CUhnPYEzHe\nfHN3yOq9wxOVGc1S+bcTM3ez8gRuv0fB9ao2bJM0pKJphYq5dNkT0p2Ty923n+yZ\nAOKELIWwwyOQgyfiv8ZwkdPL+UbNQq2dYZEWa1qSsGgN2655hvvD/pH/bggAFEqm\nOybQFnRcdG9Fja9m/ZVp7jBYuX+4FaFq3DjD0oW/7imboVsEqcx7l7ym4tiKCz57\nMwIDAQAB\n-----END PUBLIC KEY-----\n"
+                    },
+                    "text": "",
+                    "html": "<code class=\"language-RSA\">-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4g06WvN+BRr9GeeOkZ4y\nnnK1uHreCPZyEsc43g3ftVXqsq2Kbdy7Z+XORqxmBi8D5nhDfw3eHRzH8wpcUos3\nszWKyJLOeKhN6DM5M4FppD8hyuKDTcgsa70Nhapc1Oyjfh3kf3Kc/2CUhnPYEzHe\nfHN3yOq9wxOVGc1S+bcTM3ez8gRuv0fB9ao2bJM0pKJphYq5dNkT0p2Ty923n+yZ\nAOKELIWwwyOQgyfiv8ZwkdPL+UbNQq2dYZEWa1qSsGgN2655hvvD/pH/bggAFEqm\nOybQFnRcdG9Fja9m/ZVp7jBYuX+4FaFq3DjD0oW/7imboVsEqcx7l7ym4tiKCz57\nMwIDAQAB\n-----END PUBLIC KEY-----\n</code>"
+                },
+                {
+                    "id": "<sentence_0x84d003e9>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3c67782a>": "https://chuongdong.com/uploads/rook05.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook05.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa281df6d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 5: Parsing ROOKs RSA Public Key.",
+                    "html": "<p>Figure 5: Parsing ROOK\u2019s RSA Public Key.</p>"
+                },
+                {
+                    "id": "<sentence_0x9f97ab02>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK then calls RegCreateKeyExW to open the subkey Software in HKEY_CURRENT_USER. Using that, it calls RegQueryValueExW to check if the registry value RookPublicKey exists in there. If it does not, the malware generates a public-private key pair for the victim.",
+                    "html": "<p>ROOK then calls RegCreateKeyExW to open the subkey Software in HKEY_CURRENT_USER. Using that, it calls RegQueryValueExW to check if the registry value RookPublicKey exists in there. If it does not, the malware generates a public-private key pair for the victim.</p>"
+                },
+                {
+                    "id": "<sentence_0xdf3253f8>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6289b3b4>": "https://chuongdong.com/uploads/rook06.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook06.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x4c2247f6>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x80fe174b>": "https://chuongdong.com/uploads/rook07.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook07.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xfde4473f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 6, 7: Querying From Registry & Generating Victim Public-Private Key Pair.",
+                    "html": "<p>Figure 6, 7: Querying From Registry &amp; Generating Victim Public-Private Key Pair.</p>"
+                },
+                {
+                    "id": "<sentence_0x7ab49693>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, ROOK encrypts the victims RSA private key using its own public key context.",
+                    "html": "<p>Next, ROOK encrypts the victim\u2019s RSA private key using its own public key context.</p>"
+                },
+                {
+                    "id": "<sentence_0xa6c67902>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xffd13ffb>": "https://chuongdong.com/uploads/rook08.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook08.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x2eb39177>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 8: Encrypting Victim Private Key Using TAs Public Key.",
+                    "html": "<p>Figure 8: Encrypting Victim Private Key Using TA\u2019s Public Key.</p>"
+                },
+                {
+                    "id": "<sentence_0xd2e5a9f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The victims public key and encrypted private key are consecutively stored in the registry at the value RookPublicKey and RookPrivateKey.",
+                    "html": "<p>The victim\u2019s public key and encrypted private key are consecutively stored in the registry at the value RookPublicKey and RookPrivateKey.</p>"
+                },
+                {
+                    "id": "<sentence_0x2e24c6c2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the victims public key was already generated before and the malware can query it directly from registry, the victims encrypted private key is pulled from the registry value RookPrivateKey.",
+                    "html": "<p>If the victim\u2019s public key was already generated before and the malware can query it directly from registry, the victim\u2019s encrypted private key is pulled from the registry value RookPrivateKey.</p>"
+                },
+                {
+                    "id": "<sentence_0x885437df>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, the malware calls mbedtls_pk_parse_public_key to retrieve the victims public key context and wipes the victims raw private key from memory.",
+                    "html": "<p>Finally, the malware calls mbedtls_pk_parse_public_key to retrieve the victim\u2019s public key context and wipes the victim\u2019s raw private key from memory.</p>"
+                },
+                {
+                    "id": "<sentence_0xf9c9d481>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc9f3b26f>": "https://chuongdong.com/uploads/rook09.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook09.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x16f2d505>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 9: Writing Keys to Registry & Cleaning Up.",
+                    "html": "<p>Figure 9: Writing Keys to Registry &amp; Cleaning Up.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x65b476bd>",
+            "title": "Anti-Detection: Alternate Data Streams",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x83cbb6e5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Alternate Data Streams (ADS) is a file attribute on the NT File System (NTFS) which was designed for compatibility with Macintosh Hierarchical File System (HFS).",
+                    "html": "<p>Alternate Data Streams (ADS) is a file attribute on the NT File System (NTFS) which was designed for compatibility with Macintosh Hierarchical File System (HFS).</p>"
+                },
+                {
+                    "id": "<sentence_0xa785b923>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For normal files, there is typically one primary data stream that is known as the unnamed data stream since its name is an empty string. However, ADS allows files to have more than one data stream, with any stream with a name being considered alternate.",
+                    "html": "<p>For normal files, there is typically one primary data stream that is known as the unnamed data stream since its name is an empty string. However, ADS allows files to have more than one data stream, with any stream with a name being considered alternate.</p>"
+                },
+                {
+                    "id": "<sentence_0x63dece79>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Because alternate data streams are hidden from Windows Explorer and the dir command on the command-line, they are a sneaky way to hide external executable from a seemingly harmless file.",
+                    "html": "<p>Because alternate data streams are hidden from Windows Explorer and the dir command on the command-line, they are a sneaky way to hide external executable from a seemingly harmless file.</p>"
+                },
+                {
+                    "id": "<sentence_0x440320fe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To evade detection, ROOK uses ADS to hides its own executable. First, it calls GetModuleFileNameW with a NULL handle to retrieve its own executable path.",
+                    "html": "<p>To evade detection, ROOK uses ADS to hides its own executable. First, it calls GetModuleFileNameW with a NULL handle to retrieve its own executable path.</p>"
+                },
+                {
+                    "id": "<sentence_0x6ffe8197>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It then calls CreateFileW to retrieve its own handle and SetFileInformationByHandle to rename the file with a data stream named :ask. This ultimately puts the entire executable into the alternate :ask data stream, leaving an empty file on the primary stream.",
+                    "html": "<p>It then calls CreateFileW to retrieve its own handle and SetFileInformationByHandle to rename the file with a data stream named \u201c:ask\u201d. This ultimately puts the entire executable into the alternate \u201c:ask\u201d data stream, leaving an empty file on the primary stream.</p>"
+                },
+                {
+                    "id": "<sentence_0x5b726937>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2fc07f84>": "https://chuongdong.com/uploads/rook10.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook10.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x81c07a92>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 10: Moving Executable to Data Stream.",
+                    "html": "<p>Figure 10: Moving Executable to Data Stream.</p>"
+                },
+                {
+                    "id": "<sentence_0x9321e6dc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Pausing the execution after the handle is released using the call to CloseHandle, we can examine how it looks in the system.",
+                    "html": "<p>Pausing the execution after the handle is released using the call to CloseHandle, we can examine how it looks in the system.</p>"
+                },
+                {
+                    "id": "<sentence_0x6469e5c8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By running the command dir /r, we can examine what changes to the executable file.",
+                    "html": "<p>By running the command \u201cdir /r\u201d, we can examine what changes to the executable file.</p>"
+                },
+                {
+                    "id": "<sentence_0xd6c0003>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To test this, I use two copies of the ROOK sample and have the ro0k.mal_ one hide itself in the :ask data stream. As we can see in the command-line, that file shows up empty, but its alternate data stream contains the full malicious executable.",
+                    "html": "<p>To test this, I use two copies of the ROOK sample and have the ro0k.mal_ one hide itself in the \u201c:ask\u201d data stream. As we can see in the command-line, that file shows up empty, but its alternate data stream contains the full malicious executable.</p>"
+                },
+                {
+                    "id": "<sentence_0xa6ca254>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x695be6fc>": "https://chuongdong.com/uploads/rook11.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook11.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xf508a8aa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 11: Examining Alternate Data Stream In Command-Line.",
+                    "html": "<p>Figure 11: Examining Alternate Data Stream In Command-Line.</p>"
+                },
+                {
+                    "id": "<sentence_0xfbd8f241>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After doing this, the ransomware file will appear as empty in the file system until the end of execution.",
+                    "html": "<p>After doing this, the ransomware file will appear as empty in the file system until the end of execution.</p>"
+                },
+                {
+                    "id": "<sentence_0xc6de7e74>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After hiding itself, ROOK also calls SetFileInformationByHandle again to set the file to be deleted once all handles are closed at the end.",
+                    "html": "<p>After hiding itself, ROOK also calls SetFileInformationByHandle again to set the file to be deleted once all handles are closed at the end.</p>"
+                },
+                {
+                    "id": "<sentence_0x23ce7424>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x61026a10>": "https://chuongdong.com/uploads/rook12.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook12.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe561b55a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 12: Set Up File for Self-Deletion.",
+                    "html": "<p>Figure 12: Set Up File for Self-Deletion.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc4031b4>",
+            "title": "Command-line Arguments",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x68935d79>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK can run with or without command-line arguments.",
+                    "html": "<p>ROOK can run with or without command-line arguments.</p>"
+                },
+                {
+                    "id": "<sentence_0x161c8706>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the list of arguments that can be supplied by the operator.",
+                    "html": "<p>Below is the list of arguments that can be supplied by the operator.</p>"
+                },
+                {
+                    "id": "<sentence_0x5f9e90e7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x2146400>": {
+                            "Argument": {
+                                "0": "-debug <log_filename>",
+                                "1": "-shares <share_list>",
+                                "2": "-paths <drive_list>"
+                            },
+                            "Description": {
+                                "0": "Enable logging to the specified log file",
+                                "1": "List of network shares to be traversed",
+                                "2": "List of local & network drives to be traversed"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<thead>\n<tr>\n<th>Argument</th>\n<th>Description</th>\n</tr>\n</thead>\n<tbody>\n<tr>\n<td>-debug &lt;log_filename&gt;</td>\n<td>Enable logging to the specified log file</td>\n</tr>\n<tr>\n<td>-shares &lt;share_list&gt;</td>\n<td>List of network shares to be traversed</td>\n</tr>\n<tr>\n<td>-paths &lt;drive_list&gt;</td>\n<td>List of local &amp; network drives to be traversed</td>\n</tr>\n</tbody>\n</table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x82662c50>",
+            "title": "Logging",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3fc60bbf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the debug argument is provided on the command-line, ROOK enables debugging and calls CreateFileW to create the log file to later log into.",
+                    "html": "<p>When the debug argument is provided on the command-line, ROOK enables debugging and calls CreateFileW to create the log file to later log into.</p>"
+                },
+                {
+                    "id": "<sentence_0x8aaf215b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It also calls InitializeCriticalSection to initialize a critical section to prevent multiple threads from writing into the log file at the same time.",
+                    "html": "<p>It also calls InitializeCriticalSection to initialize a critical section to prevent multiple threads from writing into the log file at the same time.</p>"
+                },
+                {
+                    "id": "<sentence_0x317623e2>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x470b83bf>": "https://chuongdong.com/uploads/rook13.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook13.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x4f16b7a9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 13: Logging Initialization.",
+                    "html": "<p>Figure 13: Logging Initialization.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa46ea13>",
+            "title": "Stopping Services",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd87c7ab1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For stopping services, ROOK borrows this part from the leaked BABUK source code.",
+                    "html": "<p>For stopping services, ROOK borrows this part from the leaked BABUK source code.</p>"
+                },
+                {
+                    "id": "<sentence_0x244ee140>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware first calls GetTickCount to get a tick count prior to stopping services. It then calls OpenSCManagerA to retrieve a service control manager handle.",
+                    "html": "<p>The malware first calls GetTickCount to get a tick count prior to stopping services. It then calls OpenSCManagerA to retrieve a service control manager handle.</p>"
+                },
+                {
+                    "id": "<sentence_0xeb1cfe4f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6dd36ecf>": "https://chuongdong.com/uploads/rook14.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook14.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x7294ca59>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 14: Retrieving Service Control Manager.",
+                    "html": "<p>Figure 14: Retrieving Service Control Manager.</p>"
+                },
+                {
+                    "id": "<sentence_0x6a89617d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, it iterates through a hard-coded list containing services to be stopped. For each of these service, the malware calls OpenServiceA to retrieve the services handle and QueryServiceStatusEx to query and checks if the service state is SERVICE_STOP_PENDING.",
+                    "html": "<p>Next, it iterates through a hard-coded list containing services to be stopped. For each of these service, the malware calls OpenServiceA to retrieve the service\u2019s handle and QueryServiceStatusEx to query and checks if the service state is SERVICE_STOP_PENDING.</p>"
+                },
+                {
+                    "id": "<sentence_0x6b57e19c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If it is not, ROOK calls EnumDependentServicesA to enumerate through all dependent services of the target service and stop them.",
+                    "html": "<p>If it is not, ROOK calls EnumDependentServicesA to enumerate through all dependent services of the target service and stop them.</p>"
+                },
+                {
+                    "id": "<sentence_0xce054711>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x565c44cc>": "https://chuongdong.com/uploads/rook15.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook15.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe82346da>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 15: Iterating Through Service Stop List.",
+                    "html": "<p>Figure 15: Iterating Through Service Stop List.</p>"
+                },
+                {
+                    "id": "<sentence_0x3ec48d83>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For each dependent service, the malware calls OpenServiceA to retrieve its handle and ControlService to send a control stop code to stop it. It also sleeps and calls QueryServiceStatusEx to wait until the services state is fully stopped.",
+                    "html": "<p>For each dependent service, the malware calls OpenServiceA to retrieve its handle and ControlService to send a control stop code to stop it. It also sleeps and calls QueryServiceStatusEx to wait until the service\u2019s state is fully stopped.</p>"
+                },
+                {
+                    "id": "<sentence_0x3ff2ee7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x34eec4e6>": "https://chuongdong.com/uploads/rook16.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook16.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe44a06cc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 16: Stopping Dependent Services.",
+                    "html": "<p>Figure 16: Stopping Dependent Services.</p>"
+                },
+                {
+                    "id": "<sentence_0x442198c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After stopping all dependent services, ROOK calls ControlService send a control stop code to the main service and continuosly checks until the service is fully stopped.",
+                    "html": "<p>After stopping all dependent services, ROOK calls ControlService send a control stop code to the main service and continuosly checks until the service is fully stopped.</p>"
+                },
+                {
+                    "id": "<sentence_0x83f22510>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xa01533cd>": "https://chuongdong.com/uploads/rook17.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook17.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xbd367fde>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 17: Stopping Target Services.",
+                    "html": "<p>Figure 17: Stopping Target Services.</p>"
+                },
+                {
+                    "id": "<sentence_0x9dcec5b1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For stopping all services, the maximum timeout is 30000ms or 30 seconds from the original tick count. If it takes more than 30 seconds to stop services, the malware aborts and exits the function.",
+                    "html": "<p>For stopping all services, the maximum timeout is 30000ms or 30 seconds from the original tick count. If it takes more than 30 seconds to stop services, the malware aborts and exits the function.</p>"
+                },
+                {
+                    "id": "<sentence_0xd139fd97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the list of services that are stopped.",
+                    "html": "<p>Below is the list of services that are stopped.</p>"
+                },
+                {
+                    "id": "<sentence_0x4ae28186>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x7c5ed73a>": "\"memtas\", \"mepocs\", \"vss\", \"sql\", \"svc$\", \"veeam\", \"backup\", \"GxVss\", \"GxBlr\", \"GxFWD\", \"GxCVD\", \"GxCIMgr\", \"DefWatch\", \"ccEvtMgr\", \"ccSetMgr\", \"SavRoam\", \"RTVscan\", \"QBFCService\", \"QBIDPService\", \"Intuit.QuickBooks.FCS\", \"QBCFMonitorService\", \"AcrSch2Svc\", \"AcronisAgent\", \"CASAD2DWebSvc\", \"CAARCUpdateSvc\"\n"
+                    },
+                    "text": "",
+                    "html": "<code>\"memtas\", \"mepocs\", \"vss\", \"sql\", \"svc$\", \"veeam\", \"backup\", \"GxVss\", \"GxBlr\", \"GxFWD\", \"GxCVD\", \"GxCIMgr\", \"DefWatch\", \"ccEvtMgr\", \"ccSetMgr\", \"SavRoam\", \"RTVscan\", \"QBFCService\", \"QBIDPService\", \"Intuit.QuickBooks.FCS\", \"QBCFMonitorService\", \"AcrSch2Svc\", \"AcronisAgent\", \"CASAD2DWebSvc\", \"CAARCUpdateSvc\"\n</code>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5e0fb4b4>",
+            "title": "Terminating Processes",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x16cc8eda>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This part of code is also copied and pasted from the BABUK source code.",
+                    "html": "<p>This part of code is also copied and pasted from the BABUK source code.</p>"
+                },
+                {
+                    "id": "<sentence_0x5d9275a0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK calls CreateToolhelp32Snapshot to retrieve a snapshot of all processes and threads in the system. It then calls Process32FirstW and Process32NextW to enumerate through the snapshot.",
+                    "html": "<p>ROOK calls CreateToolhelp32Snapshot to retrieve a snapshot of all processes and threads in the system. It then calls Process32FirstW and Process32NextW to enumerate through the snapshot.</p>"
+                },
+                {
+                    "id": "<sentence_0x1ddcb085>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For each process whose name is in the list of processes to be terminated, the malware calls OpenProcess to retrieve the processs handle and TerminateProcess to terminate it.",
+                    "html": "<p>For each process whose name is in the list of processes to be terminated, the malware calls OpenProcess to retrieve the process\u2019s handle and TerminateProcess to terminate it.</p>"
+                },
+                {
+                    "id": "<sentence_0xc3b7988f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5085813d>": "https://chuongdong.com/uploads/rook18.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook18.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x380aa585>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 18: Stopping Target Services.",
+                    "html": "<p>Figure 18: Stopping Target Services.</p>"
+                },
+                {
+                    "id": "<sentence_0x42d9cbd3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the list of processes that are stopped.",
+                    "html": "<p>Below is the list of processes that are stopped.</p>"
+                },
+                {
+                    "id": "<sentence_0x7e667b74>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x99aa650d>": "\"sql.exe\", \"oracle.exe\", \"ocssd.exe\", \"dbsnmp.exe\", \"visio.exe\", \"winword.exe\", \"wordpad.exe\", \"notepad.exe\", \"excel.exe\", \"onenote.exe\", \"outlook.exe\", \"synctime.exe\", \"agntsvc.exe\", \"isqlplussvc.exe\", \"xfssvccon.exe\", \"mydesktopservice.exe\", \"ocautoupds.exe\", \"encsvc.exe\", \"firefox.exe\", \"tbirdconfig.exe\", \"mydesktopqos.exe\", \"ocomm.exe\", \"dbeng50.exe\", \"sqbcoreservice.exe\", \"infopath.exe\", \"msaccess.exe\", \"mspub.exe\", \"powerpnt.exe\", \"steam.exe\", \"thebat.exe\", \"thunderbird.exe\"\n"
+                    },
+                    "text": "",
+                    "html": "<code>\"sql.exe\", \"oracle.exe\", \"ocssd.exe\", \"dbsnmp.exe\", \"visio.exe\", \"winword.exe\", \"wordpad.exe\", \"notepad.exe\", \"excel.exe\", \"onenote.exe\", \"outlook.exe\", \"synctime.exe\", \"agntsvc.exe\", \"isqlplussvc.exe\", \"xfssvccon.exe\", \"mydesktopservice.exe\", \"ocautoupds.exe\", \"encsvc.exe\", \"firefox.exe\", \"tbirdconfig.exe\", \"mydesktopqos.exe\", \"ocomm.exe\", \"dbeng50.exe\", \"sqbcoreservice.exe\", \"infopath.exe\", \"msaccess.exe\", \"mspub.exe\", \"powerpnt.exe\", \"steam.exe\", \"thebat.exe\", \"thunderbird.exe\"\n</code>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4cebd6c0>",
+            "title": "Deleting Shadow Copies",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1e854aaf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This part of code is also copied and pasted from the BABUK source code.",
+                    "html": "<p>This part of code is also copied and pasted from the BABUK source code.</p>"
+                },
+                {
+                    "id": "<sentence_0x3c866ecc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK first checks if its process is running under a 64-bit processor by calling IsWow64Process.",
+                    "html": "<p>ROOK first checks if its process is running under a 64-bit processor by calling IsWow64Process.</p>"
+                },
+                {
+                    "id": "<sentence_0x3ff7eea5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbcd9ea9a>": "https://chuongdong.com/uploads/rook19.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook19.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x22571114>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 19: Checking Process Architecture.",
+                    "html": "<p>Figure 19: Checking Process Architecture.</p>"
+                },
+                {
+                    "id": "<sentence_0xa921a351>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If it is, the malware calls Wow64DisableWow64FsRedirection to disable file system redirection for its process.",
+                    "html": "<p>If it is, the malware calls Wow64DisableWow64FsRedirection to disable file system redirection for its process.</p>"
+                },
+                {
+                    "id": "<sentence_0xc0194cfb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then it executes ShellExecuteW to launch the following command in the command line to delete all shadow copies in the system.",
+                    "html": "<p>Then it executes ShellExecuteW to launch the following command in the command line to delete all shadow copies in the system.</p>"
+                },
+                {
+                    "id": "<sentence_0x4eb90c3a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xc9ef96f4>": "vssadmin.exe delete shadows /all /quiet\n"
+                    },
+                    "text": "",
+                    "html": "<code>vssadmin.exe delete shadows /all /quiet\n</code>"
+                },
+                {
+                    "id": "<sentence_0x6871ea32>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, if the malwares process is running under a 64-bit architecture, it calls Wow64RevertWow64FsRedirection to enable file system redirection.",
+                    "html": "<p>Finally, if the malware\u2019s process is running under a 64-bit architecture, it calls Wow64RevertWow64FsRedirection to enable file system redirection.</p>"
+                },
+                {
+                    "id": "<sentence_0xb7425846>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xcc87eed2>": "https://chuongdong.com/uploads/rook20.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook20.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x8e4efa9f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 20: Deleting Shadow Copies.",
+                    "html": "<p>Figure 20: Deleting Shadow Copies.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x526d8f73>",
+            "title": "Multithreading Setup",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x4914c55b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Prior to encrypting files, ROOK sets up its own multithreading system.",
+                    "html": "<p>Prior to encrypting files, ROOK sets up its own multithreading system.</p>"
+                },
+                {
+                    "id": "<sentence_0x66cc19fa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Initially, it calls GetSystemInfo to retrieve the number of processors in the system.",
+                    "html": "<p>Initially, it calls GetSystemInfo to retrieve the number of processors in the system.</p>"
+                },
+                {
+                    "id": "<sentence_0xd6f1aa03>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The multithreading structure is divided into two parts: file encryption and directory enumeration.",
+                    "html": "<p>The multithreading structure is divided into two parts: file encryption and directory enumeration.</p>"
+                },
+                {
+                    "id": "<sentence_0x962d9063>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For file encryption, the malware calculates the maximum number of files to be encrypted by multiple threads at the same time is 24 times the number of processors. It then calls HeapAlloc to allocate a global array to store the files that are set to be encrypted and CreateSemaphoreA to create 2 semaphores that are used for synchronization among threads that access the file array. Finally, it also calls<crlf>InitializeCriticalSection to initialize a critical section that allows one thread to add or remove a file from the global array at a time.",
+                    "html": "<p>For file encryption, the malware calculates the maximum number of files to be encrypted by multiple threads at the same time is 24 times the number of processors. It then calls HeapAlloc to allocate a global array to store the files that are set to be encrypted and CreateSemaphoreA to create 2 semaphores that are used for synchronization among threads that access the file array. Finally, it also calls \nInitializeCriticalSection to initialize a critical section that allows one thread to add or remove a file from the global array at a time.</p>"
+                },
+                {
+                    "id": "<sentence_0x797c72ee>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x505fb933>": "https://chuongdong.com/uploads/rook21.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook21.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x99efc0c0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 21: Threading Setup for File Encryption.",
+                    "html": "<p>Figure 21: Threading Setup for File Encryption.</p>"
+                },
+                {
+                    "id": "<sentence_0x69d21a31>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For directory enumeration, the malware calculates the maximum number of directories to be enumerated by multiple threads at the same time is 6 times the number of processors. It also creates a global array, 2 semaphores, and a critical section like to the file encryption part above.",
+                    "html": "<p>For directory enumeration, the malware calculates the maximum number of directories to be enumerated by multiple threads at the same time is 6 times the number of processors. It also creates a global array, 2 semaphores, and a critical section like to the file encryption part above.</p>"
+                },
+                {
+                    "id": "<sentence_0x59180a64>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbf53ccff>": "https://chuongdong.com/uploads/rook22.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook22.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xd58d659b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 22: Threading Setup for Directory Enumeration.",
+                    "html": "<p>Figure 22: Threading Setup for Directory Enumeration.</p>"
+                },
+                {
+                    "id": "<sentence_0x3084def1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, the malware calls HeapAlloc to allocate two arrays to store child thread handles, one for file encryption and the other for directory enumeration.",
+                    "html": "<p>Next, the malware calls HeapAlloc to allocate two arrays to store child thread handles, one for file encryption and the other for directory enumeration.</p>"
+                },
+                {
+                    "id": "<sentence_0xdc6e5f06>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK then calls CreateThread to spawn threads for double the number of processors for each thread array. The functionalities of these threads are later discussed in the Child Thread section.",
+                    "html": "<p>ROOK then calls CreateThread to spawn threads for double the number of processors for each thread array. The functionalities of these threads are later discussed in the <a href=\"#child-thread\">Child Thread</a> section.</p>"
+                },
+                {
+                    "id": "<sentence_0x7afd0d45>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xbe12820f>": "https://chuongdong.com/uploads/rook23.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook23.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x4131fa07>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 23: Spawning Child Threads.",
+                    "html": "<p>Figure 23: Spawning Child Threads.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x858bb42b>",
+            "title": "Network Resource Traversal",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x57e8f073>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the command-line argument -paths or -shares is not provided, ROOK recursively traverses through all resources in the network.",
+                    "html": "<p>When the command-line argument \u201c-paths\u201d or \u201c-shares\u201d is not provided, ROOK recursively traverses through all resources in the network.</p>"
+                },
+                {
+                    "id": "<sentence_0x84971281>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware calls WNetOpenEnumW to retrieve an enumeration handle for all network resources and WNetEnumResourceW to enumerate through them.",
+                    "html": "<p>The malware calls WNetOpenEnumW to retrieve an enumeration handle for all network resources and WNetEnumResourceW to enumerate through them.</p>"
+                },
+                {
+                    "id": "<sentence_0xfc83a05a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For each network resource, if its a container for other resources that can also be enumerated, ROOK recursively passes it back to the current function to traverse it.",
+                    "html": "<p>For each network resource, if it\u2019s a container for other resources that can also be enumerated, ROOK recursively passes it back to the current function to traverse it.</p>"
+                },
+                {
+                    "id": "<sentence_0x7be8202b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the resource is just a normal and connectable directory, the malware passes it into a recursive function to traverse it, which will be discussed in the Drives Traversal section.",
+                    "html": "<p>If the resource is just a normal and connectable directory, the malware passes it into a recursive function to traverse it, which will be discussed in the <a href=\"#drives-traversal\">Drives Traversal</a> section.</p>"
+                },
+                {
+                    "id": "<sentence_0x9d4a6f5c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x56607ca>": "https://chuongdong.com/uploads/rook24.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook24.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xae492df8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 24: Traversing Network Resources.",
+                    "html": "<p>Figure 24: Traversing Network Resources.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdbffbf2d>",
+            "title": "Drives Traversal",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdc9d56c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the command-line argument -paths is provided, ROOK specifically enumerates them and exits upon completion.",
+                    "html": "<p>When the command-line argument \u201c-paths\u201d is provided, ROOK specifically enumerates them and exits upon completion.</p>"
+                },
+                {
+                    "id": "<sentence_0xf21b1f8f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The argument can come in the form of a list of paths, each separated by a comma. Instead of a normal directory path, ROOK also accepts a two-character string of a drive letter followed by a colon as a path to a drive.",
+                    "html": "<p>The argument can come in the form of a list of paths, each separated by a comma. Instead of a normal directory path, ROOK also accepts a two-character string of a drive letter followed by a colon as a path to a drive.</p>"
+                },
+                {
+                    "id": "<sentence_0xbd5b49d5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3cf8bc8d>": "https://chuongdong.com/uploads/rook25.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook25.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x25792e4c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 25: Parsing -paths Command-Line Argument.",
+                    "html": "<p>Figure 25: Parsing \u201c-paths\u201d Command-Line Argument.</p>"
+                },
+                {
+                    "id": "<sentence_0x62da1dad>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When traversing a drive, ROOK builds the following drive path.",
+                    "html": "<p>When traversing a drive, ROOK builds the following drive path.</p>"
+                },
+                {
+                    "id": "<sentence_0xb56770ec>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xcfbb42ef>": "\\\\\\\\?\\\\<drive_letter>:\n"
+                    },
+                    "text": "",
+                    "html": "<code>\\\\\\\\?\\\\&lt;drive_letter&gt;:\n</code>"
+                },
+                {
+                    "id": "<sentence_0x4613911e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "With the path, the malware checks and avoids enumerating the drive if its a CD-ROM drive.",
+                    "html": "<p>With the path, the malware checks and avoids enumerating the drive if it\u2019s a CD-ROM drive.</p>"
+                },
+                {
+                    "id": "<sentence_0x64bfc222>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the drive type is a remote drive, ROOK calls WNetGetConnectionW to retrieve the remote name of the drive and passes it to be traversed by the recursive_traverse_dir function.",
+                    "html": "<p>If the drive type is a remote drive, ROOK calls WNetGetConnectionW to retrieve the remote name of the drive and passes it to be traversed by the recursive_traverse_dir function.</p>"
+                },
+                {
+                    "id": "<sentence_0x81725eb6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the drive type is not remote drive and CD-ROM drive, the malware simply passes it to the recursive_traverse_dir function.",
+                    "html": "<p>If the drive type is not remote drive and CD-ROM drive, the malware simply passes it to the recursive_traverse_dir function.</p>"
+                },
+                {
+                    "id": "<sentence_0xcf685716>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In the recursive_traverse_dir function, ROOK begins by executing two nested while loop. The first one loops and waits until the END_ACCESS_DIR_SEMAPHORE semaphores count is reduced to zero, and its state is nonsignaled. When this happens, it means every directory in the global directory list is already traversed and no thread is extracting from it.",
+                    "html": "<p>In the recursive_traverse_dir function, ROOK begins by executing two nested while loop. The first one loops and waits until the END_ACCESS_DIR_SEMAPHORE semaphore\u2019s count is reduced to zero, and its state is nonsignaled. When this happens, it means every directory in the global directory list is already traversed and no thread is extracting from it.</p>"
+                },
+                {
+                    "id": "<sentence_0x592cb0e9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While waiting for this, the inner while loop waits until the BEGIN_ACCESS_FILE_SEMAPHORE semaphore is signaled, which allows the current process to access the global file list. After obtaining the ownership of the critical section for the global file list using EnterCriticalSection, ROOK extracts the file at the current index, increments the index, and encrypts it. The file encryption routine is later discussed at the File Encryption section.",
+                    "html": "<p>While waiting for this, the inner while loop waits until the BEGIN_ACCESS_FILE_SEMAPHORE semaphore is signaled, which allows the current process to access the global file list. After obtaining the ownership of the critical section for the global file list using EnterCriticalSection, ROOK extracts the file at the current index, increments the index, and encrypts it. The file encryption routine is later discussed at the <a href=\"#file-encryption\">File Encryption</a> section.</p>"
+                },
+                {
+                    "id": "<sentence_0x98be0065>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x37226b0f>": "https://chuongdong.com/uploads/rook27.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook27.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x3559bd96>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 27: Waiting for Directory List to Be Cleared & Encrypting File in the Meantime.",
+                    "html": "<p>Figure 27: Waiting for Directory List to Be Cleared &amp; Encrypting File in the Meantime.</p>"
+                },
+                {
+                    "id": "<sentence_0x9393995a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Instead of just looping and waiting for the directory list to be cleared, ROOK extracts and encrypts files in the global file list during the wait time to increase efficiency and avoids wasting computing resources. This makes the overall enumeration and encryption process quite fast.",
+                    "html": "<p>Instead of just looping and waiting for the directory list to be cleared, ROOK extracts and encrypts files in the global file list during the wait time to increase efficiency and avoids wasting computing resources. This makes the overall enumeration and encryption process quite fast.</p>"
+                },
+                {
+                    "id": "<sentence_0x91468466>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, the malware calls EnterCriticalSection to obtain the ownership of the global directory list and adds the directory path to be traversed in. Then, it calls ReleaseSemaphore to release the BEGIN_ACCESS_DIR_SEMAPHORE semaphore, which increments its count by one and signals other threads that another directory is available to be enumerated.",
+                    "html": "<p>Next, the malware calls EnterCriticalSection to obtain the ownership of the global directory list and adds the directory path to be traversed in. Then, it calls ReleaseSemaphore to release the BEGIN_ACCESS_DIR_SEMAPHORE semaphore, which increments its count by one and signals other threads that another directory is available to be enumerated.</p>"
+                },
+                {
+                    "id": "<sentence_0x5ed14e17>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc200eebc>": "https://chuongdong.com/uploads/rook28.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook28.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x7a8ac6e4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 28: Adding Directory to Global List & Signaling for Enumeration.",
+                    "html": "<p>Figure 28: Adding Directory to Global List &amp; Signaling for Enumeration.</p>"
+                },
+                {
+                    "id": "<sentence_0x76de5188>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, the function begins enumerating the directory for all its sub-directories. ROOK builds the path **\\\\\\*\"** and passes it to **FindFirstFileW** to start the enumeration.",
+                    "html": "<p>Then, the function begins enumerating the directory for all its sub-directories. ROOK builds the path **\u201c\\\\\\*\"** and passes it to **FindFirstFileW** to start the enumeration.</p>"
+                },
+                {
+                    "id": "<sentence_0xa1e0b7b9>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x744566d9>": "https://chuongdong.com/uploads/rook29.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook29.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x9bc4e569>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 29: Enumerating Directory for Sub-Directories.",
+                    "html": "<p>Figure 29: Enumerating Directory for Sub-Directories.</p>"
+                },
+                {
+                    "id": "<sentence_0x1311eb97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For each sub-directory found, the malware checks if the filename is not in the list of files and directories to avoid. If its not, the sub-directory full path is constructed and passed back to recursive_traverse_dir to be recursively traversed.",
+                    "html": "<p>For each sub-directory found, the malware checks if the filename is not in the list of files and directories to avoid. If it\u2019s not, the sub-directory full path is constructed and passed back to recursive_traverse_dir to be recursively traversed.</p>"
+                },
+                {
+                    "id": "<sentence_0xb72c69dc>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the list of files and directories to avoid.",
+                    "html": "<p>Below is the list of files and directories to avoid.</p>"
+                },
+                {
+                    "id": "<sentence_0xcf8417be>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0xda0b3fee>": "<log_filename>, \"Mozilla Firefox\", \"$Recycle.Bin\", \"ProgramData\", \"All Users\", \"autorun.inf\", \"boot.ini\", \"bootfont.bin\", \"bootsect.bak\", \"bootmgr\", \"bootmgr.efi\", \"bootmgfw.efi\", \"desktop.ini\", \"iconcache.db\", \"ntldr\", \"ntuser.dat\", \"ntuser.dat.log\", \"ntuser.ini\", \"thumbs.db\", \"Program Files\", \"Program Files (x86)\", \"AppData\", \"Boot\", \"Windows\", \"Windows.old\", \"Tor Browser\", \"Internet Explorer\", \"Google\", \"Opera\", \"Opera Software\", \"Mozilla\", \"#recycle\", \"..\", \".\"\n"
+                    },
+                    "text": "",
+                    "html": "<code>&lt;log_filename&gt;, \"Mozilla Firefox\", \"$Recycle.Bin\", \"ProgramData\", \"All Users\", \"autorun.inf\", \"boot.ini\", \"bootfont.bin\", \"bootsect.bak\", \"bootmgr\", \"bootmgr.efi\", \"bootmgfw.efi\", \"desktop.ini\", \"iconcache.db\", \"ntldr\", \"ntuser.dat\", \"ntuser.dat.log\", \"ntuser.ini\", \"thumbs.db\", \"Program Files\", \"Program Files (x86)\", \"AppData\", \"Boot\", \"Windows\", \"Windows.old\", \"Tor Browser\", \"Internet Explorer\", \"Google\", \"Opera\", \"Opera Software\", \"Mozilla\", \"#recycle\", \"..\", \".\"\n</code>"
+                },
+                {
+                    "id": "<sentence_0xc442f925>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb10cf23b>": "https://chuongdong.com/uploads/rook30.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook30.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x64c83c36>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 30: Recursively Traversing All Sub-Directories.",
+                    "html": "<p>Figure 30: Recursively Traversing All Sub-Directories.</p>"
+                },
+                {
+                    "id": "<sentence_0xc02ecbcf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the command-line argument -paths is not provided, ROOK manually mounts all drives that have no volume mounted and traverses through all of them.",
+                    "html": "<p>If the command-line argument \u201c-paths\u201d is not provided, ROOK manually mounts all drives that have no volume mounted and traverses through all of them.</p>"
+                },
+                {
+                    "id": "<sentence_0xaf61b0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, it builds a list of all drive letters and iterates through it to find drives with type DRIVE_NO_ROOT_DIR. Those drives are then added to the end of the list.",
+                    "html": "<p>First, it builds a list of all drive letters and iterates through it to find drives with type DRIVE_NO_ROOT_DIR. Those drives are then added to the end of the list.</p>"
+                },
+                {
+                    "id": "<sentence_0xfa7d24f7>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1fb676d4>": "https://chuongdong.com/uploads/rook31.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook31.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x7650c46c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 31: Finding Drives with an Invalid Root Path.",
+                    "html": "<p>Figure 31: Finding Drives with an Invalid Root Path.</p>"
+                },
+                {
+                    "id": "<sentence_0x2dbf705e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, ROOK calls FindFirstVolumeW and FindNextVolumeW to scan for available volumes in the system. For each volume, the malware calls GetVolumePathNamesForVolumeNameW to retrieve the volume GUID path and SetVolumeMountPointW to set the path as the root path for the next no-root drive in the list.",
+                    "html": "<p>Next, ROOK calls FindFirstVolumeW and FindNextVolumeW to scan for available volumes in the system. For each volume, the malware calls GetVolumePathNamesForVolumeNameW to retrieve the volume GUID path and SetVolumeMountPointW to set the path as the root path for the next no-root drive in the list.</p>"
+                },
+                {
+                    "id": "<sentence_0x3a26940d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xab316a1e>": "https://chuongdong.com/uploads/rook32.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook32.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe0c49e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 32: Mounting All Unmounted Drives.",
+                    "html": "<p>Figure 32: Mounting All Unmounted Drives.</p>"
+                },
+                {
+                    "id": "<sentence_0xb10d3166>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, the malware calls GetLogicalDrives to iterate through all the drives in the system and traverse them.",
+                    "html": "<p>Finally, the malware calls GetLogicalDrives to iterate through all the drives in the system and traverse them.</p>"
+                },
+                {
+                    "id": "<sentence_0x10669c8f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xab88c5b0>": "https://chuongdong.com/uploads/rook33.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook33.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x8bb218a0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 33: Traversing All Mounted Drives.",
+                    "html": "<p>Figure 33: Traversing All Mounted Drives.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc3927d3b>",
+            "title": "Child Thread",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x74b82921>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For the spawn child threads, they have two different modes of execution depending on the flag passed in as parameter.",
+                    "html": "<p>For the spawn child threads, they have two different modes of execution depending on the flag passed in as parameter.</p>"
+                },
+                {
+                    "id": "<sentence_0x51a18152>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the flag is 1, the thread will process a directory from the global directory list.",
+                    "html": "<p>If the flag is 1, the thread will process a directory from the global directory list.</p>"
+                },
+                {
+                    "id": "<sentence_0x67bba34>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, it enters a nested while loop like the one we have seen earlier. The first loop waits until the BEGIN_ACCESS_DIR_SEMAPHORE semaphore enters a nonsignaled state, which means no thread is adding to the directory list.",
+                    "html": "<p>First, it enters a nested while loop like the one we have seen <a href=\"#drives-traversal\">earlier</a>. The first loop waits until the BEGIN_ACCESS_DIR_SEMAPHORE semaphore enters a nonsignaled state, which means no thread is adding to the directory list.</p>"
+                },
+                {
+                    "id": "<sentence_0x39e4864>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While waiting for that, ROOK efficiently waits to retrieve access to the global file list, extract a file, and encrypts it similar to the previous nested while loop.",
+                    "html": "<p>While waiting for that, ROOK efficiently waits to retrieve access to the global file list, extract a file, and encrypts it similar to the previous nested while loop.</p>"
+                },
+                {
+                    "id": "<sentence_0x10811e87>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc90ef944>": "https://chuongdong.com/uploads/rook36.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook36.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x45163fe>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 36: Waiting for Global Directory List Access.",
+                    "html": "<p>Figure 36: Waiting for Global Directory List Access.</p>"
+                },
+                {
+                    "id": "<sentence_0x56196342>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After the directory list is full, the malware obtains ownership of the lists critical section, extracts a directory out, and begins traversing it for sub-files.",
+                    "html": "<p>After the directory list is full, the malware obtains ownership of the list\u2019s critical section, extracts a directory out, and begins traversing it for sub-files.</p>"
+                },
+                {
+                    "id": "<sentence_0x42194b46>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1c797491>": "https://chuongdong.com/uploads/rook37.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook37.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x34db78cf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 37: Extracting Directory & Enumerating for Sub-Files.",
+                    "html": "<p>Figure 37: Extracting Directory &amp; Enumerating for Sub-Files.</p>"
+                },
+                {
+                    "id": "<sentence_0x17d36104>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For the enumeration, ROOK first builds a path to a ransom note file in the directory, calls CreateFileW to create it and WriteFile to write the ransom note content to it.",
+                    "html": "<p>For the enumeration, ROOK first builds a path to a ransom note file in the directory, calls CreateFileW to create it and WriteFile to write the ransom note content to it.</p>"
+                },
+                {
+                    "id": "<sentence_0xabdb8ec4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is the raw content of the ransom note.",
+                    "html": "<p>Below is the raw content of the ransom note.</p>"
+                },
+                {
+                    "id": "<sentence_0x2f411439>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x46932589>": "-----------Welcome. Again. --------------------\n[+]Whats Happen?[+]\nYour files are encrypted,and currently unavailable. You can check it: all files on you computer has expansion robet.\nBy the way,everything is possible to recover (restore), but you need to follow our instructions. Otherwise, you cant return your data (NEVER).\n[+] What guarantees?[+]\nIts just a business. We absolutely do not care about you and your deals, except getting benefits. If we do not do our work and liabilities - nobody will not cooperate with us. Its not in our interests.\nTo check the file capacity, please send 3 files not larger than 1M to us, and we will prove that we are capable of restoring.\nIf you will not cooperate with our service - for us, its does not matter. But you will lose your time and data,cause just we have the private key. In practise - time is much more valuable than money.\nIf we find that a security vendor or law enforcement agency pretends to be you to negotiate with us, we will directly destroy the private key and no longer provide you with decryption services.\nYou have 3 days to contact us for negotiation. Within 3 days, we will provide a 50% discount. If the discount service is not provided for more than 3 days, the files will be leaked to our onion network. Every more than 3 days will increase the number of leaked files.\nPlease use the company email to contact us, otherwise we will not reply.\n[+] How to get access on website?[+] \nYou have two ways:\n1) [Recommended] Using a TOR browser!\n\ta) Download and install TOR browser from this site:hxxps://torproject[.]org/\n\tb) Open our website:<redacted>[.]onion\n2) Our mail box:\n\ta)<redacted>@onionmail[.]org\n\tb)<redacted>@onionmail[.]org\n\tc)If the mailbox fails or is taken over, please open Onion Network to check the new mailbox\n------------------------------------------------------------------------------------------------\n!!!DANGER!!!\nDONT try to change files by yourself, DONT use any third party software for restoring your data or antivirus solutions - its may entail damge of the private key and, as result, The Loss all data.\n!!!!!!!\nAGAIN: Its in your interests to get your files back. From our side, we (the best specialists) make everything for restoring, please should not interfere.\n!!!!!!!\nONE MORE TIME: Security vendors and law enforcement agencies, please be aware that attacks on us will make us even stronger.\n!!!!!!!\n"
+                    },
+                    "text": "",
+                    "html": "<code>-----------Welcome. Again. --------------------\n[+]Whats Happen?[+]\nYour files are encrypted,and currently unavailable. You can check it: all files on you computer has expansion robet.\nBy the way,everything is possible to recover (restore), but you need to follow our instructions. Otherwise, you cant return your data (NEVER).\n[+] What guarantees?[+]\nIts just a business. We absolutely do not care about you and your deals, except getting benefits. If we do not do our work and liabilities - nobody will not cooperate with us. Its not in our interests.\nTo check the file capacity, please send 3 files not larger than 1M to us, and we will prove that we are capable of restoring.\nIf you will not cooperate with our service - for us, its does not matter. But you will lose your time and data,cause just we have the private key. In practise - time is much more valuable than money.\nIf we find that a security vendor or law enforcement agency pretends to be you to negotiate with us, we will directly destroy the private key and no longer provide you with decryption services.\nYou have 3 days to contact us for negotiation. Within 3 days, we will provide a 50% discount. If the discount service is not provided for more than 3 days, the files will be leaked to our onion network. Every more than 3 days will increase the number of leaked files.\nPlease use the company email to contact us, otherwise we will not reply.\n[+] How to get access on website?[+] \nYou have two ways:\n1) [Recommended] Using a TOR browser!\n\ta) Download and install TOR browser from this site:hxxps://torproject[.]org/\n\tb) Open our website:&lt;redacted&gt;[.]onion\n2) Our mail box:\n\ta)&lt;redacted&gt;@onionmail[.]org\n\tb)&lt;redacted&gt;@onionmail[.]org\n\tc)If the mailbox fails or is taken over, please open Onion Network to check the new mailbox\n------------------------------------------------------------------------------------------------\n!!!DANGER!!!\nDONT try to change files by yourself, DONT use any third party software for restoring your data or antivirus solutions - its may entail damge of the private key and, as result, The Loss all data.\n!!!!!!!\nAGAIN: Its in your interests to get your files back. From our side, we (the best specialists) make everything for restoring, please should not interfere.\n!!!!!!!\nONE MORE TIME: Security vendors and law enforcement agencies, please be aware that attacks on us will make us even stronger.\n!!!!!!!\n</code>"
+                },
+                {
+                    "id": "<sentence_0xe0e613ff>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x635f4c77>": "https://chuongdong.com/uploads/rook38.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook38.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe150ec53>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 38: Dropping Ransom Note.",
+                    "html": "<p>Figure 38: Dropping Ransom Note.</p>"
+                },
+                {
+                    "id": "<sentence_0x91f3cd7e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, it builds the path **\\\\*\"** and passes it to **FindFirstFileW** to begin enumerating through files in the directory.",
+                    "html": "<p>Next, it builds the path **\u201c\\\\*\"** and passes it to **FindFirstFileW** to begin enumerating through files in the directory.</p>"
+                },
+                {
+                    "id": "<sentence_0x915276a4>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb2959db9>": "https://chuongdong.com/uploads/rook39.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook39.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x4f75696d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 39: Enumerating Files in Directory.",
+                    "html": "<p>Figure 39: Enumerating Files in Directory.</p>"
+                },
+                {
+                    "id": "<sentence_0xa34785e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For each found file, ROOK checks to make sure its name is not in the files and directories to avoid list and is not HowToRestoreYourFiles.txt.",
+                    "html": "<p>For each found file, ROOK checks to make sure its name is not in the files and directories to avoid list and is not HowToRestoreYourFiles.txt.</p>"
+                },
+                {
+                    "id": "<sentence_0x3320c1f1>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdaeb5c60>": "https://chuongdong.com/uploads/rook40.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook40.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x61242758>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 40: Checking for Invalid Filenames.",
+                    "html": "<p>Figure 40: Checking for Invalid Filenames.</p>"
+                },
+                {
+                    "id": "<sentence_0x6f077cd4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ROOK also skips the file if its extension is .exe, .dll, or .Rook. After checking, the malware enters a nested while loop to wait until no thread can add to the global file list and extracts files to encrypt during the wait time.",
+                    "html": "<p>ROOK also skips the file if its extension is \u201c.exe\u201d, \u201c.dll\u201d, or \u201c.Rook\u201d. After checking, the malware enters a nested while loop to wait until no thread can add to the global file list and extracts files to encrypt during the wait time.</p>"
+                },
+                {
+                    "id": "<sentence_0x9b855669>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After getting access to the file list, ROOK calls EnterCriticalSection to obtain the ownership of the file lists critical section and<crlf>adds the subfile to the list.",
+                    "html": "<p>After getting access to the file list, ROOK calls EnterCriticalSection to obtain the ownership of the file list\u2019s critical section and \nadds the subfile to the list.</p>"
+                },
+                {
+                    "id": "<sentence_0x9ea98aab>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xd3b8ac85>": "https://chuongdong.com/uploads/rook41.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook41.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x8b203534>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 41: Adding Subfile to Global File List.",
+                    "html": "<p>Figure 41: Adding Subfile to Global File List.</p>"
+                },
+                {
+                    "id": "<sentence_0x56a5701b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the flag from parameter is 1, the child thread will continuously encrypt files from the global directory list until the list is completely empty.",
+                    "html": "<p>If the flag from parameter is 1, the child thread will continuously encrypt files from the global directory list until the list is completely empty.</p>"
+                },
+                {
+                    "id": "<sentence_0xc04f8302>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x370a9e6e>": "https://chuongdong.com/uploads/rook42.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook42.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x5a070577>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 42: Iterating & Encrypting Files in Global List.",
+                    "html": "<p>Figure 42: Iterating &amp; Encrypting Files in Global List.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd6bde386>",
+            "title": "File Encryption",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8326c863>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Prior to file encryption, ROOK calls SetFileAttributesW to set the file attribute to normal.",
+                    "html": "<p>Prior to file encryption, ROOK calls SetFileAttributesW to set the file attribute to normal.</p>"
+                },
+                {
+                    "id": "<sentence_0x1ddae69a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It builds the following path **.Rook\"** and calls **MoveFileExW** to change the file name to have the encrypted extension **.Rook**.",
+                    "html": "<p>It builds the following path **\u201c.Rook\"** and calls **MoveFileExW** to change the file name to have the encrypted extension **.Rook**.</p>"
+                },
+                {
+                    "id": "<sentence_0xbd5cdc62>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x33ade19a>": "https://chuongdong.com/uploads/rook43.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook43.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xef3c4c85>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 43: Adding Encrypted Extension.",
+                    "html": "<p>Figure 43: Adding Encrypted Extension.</p>"
+                },
+                {
+                    "id": "<sentence_0xd53a4cbb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, the malware calls CreateFileW to retrieve the file handle for the target and begins the encryption.",
+                    "html": "<p>Next, the malware calls CreateFileW to retrieve the file handle for the target and begins the encryption.</p>"
+                },
+                {
+                    "id": "<sentence_0x59c505df>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, it uses the Mbed TLS CTR_DRBG context to generates a random 16-byte AES key.",
+                    "html": "<p>First, it uses the Mbed TLS CTR_DRBG context to generates a random 16-byte AES key.</p>"
+                },
+                {
+                    "id": "<sentence_0xdf86fc0>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x3d7eeeeb>": "https://chuongdong.com/uploads/rook44.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook44.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xf01f5d13>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 44: Randomly Generating AES Key for File.",
+                    "html": "<p>Figure 44: Randomly Generating AES Key for File.</p>"
+                },
+                {
+                    "id": "<sentence_0xeda5754a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, ROOK populates the following structures for the file footer.",
+                    "html": "<p>Next, ROOK populates the following structures for the file footer.</p>"
+                },
+                {
+                    "id": "<sentence_0xc084b8fa>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<code_0x3c82ebdb>": "struct ROOK_FILE_FOOTER\n{\n LARGE_INTEGER file_size;\n ROOK_CRYPT_METADATA metadata;\n};\nstruct ROOK_CRYPT_METADATA\n{\n _QWORD encrypted_chunk_count;\n _QWORD unk;\n BYTE AES_key_encrypted_by_my_public[256];\n BYTE my_private_key_encrypted_by_Rook_public[2304];\n};\n"
+                    },
+                    "text": "",
+                    "html": "<code>struct ROOK_FILE_FOOTER\n{\n LARGE_INTEGER file_size;\n ROOK_CRYPT_METADATA metadata;\n};\nstruct ROOK_CRYPT_METADATA\n{\n _QWORD encrypted_chunk_count;\n _QWORD unk;\n BYTE AES_key_encrypted_by_my_public[256];\n BYTE my_private_key_encrypted_by_Rook_public[2304];\n};\n</code>"
+                },
+                {
+                    "id": "<sentence_0xbea2fa25>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware begins by calling GetFileSizeEx to retrieve the size of the file and store it in the file footer. It then uses the victims RSA public key to encrypt the AES key and store it in the metadatas AES_key_encrypted_by_my_public field.",
+                    "html": "<p>The malware begins by calling GetFileSizeEx to retrieve the size of the file and store it in the file footer. It then uses the victim\u2019s RSA public key to encrypt the AES key and store it in the metadata\u2019s AES_key_encrypted_by_my_public field.</p>"
+                },
+                {
+                    "id": "<sentence_0x496f674f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x191137e8>": "https://chuongdong.com/uploads/rook45.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook45.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x231a07b0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 45: Encrypting AES Key Using Victims Public Key.",
+                    "html": "<p>Figure 45: Encrypting AES Key Using Victim\u2019s Public Key.</p>"
+                },
+                {
+                    "id": "<sentence_0x5e3fba52>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, it copies the victims private key that is encrypted using ROOKs public key during RSA Key Generation into the metadatas my_private_key_encrypted_by_Rook_public field.",
+                    "html": "<p>Next, it copies the victim\u2019s private key that is encrypted using ROOK\u2019s public key during <a href=\"#rsa-key-generation\">RSA Key Generation</a> into the metadata\u2019s my_private_key_encrypted_by_Rook_public field.</p>"
+                },
+                {
+                    "id": "<sentence_0x76130e24>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x41391b5>": "https://chuongdong.com/uploads/rook46.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook46.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x436e2c2f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 46: Writing Victims Encrypted Private Key into File Footer.",
+                    "html": "<p>Figure 46: Writing Victim\u2019s Encrypted Private Key into File Footer.</p>"
+                },
+                {
+                    "id": "<sentence_0x261db4cd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the file size is greater than 0x80000 bytes, the malware reads and encrypts at most three 0x80000-byte chunks at the beginning of the file using AES-128 ECB.",
+                    "html": "<p>If the file size is greater than 0x80000 bytes, the malware reads and encrypts at most three 0x80000-byte chunks at the beginning of the file using AES-128 ECB.</p>"
+                },
+                {
+                    "id": "<sentence_0xe8fdab9c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1e7ba3c5>": "https://chuongdong.com/uploads/rook47.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook47.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x4918d09>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 47: Encrypting Files Larger Than 0x80000 Bytes.",
+                    "html": "<p>Figure 47: Encrypting Files Larger Than 0x80000 Bytes.</p>"
+                },
+                {
+                    "id": "<sentence_0x43a0ffbb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the file size is less than 0x80000 bytes or is between 0x80000 and 0x180000 bytes, the entire file will be encrypted.",
+                    "html": "<p>If the file size is less than 0x80000 bytes or is between 0x80000 and 0x180000 bytes, the entire file will be encrypted.</p>"
+                },
+                {
+                    "id": "<sentence_0x96e37f9b>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb5bcec53>": "https://chuongdong.com/uploads/rook48.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook48.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x5ec85eee>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 48: Calculating & Encrypting the Last Chunk That Is Less Than 0x80000 Bytes.",
+                    "html": "<p>Figure 48: Calculating &amp; Encrypting the Last Chunk That Is Less Than 0x80000 Bytes.</p>"
+                },
+                {
+                    "id": "<sentence_0x3f9a58df>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Finally, the file footer is written to the end of the file, which ends the encryption routine.",
+                    "html": "<p>Finally, the file footer is written to the end of the file, which ends the encryption routine.</p>"
+                },
+                {
+                    "id": "<sentence_0x14fd2d7d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7a4aad79>": "https://chuongdong.com/uploads/rook49.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook49.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x68a5c360>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 49: Writing File Footer.",
+                    "html": "<p>Figure 49: Writing File Footer.</p>"
+                },
+                {
+                    "id": "<sentence_0x427bf9db>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If ROOK is unable to open the file prior to encryption, the malware attempts to terminate the file owners process.",
+                    "html": "<p>If ROOK is unable to open the file prior to encryption, the malware attempts to terminate the file owner\u2019s process.</p>"
+                },
+                {
+                    "id": "<sentence_0xa93b65c2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It first calls RmStartSession to starts a new Restart Manager session and WideCharToMultiByte to convert the file path to a multibyte buffer.",
+                    "html": "<p>It first calls RmStartSession to starts a new Restart Manager session and WideCharToMultiByte to convert the file path to a multibyte buffer.</p>"
+                },
+                {
+                    "id": "<sentence_0xde8ff01d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe627133e>": "https://chuongdong.com/uploads/rook50.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook50.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xe5aa384>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 50: Starting A Restart Manager Session.",
+                    "html": "<p>Figure 50: Starting A Restart Manager Session.</p>"
+                },
+                {
+                    "id": "<sentence_0x26560e50>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Using that session handle, the malware calls RmRegisterResources to register the target file as a resource to the RM.",
+                    "html": "<p>Using that session handle, the malware calls RmRegisterResources to register the target file as a resource to the RM.</p>"
+                },
+                {
+                    "id": "<sentence_0x3e88e53f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x592040c7>": "https://chuongdong.com/uploads/rook51.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook51.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xad142c3c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 51: Registering Target File as a Resource.",
+                    "html": "<p>Figure 51: Registering Target File as a Resource.</p>"
+                },
+                {
+                    "id": "<sentence_0x79b211e3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Next, it calls RmGetList to get a list of all applications that are using the file. For each of these applications, if the applications type is Windows Explorer or a critical process, it is skipped.",
+                    "html": "<p>Next, it calls RmGetList to get a list of all applications that are using the file. For each of these applications, if the application\u2019s type is Windows Explorer or a critical process, it is skipped.</p>"
+                },
+                {
+                    "id": "<sentence_0xd802d783>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Then, ROOK checks to make sure the application is not its own ransomware process through the process IDs. Finally, it calls OpenProcess to retrieve the processs handle and terminate it using TerminateProcess.",
+                    "html": "<p>Then, ROOK checks to make sure the application is not its own ransomware process through the process IDs. Finally, it calls OpenProcess to retrieve the process\u2019s handle and terminate it using TerminateProcess.</p>"
+                },
+                {
+                    "id": "<sentence_0xd625d579>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb87a388e>": "https://chuongdong.com/uploads/rook52.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook52.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xaec2f307>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 52: Terminating File Owners.",
+                    "html": "<p>Figure 52: Terminating File Owners.</p>"
+                },
+                {
+                    "id": "<sentence_0xbb07e105>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After terminating all processes that are using the file, ROOK passes it back in to be encrypted.",
+                    "html": "<p>After terminating all processes that are using the file, ROOK passes it back in to be encrypted.</p>"
+                },
+                {
+                    "id": "<sentence_0x64e4748d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc9f441a8>": "https://chuongdong.com/uploads/rook53.PNG"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"alt text\" src=\"/uploads/rook53.PNG\"/></p>"
+                },
+                {
+                    "id": "<sentence_0x72934868>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 53: Setting Up File to Be Encrypted Again.",
+                    "html": "<p>Figure 53: Setting Up File to Be Encrypted Again.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x23e5cc32>",
+            "title": "References",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x588b8f95>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://infosecwriteups.com/alternate-data-streams-ads-54b144a831f1",
+                    "html": "<p>https://infosecwriteups.com/alternate-data-streams-ads-54b144a831f1</p>"
+                },
+                {
+                    "id": "<sentence_0xc2bb0e1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://www.sentinelone.com/labs/new-rook-ransomware-feeds-off-the-code-of-babuk/",
+                    "html": "<p>https://www.sentinelone.com/labs/new-rook-ransomware-feeds-off-the-code-of-babuk/</p>"
+                },
+                {
+                    "id": "<sentence_0x920fda81>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://chuongdong.com/reverse%20engineering/2021/01/03/BabukRansomware/",
+                    "html": "<p>https://chuongdong.com/reverse%20engineering/2021/01/03/BabukRansomware/</p>"
+                },
+                {
+                    "id": "<sentence_0x8d77b49a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "https://chuongdong.com/reverse%20engineering/2021/01/16/BabukRansomware-v3/",
+                    "html": "<p>https://chuongdong.com/reverse%20engineering/2021/01/16/BabukRansomware-v3/</p>"
+                },
+                {
+                    "id": "<sentence_0x3ffc7a5f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4f21300>": "https://twitter.com/intent/tweet/?url=https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/&text=Rook%20Ransomware&via=cPeterr"
+                    },
+                    "text": "Twitter twitter",
+                    "html": "<a class=\"button\" href=\"https://twitter.com/intent/tweet/?url=https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/&amp;text=Rook%20Ransomware&amp;via=cPeterr\">Twitter twitter\n</a>"
+                },
+                {
+                    "id": "<sentence_0x16ff4ec2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8f10c64c>": "https://facebook.com/sharer/sharer.php?u=https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/"
+                    },
+                    "text": "Facebook facebook",
+                    "html": "<a class=\"button\" href=\"https://facebook.com/sharer/sharer.php?u=https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/\">Facebook facebook\n</a>"
+                },
+                {
+                    "id": "<sentence_0x177fd961>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xcf60cf00>": "mailto:?subject=Rook%20Ransomware&body=Hey,%20check%20out%20this:%20https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/"
+                    },
+                    "text": "Email email",
+                    "html": "<a class=\"button\" href=\"mailto:?subject=Rook%20Ransomware&amp;body=Hey,%20check%20out%20this:%20https://cdong1012.github.io//reverse%20engineering/2022/01/06/RookRansomware/\">Email email\n</a>"
+                }
+            ]
+        }
+    ]
+}

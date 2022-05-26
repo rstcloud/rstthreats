@@ -1,0 +1,1838 @@
+{
+    "title": "cr8escape: New Vulnerability in CRI-O Container Engine Discovered by CrowdStrike (CVE-2022-0811)",
+    "url": "https://www.crowdstrike.com/blog/cr8escape-new-vulnerability-discovered-in-cri-o-container-engine-cve-2022-0811",
+    "threats": {},
+    "ttps": {
+        "TTP": [
+            {
+                "token": {
+                    "id": "<TTP_0x4f6a185>",
+                    "type": "TTP",
+                    "value": "ta0040"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Impact"
+                    ]
+                }
+            }
+        ]
+    },
+    "meanings": {
+        "CVE": [
+            {
+                "token": {
+                    "id": "<CVE_0x57f4f8ea>",
+                    "type": "CVE",
+                    "value": "cve-2022-0811"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon sensor included in the CrowdStrike Falcon Cloud Workload Protection module, which protects Kubernetes and containers, will detect attempts to exploit CVE-2022-0811 as privilege escalation. The Falcon sensor for Linux is able to see the pinns utility command execution and detect and prevent this behavior during runtime.",
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods.",
+                        "CrowdStrike cloud security researchers discovered a new vulnerability (dubbed cr8escape and tracked as CVE-2022-0811) in the Kubernetes container engine CRI-O.<crlf>CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today.<crlf>It is recommended that CRI-O users patch immediately.<crlf>CrowdStrike customers are protected from this threat by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module."
+                    ],
+                    "titles": [
+                        "Kubernetes and CRI-O release patch for vulnerability today; CrowdStrike customers protected",
+                        "Summary",
+                        "Detection",
+                        "Proof of Concept: Leveraging CVE-2022-0811 to Compromise Kubernetes",
+                        "cr8escape: New Vulnerability in CRI-O Container Engine Discovered by CrowdStrike (CVE-2022-0811)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CVE_0xb3619f49>",
+                    "type": "CVE",
+                    "value": "cve-2022-8011"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal.",
+                        "Kubernetes is not necessary to invoke CVE-2022-8011. An attacker on a machine with CRI-O installed can use it to set kernel parameters all by itself. We used Kubernetes in this POC to better illustrate the potential impact of the problem and to more closely simulate how this would likely be used in the wild."
+                    ],
+                    "titles": [
+                        "Notes",
+                        "Additional Resources"
+                    ]
+                }
+            }
+        ],
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xfda51682>",
+                    "type": "Category",
+                    "value": "scan"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value."
+                    ],
+                    "titles": [
+                        "Indicator of Misconfiguration"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "We need to trigger a core dump to cause the kernel to execute our malicious core dump handler.",
+                        "While the sysctl-set pod did not start, it successfully updated the node-wide core_pattern to point into our malicious-script-host container.",
+                        "Within our malicious script host pod:",
+                        "We now have a malicious script setup and we know its path in the host mount namespace.",
+                        "NOTE: You must ensure this pod runs on the same node as the malicious script pod. There are multiple ways to do this depending on the exact cluster setup. A primitive, brute force method is to spin it up as a daemonset, which will update core_pattern for every node in the cluster.",
+                        "The result: A malicious user can pass in sysctl values with + and = characters allowing extra kernel settings to be set through pinns.",
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable.",
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #"
+                    ],
+                    "titles": [
+                        "Overview",
+                        "Create a Malicious Script to Invoke on Core Dump",
+                        "Verify Malicious Script Ran",
+                        "Use Second Pod to Point Core Pattern to Malicious Script",
+                        "Trigger Core Dump",
+                        "Vulnerability Details",
+                        "Startup Pod to Host Malicious Executable"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x3119e353>",
+                    "type": "File",
+                    "value": "crio.conf"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": [
+                        "Remediation"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x59b18a5b>",
+                            "type": "UnknownWord",
+                            "value": "option"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x886774df>",
+                            "type": "UnknownWord",
+                            "value": "pinns"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3eb3aef9>",
+                            "type": "UnknownWord",
+                            "value": "wrapper"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe05fb0e2>",
+                            "type": "UnknownWord",
+                            "value": "strips"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd773b149>",
+                            "type": "UnknownWord",
+                            "value": "-s"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x185a3476>",
+                            "type": "UnknownWord",
+                            "value": "invoking"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd0009f11>",
+                            "type": "UnknownWord",
+                            "value": "pinns_path"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0xcb1be86>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6"
+                },
+                "references": {
+                    "sentences": [
+                        "/var/lib/containers/storage/overlay/3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6/diff is the path to the root of the container from the perspective of the kernel."
+                    ],
+                    "titles": [
+                        "Determine Root Path From Host Mount Namespace"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xcb1be86>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3a5006dd>",
+                            "type": "UnknownWord",
+                            "value": "diff"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0xcb1be86>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8b06d83b>",
+                            "type": "UnknownWord",
+                            "value": "var lib"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x60ed0476>",
+                    "type": "UnknownWord",
+                    "value": "cr8escape"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal.",
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods.",
+                        "CrowdStrike cloud security researchers discovered a new vulnerability (dubbed cr8escape and tracked as CVE-2022-0811) in the Kubernetes container engine CRI-O.<crlf>CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today.<crlf>It is recommended that CRI-O users patch immediately.<crlf>CrowdStrike customers are protected from this threat by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module."
+                    ],
+                    "titles": [
+                        "cr8escape: New Vulnerability in CRI-O Container Engine Discovered by CrowdStrike (CVE-2022-0811)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd5792d32>",
+                    "type": "UnknownWord",
+                    "value": "cri-o"
+                },
+                "references": {
+                    "sentences": [
+                        "At the CRI-O level:",
+                        "The following function converts the map of sysctl settings passed to CRI-O into a pinns argument. Like pinns, it does not validate the settings.",
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)",
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)",
+                        "Next is our attempt to create a second pod. Creation will stall, but as a result of the attempt, CRI-O daemon will update the value of the kernel.core_pattern setting, which controls what the kernel does in response to core dumps. In this case, well tell the kernel to send the core dump to our malicious script.",
+                        "Attempted exploits of this vulnerability can be detected by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module. CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today. The CVE score is 8.8 (High) and the potential impact is widespread, as many software and platforms use CRI-O by default. It is recommended that CRI-O users patch immediately. CrowdStrike customers can use Falcon Spotlight vulnerability management to see which hosts are affected and patch where recommended to aid against exploitation.",
+                        "Starting with this commit, CRI-O uses the pinns utility to set kernel options for a pod. Pinns is most commonly invoked like this:<crlf>pinns -s kernel_parameter1=value1+kernel_parameter2=value2<crlf>Due to the addition of sysctl support in version 1.19, pinns will now blindly set any kernel parameters its passed without validation.",
+                        "CRI-O version 1.19+",
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods.",
+                        "This works because both Kubernetes and CRI-O sysctl validation logic believe the user is updating only the safe kernel parameter kernel.shm_rmid_forced. When CRI-O actually applies this setting, though, its parser will expand it into two kernel parameter updates:",
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)",
+                        "Kubernetes is not necessary to invoke CVE-2022-8011. An attacker on a machine with CRI-O installed can use it to set kernel parameters all by itself. We used Kubernetes in this POC to better illustrate the potential impact of the problem and to more closely simulate how this would likely be used in the wild.",
+                        "While the vulnerability is in CRI-O, software and platforms that depend on it are also likely to be vulnerable, including:",
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others.",
+                        "CrowdStrike cloud security researchers discovered a new vulnerability (dubbed cr8escape and tracked as CVE-2022-0811) in the Kubernetes container engine CRI-O.<crlf>CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today.<crlf>It is recommended that CRI-O users patch immediately.<crlf>CrowdStrike customers are protected from this threat by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module.",
+                        "CrowdStrikes Cloud Threat Research team discovered a flaw introduced in CRI-O version 1.19 that allows an attacker to bypass these safeguards and set arbitrary kernel parameters on the host. As a result of CVE-2022-0811, anyone with rights to deploy a pod on a Kubernetes cluster that uses the CRI-O runtime can abuse the kernel.core_pattern parameter to achieve container escape and arbitrary code execution as root on any node in the cluster."
+                    ],
+                    "titles": [
+                        "Kubernetes and CRI-O release patch for vulnerability today; CrowdStrike customers protected",
+                        "cr8escape: New Vulnerability in CRI-O Container Engine Discovered by CrowdStrike (CVE-2022-0811)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x37b4e324>",
+                    "type": "UnknownWord",
+                    "value": "john walker"
+                },
+                "references": {
+                    "sentences": [
+                        "John Walker - Manoj Ahuje"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x516bb58a>",
+                    "type": "UnknownWord",
+                    "value": "manoj"
+                },
+                "references": {
+                    "sentences": [
+                        "John Walker - Manoj Ahuje"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ef46a7f>",
+                    "type": "UnknownWord",
+                    "value": "ahuje"
+                },
+                "references": {
+                    "sentences": [
+                        "John Walker - Manoj Ahuje"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x879c3c10>",
+                    "type": "UnknownWord",
+                    "value": "runtime"
+                },
+                "references": {
+                    "sentences": [
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods.",
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x49aee268>",
+                    "type": "UnknownWord",
+                    "value": "underpinning"
+                },
+                "references": {
+                    "sentences": [
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5323e639>",
+                    "type": "UnknownWord",
+                    "value": "invoked"
+                },
+                "references": {
+                    "sentences": [
+                        "This script was invoked by the kernel outside of the container namespace with root privileges. A real attacker could, as an example, run a reverse shell and gain full control of the node.",
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods.",
+                        "Validation does occur before this function is invoked. However, note that the value is not checked or sanitized. As long as the sysctl key is valid, it will be processed as is."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeea58cdb>",
+                    "type": "UnknownWord",
+                    "value": "move"
+                },
+                "references": {
+                    "sentences": [
+                        "CrowdStrikes Cloud Threat Research team discovered a new vulnerability (CVE-2022-0811) in CRI-O (a container runtime engine underpinning Kubernetes). Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster. Invocation of CVE-2022-0811 can allow an attacker to perform a variety of actions on objectives, including execution of malware, exfiltration of data and lateral movement across pods."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8861fcfb>",
+                    "type": "UnknownWord",
+                    "value": "falcon"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal.",
+                        "Attempted exploits of this vulnerability can be detected by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module. CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today. The CVE score is 8.8 (High) and the potential impact is widespread, as many software and platforms use CRI-O by default. It is recommended that CRI-O users patch immediately. CrowdStrike customers can use Falcon Spotlight vulnerability management to see which hosts are affected and patch where recommended to aid against exploitation.",
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value.",
+                        "The CrowdStrike Falcon sensor included in the CrowdStrike Falcon Cloud Workload Protection module, which protects Kubernetes and containers, will detect attempts to exploit CVE-2022-0811 as privilege escalation. The Falcon sensor for Linux is able to see the pinns utility command execution and detect and prevent this behavior during runtime."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3ece6c39>",
+                    "type": "UnknownWord",
+                    "value": "sensor"
+                },
+                "references": {
+                    "sentences": [
+                        "Attempted exploits of this vulnerability can be detected by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module. CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today. The CVE score is 8.8 (High) and the potential impact is widespread, as many software and platforms use CRI-O by default. It is recommended that CRI-O users patch immediately. CrowdStrike customers can use Falcon Spotlight vulnerability management to see which hosts are affected and patch where recommended to aid against exploitation.",
+                        "The CrowdStrike Falcon sensor included in the CrowdStrike Falcon Cloud Workload Protection module, which protects Kubernetes and containers, will detect attempts to exploit CVE-2022-0811 as privilege escalation. The Falcon sensor for Linux is able to see the pinns utility command execution and detect and prevent this behavior during runtime."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfc7043b1>",
+                    "type": "UnknownWord",
+                    "value": "workload"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal.",
+                        "Attempted exploits of this vulnerability can be detected by the Falcon sensor for Linux or the Falcon Cloud Workload Protection module. CrowdStrike disclosed the vulnerability to Kubernetes, which worked with CRI-O to issue a patch that was released today. The CVE score is 8.8 (High) and the potential impact is widespread, as many software and platforms use CRI-O by default. It is recommended that CRI-O users patch immediately. CrowdStrike customers can use Falcon Spotlight vulnerability management to see which hosts are affected and patch where recommended to aid against exploitation.",
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value.",
+                        "The CrowdStrike Falcon sensor included in the CrowdStrike Falcon Cloud Workload Protection module, which protects Kubernetes and containers, will detect attempts to exploit CVE-2022-0811 as privilege escalation. The Falcon sensor for Linux is able to see the pinns utility command execution and detect and prevent this behavior during runtime."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x378fe873>",
+                    "type": "UnknownWord",
+                    "value": "safely"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9517fba2>",
+                    "type": "UnknownWord",
+                    "value": "containerized"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdab3812b>",
+                    "type": "UnknownWord",
+                    "value": "namespaced"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe958fbf2>",
+                    "type": "UnknownWord",
+                    "value": "impacting"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes uses a container runtime like CRI-O or Docker to safely share each nodes kernel and resources with the various containerized applications running on it. The Linux kernel accepts runtime parameters that control its behavior. Some parameters are namespaced and can therefore be set in a single container without impacting the system at large. Kubernetes and the container runtimes it drives allow pods to update these safe kernel settings while blocking access to others."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x76e5c20c>",
+                    "type": "UnknownWord",
+                    "value": "safeguards"
+                },
+                "references": {
+                    "sentences": [
+                        "CrowdStrikes Cloud Threat Research team discovered a flaw introduced in CRI-O version 1.19 that allows an attacker to bypass these safeguards and set arbitrary kernel parameters on the host. As a result of CVE-2022-0811, anyone with rights to deploy a pod on a Kubernetes cluster that uses the CRI-O runtime can abuse the kernel.core_pattern parameter to achieve container escape and arbitrary code execution as root on any node in the cluster."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x74881f5a>",
+                    "type": "UnknownWord",
+                    "value": "crio"
+                },
+                "references": {
+                    "sentences": [
+                        "To determine if a host is affected: run crio version",
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1374b801>",
+                    "type": "UnknownWord",
+                    "value": "depend"
+                },
+                "references": {
+                    "sentences": [
+                        "While the vulnerability is in CRI-O, software and platforms that depend on it are also likely to be vulnerable, including:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xde2e2d9d>",
+                    "type": "UnknownWord",
+                    "value": "openshift"
+                },
+                "references": {
+                    "sentences": [
+                        "OpenShift 4+<crlf>Oracle Container Engine for Kubernetes"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x875aa459>",
+                    "type": "UnknownWord",
+                    "value": "protects"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon sensor included in the CrowdStrike Falcon Cloud Workload Protection module, which protects Kubernetes and containers, will detect attempts to exploit CVE-2022-0811 as privilege escalation. The Falcon sensor for Linux is able to see the pinns utility command execution and detect and prevent this behavior during runtime."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf85450d0>",
+                    "type": "UnknownWord",
+                    "value": "click"
+                },
+                "references": {
+                    "sentences": [
+                        "(Click to enlarge)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4790150a>",
+                    "type": "UnknownWord",
+                    "value": "enlarge"
+                },
+                "references": {
+                    "sentences": [
+                        "(Click to enlarge)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe6f70764>",
+                    "type": "UnknownWord",
+                    "value": "misconfiguration"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value."
+                    ],
+                    "titles": [
+                        "Indicator of Misconfiguration"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ee48e2f>",
+                    "type": "UnknownWord",
+                    "value": "specs"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9dd82c91>",
+                    "type": "UnknownWord",
+                    "value": "displayed"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a45075c>",
+                    "type": "UnknownWord",
+                    "value": "investigate"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Falcon Cloud Workload Protection module also includes a Kubernetes Protection Agent that scans all workload resource specs on the clusters and transmits it to the CrowdStrike Security Cloud for any misconfiguration analysis. Any discovered misconfiguration results in a detection that is displayed in Cloud Security > Kubernetes And Containers > Investigate. This module is helpful in scanning all of the existing running workloads on clusters that may have been already running with a bad sysctl value."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x82c2670c>",
+                    "type": "UnknownWord",
+                    "value": "remediation"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Remediation"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8a4b8bf9>",
+                    "type": "UnknownWord",
+                    "value": "ideal"
+                },
+                "references": {
+                    "sentences": [
+                        "Ideal: Use policies to block pods that contain sysctl settings with + or = in their value.<crlf>Less ideal alternative: Use the PodSecurityPolicy forbiddenSysctls field to block all sysctls (its necessary to block all sysctls as the malicious setting is smuggled in a value)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf666e3aa>",
+                    "type": "UnknownWord",
+                    "value": "policies"
+                },
+                "references": {
+                    "sentences": [
+                        "Ideal: Use policies to block pods that contain sysctl settings with + or = in their value.<crlf>Less ideal alternative: Use the PodSecurityPolicy forbiddenSysctls field to block all sysctls (its necessary to block all sysctls as the malicious setting is smuggled in a value)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeb673d01>",
+                    "type": "UnknownWord",
+                    "value": "pods"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)",
+                        "Ideal: Use policies to block pods that contain sysctl settings with + or = in their value.<crlf>Less ideal alternative: Use the PodSecurityPolicy forbiddenSysctls field to block all sysctls (its necessary to block all sysctls as the malicious setting is smuggled in a value)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeb06a586>",
+                    "type": "UnknownWord",
+                    "value": "contain"
+                },
+                "references": {
+                    "sentences": [
+                        "Ideal: Use policies to block pods that contain sysctl settings with + or = in their value.<crlf>Less ideal alternative: Use the PodSecurityPolicy forbiddenSysctls field to block all sysctls (its necessary to block all sysctls as the malicious setting is smuggled in a value)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe80bb261>",
+                    "type": "UnknownWord",
+                    "value": "sysctl"
+                },
+                "references": {
+                    "sentences": [
+                        "The following function converts the map of sysctl settings passed to CRI-O into a pinns argument. Like pinns, it does not validate the settings.",
+                        "The result: A malicious user can pass in sysctl values with + and = characters allowing extra kernel settings to be set through pinns.",
+                        "Ideal: Use policies to block pods that contain sysctl settings with + or = in their value.<crlf>Less ideal alternative: Use the PodSecurityPolicy forbiddenSysctls field to block all sysctls (its necessary to block all sysctls as the malicious setting is smuggled in a value).",
+                        "This works because both Kubernetes and CRI-O sysctl validation logic believe the user is updating only the safe kernel parameter kernel.shm_rmid_forced. When CRI-O actually applies this setting, though, its parser will expand it into two kernel parameter updates:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd0009f11>",
+                    "type": "UnknownWord",
+                    "value": "pinns_path"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd0009f11>",
+                            "type": "UnknownWord",
+                            "value": "pinns_path"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x886774df>",
+                    "type": "UnknownWord",
+                    "value": "pinns"
+                },
+                "references": {
+                    "sentences": [
+                        "The result: A malicious user can pass in sysctl values with + and = characters allowing extra kernel settings to be set through pinns.",
+                        "The following function converts the map of sysctl settings passed to CRI-O into a pinns argument. Like pinns, it does not validate the settings.",
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)",
+                        "Starting with this commit, CRI-O uses the pinns utility to set kernel options for a pod. Pinns is most commonly invoked like this:<crlf>pinns -s kernel_parameter1=value1+kernel_parameter2=value2<crlf>Due to the addition of sysctl support in version 1.19, pinns will now blindly set any kernel parameters its passed without validation."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x886774df>",
+                            "type": "UnknownWord",
+                            "value": "pinns"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3eb3aef9>",
+                    "type": "UnknownWord",
+                    "value": "wrapper"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3eb3aef9>",
+                            "type": "UnknownWord",
+                            "value": "wrapper"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe05fb0e2>",
+                    "type": "UnknownWord",
+                    "value": "strips"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xe05fb0e2>",
+                            "type": "UnknownWord",
+                            "value": "strips"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd773b149>",
+                    "type": "UnknownWord",
+                    "value": "-s"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd773b149>",
+                            "type": "UnknownWord",
+                            "value": "-s"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x59b18a5b>",
+                    "type": "UnknownWord",
+                    "value": "option"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)",
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x59b18a5b>",
+                            "type": "UnknownWord",
+                            "value": "option"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x185a3476>",
+                    "type": "UnknownWord",
+                    "value": "invoking"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)",
+                        "Ultimately the kernel will be invoking a script in this pod in response to a core dump. The kernel will be acting in the host mount namespace, so we need to determine the path to the container filesystem from this namespace."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x3119e353>",
+                            "type": "File",
+                            "value": "crio.conf"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x185a3476>",
+                            "type": "UnknownWord",
+                            "value": "invoking"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x42030cbf>",
+                    "type": "UnknownWord",
+                    "value": "usr"
+                },
+                "references": {
+                    "sentences": [
+                        "Upgrade to a patched version of CRI-O.<crlf>Set pinns_path in crio.conf to point to a pinns wrapper that strips the -s option before invoking the real pinns. This will prevent pods from updating any kernel parameters, including sensitive ones. Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Pinns, typically found at /usr/bin/pinns, is the utility CRI-O uses to set kernel parameters.<crlf>Downgrade to CRI-O version 1.18 or earlier. (Not recommended in most cases.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x73eadc14>",
+                    "type": "UnknownWord",
+                    "value": "options"
+                },
+                "references": {
+                    "sentences": [
+                        "Starting with this commit, CRI-O uses the pinns utility to set kernel options for a pod. Pinns is most commonly invoked like this:<crlf>pinns -s kernel_parameter1=value1+kernel_parameter2=value2<crlf>Due to the addition of sysctl support in version 1.19, pinns will now blindly set any kernel parameters its passed without validation."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2abdc051>",
+                    "type": "UnknownWord",
+                    "value": "pod"
+                },
+                "references": {
+                    "sentences": [
+                        "This pod will host an executable that the kernel will invoke after a core dump. It will also be used to trigger a core dump.",
+                        "Next is our attempt to create a second pod. Creation will stall, but as a result of the attempt, CRI-O daemon will update the value of the kernel.core_pattern setting, which controls what the kernel does in response to core dumps. In this case, well tell the kernel to send the core dump to our malicious script.",
+                        "While the sysctl-set pod did not start, it successfully updated the node-wide core_pattern to point into our malicious-script-host container.",
+                        "Starting with this commit, CRI-O uses the pinns utility to set kernel options for a pod. Pinns is most commonly invoked like this:<crlf>pinns -s kernel_parameter1=value1+kernel_parameter2=value2<crlf>Due to the addition of sysctl support in version 1.19, pinns will now blindly set any kernel parameters its passed without validation.",
+                        "Within our malicious script host pod:",
+                        "NOTE: You must ensure this pod runs on the same node as the malicious script pod. There are multiple ways to do this depending on the exact cluster setup. A primitive, brute force method is to spin it up as a daemonset, which will update core_pattern for every node in the cluster.",
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable.",
+                        "Ultimately the kernel will be invoking a script in this pod in response to a core dump. The kernel will be acting in the host mount namespace, so we need to determine the path to the container filesystem from this namespace."
+                    ],
+                    "titles": [
+                        "Use Second Pod to Point Core Pattern to Malicious Script",
+                        "Startup Pod to Host Malicious Executable"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1c81132>",
+                    "type": "UnknownWord",
+                    "value": "converts"
+                },
+                "references": {
+                    "sentences": [
+                        "The following function converts the map of sysctl settings passed to CRI-O into a pinns argument. Like pinns, it does not validate the settings."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x643cc474>",
+                    "type": "UnknownWord",
+                    "value": "passed"
+                },
+                "references": {
+                    "sentences": [
+                        "The following function converts the map of sysctl settings passed to CRI-O into a pinns argument. Like pinns, it does not validate the settings."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1f23fcb2>",
+                    "type": "UnknownWord",
+                    "value": "validation"
+                },
+                "references": {
+                    "sentences": [
+                        "Validation does occur before this function is invoked. However, note that the value is not checked or sanitized. As long as the sysctl key is valid, it will be processed as is.",
+                        "This works because both Kubernetes and CRI-O sysctl validation logic believe the user is updating only the safe kernel parameter kernel.shm_rmid_forced. When CRI-O actually applies this setting, though, its parser will expand it into two kernel parameter updates:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x13c77b37>",
+                    "type": "UnknownWord",
+                    "value": "sanitized"
+                },
+                "references": {
+                    "sentences": [
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)",
+                        "Validation does occur before this function is invoked. However, note that the value is not checked or sanitized. As long as the sysctl key is valid, it will be processed as is."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xddf28b53>",
+                    "type": "UnknownWord",
+                    "value": "characters"
+                },
+                "references": {
+                    "sentences": [
+                        "The result: A malicious user can pass in sysctl values with + and = characters allowing extra kernel settings to be set through pinns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xeceedc11>",
+                    "type": "UnknownWord",
+                    "value": "extra"
+                },
+                "references": {
+                    "sentences": [
+                        "The result: A malicious user can pass in sysctl values with + and = characters allowing extra kernel settings to be set through pinns."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcdd38faf>",
+                    "type": "UnknownWord",
+                    "value": "poc"
+                },
+                "references": {
+                    "sentences": [
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": [
+                        "Reproduction Environment for POC"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x18f03fdb>",
+                    "type": "UnknownWord",
+                    "value": "podspec"
+                },
+                "references": {
+                    "sentences": [
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb25865fd>",
+                    "type": "UnknownWord",
+                    "value": "core_pattern"
+                },
+                "references": {
+                    "sentences": [
+                        "Next is our attempt to create a second pod. Creation will stall, but as a result of the attempt, CRI-O daemon will update the value of the kernel.core_pattern setting, which controls what the kernel does in response to core dumps. In this case, well tell the kernel to send the core dump to our malicious script.",
+                        "While the sysctl-set pod did not start, it successfully updated the node-wide core_pattern to point into our malicious-script-host container.",
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2095f311>",
+                    "type": "UnknownWord",
+                    "value": "specifies"
+                },
+                "references": {
+                    "sentences": [
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe24f8ec1>",
+                    "type": "UnknownWord",
+                    "value": "react"
+                },
+                "references": {
+                    "sentences": [
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a960a10>",
+                    "type": "UnknownWord",
+                    "value": "outside"
+                },
+                "references": {
+                    "sentences": [
+                        "This script was invoked by the kernel outside of the container namespace with root privileges. A real attacker could, as an example, run a reverse shell and gain full control of the node.",
+                        "This proof of concept (POC) uses a malicious PodSpec to set the kernel.core_pattern kernel parameter, which specifies how the kernel should react to a core dump. In this case, well tell it to execute a binary hosted in another pod. That binary will be run as root outside of any container. Finally, well trigger a core dump causing the kernel to invoke the malicious executable."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x13ac1ce7>",
+                    "type": "UnknownWord",
+                    "value": "reproduction"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Reproduction Environment for POC"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x215e8d98>",
+                    "type": "UnknownWord",
+                    "value": "minikube"
+                },
+                "references": {
+                    "sentences": [
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa5891de4>",
+                    "type": "UnknownWord",
+                    "value": "--kubernetes-version"
+                },
+                "references": {
+                    "sentences": [
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x74b8f1dd>",
+                    "type": "UnknownWord",
+                    "value": "--driver"
+                },
+                "references": {
+                    "sentences": [
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x14544652>",
+                    "type": "UnknownWord",
+                    "value": "--container-runtime"
+                },
+                "references": {
+                    "sentences": [
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1bb446ad>",
+                    "type": "UnknownWord",
+                    "value": "happens"
+                },
+                "references": {
+                    "sentences": [
+                        "Minikube cluster created via minikube start --kubernetes-version=v1.23.3 --driver=vmware --container-runtime=crio running: Kubernetes v1.23.3 CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)<crlf>Kubernetes v1.23.3<crlf>CRI-O 1.22.0 (Later versions are vulnerable as well; this just happens to be the version of CRI-O Minikube installs.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20ede8cd>",
+                    "type": "UnknownWord",
+                    "value": "invoke"
+                },
+                "references": {
+                    "sentences": [
+                        "This pod will host an executable that the kernel will invoke after a core dump. It will also be used to trigger a core dump.",
+                        "Kubernetes is not necessary to invoke CVE-2022-8011. An attacker on a machine with CRI-O installed can use it to set kernel parameters all by itself. We used Kubernetes in this POC to better illustrate the potential impact of the problem and to more closely simulate how this would likely be used in the wild."
+                    ],
+                    "titles": [
+                        "Create a Malicious Script to Invoke on Core Dump"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa93257a7>",
+                    "type": "UnknownWord",
+                    "value": "mount"
+                },
+                "references": {
+                    "sentences": [
+                        "We now have a malicious script setup and we know its path in the host mount namespace."
+                    ],
+                    "titles": [
+                        "Determine Root Path From Host Mount Namespace"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb05f48>",
+                    "type": "UnknownWord",
+                    "value": "namespace"
+                },
+                "references": {
+                    "sentences": [
+                        "We now have a malicious script setup and we know its path in the host mount namespace.",
+                        "This script was invoked by the kernel outside of the container namespace with root privileges. A real attacker could, as an example, run a reverse shell and gain full control of the node."
+                    ],
+                    "titles": [
+                        "Determine Root Path From Host Mount Namespace"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8b06d83b>",
+                    "type": "UnknownWord",
+                    "value": "var lib"
+                },
+                "references": {
+                    "sentences": [
+                        "/var/lib/containers/storage/overlay/3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6/diff is the path to the root of the container from the perspective of the kernel."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xcb1be86>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8b06d83b>",
+                            "type": "UnknownWord",
+                            "value": "var lib"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3a5006dd>",
+                    "type": "UnknownWord",
+                    "value": "diff"
+                },
+                "references": {
+                    "sentences": [
+                        "/var/lib/containers/storage/overlay/3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6/diff is the path to the root of the container from the perspective of the kernel."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0xcb1be86>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "3ef1281bce79865599f673b476957be73f994d17c15109d2b6a426711cf753e6"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x3a5006dd>",
+                            "type": "UnknownWord",
+                            "value": "diff"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe8a31692>",
+                    "type": "UnknownWord",
+                    "value": "creation"
+                },
+                "references": {
+                    "sentences": [
+                        "Next is our attempt to create a second pod. Creation will stall, but as a result of the attempt, CRI-O daemon will update the value of the kernel.core_pattern setting, which controls what the kernel does in response to core dumps. In this case, well tell the kernel to send the core dump to our malicious script."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x14d67c53>",
+                    "type": "UnknownWord",
+                    "value": "stall"
+                },
+                "references": {
+                    "sentences": [
+                        "Next is our attempt to create a second pod. Creation will stall, but as a result of the attempt, CRI-O daemon will update the value of the kernel.core_pattern setting, which controls what the kernel does in response to core dumps. In this case, well tell the kernel to send the core dump to our malicious script."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xabb7bf53>",
+                    "type": "UnknownWord",
+                    "value": "exact"
+                },
+                "references": {
+                    "sentences": [
+                        "NOTE: You must ensure this pod runs on the same node as the malicious script pod. There are multiple ways to do this depending on the exact cluster setup. A primitive, brute force method is to spin it up as a daemonset, which will update core_pattern for every node in the cluster."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7c5afabf>",
+                    "type": "UnknownWord",
+                    "value": "sysctl-set"
+                },
+                "references": {
+                    "sentences": [
+                        "While the sysctl-set pod did not start, it successfully updated the node-wide core_pattern to point into our malicious-script-host container."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x448fd2b4>",
+                    "type": "UnknownWord",
+                    "value": "node-wide"
+                },
+                "references": {
+                    "sentences": [
+                        "While the sysctl-set pod did not start, it successfully updated the node-wide core_pattern to point into our malicious-script-host container."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x41e84812>",
+                    "type": "UnknownWord",
+                    "value": "logic"
+                },
+                "references": {
+                    "sentences": [
+                        "This works because both Kubernetes and CRI-O sysctl validation logic believe the user is updating only the safe kernel parameter kernel.shm_rmid_forced. When CRI-O actually applies this setting, though, its parser will expand it into two kernel parameter updates:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdc2761c0>",
+                    "type": "UnknownWord",
+                    "value": "shm_rmid_forced"
+                },
+                "references": {
+                    "sentences": [
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #",
+                        "This works because both Kubernetes and CRI-O sysctl validation logic believe the user is updating only the safe kernel parameter kernel.shm_rmid_forced. When CRI-O actually applies this setting, though, its parser will expand it into two kernel parameter updates:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd567d93c>",
+                    "type": "UnknownWord",
+                    "value": "kernel"
+                },
+                "references": {
+                    "sentences": [
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcdfe612f>",
+                    "type": "UnknownWord",
+                    "value": "kernel core_pattern"
+                },
+                "references": {
+                    "sentences": [
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5d2cea5f>",
+                    "type": "UnknownWord",
+                    "value": "<path"
+                },
+                "references": {
+                    "sentences": [
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe16ffaca>",
+                    "type": "UnknownWord",
+                    "value": "script>"
+                },
+                "references": {
+                    "sentences": [
+                        "kernel.shm_rmid_forced=1<crlf>kernel.core_pattern=|<path to malicious script> #"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5399f583>",
+                    "type": "UnknownWord",
+                    "value": "validated"
+                },
+                "references": {
+                    "sentences": [
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1beeaa9b>",
+                    "type": "UnknownWord",
+                    "value": "trailing"
+                },
+                "references": {
+                    "sentences": [
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9cef9a1d>",
+                    "type": "UnknownWord",
+                    "value": "ignore"
+                },
+                "references": {
+                    "sentences": [
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfb823901>",
+                    "type": "UnknownWord",
+                    "value": "quote"
+                },
+                "references": {
+                    "sentences": [
+                        "This second option has not been validated or sanitized in any way. (NOTE: The trailing # is to ignore the single quote CRI-O adds to the end of the value.)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b8b9e4a>",
+                    "type": "UnknownWord",
+                    "value": "need"
+                },
+                "references": {
+                    "sentences": [
+                        "We need to trigger a core dump to cause the kernel to execute our malicious core dump handler."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd6e4e2d5>",
+                    "type": "UnknownWord",
+                    "value": "handler"
+                },
+                "references": {
+                    "sentences": [
+                        "We need to trigger a core dump to cause the kernel to execute our malicious core dump handler."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf0385dae>",
+                    "type": "UnknownWord",
+                    "value": "ran"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Verify Malicious Script Ran"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2ece6bbc>",
+                    "type": "UnknownWord",
+                    "value": "necessary"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes is not necessary to invoke CVE-2022-8011. An attacker on a machine with CRI-O installed can use it to set kernel parameters all by itself. We used Kubernetes in this POC to better illustrate the potential impact of the problem and to more closely simulate how this would likely be used in the wild."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4dc37490>",
+                    "type": "UnknownWord",
+                    "value": "installed"
+                },
+                "references": {
+                    "sentences": [
+                        "Kubernetes is not necessary to invoke CVE-2022-8011. An attacker on a machine with CRI-O installed can use it to set kernel parameters all by itself. We used Kubernetes in this POC to better illustrate the potential impact of the problem and to more closely simulate how this would likely be used in the wild."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc83d0e08>",
+                    "type": "UnknownWord",
+                    "value": "theyre"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x324a4574>",
+                    "type": "UnknownWord",
+                    "value": "protect"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfa452891>",
+                    "type": "UnknownWord",
+                    "value": "workloads"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb3af871e>",
+                    "type": "UnknownWord",
+                    "value": "learn"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x30d3c5d>",
+                    "type": "UnknownWord",
+                    "value": "robust"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x79b5b5ae>",
+                    "type": "UnknownWord",
+                    "value": "cloud-native"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb5f46879>",
+                    "type": "UnknownWord",
+                    "value": "powerful"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x688ebc08>",
+                    "type": "UnknownWord",
+                    "value": "visiting"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2a7956fd>",
+                    "type": "UnknownWord",
+                    "value": "full-featured"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdeb72ed9>",
+                    "type": "UnknownWord",
+                    "value": "trial"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x77e5123e>",
+                    "type": "UnknownWord",
+                    "value": "yourself"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2ddae5a7>",
+                    "type": "UnknownWord",
+                    "value": "next-gen"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4c21e06d>",
+                    "type": "UnknownWord",
+                    "value": "portal"
+                },
+                "references": {
+                    "sentences": [
+                        "Read more about how to block vulnerabilities before theyre exploited: How to Protect Cloud Workloads from Zero-day Vulnerabilities<crlf>Learn how CrowdStrike Falcon Cloud Workload Protection provides robust protection for applications that run in the cloud and enables organizations to build, run and secure cloud-native applications with speed and confidence.<crlf>Learn about the powerful, cloud-native CrowdStrike Falcon platform by visiting the product webpage.<crlf>Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats.<crlf>See if a managed solution is right for you. Find out about Falcon Cloud Workload Protection Complete: Managed Detection and Response for Cloud Workloads.<crlf>For more resources of CVE-2022-8011 cr8escape from CrowdStrike, customers may access the tracking page in the Support Portal.<crlf>Review our Prevention Policy Best Practices in the Support Portal."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x71c46a6e>",
+                    "type": "UnknownWord",
+                    "value": "tweet"
+                },
+                "references": {
+                    "sentences": [
+                        "Tweet<crlf>Share"
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {},
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [
+            "CrowdStrike cloud security researchers discovered a new vulnerability (dubbed cr8escape and tracked as CVE-2022-0811) in the Kubernetes container engine CRI-O",
+            "Dubbed cr8escape, when invoked, an attacker could escape from a Kubernetes container and gain root access to the host and be able to move anywhere in the cluster"
+        ],
+        "associated": [],
+        "targets": [
+            "Get a full-featured free trial of CrowdStrike Falcon Prevent to see for yourself how true next-gen AV performs against todays most sophisticated threats"
+        ],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [
+                "https://github.com/cri-o/cri-o/releases",
+                "https://github.com/cri-o/cri-o/tree/v1.19.0/pinns/src",
+                "https://github.com/cri-o/cri-o/tree/v1.19.0/pinns/src",
+                "https://github.com/cri-o/cri-o/commit/26de5b665937608100817bc3b21f3eca41014dd2"
+            ],
+            "pastebin": [],
+            "other": [
+                "https://www.crowdstrike.com/blog/author/john-walker-manoj-ahuje/",
+                "https://www.crowdstrike.com/blog/category/endpoint-protection/",
+                "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-0811",
+                "https://cri-o.io/",
+                "https://www.crowdstrike.com/cybersecurity-101/data-exfiltration/",
+                "https://www.crowdstrike.com/cloud-security-products/falcon-cloud-workload-protection/",
+                "https://www.crowdstrike.com/endpoint-security-products/falcon-spotlight-vulnerability-management/",
+                "https://kubernetes.io/docs/setup/production-environment/container-runtimes/",
+                "https://man7.org/linux/man-pages/man5/core.5.html",
+                "https://www.crowdstrike.com/blog/protect-cloud-workloads-from-zero-day-vulnerabilities/",
+                "https://www.crowdstrike.com/cloud-security-products/falcon-cloud-workload-protection/",
+                "https://www.crowdstrike.com/endpoint-security-products/",
+                "https://go.crowdstrike.com/try-falcon-prevent.html",
+                "https://www.crowdstrike.com/products/cloud-security/falcon-cloud-workload-protection-complete/",
+                "https://supportportal.crowdstrike.com/s/article/Trending-Threats-Vulnerabilities-cr8escape-New-Vulnerability-in-CRI-O-Container-Engine-Discovered-by-CrowdStrike",
+                "https://supportportal.crowdstrike.com/s/article/Prevention-Policy-Best-Practice-Guidelines",
+                "https://twitter.com/share?text=cr8escape%3A+New+Vulnerability+in+CRI-O+Container+Engine+Discovered+by+CrowdStrike+%28CVE-2022-0811%29&url=https://www.crowdstrike.com/blog/cr8escape-new-vulnerability-discovered-in-cri-o-container-engine-cve-2022-0811/",
+                "https://www.linkedin.com/shareArticle?mini=true&url=https://www.crowdstrike.com/blog/cr8escape-new-vulnerability-discovered-in-cri-o-container-engine-cve-2022-0811/&title=cr8escape%3A+New+Vulnerability+in+CRI-O+Container+Engine+Discovered+by+CrowdStrike+%28CVE-2022-0811%29",
+                "https://go.crowdstrike.com/try-falcon-prevent.html"
+            ]
+        },
+        "images": [
+            "https://www.crowdstrike.com/wp-content/uploads/2022/03/Blog_1060x698-4.jpeg",
+            "https://www.crowdstrike.com/wp-content/uploads/2022/03/detection-process-tree.png",
+            "https://www.crowdstrike.com/wp-content/uploads/2022/03/Picture1-9.png",
+            "https://www.crowdstrike.com/wp-content/uploads/2022/03/Picture2.png",
+            "https://www.crowdstrike.com/wp-content/uploads/2022/03/Picture3.png",
+            "https://www.crowdstrike.com/wp-content/themes/main-theme/dist/images/blog/breaches-stop-here-post-cta.jpeg"
+        ]
+    }
+}
