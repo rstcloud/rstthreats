@@ -1,0 +1,949 @@
+{
+    "id": "<report_0xecf74b6>",
+    "url": "https://thehackernews.com/2022/05/malware-analysis-trickbot.html",
+    "title": "Malware Analysis: Trickbot",
+    "meta": [
+        {
+            "id": "<chapter_0xd7338bd9>",
+            "title": "Malware Analysis: Trickbot",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x7eb15783>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Origins of Trickbot",
+                    "html": "<p>Origins of Trickbot</p>"
+                },
+                {
+                    "id": "<sentence_0xd50bd368>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "1 Initial access",
+                    "html": "<p>1 \u2014 Initial access</p>"
+                },
+                {
+                    "id": "<sentence_0x9779d38d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "2 Execution",
+                    "html": "<p>2 \u2014 Execution</p>"
+                },
+                {
+                    "id": "<sentence_0xdb186438>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "3 Collection",
+                    "html": "<p>3 \u2014 Collection</p>"
+                },
+                {
+                    "id": "<sentence_0x804e0eee>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "4 Command & Control",
+                    "html": "<p>4 \u2014 Command &amp; Control</p>"
+                },
+                {
+                    "id": "<sentence_0xcdfb2b57>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Follow-up attacks: Cobalt Strike, Ryuk, Conti",
+                    "html": "<p>Follow-up attacks: Cobalt Strike, Ryuk, Conti</p>"
+                },
+                {
+                    "id": "<sentence_0x65f2719c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Key learnings",
+                    "html": "<p>Key learnings</p>"
+                },
+                {
+                    "id": "<sentence_0xb07a27b2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Comments",
+                    "html": "\nComments\n"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x559561bf>",
+            "title": "Malware Analysis: Trickbot",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5f13577>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "May 24, 2022",
+                    "html": "\n\ue802May 24, 2022\ue804"
+                },
+                {
+                    "id": "<sentence_0xa9ef9461>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x545843bd>": "https://thehackernews.com/p/authors.html"
+                    },
+                    "text": "The Hacker News",
+                    "html": "<a href=\"/p/authors.html\" rel=\"author\">The Hacker News</a>"
+                },
+                {
+                    "id": "<sentence_0xd4e56a66>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a href=\"https://thehackernews.com/new-images/img/b/R29vZ2xl/AVvXsEgryO4wnLxb4fGeKz4Tr_PrD6PjHDS3wDCZEb3rMwRJprNyY2zfdjCeYk7Ojz2B8pQsx2_deYOH-ihW-2Syz5oFCc7YoiVT3q_Y2D1EuLq4WGIhuluu7cucWQZeg9Gff3BtCjCB8qocHcS3o4e5Ilb2SnrbIttC8CiMjt2vCwBOsTt4NqcGm0oTV6Lb/s728-e100/trickbot.jpg\"><img alt=\"Trickbot\" border=\"0\" src=\"https://thehackernews.com/new-images/img/b/R29vZ2xl/AVvXsEgryO4wnLxb4fGeKz4Tr_PrD6PjHDS3wDCZEb3rMwRJprNyY2zfdjCeYk7Ojz2B8pQsx2_deYOH-ihW-2Syz5oFCc7YoiVT3q_Y2D1EuLq4WGIhuluu7cucWQZeg9Gff3BtCjCB8qocHcS3o4e5Ilb2SnrbIttC8CiMjt2vCwBOsTt4NqcGm0oTV6Lb/s728-e1000/trickbot.jpg\" title=\"Trickbot\"/></a>"
+                },
+                {
+                    "id": "<sentence_0x721d95ff>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?",
+                    "html": "<p>In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary? </p>"
+                },
+                {
+                    "id": "<sentence_0x79b63fd4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Well, it does, but the apparent professionalization actually does have some good sides too. One factor is that certain reused modules commonly found in malware can be used to identify, track, and analyze professional attack software. Ultimately this means that, with enough experience, skilled analysts can detect and stop malware in its tracks, often with minimal or no damage (if the attackers make it through the first defense lines at all).",
+                    "html": "<p>Well, it does, but the apparent professionalization actually does have some good sides too. One factor is that certain reused modules commonly found in malware can be used to identify, track, and analyze professional attack software. Ultimately this means that, with enough experience, skilled analysts can detect and stop malware in its tracks, often with minimal or no damage (if the attackers make it through the first defense lines at all).</p>"
+                },
+                {
+                    "id": "<sentence_0xc192afc2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\"",
+                    "html": "<p>Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\"</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa1f24b84>",
+            "title": "Origins of Trickbot",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xcd15b3ab>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).",
+                    "html": "<p>Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).</p>"
+                },
+                {
+                    "id": "<sentence_0x7d9c4562>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups.",
+                    "html": "<p>Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups.</p>"
+                },
+                {
+                    "id": "<sentence_0xdf06b059>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks.",
+                    "html": "<p>The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks.</p>"
+                },
+                {
+                    "id": "<sentence_0x6b8692d9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This threat analysis will be focused on the threat actor named TA551, and its use of Trickbot as an example. I will present how we are able to perform detection at the different steps of the kill chain, starting from the initial infection through malspam campaigns, moving on to the detection of tools used by the threat actor during compromise. We will also provide some additional information about how the threat actor is using this malware and the evolution it took.",
+                    "html": "<p>This threat analysis will be focused on the threat actor named TA551, and its use of Trickbot as an example. I will present how we are able to perform detection at the different steps of the kill chain, starting from the initial infection through malspam campaigns, moving on to the detection of tools used by the threat actor during compromise. We will also provide some additional information about how the threat actor is using this malware and the evolution it took.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6157a2aa>",
+            "title": "1 Initial access",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe68fc179>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ol>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x790080af>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user.",
+                    "html": "<p>Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user.</p>"
+                },
+                {
+                    "id": "<sentence_0xd8b14706>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attachment includes a .zip file which again includes a document. The zip file always uses the same name as \"request.zip\" or \"info.zip\", and the same name for the document file.",
+                    "html": "<p>The attachment includes a .zip file which again includes a document. The zip file always uses the same name as \"request.zip\" or \"info.zip\", and the same name for the document file.</p>"
+                },
+                {
+                    "id": "<sentence_0xca4150da>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "NB: The Threat Actor used the same modus operandi before/in parallel to Trickbot to deliver other malware. We observed during the same period, from June 2021 to September 2021, the use of Bazarloader on the initial access payload.",
+                    "html": "<p>NB: The Threat Actor used the same modus operandi before/in parallel to Trickbot to deliver other malware. We observed during the same period, from June 2021 to September 2021, the use of Bazarloader on the initial access payload.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xdb2121f9>",
+            "title": "2 Execution",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf984138f>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ol>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x7dfefe2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the user opens the document with macros enabled, an HTA file will be dropped on the system and launched using cmd.exe. The HTA file is used to download the Trickbot DLL from a remote server.",
+                    "html": "<p>When the user opens the document with macros enabled, an HTA file will be dropped on the system and launched using cmd.exe. The HTA file is used to download the Trickbot DLL from a remote server.</p>"
+                },
+                {
+                    "id": "<sentence_0x965475d2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This behavior is related to TA551, we can identify it with the pattern \"/bdfh/\" in the GET request.",
+                    "html": "<p>This behavior is related to TA551, we can identify it with the pattern \"/bdfh/\" in the GET request.</p>"
+                },
+                {
+                    "id": "<sentence_0xa8386f96>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x1b3f7b0e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GET /bdfh/M8v[..]VUb HTTP/1.1",
+                    "html": "<p>GET /bdfh/M8v[..]VUb HTTP/1.1</p>"
+                },
+                {
+                    "id": "<sentence_0x7bfa5ada>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Accept: */*",
+                    "html": "<p>Accept: */*</p>"
+                },
+                {
+                    "id": "<sentence_0x8f2f695d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Host: wilkinstransportss.com",
+                    "html": "<p>Host: wilkinstransportss.com</p>"
+                },
+                {
+                    "id": "<sentence_0xbde86641>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Content-Type: application/octet-stream",
+                    "html": "<p>Content-Type: application/octet-stream</p>"
+                },
+                {
+                    "id": "<sentence_0xa226ea13>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x285e0eec>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques.",
+                    "html": "<p>NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques.</p>"
+                },
+                {
+                    "id": "<sentence_0x2040147d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9c255919>": {
+                            "0": {
+                                "0": "Figure 1 - Trickbot execution in the sandbox"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table cellpadding=\"0\" cellspacing=\"0\" class=\"tr-caption-container\"><tbody><tr><td><a href=\"https://thehackernews.com/new-images/img/b/R29vZ2xl/AVvXsEjCnvY7x3RqE1KmEZUVT8bcFFS8DXQ17eelSO0F30Y3VRPKWUj7MtNZHLCcXmgMDccULW0lxnINnmqXGn4d83wHIWfXcTL86OGda3lqO_Pyk9-mSv-LQ7MRrzSNewSdvWyuz5cbG7AzxOf_-EaW8puo5PK_webIt9XmDwyF2crBy6X8cAzXlhudgQoM/s728-e100/windows.jpg\"><img alt=\"\" border=\"0\" src=\"https://thehackernews.com/new-images/img/b/R29vZ2xl/AVvXsEjCnvY7x3RqE1KmEZUVT8bcFFS8DXQ17eelSO0F30Y3VRPKWUj7MtNZHLCcXmgMDccULW0lxnINnmqXGn4d83wHIWfXcTL86OGda3lqO_Pyk9-mSv-LQ7MRrzSNewSdvWyuz5cbG7AzxOf_-EaW8puo5PK_webIt9XmDwyF2crBy6X8cAzXlhudgQoM/s728-e100/windows.jpg\"/></a></td></tr><tr><td class=\"tr-caption\">Figure 1 - Trickbot execution in the sandbox</td></tr></tbody></table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x699d420c>",
+            "title": "3 Collection",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1fbc5512>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ol>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0xa49b066>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After the successful initial system compromise, Trickbot can collect a lot of information about its target using legitimate Windows executables and identify if the system is member of an Active Directory domain.",
+                    "html": "<p>After the successful initial system compromise, Trickbot can collect a lot of information about its target using legitimate Windows executables and identify if the system is member of an Active Directory domain. </p>"
+                },
+                {
+                    "id": "<sentence_0x4c6a5b28>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Additionally, to this collection, Trickbot will scan more information like Windows build, the public IP address, the user that is running Trickbot, and also if the system is behind an NAT firewall.",
+                    "html": "<p>Additionally, to this collection, Trickbot will scan more information like Windows build, the public IP address, the user that is running Trickbot, and also if the system is behind an NAT firewall.</p>"
+                },
+                {
+                    "id": "<sentence_0xf7762204>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Trickbot is also able to collect sensitive information like banking data or credentials, and exfiltrate it to a dedicated command and control server (C2).",
+                    "html": "<p>Trickbot is also able to collect sensitive information like banking data or credentials, and exfiltrate it to a dedicated command and control server (C2).</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x50a23411>",
+            "title": "4 Command & Control",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x8e615b24>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<ol>\n</ol>"
+                },
+                {
+                    "id": "<sentence_0x61d32b00>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the system is infected, it can contact several kinds of Trickbot C2. The main C2 is the one with which the victim system will communicate, mainly to get new instructions.",
+                    "html": "<p>When the system is infected, it can contact several kinds of Trickbot C2. The main C2 is the one with which the victim system will communicate, mainly to get new instructions.</p>"
+                },
+                {
+                    "id": "<sentence_0x35088ef0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All requests to a Trickbot C2 use the following format:",
+                    "html": "<p>All requests to a Trickbot C2 use the following format:</p>"
+                },
+                {
+                    "id": "<sentence_0xbce7c786>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x58d0c52f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "\"/<gtag>/<Client_ID>/<command>/<additionnal",
+                    "html": "<p>\"/&lt;gtag&gt;/&lt;Client_ID&gt;/&lt;command&gt;/&lt;additionnal </p>"
+                },
+                {
+                    "id": "<sentence_0x9e157716>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "information about the command>/\"",
+                    "html": "<p>information about the command&gt;/\"</p>"
+                },
+                {
+                    "id": "<sentence_0x450e8dd5>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0xd3b573a4>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x270baac7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120",
+                    "html": "<p>GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120</p>"
+                },
+                {
+                    "id": "<sentence_0x5888f031>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "6571D97A519A2EF29/0bqjxzSOQUSLPRJMQSWKDHTHKEG/ HTTP/1.1",
+                    "html": "<p>6571D97A519A2EF29/0bqjxzSOQUSLPRJMQSWKDHTHKEG/ HTTP/1.1</p>"
+                },
+                {
+                    "id": "<sentence_0x91aaae64>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Connection: Keep-Alive",
+                    "html": "<p>Connection: Keep-Alive</p>"
+                },
+                {
+                    "id": "<sentence_0xfdc720ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "User-Agent: curl/7.74.0",
+                    "html": "<p>User-Agent: curl/7.74.0</p>"
+                },
+                {
+                    "id": "<sentence_0x4e894432>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Host: 202.165.47.106",
+                    "html": "Host: 202.165.47.106\n"
+                },
+                {
+                    "id": "<sentence_0x5de45498>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "All data collected is sent to a separate Exfiltration Trickbot C2 using HTTP POST request methods. The request format keeps the same, but the command \"90\" is specific to data exfiltration, more precisely system data collected off the infected system.",
+                    "html": "<p>All data collected is sent to a separate Exfiltration Trickbot C2 using HTTP POST request methods. The request format keeps the same, but the command \"90\" is specific to data exfiltration, more precisely system data collected off the infected system.</p>"
+                },
+                {
+                    "id": "<sentence_0x9ead636e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0x404f9fa6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "POST /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/90/ HTTP/1.1",
+                    "html": "<p>POST /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/90/ HTTP/1.1</p>"
+                },
+                {
+                    "id": "<sentence_0xb078be1b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Connection: Keep-Alive",
+                    "html": "<p>Connection: Keep-Alive</p>"
+                },
+                {
+                    "id": "<sentence_0x8204f6ea>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Content-Type: multipart/form-data; boundary=------Bound",
+                    "html": "<p>Content-Type: multipart/form-data; boundary=------Bound</p>"
+                },
+                {
+                    "id": "<sentence_0x74bd992c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "ary0F79C562",
+                    "html": "<p>ary0F79C562</p>"
+                },
+                {
+                    "id": "<sentence_0xcf78a427>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "User-Agent: Ghost",
+                    "html": "<p>User-Agent: Ghost</p>"
+                },
+                {
+                    "id": "<sentence_0xdbfee9eb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Host: 24.242.237.172:443",
+                    "html": "<p>Host: 24.242.237.172:443</p>"
+                },
+                {
+                    "id": "<sentence_0xbd4e3602>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x82ae2b6b>",
+            "title": "Key learnings",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x76ae9090>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Threat actors often still use basic techniques to get into the network like phishing emails. Raising awareness about phishing is definitely a great first step in building up cyber resilience. The best attacks are, after all, the ones that never even get started.",
+                    "html": "<p>Threat actors often still use basic techniques to get into the network like phishing emails. Raising awareness about phishing is definitely a great first step in building up cyber resilience. The best attacks are, after all, the ones that never even get started.</p>"
+                },
+                {
+                    "id": "<sentence_0xd502ee0e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Of course, there is no such thing as bullet-proof preventive protection in cyber. It's all the more important to have the capability of detecting Trickbot at an early stage. Though the attack chain can be broken at every stage along the way: the later it is, the higher the risk of full compromise and the resulting damage. Trickbot is used by different threat actors, but the detection approach stays the same on most of its specific stages. Some of the indicators of compromise are explained here. But malware gets updates too.",
+                    "html": "<p>Of course, there is no such thing as bullet-proof preventive protection in cyber. It's all the more important to have the capability of detecting Trickbot at an early stage. Though the attack chain can be broken at every stage along the way: the later it is, the higher the risk of full compromise and the resulting damage. Trickbot is used by different threat actors, but the detection approach stays the same on most of its specific stages. Some of the indicators of compromise are explained here. But malware gets updates too. </p>"
+                },
+                {
+                    "id": "<sentence_0xdc5235bf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Analysts have to stay vigilant. Tracking and watching a specific malware or a threat actor is a key to follow its evolution, improvement, and keep up to date about an efficient detection of the threat.",
+                    "html": "<p>Analysts have to stay vigilant. Tracking and watching a specific malware or a threat actor is a key to follow its evolution, improvement, and keep up to date about an efficient detection of the threat.</p>"
+                },
+                {
+                    "id": "<sentence_0x39666174>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb771ed43>": "https://orangecyberdefense.com/global/security-navigator/"
+                    },
+                    "text": "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!",
+                    "html": "<p>This is a story from the trenches found in the <a href=\"https://orangecyberdefense.com/global/security-navigator/\" rel=\"noopener\" target=\"_blank\">Security Navigator</a>. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!</p>"
+                },
+                {
+                    "id": "<sentence_0xffe2280b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb228959c>": "https://attack.mitre.org/software/S0154/"
+                    },
+                    "text": "[1] MITRE ATT&CK Cobaltstrike :",
+                    "html": "<p>[1] MITRE ATT&amp;CK Cobaltstrike : <a href=\"https://attack.mitre.org/software/S0154/\" rel=\"noopener\" target=\"_blank\">https://attack.mitre.org/software/S0154/</a></p>"
+                },
+                {
+                    "id": "<sentence_0x1b4e03f0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense.",
+                    "html": "<p>This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense.</p>"
+                },
+                {
+                    "id": "<sentence_0x702555c0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Found this article interesting? Follow THN on",
+                    "html": "\nFound this article interesting? Follow THN on "
+                },
+                {
+                    "id": "<sentence_0xeb076f42>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x7345a4eb>": "https://www.facebook.com/thehackernews"
+                    },
+                    "text": "Facebook",
+                    "html": "<a href=\"https://www.facebook.com/thehackernews\" rel=\"noopener\" target=\"_blank\">Facebook</a>"
+                },
+                {
+                    "id": "<sentence_0x4a5b10bf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0xa1bf0e62>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xeb6d3ea3>": "https://twitter.com/thehackersnews"
+                    },
+                    "text": "Twitter",
+                    "html": "<a href=\"https://twitter.com/thehackersnews\" rel=\"noopener\" target=\"_blank\">Twitter \uf099</a>"
+                },
+                {
+                    "id": "<sentence_0x335e1e27>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "and",
+                    "html": " and "
+                },
+                {
+                    "id": "<sentence_0xd69a854>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x25b6ebc3>": "https://www.linkedin.com/company/thehackernews/"
+                    },
+                    "text": "LinkedIn",
+                    "html": "<a href=\"https://www.linkedin.com/company/thehackernews/\" rel=\"noopener\" target=\"_blank\">LinkedIn</a>"
+                },
+                {
+                    "id": "<sentence_0xbc63be9f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "to read more exclusive content we post.<crlf>SHARE",
+                    "html": " to read more exclusive content we post.\nSHARE\n"
+                },
+                {
+                    "id": "<sentence_0xb521fb66>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-fb\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf09a</a>"
+                },
+                {
+                    "id": "<sentence_0x98473f9e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-tw\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf099</a>"
+                },
+                {
+                    "id": "<sentence_0xe7da391d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-ln\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf0e1</a>"
+                },
+                {
+                    "id": "<sentence_0x8a101103>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-more\" href=\"\">\uf1e0</a>"
+                },
+                {
+                    "id": "<sentence_0xad07e34a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-com show-comments\" href=\"#comment-box\">\ue803</a>"
+                },
+                {
+                    "id": "<sentence_0x17cfccba>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf09aShare</a>"
+                },
+                {
+                    "id": "<sentence_0xf2ca9b46>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf099Tweet</a>"
+                },
+                {
+                    "id": "<sentence_0xd1a05acc>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf0e1Share</a>"
+                },
+                {
+                    "id": "<sentence_0xce5baacb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Share",
+                    "html": "\n\uf1e0Share\n"
+                },
+                {
+                    "id": "<sentence_0xcbb64c0b>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"share-close-modal\" href=\"\">\ue80a</a>"
+                },
+                {
+                    "id": "<sentence_0x1994174a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-fb\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf09aShare on Facebook</a>"
+                },
+                {
+                    "id": "<sentence_0xdaa7eb06>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-tw\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf099Share on Twitter</a>"
+                },
+                {
+                    "id": "<sentence_0x16a8fa2a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-ln\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf0e1Share on Linkedin</a>"
+                },
+                {
+                    "id": "<sentence_0x9b6d739e>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-rd\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf281Share on Reddit</a>"
+                },
+                {
+                    "id": "<sentence_0xaeb684a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-hn\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf1d4Share on Hacker News</a>"
+                },
+                {
+                    "id": "<sentence_0xc1f03eb4>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-em\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf0e0Share on Email</a>"
+                },
+                {
+                    "id": "<sentence_0x765d3738>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-wa\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf232Share on WhatsApp</a>"
+                },
+                {
+                    "id": "<sentence_0x7ca4e71d>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-fm\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\"><img alt=\"Facebook Messenger\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAkCAMAAADW3miqAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAG9QTFRF////z+j/1+z//P7/AIT/0en/2u3/0+r/6PT/+Pz/3/D/4PD/0Oj/5PL/R6b/1Or/9/v/D4v/u97/mM7/lMz/4/L/7/f/CIj/xOP/K5n/6/X/7fb/str/h8X/8Pj/ntD/8vn/YbP/pdT/XLD/////yeSxCQAAACV0Uk5T////////////////////////////////////////////////AD/PQk8AAACwSURBVHja7NPHDoMwDAbg3xkkzEKhe9DB+z9jBWlpIzmoqtQbPuSST3FsJ+i+CMzoJxSRMRRNIooxRExhlGCMJIRWAK8+EMELYpH0Ucwh4faW9bBaQDDIZdtuVAtdHL18b5T1RleVUoW6IYD6k8SuKa9K1QihFLDNGZD3k7tdylV3gKvvWeWebYHwWxDxHc8CvfRnp0ciKTjgxYuYdTeBdJkLkU8+OnuZ/93f0UOAAQDpgJe+d1P0RQAAAABJRU5ErkJggg==\"/>Share on Facebook Messenger</a>"
+                },
+                {
+                    "id": "<sentence_0xaf54ead4>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"more-share m-tg\" href=\"#link_share\" rel=\"nofollow noopener\" target=\"_blank\">\uf2c6Share on Telegram</a>"
+                },
+                {
+                    "id": "<sentence_0x400f6ec1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"show-comments\" href=\"#comment-box\">\ue803Comments</a>"
+                },
+                {
+                    "id": "<sentence_0x59200b6f>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"float-share-li fs-more mobile-s\" href=\"\">SHARE \uf1e0</a>"
+                },
+                {
+                    "id": "<sentence_0x745e2413>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x926dc4d3>": "https://thehackernews.com/search/label/banking%20malware"
+                    },
+                    "text": "banking malware",
+                    "html": "<a href=\"https://thehackernews.com/search/label/banking%20malware\" rel=\"tag\">banking malware</a>"
+                },
+                {
+                    "id": "<sentence_0xf40bf1bf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x275a8932>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2a3db1cb>": "https://thehackernews.com/search/label/Cobalt%20Strike"
+                    },
+                    "text": "Cobalt Strike",
+                    "html": "<a href=\"https://thehackernews.com/search/label/Cobalt%20Strike\" rel=\"tag\">Cobalt Strike</a>"
+                },
+                {
+                    "id": "<sentence_0xcd372c58>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0xf0dc9d66>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x86385a91>": "https://thehackernews.com/search/label/Conti"
+                    },
+                    "text": "Conti",
+                    "html": "<a href=\"https://thehackernews.com/search/label/Conti\" rel=\"tag\">Conti</a>"
+                },
+                {
+                    "id": "<sentence_0x367aaef8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x4b4c20e3>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xba9b4e84>": "https://thehackernews.com/search/label/Orange%20Cyberdefense"
+                    },
+                    "text": "Orange Cyberdefense",
+                    "html": "<a href=\"https://thehackernews.com/search/label/Orange%20Cyberdefense\" rel=\"tag\">Orange Cyberdefense</a>"
+                },
+                {
+                    "id": "<sentence_0xf19c47bb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0xf5ef5981>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf6206fda>": "https://thehackernews.com/search/label/Ryuk"
+                    },
+                    "text": "Ryuk",
+                    "html": "<a href=\"https://thehackernews.com/search/label/Ryuk\" rel=\"tag\">Ryuk</a>"
+                },
+                {
+                    "id": "<sentence_0x6dbcdd81>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x6e2e79be>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xcae761cb>": "https://thehackernews.com/search/label/Trickbot"
+                    },
+                    "text": "Trickbot",
+                    "html": "<a href=\"https://thehackernews.com/search/label/Trickbot\" rel=\"tag\">Trickbot</a>"
+                },
+                {
+                    "id": "<sentence_0x95ba2fd2>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8f0999cc>": "https://go.thn.li/THNLite",
+                        "<img_0xcf5a2ab3>": "https://thehackernews.com/new-images/img/a/AVvXsEiN2CRfA_ceqxVqUhWgQghksIlR--dFXivRiP_Zg-Imyju-DxkJsRqAwMZTHptnxs57fD9WZmF-r0rSMTTmTsDQxuSSveVz3PCX_3vRCCJfInCb6CwrA7DzHnLFlcTMEcG5unhBWOA42n8TdYPH4Zbev3is3ygxwbqRjajda3u7AchyDh0rSt5_WqXjyQ"
+                    },
+                    "text": "",
+                    "html": "<a href=\"https://go.thn.li/THNLite\" rel=\"nofollow noopener sponsored\" target=\"_blank\" title=\"cyber defense\"><img alt=\"cyber defense\" class=\"lazyloaded\" src=\"https://thehackernews.com/new-images/img/a/AVvXsEiN2CRfA_ceqxVqUhWgQghksIlR--dFXivRiP_Zg-Imyju-DxkJsRqAwMZTHptnxs57fD9WZmF-r0rSMTTmTsDQxuSSveVz3PCX_3vRCCJfInCb6CwrA7DzHnLFlcTMEcG5unhBWOA42n8TdYPH4Zbev3is3ygxwbqRjajda3u7AchyDh0rSt5_WqXjyQ\"/></a>"
+                },
+                {
+                    "id": "<sentence_0xde0ca569>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xd494e679>": "https://go.thn.li/scw-q2",
+                        "<img_0x7593f32>": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAD6AQMAAAAho+iwAAAAA1BMVEXm5+i1+56pAAAAH0lEQVQYGe3AAQ0AAADCIPuntscHAwAAAAAAAAAAIOQmFgAB/YLDRAAAAABJRU5ErkJggg=="
+                    },
+                    "text": "",
+                    "html": "<a href=\"https://go.thn.li/scw-q2\" rel=\"nofollow noopener sponsored\" target=\"_blank\" title=\"cyber defense\"><img alt=\"cyber defense\" class=\"lazyload\" src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAD6AQMAAAAho+iwAAAAA1BMVEXm5+i1+56pAAAAH0lEQVQYGe3AAQ0AAADCIPuntscHAwAAAAAAAAAAIOQmFgAB/YLDRAAAAABJRU5ErkJggg==\"/></a>"
+                }
+            ]
+        }
+    ]
+}

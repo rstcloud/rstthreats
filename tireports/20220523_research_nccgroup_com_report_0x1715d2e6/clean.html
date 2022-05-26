@@ -1,0 +1,111 @@
+<div>
+<h1 class="entry-title">Metastealer – filling the Racoon void</h1>
+<a href="https://research.nccgroup.com/author/nccgifc/" rel="author" title="Posts by RIFT: Research and Intelligence Fusion Team">RIFT: Research and Intelligence Fusion Team</a>
+<a href="https://research.nccgroup.com/category/threat-intelligence/" rel="category tag">Threat Intelligence</a> 
+May 20, 2022 
+5 Minutes 
+<p>Author: Peter Gurney</p>
+<h1>tl;dr</h1>
+<p>MetaStealer is a new information stealer variant designed to fill the void following Racoon stealer suspending operations in March of this year. Analysts at Israeli dark web intelligence firm Kela first identified its emergence on underground marketplaces [1] and later as being used in a spam campaign by SANS Internet Storm Centre Handler Brad Duncan [2], where the initial stages and traffic were detailed. This analysis further describes the final MetaStealer payload detailing its functionality.</p>
+<p>Significant findings include:</p>
+<ul><li>Heavy reliance on open-source libraries</li><li>Microsoft Defender Bypass</li><li>Scheduled Task Persistence</li><li>Password Stealer</li><li>Keylogger</li><li>Hidden VNC server<a id="_msocom_1"></a></li></ul>
+<figure class="wp-block-image size-full"><a href="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image.png?ssl=1"><img alt="" class="wp-image-15991 jetpack-lazy-image jetpack-lazy-image--handled" height="725" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image.png?resize=857%2C725&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="857"/><img alt="" class="wp-image-15991" height="725" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image.png?resize=857%2C725&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="857"/></a><figcaption> Figure 1 MetaStealer Loader Execution</figcaption></figure>
+<h1>Technical Analysis</h1>
+<h2>Defender Bypass</h2>
+<p>Early on in execution, the below command is executed using PowerShell:</p>
+<code>powershell -inputformat none -outputformat none –NonInteractive -Command Add-MpPreference -ExclusionExtension "exe"</code>
+<p>As can be seen below in Figure 2 the command adds an exclusion rule to Microsoft Defender, effectively turning off scanning of files with ‘.exe’ extension. This decreases the chances of the main payload being detected as well as any subsequent payloads that may be delivered to the target host post infection.</p>
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-1.png?ssl=1"><img alt="" class="wp-image-15993 jetpack-lazy-image" height="483" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-1.png?resize=578%2C483&amp;ssl=1" width="578"/><img alt="" class="wp-image-15993" height="483" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-1.png?resize=578%2C483&amp;ssl=1" width="578"/></a><figcaption>Figure 2 Defender Exclusion</figcaption></figure>
+<p>With the Microsoft Defender exclusion in place another PowerShell command is issued that proceeds to rename the original file to a hardcoded value with an <code>.exe</code> extension. In this case <code>{Original filename}.xyz</code> to <code>hyper-v.exe</code></p>
+<code>powershell rename-item -path .xyz -newname hyper-v.exe</code>
+<h2>Persistence</h2>
+<p>To maintain persistence, a scheduled task is created using The Component Object Model (COM), a task named <code>sys</code> is created in the folder <code>\Microsoft\Windows’</code> The task is set to trigger at user login, ensuring the malware remains persistent across reboots.</p>
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-2.png?ssl=1"><img alt="" class="wp-image-15995 jetpack-lazy-image" height="494" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-2.png?resize=632%2C494&amp;ssl=1" width="632"/><img alt="" class="wp-image-15995" height="494" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-2.png?resize=632%2C494&amp;ssl=1" width="632"/></a><figcaption>Figure 3 String de-obfuscation example</figcaption></figure>
+<h2>String Obfuscation</h2>
+<p>While several strings from included libraries are visible within the sample, the majority of strings within MetaStealer’s main code are encrypted and only decrypted as needed during runtime. To achieve this, the encrypted strings are moved onto the stack and decrypted with a bitwise XOR operation for use during execution. A Python representation of the routing can be seen below with an example seen below in Figure 4</p>
+<code>def swap32(x):
+ return int.from_bytes(x.to_bytes(8, byteorder='little'), byteorder='big', signed=False)
+def split_hex(input):
+ text = hex(input)
+ text = text[2:]
+ text = text.zfill(len(text) + len(text) % 2)
+ output = " ".join(text[i: i+2] for i in range(0, len(text), 2))
+ return(output.split(' '))
+hexIntXOR = []
+hexIntKey = []
+hexIntXOR.append(0x4BFB9390)
+hexIntXOR.append(0x25C2F251)
+hexIntXOR.append(0x11C52ED4)
+hexIntXOR.append(0x5CEDBB0D)
+hexIntKey.append(0x2489FBF3)
+hexIntKey.append(0x25C2973C)
+hexIntKey.append(0x11C52ED4)
+hexIntKey.append(0x5CEDBB0D)
+hexbytesxor = []
+hexbyteskey = []
+for HexInt in hexIntXOR:
+ hexBytes = split_hex(HexInt)
+ hexBytes.reverse()
+ hexbytesxor = hexbytesxor + hexBytes
+for HexInt in hexIntKey:
+ hexBytes = split_hex(HexInt)
+ hexBytes.reverse()
+ hexbyteskey = hexbyteskey + hexBytes
+count = 0
+for hexByte in hexbytesxor:
+ print(chr(int(hexByte, base=16) ^ int(hexbyteskey[count], base=16)), end='')
+ count+=1
+</code>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-15998 jetpack-lazy-image" height="369" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-3.png?resize=315%2C369&amp;ssl=1" width="315"/><img alt="" class="wp-image-15998" height="369" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-3.png?resize=315%2C369&amp;ssl=1" width="315"/><figcaption>Figure 4 String de-obfuscation example</figcaption></figure>
+<h2>Command and Control</h2>
+<p>PCAPs from the SANS Internet Storm Centre report show that while initial C2 registration traffic was successful, later requests resulted in an HTTP 400 error code reply. Our own tests confirm this behaviour indicating this specific campaign was short-lived with commands no longer issued to new infections. This is likely a direct attempt to limit further analysis of the command and control communication protocol by analysts.</p>
+<p>The sample contains a hardcoded Command and Control server, in this case, 193.106.191[.]162:1775, which is decrypted by the standard string decryption routine described in the previous section.</p>
+<p>Connection to the command and control infrastructure is performed over HTTP using the library ‘cpp-httplib’ [3], resulting in the user agent <code>cpp-httplib/0.10.1</code> being used.</p>
+<p>The initial connection is performed to the URL path <code>/api/client/new</code>, decrypted using the XOR routine detailed earlier. This connection is simply a get request with no further information included and expects a reply in JSON format, as can be seen in Figure 5</p>
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-4.png?ssl=1"><img alt="" class="wp-image-15999 jetpack-lazy-image" height="469" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-4.png?resize=683%2C469&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="683"/><img alt="" class="wp-image-15999" height="469" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-4.png?resize=683%2C469&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="683"/></a><figcaption>Figure 5 Registration connection</figcaption></figure>
+<p>The UUID in the <code>ok</code> key is used as a <code>BotId</code> and changes on each new registration request.</p>
+<p>To parse the JSON string, another open-source library is utilised (Nlohmann JSON [4]), extracting the BotId, which is subsequently written to the file <code>%localappdata%\hyper-v.ver</code> in plaintext allowing the BotId to remain persistent across reboots.</p>
+<p>The second request to the command and control server begins with a new JSON object being created utilising the Nlohmann JSON library. The UUID key is populated with the UUID received from the earlier registration request.</p>
+<figure class="aligncenter size-full"><a href="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-5.png?ssl=1"><img alt="" class="wp-image-16001 jetpack-lazy-image" height="127" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-5.png?resize=780%2C127&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="780"/><img alt="" class="wp-image-16001" height="127" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-5.png?resize=780%2C127&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="780"/></a><figcaption>Figure 6 get worker request body</figcaption></figure>
+<p>The URL path <code>/tasks/get_worker</code> is decrypted and used to make a POST request to the command and control server, including the UUID JSON string. At the time of writing, the server replies to this command with a HTTP 400 error code as seen in Figure 7.</p>
+<figure class="aligncenter size-full"><img alt="" class="wp-image-16002 jetpack-lazy-image" height="455" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-6.png?resize=821%2C455&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="821"/><img alt="" class="wp-image-16002" height="455" src="https://i0.wp.com/research.nccgroup.com/wp-content/uploads/2022/05/image-6.png?resize=821%2C455&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="821"/><figcaption>Figure 7 get worker request</figcaption></figure>
+<p>The final identified command and control request uses the URL path ‘/tasks/collect’ following the completion of any tasks issued. A POST request is made detailing the success or failure of the task along with additional data such as stolen information or command output.</p>
+<h3>Command and Control Commands</h3>
+<figure class="wp-block-table"><table><tbody><tr><td>Command ID</td><td>Function</td><td>Description</td></tr><tr><td>1001</td><td>System Information</td><td>Spawn cmd.exe process with the command line system info and read output using attached pipes.</td></tr><tr><td>1002</td><td>Cookie Stealer</td><td>Access Cookie data from the following locations (location can change based on a currently installed version check): Chrome ‘C:\Users\{user}\AppData\Local\Google\Chrome\User Data\Default{\Network (depending on version check) }\Cookies’ Firefox C:\Users\{user}\AppData\Roaming\Mozilla\Firefox\Profiles\cookies.sqlite Edge C:\Users\{user}\AppData\Local\Microsoft\Edge\User Data\Default{\Network (depending on version check) }\Cookies</td></tr><tr><td>1003</td><td>Password Stealer</td><td>Access saved password data from the following locations: Chrome C:\Users\{user}\AppData\Local\Google\Chrome\User Data\Default\Login Data Firefox C:\Users\{user}\AppData\Roaming\Mozilla\Firefox\Profiles\ logins.json / signons.sqlite C:\Users\{user}\AppData\Local\Microsoft\Edge\User Data\Default\LoginData </td></tr><tr><td>1004</td><td>Start keylogger</td><td>Start keylogger on the following applications: ChromeFirefoxNotepad</td></tr><tr><td>1005</td><td>Stop keylogger</td><td>Stop Keylogger</td></tr><tr><td>1006</td><td>Start HVNC</td><td>Setup Hidden Virtual Network Connection by creating a hidden desktop and network connectivity using sockets through the open-source library Kissnet [5]</td></tr><tr><td>1007</td><td>Stop HVNC</td><td>Stop HNVC</td></tr><tr><td>1008</td><td>Execute Command</td><td>Execute the given command using a spawned cmd.exe process and read the result using connected pipes.</td></tr></tbody></table><figcaption>Table 1 Command and Control Commands</figcaption></figure>
+<p></p>
+<h1>Appendix</h1>
+<h2>IOC’s</h2>
+<ul><li>193.106.191[.]162:1775</li><li>cpp-httplib/0.10.1</li><li>hyper-v.exe</li></ul>
+<h2>YARA</h2>
+<code>rule metaStealer_memory {
+ meta:
+ description = "MetaStealer Memory"
+ author = "Peter Gurney"
+ date = "2022-04-29"
+ strings:
+ $str_c2_parse = {B8 56 55 55 55 F7 6D C4 8B C2 C1 E8 1F 03 C2 8B 55 C0 8D 04 40 2B 45 C4}
+ $str_filename = ".xyz -newname hyper-v.exe" fullword wide
+ $str_stackstring = {FF FF FF C7 85 ?? ?? ?? ?? ?? ?? ?? ?? C7 85 ?? ?? ?? ?? ?? ?? ?? ?? C7 85 ?? ?? ?? ?? ?? ?? ?? ?? C7 85 ?? ?? ?? ?? ?? ?? ?? ?? 66 0F EF}
+ condition:
+ uint16(0) == 0x5a4d and
+ 2 of ($str_*)
+}
+</code>
+<h2>References</h2>
+<p>[1] <a href="https://www.bleepingcomputer.com/news/security/new-blackguard-password-stealing-malware-sold-on-hacker-forums/">https://www.bleepingcomputer.com/news/security/new-blackguard-password-stealing-malware-sold-on-hacker-forums/</a></p>
+<p>[2] <a href="https://isc.sans.edu/forums/diary/Windows+MetaStealer+Malware/28522/">https://isc.sans.edu/forums/diary/Windows+MetaStealer+Malware/28522/</a></p>
+<p>[3] <a href="https://github.com/yhirose/cpp-httplib">https://github.com/yhirose/cpp-httplib</a></p>
+<p>[4] <a href="https://github.com/nlohmann/json">https://github.com/nlohmann/json</a></p>
+<p>[5] <a href="https://github.com/Ybalrid/kissnet">https://github.com/Ybalrid/kissnet</a></p>
+<p><a id="_msocom_2"></a></p>
+<h3 class="sd-title">Share this:</h3><ul><li class="share-twitter"><a class="share-twitter sd-button share-icon" href="https://research.nccgroup.com/2022/05/20/metastealer-filling-the-racoon-void/?share=twitter&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Twitter">Twitter</a></li><li class="share-reddit"><a class="share-reddit sd-button share-icon" href="https://research.nccgroup.com/2022/05/20/metastealer-filling-the-racoon-void/?share=reddit&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Reddit">Reddit</a></li><li class="share-linkedin"><a class="share-linkedin sd-button share-icon" href="https://research.nccgroup.com/2022/05/20/metastealer-filling-the-racoon-void/?share=linkedin&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on LinkedIn">LinkedIn</a></li><li class="share-facebook"><a class="share-facebook sd-button share-icon" href="https://research.nccgroup.com/2022/05/20/metastealer-filling-the-racoon-void/?share=facebook&amp;nb=1" rel="nofollow noopener noreferrer" target="_blank" title="Click to share on Facebook">Facebook</a></li><li class="share-end"></li></ul><h3 class="sd-title">Like this:</h3>Like Loading...<a class="sd-link-color"></a>
+<img alt="" class="avatar avatar-80 photo jetpack-lazy-image grav-hashed grav-hijack" height="80" id="grav-8875243b6c0f6a934366d0278ee52700-0" src="https://secure.gravatar.com/avatar/8875243b6c0f6a934366d0278ee52700?s=80&amp;d=identicon&amp;r=g" width="80"/><img alt="" class="avatar avatar-80 photo" height="80" src="https://secure.gravatar.com/avatar/8875243b6c0f6a934366d0278ee52700?s=80&amp;d=identicon&amp;r=g" width="80"/>
+<h2 class="author-title">
+				Published by RIFT: Research and Intelligence Fusion Team </h2>
+<p>
+			RIFT leverages our strategic analysis, data science, and threat hunting capabilities to create actionable threat intelligence, ranging from IoCs and detection capabilities to strategic reports on tomorrow’s threat landscape. Cyber security is an arms race where both attackers and defenders continually update and improve their tools and ways of working. To ensure that our managed services remain effective against the latest threats, NCC Group operates a Global Fusion Center with Fox-IT at its core. This multidisciplinary team converts our leading cyber threat intelligence into powerful detection strategies.			<a class="author-link" href="https://research.nccgroup.com/author/nccgifc/" rel="author">
+				View all posts by RIFT: Research and Intelligence Fusion Team			</a>
+</p>
+Published
+May 20, 2022 
+</div>

@@ -1,0 +1,799 @@
+{
+    "id": "<report_0x1cd538c3>",
+    "url": "https://www.microsoft.com/security/blog/2022/05/23/beneath-the-surface-uncovering-the-shift-in-web-skimming",
+    "title": "Beneath the surface: Uncovering the shift in web skimming",
+    "meta": [
+        {
+            "id": "<chapter_0xc7ec92c5>",
+            "title": "Beneath the surface: Uncovering the shift in web skimming",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9d8a8bda>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft 365 Defender Research Team",
+                    "html": "<ul class=\"authors\">\n<li class=\"author-item\">\nMicrosoft 365 Defender Research Team\n</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xde61e0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "How web skimming works",
+                    "html": "<p>How web skimming works</p>"
+                },
+                {
+                    "id": "<sentence_0x23c26423>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Recent developments",
+                    "html": "<p>Recent developments</p>"
+                },
+                {
+                    "id": "<sentence_0xfafef486>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Malicious images with obfuscated script",
+                    "html": "<p>Malicious images with obfuscated script</p>"
+                },
+                {
+                    "id": "<sentence_0x6898514b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Concatenated and encoded skimming host URL",
+                    "html": "<p>Concatenated and encoded skimming host URL</p>"
+                },
+                {
+                    "id": "<sentence_0x39e1be6d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Google Analytics and Meta Pixel script spoofing",
+                    "html": "<p>Google Analytics and Meta Pixel script spoofing</p>"
+                },
+                {
+                    "id": "<sentence_0xe3909e20>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Defending against web skimming",
+                    "html": "<p>Defending against web skimming</p>"
+                },
+                {
+                    "id": "<sentence_0x4c5293fd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Appendix",
+                    "html": "<p>Appendix</p>"
+                },
+                {
+                    "id": "<sentence_0x9569f3e7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Indicators of compromise",
+                    "html": "<p id=\"ioc\">Indicators of compromise</p>"
+                },
+                {
+                    "id": "<sentence_0xe5705226>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "File hashes (SHA-256)",
+                    "html": "<p>File hashes (SHA-256)</p>"
+                },
+                {
+                    "id": "<sentence_0x33cfe2de>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Encoded URLs",
+                    "html": "<p>Encoded URLs</p>"
+                },
+                {
+                    "id": "<sentence_0xa86efca0>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft 365 Defender detections",
+                    "html": "<p>Microsoft 365 Defender detections</p>"
+                },
+                {
+                    "id": "<sentence_0x184b4d06>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft Defender Antivirus",
+                    "html": "<p>Microsoft Defender Antivirus</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0x72c20d1d>",
+            "title": "Beneath the surface: Uncovering the shift in web skimming",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc56b3090>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. Its a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates.",
+                    "html": "<p>Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. It\u2019s a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates.</p>"
+                },
+                {
+                    "id": "<sentence_0x5051162d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x50cff45f>": "https://www.riskiq.com/what-is-magecart/"
+                    },
+                    "text": "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands.",
+                    "html": "<p>Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is <a href=\"https://www.riskiq.com/what-is-magecart/\">Magecart</a>, which gained media coverage over the years for affecting thousands of websites, including several popular brands.</p>"
+                },
+                {
+                    "id": "<sentence_0xddca8092>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open.",
+                    "html": "<p>In one of the campaigns we\u2019ve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image file\u2014a likely attempt to leverage PHP calls when a website\u2019s index page is loaded. Recently, we\u2019ve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browser\u2019s developer tools were open.</p>"
+                },
+                {
+                    "id": "<sentence_0x53672185>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x977207fd>": "https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender",
+                        "<a_0xd3248122>": "https://www.riskiq.com/blog/magecart/"
+                    },
+                    "text": "Given the scale of web skimming campaigns and the impact they have on organizations and their customers, a comprehensive security solution is needed to detect and block this threat. Microsoft 365 Defender provides a coordinated defense thats enriched by our visibility into attacker infrastructure and continuous monitoring of the threat landscape.",
+                    "html": "<p>Given the scale of web skimming campaigns and the impact they have on organizations and their customers, a comprehensive security solution is needed to detect and block this threat. <a href=\"https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender\">Microsoft 365 Defender</a> provides a coordinated defense that\u2019s enriched by our visibility into attacker infrastructure and <a href=\"https://www.riskiq.com/blog/magecart/\">continuous monitoring</a> of the threat landscape.</p>"
+                },
+                {
+                    "id": "<sentence_0xba2ef76e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blog, we provide the technical details of the recent skimming campaigns obfuscation techniques. We also offer steps for defenders and users to protect themselves and their organizations from such attacks.",
+                    "html": "<p>In this blog, we provide the technical details of the recent skimming campaigns\u2019 obfuscation techniques. We also offer steps for defenders and users to protect themselves and their organizations from such attacks.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xf72cd38c>",
+            "title": "How web skimming works",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x1e46bdb4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent.",
+                    "html": "<p>This primary goal of web skimming campaigns is to harvest and later exfiltrate users\u2019 payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owner\u2019s knowledge or consent.</p>"
+                },
+                {
+                    "id": "<sentence_0xda812d27>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xe3653360>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig1-skimming-attack-overview.png"
+                    },
+                    "text": "Figure 1. Overview of a web skimming attack",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Attack chain diagram with icons and arrows depicting a typical web skimming attack.\" class=\"wp-image-114615\" height=\"493\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig1-skimming-attack-overview.png\" width=\"799\"/><figcaption>Figure 1. Overview of a web skimming attack</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x1e1b4419>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x50cff45f>": "https://www.riskiq.com/what-is-magecart/",
+                        "<a_0xe941844d>": "https://www.riskiq.com/blog/labs/magecart-british-airways-breach/",
+                        "<a_0xe080e539>": "https://www.riskiq.com/blog/labs/magecart-ticketmaster-breach/",
+                        "<a_0x36ff5aa3>": "https://sansec.io/research/puma-magecart",
+                        "<a_0x8dd4c7e8>": "https://www.bleepingcomputer.com/news/security/segway-store-hacked-to-steal-customers-credit-cards/",
+                        "<a_0x985bdbff>": "https://www.riskiq.com/blog/labs/cloudcms-picreel-magecart/",
+                        "<a_0x43fc127d>": "https://www.pcisecuritystandards.org/pdfs/PCISSC_Magecart_Bulletin_RHISAC_FINAL.pdf",
+                        "<a_0xd57731b7>": "https://portswigger.net/daily-swig/credit-card-industry-standard-revised-to-repel-card-skimmer-attacks"
+                    },
+                    "text": "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming.",
+                    "html": "<p>As mentioned earlier, one notable skimming campaign is <a href=\"https://www.riskiq.com/what-is-magecart/\">Magecart</a>. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecart\u2014from an <a href=\"https://www.riskiq.com/blog/labs/magecart-british-airways-breach/\">airline company</a> and <a href=\"https://www.riskiq.com/blog/labs/magecart-ticketmaster-breach/\">online ticketing services</a> to a <a href=\"https://sansec.io/research/puma-magecart\">sports brand</a> and <a href=\"https://www.bleepingcomputer.com/news/security/segway-store-hacked-to-steal-customers-credit-cards/\">personal transporter</a>. In 2019, <a href=\"https://www.riskiq.com/blog/labs/cloudcms-picreel-magecart/\">tens of thousands of websites</a> got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to <a href=\"https://www.pcisecuritystandards.org/pdfs/PCISSC_Magecart_Bulletin_RHISAC_FINAL.pdf\">release a bulletin</a> that warns users about the threat. In April 2022, PCI also <a href=\"https://portswigger.net/daily-swig/credit-card-industry-standard-revised-to-repel-card-skimmer-attacks\">released</a> a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4ed57b92>",
+            "title": "Recent developments",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x146eab5b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts.",
+                    "html": "<p>In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns\u2019 attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb5a7d1d1>",
+            "title": "Malicious images with obfuscated script",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x560055c5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "During our research, we came across two instances of malicious image files being uploaded to a Magento-hosted server. Both images contained a PHP script with a Base64-encoded JavaScript, and while they had identical JavaScript code, they slightly differed in their PHP implementation. The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team. Their hashes are included in the section below.",
+                    "html": "<p>During our research, we came across two instances of malicious image files being uploaded to a Magento-hosted server. Both images contained a PHP script with a Base64-encoded JavaScript, and while they had identical JavaScript code, they slightly differed in their PHP implementation. The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team. Their hashes are included in the <a href=\"#ioc\">Indicators of compromise</a> section below.</p>"
+                },
+                {
+                    "id": "<sentence_0x36197c7a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS.",
+                    "html": "<p>We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS.</p>"
+                },
+                {
+                    "id": "<sentence_0x789553a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The insertion of the PHP script in an image file is interesting because, by default, the web server wouldnt run the said code. Based on previous similar attacks, we believe that the attacker used a PHP include expression to include the image (that contains the PHP code) in the websites index page, so that it automatically loads at every webpage visit.",
+                    "html": "<p>The insertion of the PHP script in an image file is interesting because, by default, the web server wouldn\u2019t run the said code. Based on previous similar attacks, we believe that the attacker used a PHP include expression to include the image (that contains the PHP code) in the website\u2019s index page, so that it automatically loads at every webpage visit.</p>"
+                },
+                {
+                    "id": "<sentence_0xcbae3ba6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In both images cases, once the embedded PHP script was run, it first retrieved the current pages URL and looked for the checkout and onepage keywords, both of which are mapped to Magentos checkout page.",
+                    "html": "<p>In both images\u2019 cases, once the embedded PHP script was run, it first retrieved the current page\u2019s URL and looked for the \u201ccheckout\u201d and \u201conepage\u201d keywords, both of which are mapped to Magento\u2019s checkout page.</p>"
+                },
+                {
+                    "id": "<sentence_0x81d6b784>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x953200dc>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig2-magento-shopping-cart-page-checkout.png"
+                    },
+                    "text": "Figure 2. Screenshot of a Magento shopping cart page with the checkout keyword in the URL",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt=\"Partial screenshot of a Magento shopping cart web page.\" class=\"wp-image-114618\" height=\"236\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig2-magento-shopping-cart-page-checkout.png\" width=\"600\"/><figcaption>Figure 2. Screenshot of a Magento shopping cart page with the \u201ccheckout\u201d keyword in the URL</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x57e18fb2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before serving the skimming script, the PHP script also checked that administrator cookies werent set to ensure that a web admin isnt currently signed in. Such a check ensured that the script only targeted the site visitors (online shoppers).",
+                    "html": "<p>Before serving the skimming script, the PHP script also checked that administrator cookies weren\u2019t set to ensure that a web admin isn\u2019t currently signed in. Such a check ensured that the script only targeted the site visitors (online shoppers).</p>"
+                },
+                {
+                    "id": "<sentence_0x60c3dbe1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc607d810>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig3-php-script-checks-admin-cookies.png"
+                    },
+                    "text": "Figure 3. Portion of the PHP script that checks for admin cookies",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt=\"Partial screenshot of a PHP code snippet.\" class=\"wp-image-114621\" height=\"150\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig3-php-script-checks-admin-cookies.png\" width=\"601\"/><figcaption>Figure 3. Portion of the PHP script that checks for admin cookies</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x63a34aa7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script.",
+                    "html": "<p>The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script.</p>"
+                },
+                {
+                    "id": "<sentence_0x2d29fc66>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The boms() function (Figure 4) was responsible for creating and serving the fake checkout payment form (Figure 5) that collected target users payment details.",
+                    "html": "<p>The boms() function (Figure 4) was responsible for creating and serving the fake checkout payment form (Figure 5) that collected target users\u2019 payment details.</p>"
+                },
+                {
+                    "id": "<sentence_0x42e3f1b5>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xcb3dfa9b>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig4-script-fake-checkout-payment-form.png"
+                    },
+                    "text": "Figure 4. Portion of the skimming script that creates and serves the fake checkout payment form",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114624\" height=\"488\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig4-script-fake-checkout-payment-form.png\" width=\"800\"/><figcaption>Figure 4. Portion of the skimming script that creates and serves the fake checkout payment form</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x7644c9b0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2b3e1273>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig5-fake-checkout-form.png"
+                    },
+                    "text": "Figure 5. Sample screenshot of the fake checkout form that collects user payment details",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt=\"Partial screenshot of the fake checkout form.\" class=\"wp-image-114627\" height=\"278\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig5-fake-checkout-form.png\" width=\"401\"/><figcaption>Figure 5. Sample screenshot of the fake checkout form that collects user payment details</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6de93e81>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The said function is only triggered if the __ffse cookie value wasnt set to 236232342323626326most probably a check to ensure that the website isnt already infected.",
+                    "html": "<p>The said function is only triggered if the __ffse cookie value wasn\u2019t set to \u201c236232342323626326\u201d\u2014most probably a check to ensure that the website isn\u2019t already infected.</p>"
+                },
+                {
+                    "id": "<sentence_0x69c39c83>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf4ef8837>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig6-script-cookie-value.png"
+                    },
+                    "text": "Figure 6. Portion of the skimming script that checks for a specific cookie value",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114630\" height=\"141\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig6-script-cookie-value.png\" width=\"401\"/><figcaption>Figure 6. Portion of the skimming script that checks for a specific cookie value</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x239ad181>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "When the user submitted their details in the fake form, the glob_snsd() function is triggered (Figure 7), which then collected the said details in the form elements (input, select), encoded them in hex and Base64, and finally added them to the cookies (Figure 8).",
+                    "html": "<p>When the user submitted their details in the fake form, the glob_snsd() function is triggered (Figure 7), which then collected the said details in the form elements (input, select), encoded them in hex and Base64, and finally added them to the cookies (Figure 8).</p>"
+                },
+                {
+                    "id": "<sentence_0xe5cd0f8f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8be3ba1>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig7-script-credential-theft-exfiltration.png"
+                    },
+                    "text": "Figure 7. Portion of the skimming script that launches the credential theft and exfiltration routines",
+                    "html": "<figure class=\"wp-block-image size-full is-resized\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114633\" height=\"130\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig7-script-credential-theft-exfiltration.png\" width=\"401\"/><figcaption>Figure 7. Portion of the skimming script that launches the credential theft and exfiltration routines</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2525e224>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x7f6d6e17>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig8-script-credential-theft.png"
+                    },
+                    "text": "Figure 8. Portion of the skimming script that performs the credential theft routine",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114636\" height=\"405\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig8-script-credential-theft.png\" width=\"800\"/><figcaption>Figure 8. Portion of the skimming script that performs the credential theft routine</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x79eaa2a8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The encoded stolen information was then exfiltrated to an attacker-controlled C2 via PHP curl requests.",
+                    "html": "<p>The encoded stolen information was then exfiltrated to an attacker-controlled C2 via PHP curl requests.</p>"
+                },
+                {
+                    "id": "<sentence_0x131cebb0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x81a330a6>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig9-script-exfiltration.png"
+                    },
+                    "text": "Figure 9. Portion of the skimming script that performs the exfiltration routine",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114639\" height=\"332\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig9-script-exfiltration.png\" width=\"801\"/><figcaption>Figure 9. Portion of the skimming script that performs the exfiltration routine</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x6d075f98>",
+            "title": "Concatenated and encoded skimming host URL",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe4f858ee>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We also came across four lines of JavaScript injected into a compromised webpage. Like the malicious images we previously analyzed, the script in this scenario would run only when it finds the checkout keyword in the target web page URL. It would then fetch the skimming script hosted on an attacker-controlled domain to load a fake checkout form.",
+                    "html": "<p>We also came across four lines of JavaScript injected into a compromised webpage. Like the malicious images we previously analyzed, the script in this scenario would run only when it finds the \u201ccheckout\u201d keyword in the target web page URL. It would then fetch the skimming script hosted on an attacker-controlled domain to load a fake checkout form.</p>"
+                },
+                {
+                    "id": "<sentence_0xee3b328c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attacker-controlled domain was encoded in Base64 and concatenated from several strings. As of this writing, the said domain is still active.",
+                    "html": "<p>The attacker-controlled domain was encoded in Base64 and concatenated from several strings. As of this writing, the said domain is still active.</p>"
+                },
+                {
+                    "id": "<sentence_0xe964cd40>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf0f4e14a>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig10-encoded-concatenated-skimming-url.png"
+                    },
+                    "text": "Figure 10. Code snippet containing the concatenated and encoded URL that hosts the skimming script",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a JavaScript code.\" class=\"wp-image-114642\" height=\"104\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig10-encoded-concatenated-skimming-url.png\" width=\"803\"/><figcaption>Figure 10. Code snippet containing the concatenated and encoded URL that hosts the skimming script</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x5bce2d7a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:",
+                    "html": "<p>The skimming script itself wasn\u2019t obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:</p>"
+                },
+                {
+                    "id": "<sentence_0x7080168e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "if (devtools.open) return;<crlf>if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;",
+                    "html": "\nif (devtools.open) return;\n if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;\n"
+                },
+                {
+                    "id": "<sentence_0xd2da84d1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64.",
+                    "html": "<p>The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64.</p>"
+                },
+                {
+                    "id": "<sentence_0x7bc1b4fc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x52209bc6>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig11-hosted-script-that-exfiltrates-data.png"
+                    },
+                    "text": "Figure 11. Snippet of the hosted script that exfiltrates web page data",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114645\" height=\"314\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig11-hosted-script-that-exfiltrates-data.png\" width=\"801\"/><figcaption>Figure 11. Snippet of the hosted script that exfiltrates web page data</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4ff0a555>",
+            "title": "Google Analytics and Meta Pixel script spoofing",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x26d2272c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection.",
+                    "html": "<p>Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking they\u2019re looking at non-malicious codes, thus evading detection.</p>"
+                },
+                {
+                    "id": "<sentence_0x36390014>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The screenshot below illustrates how a Base64-encoded string was placed inside a spoofed Google Tag Manager code. This string decoded to trafficapps[.]business/data[.]php?p=form.",
+                    "html": "<p>The screenshot below illustrates how a Base64-encoded string was placed inside a spoofed Google Tag Manager code. This string decoded to trafficapps[.]business/data[.]php?p=form.</p>"
+                },
+                {
+                    "id": "<sentence_0x7f775575>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x21dd2037>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig12-spoofed-google-tag-manager-with-skimming-script-628b54a675694.png"
+                    },
+                    "text": "Figure 12. Encoded skimming script in a spoofed Google Analytics code",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114798\" height=\"289\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig12-spoofed-google-tag-manager-with-skimming-script-628b54a675694.png\" width=\"801\"/><figcaption>Figure 12. Encoded skimming script in a spoofed Google Analytics code</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x384c5347>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel.",
+                    "html": "<p>We also observed a similar technique where the skimming script mimicked Meta Pixel\u2019s function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel.</p>"
+                },
+                {
+                    "id": "<sentence_0xa4c38dcd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xa1677a4>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig13-spoofed-meta-pixel-with-skimming-script.png"
+                    },
+                    "text": "Figure 13. Encoded skimming script in a spoofed Meta Pixel code",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a web skimming script.\" class=\"wp-image-114651\" height=\"290\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig13-spoofed-meta-pixel-with-skimming-script.png\" width=\"800\"/><figcaption>Figure 13. Encoded skimming script in a spoofed Meta Pixel code</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xbae6cc3b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflares infrastructure.",
+                    "html": "<p>The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflare\u2019s infrastructure.</p>"
+                },
+                {
+                    "id": "<sentence_0x674b8022>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "sotech[.]fun created August 30, 2021<crlf>techlok[.]bar created September 3, 2021<crlf>dratserv[.]bar created September 15, 2021",
+                    "html": "<ul><li>sotech[.]fun \u2013 created August 30, 2021</li><li>techlok[.]bar \u2013 created September 3, 2021</li><li>dratserv[.]bar \u2013 created September 15, 2021</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xeef74c0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The hosted script had multiple layers of obfuscation. Based on what we were able to partially de-obfuscate, not only did the code serve the skimming script, but it also did the following:",
+                    "html": "<p>The hosted script had multiple layers of obfuscation. Based on what we were able to partially de-obfuscate, not only did the code serve the skimming script, but it also did the following:</p>"
+                },
+                {
+                    "id": "<sentence_0x4ef3fbc5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "steal passwords input[name=billing[customer_password]]<crlf>perform an anti-debugging technique function isDebugEnabled()",
+                    "html": "<ul><li>steal passwords \u2013 input[name=\u201dbilling[customer_password]\u201d]</li><li>perform an anti-debugging technique \u2013 function isDebugEnabled()</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x2e1c64f9>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x35e1b22a>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig14-encoded-skimming-script.png"
+                    },
+                    "text": "Figure 14. Snippet of the encoded skimming script",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of a JavaScript code.\" class=\"wp-image-114654\" height=\"272\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig14-encoded-skimming-script.png\" width=\"801\"/><figcaption>Figure 14. Snippet of the encoded skimming script</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd27e41f5>",
+            "title": "Defending against web skimming",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb7b5ae6c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load.",
+                    "html": "<p>For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts aren\u2019t only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load.</p>"
+                },
+                {
+                    "id": "<sentence_0x22e6dd9e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts.",
+                    "html": "<p>Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as \u201ccheckout\u201d and \u201conepage\u201d and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts.</p>"
+                },
+                {
+                    "id": "<sentence_0xa70d3707>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x977207fd>": "https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender",
+                        "<a_0x3d70f0b0>": "https://cdn.riskiq.com/wp-content/uploads/2018/11/RiskIQ-Flashpoint-Inside-MageCart-Report.pdf",
+                        "<a_0xd3248122>": "https://www.riskiq.com/blog/magecart/"
+                    },
+                    "text": "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided.",
+                    "html": "<p>Organizations should also complement best practices with a comprehensive security solution like <a href=\"https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender\">Microsoft 365 Defender</a>, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. It\u2019s also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ <a href=\"https://cdn.riskiq.com/wp-content/uploads/2018/11/RiskIQ-Flashpoint-Inside-MageCart-Report.pdf\">published</a> a report that profiled the attacker groups behind it. <a href=\"https://www.riskiq.com/blog/magecart/\">Updates</a> about the latest skimming campaigns observed are also provided.</p>"
+                },
+                {
+                    "id": "<sentence_0x68b73edc>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6c8c497d>": "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig15-defender-for-endpoint-detecting-skimming-malware.png"
+                    },
+                    "text": "Figure 15. Microsoft Defender for Endpoint detecting a web skimming malware",
+                    "html": "<figure class=\"wp-block-image size-full\"><img alt=\"Partial screenshot of Microsoft Defender of Endpoint UI showing the following alert:\n'MageBanker' credential theft malware was detected\" class=\"wp-image-114657\" height=\"451\" src=\"https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig15-defender-for-endpoint-detecting-skimming-malware.png\" width=\"800\"/><figcaption>Figure 15. Microsoft Defender for Endpoint detecting a web skimming malware</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x4e905a1b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xea75d5f>": "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/enable-cloud-protection-microsoft-defender-antivirus?view=o365-worldwide"
+                    },
+                    "text": "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats.",
+                    "html": "<p>Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on <a href=\"https://docs.microsoft.com/microsoft-365/security/defender-endpoint/enable-cloud-protection-microsoft-defender-antivirus?view=o365-worldwide\">cloud-delivered protection</a> and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats.</p>"
+                },
+                {
+                    "id": "<sentence_0x9d4b2a71>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa38fa3da>": "https://www.microsoft.com/microsoft-365/security/microsoft-365-defender"
+                    },
+                    "text": "Learn how you can stop attacks through automated, cross-domain security with Microsoft 365 Defender.",
+                    "html": "<p><a href=\"https://www.microsoft.com/microsoft-365/security/microsoft-365-defender\">Learn how you can stop attacks through automated, cross-domain security with Microsoft 365 Defender.</a></p>"
+                },
+                {
+                    "id": "<sentence_0x1b4f2438>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Microsoft 365 Defender Research Team",
+                    "html": "<p>Microsoft 365 Defender Research Team</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x3ac264ae>",
+            "title": "Appendix",
+            "title_level": 2,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x5dcd2b07>",
+            "title": "Indicators of compromise",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xf21acbc9>",
+            "title": "File hashes (SHA-256)",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xaf118e2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xffde4880>": "https://www.virustotal.com/gui/file/a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77/detection",
+                        "<a_0x21175563>": "https://www.virustotal.com/gui/file/b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a",
+                        "<a_0xb6ff0ad5>": "https://www.virustotal.com/gui/file/88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+                    },
+                    "text": "a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77<crlf>b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a<crlf>88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635",
+                    "html": "<ul><li><a href=\"https://www.virustotal.com/gui/file/a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77/detection\">a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77</a></li><li><a href=\"https://www.virustotal.com/gui/file/b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a\">b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a</a></li><li><a href=\"https://www.virustotal.com/gui/file/88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635\">88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635</a></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x279a53ea>",
+            "title": "Encoded URLs",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3d930583>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below is a list of Base64-encoded URLs injected in affected CMSs and their corresponding decoded values. These URLs host the malicious JavaScript the attackers use for web skimming.",
+                    "html": "<p>Below is a list of Base64-encoded URLs injected in affected CMSs and their corresponding decoded values. These URLs host the malicious JavaScript the attackers use for web skimming.</p>"
+                },
+                {
+                    "id": "<sentence_0x86767b4a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x9f35af9d>": {
+                            "0": {
+                                "0": "Base64-encoded URL",
+                                "1": "aHR0cHM6Ly80NS4xOTcuMTQxLjI1MC9zdGF0eXN0aWNzLnBocA==",
+                                "2": "aHR0cHM6Ly80NS4xOTcuMTQxLjI1MC9hbmFseXRpY3MucGhw",
+                                "3": "Ly9hcGl1anF1ZXJ5LmNvbS9hamF4L2xpYnMvanF1ZXJ5LzMuNS4xL2pxdWVyeS0zLjExLjAubWluLmpzP2k9",
+                                "4": "dHJhZmZpY2FwcHMuYnVzaW5lc3MvZGF0YS5waHA/cD1mb3Jt",
+                                "5": "aHR0cHM6Ly9qcXVlcmlkZXYuYXQvanF1ZXJ5LmJhLWhhc2hjaGFuZ2UubWluLmpz",
+                                "6": "aHR0cHM6Ly9qcXVlcnlzdGF0aWMueHl6L2pxdWVyeS1zdGF0aWMuanM=",
+                                "7": "Ly9zb3RlY2guZnVuL2lkZW50aXR5Lmpz",
+                                "8": "Ly90ZWNobG9rLmJhci9zY2V2ZW50Lm1pbi5qcw",
+                                "9": "Ly9kcmF0c2Vydi5iYXIvc2NyaXB0LW1pbi0yLjUuNC5taW4uanM",
+                                "10": "aHR0cHM6Ly9pZHRyYW5zZmVyLmljdS93d3cuZ29vZ2xlLWFuYWx5dGljcy5jb20vYXJvbWFvbmxpbmVzdG9yZS5jb20uanM=",
+                                "11": "dHJhZmZpY2FwcHMub3JnL2RhdGEucGhwP3A9ZjE2aTEz",
+                                "12": "aHR0cHM6Ly9jaWxlbnQtdHJhY2tpbmcuY29tL2pzL3RyYWNraW5nLTIuMS5taW4uanM=",
+                                "13": "Z29vZ2xlc2VydmljZXMub25saW5lL3Y0L2FwaS9hcGlWMi5qcw==",
+                                "14": "bGlnaHRnZXRqcy5jb20vbGlnaHQuanM=",
+                                "15": "anNwYWNrLnByby9hcGkuanM=",
+                                "16": "bWFnZWVudG8uY29tL3YzL2FwaS9sb2dzLmpz",
+                                "17": "YWdpbGl0eXNjcmlwdHMuY29tL2pzL3NhZmVmaWxlLmpz",
+                                "18": "aHR0cHM6Ly8xMDYuMTUuMTc5LjI1NQ==",
+                                "19": "aHR0cHM6Ly8xMDMuMjMzLjExLjI4L2pRdWVyeV9TdFhsRmlpc3hDRE4ucGhwP2hhc2g9MDZkMDhhMjA0YmRkZmViZTI4NTg0MDhhNjJjNzQyZTk0NDgyNDE2NA=="
+                            },
+                            "1": {
+                                "0": "Actual (Decoded) URL",
+                                "1": "hxxps://45[.]197[.]141[.]250/statystics[.]php",
+                                "2": "hxxps://45[.]197[.]141[.]250/analytics[.]php",
+                                "3": "//apiujquery[.]com/ajax/libs/jquery/3[.]5[.]1/jquery-3[.]11[.]0[.]min[.]js?i=",
+                                "4": "trafficapps[.]business/data[.]php?p=form",
+                                "5": "hxxps://jqueridev[.]at/jquery[.]ba-hashchange[.]min[.]js",
+                                "6": "hxxps://jquerystatic[.]xyz/jquery-static[.]js",
+                                "7": "//sotech[.]fun/identity[.]js",
+                                "8": "//techlok[.]bar/scevent[.]min[.]js",
+                                "9": "//dratserv[.]bar/script-min-2[.]5[.]4[.]min[.]js",
+                                "10": "hxxps://idtransfer[.]icu/www[.]google-analytics[.]com/aromaonlinestore[.]com[.]js",
+                                "11": "trafficapps[.]org/data[.]php?p=f16i13",
+                                "12": "hxxps://cilent-tracking[.]com/js/tracking-2[.]1[.]min[.]js",
+                                "13": "googleservices[.]online/v4/api/apiV2[.]js",
+                                "14": "lightgetjs[.]com/light[.]js",
+                                "15": "jspack[.]pro/api[.]js",
+                                "16": "mageento[.]com/v3/api/logs[.]js",
+                                "17": "agilityscripts[.]com/js/safefile[.]js",
+                                "18": "hxxps://106[.]15[.]179[.]255",
+                                "19": "hxxps://103[.]233[.]11[.]28/jQuery_StXlFiisxCDN[.]php?hash=06d08a204bddfebe2858408a62c742e944824164"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<figure class=\"wp-block-table\"><table><tbody><tr><td>Base64-encoded URL</td><td>Actual (Decoded) URL</td></tr><tr><td>aHR0cHM6Ly80NS4xOTcuMTQxLjI1MC9zdGF0eXN0aWNzLnBocA==</td><td>hxxps://45[.]197[.]141[.]250/statystics[.]php</td></tr><tr><td>aHR0cHM6Ly80NS4xOTcuMTQxLjI1MC9hbmFseXRpY3MucGhw</td><td>hxxps://45[.]197[.]141[.]250/analytics[.]php</td></tr><tr><td>Ly9hcGl1anF1ZXJ5LmNvbS9hamF4L2xpYnMvanF1ZXJ5LzMuNS4xL2pxdWVyeS0zLjExLjAubWluLmpzP2k9</td><td>//apiujquery[.]com/ajax/libs/jquery/3[.]5[.]1/jquery-3[.]11[.]0[.]min[.]js?i=</td></tr><tr><td>dHJhZmZpY2FwcHMuYnVzaW5lc3MvZGF0YS5waHA/cD1mb3Jt</td><td>trafficapps[.]business/data[.]php?p=form</td></tr><tr><td>aHR0cHM6Ly9qcXVlcmlkZXYuYXQvanF1ZXJ5LmJhLWhhc2hjaGFuZ2UubWluLmpz</td><td>hxxps://jqueridev[.]at/jquery[.]ba-hashchange[.]min[.]js</td></tr><tr><td>aHR0cHM6Ly9qcXVlcnlzdGF0aWMueHl6L2pxdWVyeS1zdGF0aWMuanM=</td><td>hxxps://jquerystatic[.]xyz/jquery-static[.]js</td></tr><tr><td>Ly9zb3RlY2guZnVuL2lkZW50aXR5Lmpz</td><td>//sotech[.]fun/identity[.]js</td></tr><tr><td>Ly90ZWNobG9rLmJhci9zY2V2ZW50Lm1pbi5qcw</td><td>//techlok[.]bar/scevent[.]min[.]js</td></tr><tr><td>Ly9kcmF0c2Vydi5iYXIvc2NyaXB0LW1pbi0yLjUuNC5taW4uanM</td><td>//dratserv[.]bar/script-min-2[.]5[.]4[.]min[.]js</td></tr><tr><td>aHR0cHM6Ly9pZHRyYW5zZmVyLmljdS93d3cuZ29vZ2xlLWFuYWx5dGljcy5jb20vYXJvbWFvbmxpbmVzdG9yZS5jb20uanM=</td><td>hxxps://idtransfer[.]icu/www[.]google-analytics[.]com/aromaonlinestore[.]com[.]js</td></tr><tr><td>dHJhZmZpY2FwcHMub3JnL2RhdGEucGhwP3A9ZjE2aTEz</td><td>trafficapps[.]org/data[.]php?p=f16i13</td></tr><tr><td>aHR0cHM6Ly9jaWxlbnQtdHJhY2tpbmcuY29tL2pzL3RyYWNraW5nLTIuMS5taW4uanM=</td><td>hxxps://cilent-tracking[.]com/js/tracking-2[.]1[.]min[.]js</td></tr><tr><td>Z29vZ2xlc2VydmljZXMub25saW5lL3Y0L2FwaS9hcGlWMi5qcw==</td><td>googleservices[.]online/v4/api/apiV2[.]js</td></tr><tr><td>bGlnaHRnZXRqcy5jb20vbGlnaHQuanM=</td><td>lightgetjs[.]com/light[.]js</td></tr><tr><td>anNwYWNrLnByby9hcGkuanM=</td><td>jspack[.]pro/api[.]js</td></tr><tr><td>bWFnZWVudG8uY29tL3YzL2FwaS9sb2dzLmpz</td><td>mageento[.]com/v3/api/logs[.]js</td></tr><tr><td>YWdpbGl0eXNjcmlwdHMuY29tL2pzL3NhZmVmaWxlLmpz</td><td>agilityscripts[.]com/js/safefile[.]js</td></tr><tr><td>aHR0cHM6Ly8xMDYuMTUuMTc5LjI1NQ==</td><td>hxxps://106[.]15[.]179[.]255</td></tr><tr><td>aHR0cHM6Ly8xMDMuMjMzLjExLjI4L2pRdWVyeV9TdFhsRmlpc3hDRE4ucGhwP2hhc2g9MDZkMDhhMjA0YmRkZmViZTI4NTg0MDhhNjJjNzQyZTk0NDgyNDE2NA==</td><td>hxxps://103[.]233[.]11[.]28/jQuery_StXlFiisxCDN[.]php?hash=06d08a204bddfebe2858408a62c742e944824164</td></tr></tbody></table></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x73f41200>",
+            "title": "Microsoft 365 Defender detections",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x30084fcb>",
+            "title": "Microsoft Defender Antivirus",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf0be8682>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Below are Microsoft detections that detect malicious JavaScript skimmers in web servers.",
+                    "html": "<p>Below are Microsoft detections that detect malicious JavaScript skimmers in web servers.</p>"
+                },
+                {
+                    "id": "<sentence_0x43178777>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Magento skimmers",
+                    "html": "<p>Magento skimmers</p>"
+                },
+                {
+                    "id": "<sentence_0xaf0f58>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A",
+                    "html": "<ul><li>TrojanSpy:JS/Banker.AA</li><li>TrojanSpy:JS/SuspBanker.AA</li><li>TrojanSpy:JS/MageBanker.CC</li><li>TrojanSpy:JS/GTagManagerBanker.A</li><li>TrojanSpy:JS/GTagManagerBanker.B</li><li>TrojanSpy:JS/GenWebBanker.A</li><li>TrojanSpy:JS/FbPixelSkimming.A</li><li>TrojanSpy:JS/Banker.BB</li><li>TrojanSpy:JS/PossibleSkimmer.A</li></ul>"
+                },
+                {
+                    "id": "<sentence_0xcc2ce774>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "WordPress WooCommerce skimmer",
+                    "html": "<p>WordPress WooCommerce skimmer</p>"
+                },
+                {
+                    "id": "<sentence_0x7158f719>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "TrojanSpy:JS/WooCommBanker.BB",
+                    "html": "<ul><li>TrojanSpy:JS/WooCommBanker.BB</li></ul>"
+                },
+                {
+                    "id": "<sentence_0x798dc1d8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "PrestaShop skimmer",
+                    "html": "<p>PrestaShop skimmer</p>"
+                },
+                {
+                    "id": "<sentence_0xb90d58b7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "TrojanSpy:JS/PrestaBanker.BB",
+                    "html": "<ul><li>TrojanSpy:JS/PrestaBanker.BB</li></ul>"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,2603 @@
+{
+    "title": "Beneath the surface: Uncovering the shift in web skimming",
+    "url": "https://www.microsoft.com/security/blog/2022/05/23/beneath-the-surface-uncovering-the-shift-in-web-skimming",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0xbf985ef1>",
+                    "type": "Threat",
+                    "value": "magecart_group"
+                },
+                "references": {
+                    "sentences": [
+                        "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided.",
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands.",
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": [
+                        "Beneath the surface: Uncovering the shift in web skimming",
+                        "How web skimming works",
+                        "Defending against web skimming"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x546e1401>",
+                    "type": "Threat",
+                    "value": "magento_skimmer"
+                },
+                "references": {
+                    "sentences": [
+                        "Magento skimmers"
+                    ],
+                    "titles": [
+                        "Microsoft Defender Antivirus"
+                    ]
+                }
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. Its a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates.",
+                        "Below are Microsoft detections that detect malicious JavaScript skimmers in web servers.",
+                        "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open.",
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts.",
+                        "During our research, we came across two instances of malicious image files being uploaded to a Magento-hosted server. Both images contained a PHP script with a Base64-encoded JavaScript, and while they had identical JavaScript code, they slightly differed in their PHP implementation. The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team. Their hashes are included in the section below.",
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent.",
+                        "We also came across four lines of JavaScript injected into a compromised webpage. Like the malicious images we previously analyzed, the script in this scenario would run only when it finds the checkout keyword in the target web page URL. It would then fetch the skimming script hosted on an attacker-controlled domain to load a fake checkout form.",
+                        "Malicious images with obfuscated script",
+                        "In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts.",
+                        "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS.",
+                        "Below is a list of Base64-encoded URLs injected in affected CMSs and their corresponding decoded values. These URLs host the malicious JavaScript the attackers use for web skimming.",
+                        "Figure 15. Microsoft Defender for Endpoint detecting a web skimming malware"
+                    ],
+                    "titles": [
+                        "Recent developments",
+                        "How web skimming works",
+                        "Defending against web skimming",
+                        "Malicious images with obfuscated script",
+                        "Concatenated and encoded skimming host URL",
+                        "Encoded URLs",
+                        "Beneath the surface: Uncovering the shift in web skimming",
+                        "Microsoft Defender Antivirus"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. Its a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates.",
+                        "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS."
+                    ],
+                    "titles": [
+                        "Beneath the surface: Uncovering the shift in web skimming",
+                        "Malicious images with obfuscated script"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "The encoded stolen information was then exfiltrated to an attacker-controlled C2 via PHP curl requests.",
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": [
+                        "Microsoft Defender Antivirus",
+                        "Malicious images with obfuscated script"
+                    ]
+                }
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0x5d9f9f4b>",
+                    "type": "Industry",
+                    "value": "e-commerce"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. Its a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates.",
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming.",
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts.",
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent.",
+                        "In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts."
+                    ],
+                    "titles": [
+                        "Recent developments",
+                        "Beneath the surface: Uncovering the shift in web skimming",
+                        "Defending against web skimming",
+                        "How web skimming works"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming.",
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A",
+                        "Figure 4. Portion of the skimming script that creates and serves the fake checkout payment form",
+                        "Figure 5. Sample screenshot of the fake checkout form that collects user payment details",
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent.",
+                        "The boms() function (Figure 4) was responsible for creating and serving the fake checkout payment form (Figure 5) that collected target users payment details.",
+                        "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats."
+                    ],
+                    "titles": [
+                        "Defending against web skimming",
+                        "How web skimming works",
+                        "Microsoft Defender Antivirus",
+                        "Malicious images with obfuscated script"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf6f319a4>",
+                    "type": "Industry",
+                    "value": "aerospace"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": [
+                        "How web skimming works"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x6a6c0990>",
+                    "type": "File",
+                    "value": "navigator.useragent"
+                },
+                "references": {
+                    "sentences": [
+                        "if (devtools.open) return;<crlf>if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;"
+                    ],
+                    "titles": [
+                        "Concatenated and encoded skimming host URL"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x16f6371c>",
+                            "type": "UnknownWord",
+                            "value": "googlebot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x1305958a>",
+                            "type": "UnknownWord",
+                            "value": "crawler"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xfcaf82ee>",
+                            "type": "UnknownWord",
+                            "value": "crawling"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Domain": [
+            {
+                "token": {
+                    "id": "<DOMAIN_0x49808429>",
+                    "type": "Domain",
+                    "value": "sotech.fun"
+                },
+                "references": {
+                    "sentences": [
+                        "sotech[.]fun created August 30, 2021<crlf>techlok[.]bar created September 3, 2021<crlf>dratserv[.]bar created September 15, 2021"
+                    ],
+                    "titles": [
+                        "Google Analytics and Meta Pixel script spoofing"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0xea98aa8>",
+                    "type": "Domain",
+                    "value": "techlok.bar"
+                },
+                "references": {
+                    "sentences": [
+                        "sotech[.]fun created August 30, 2021<crlf>techlok[.]bar created September 3, 2021<crlf>dratserv[.]bar created September 15, 2021"
+                    ],
+                    "titles": [
+                        "Google Analytics and Meta Pixel script spoofing"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<DOMAIN_0x5f168ce8>",
+                    "type": "Domain",
+                    "value": "dratserv.bar"
+                },
+                "references": {
+                    "sentences": [
+                        "sotech[.]fun created August 30, 2021<crlf>techlok[.]bar created September 3, 2021<crlf>dratserv[.]bar created September 15, 2021"
+                    ],
+                    "titles": [
+                        "Google Analytics and Meta Pixel script spoofing"
+                    ]
+                }
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x293f7587>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77"
+                },
+                "references": {
+                    "sentences": [
+                        "a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77<crlf>b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a<crlf>88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+                    ],
+                    "titles": [
+                        "File hashes (SHA-256)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0xdf121450>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a"
+                },
+                "references": {
+                    "sentences": [
+                        "a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77<crlf>b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a<crlf>88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+                    ],
+                    "titles": [
+                        "File hashes (SHA-256)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x6b0b94d3>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+                },
+                "references": {
+                    "sentences": [
+                        "a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77<crlf>b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a<crlf>88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+                    ],
+                    "titles": [
+                        "File hashes (SHA-256)"
+                    ]
+                }
+            }
+        ],
+        "Url": [
+            {
+                "token": {
+                    "id": "<URL_0xf97196ea>",
+                    "type": "Url",
+                    "value": "https://45.197.141.250/statystics.php"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xf97196ea>",
+                            "type": "Url",
+                            "value": "https://45.197.141.250/statystics.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x2205221f>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9zdgf0exn0awnzlnboca"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0xaeb3f436>",
+                    "type": "Url",
+                    "value": "https://45.197.141.250/analytics.php"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xaeb3f436>",
+                            "type": "Url",
+                            "value": "https://45.197.141.250/analytics.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x72638285>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9hbmfsexrpy3mucghw"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x7c67ed5c>",
+                    "type": "Url",
+                    "value": "https://jqueridev.at/jquery.ba-hashchange.min.js"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x7c67ed5c>",
+                            "type": "Url",
+                            "value": "https://jqueridev.at/jquery.ba-hashchange.min.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaccf051>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9qcxvlcmlkzxyuyxqvanf1zxj5lmjhlwhhc2hjagfuz2uubwlulmpz"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x5e1335a4>",
+                    "type": "Url",
+                    "value": "https://jquerystatic.xyz/jquery-static.js"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x5e1335a4>",
+                            "type": "Url",
+                            "value": "https://jquerystatic.xyz/jquery-static.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6242786a>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9qcxvlcnlzdgf0awmuehl6l2pxdwvyes1zdgf0awmuanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x5b36ecea>",
+                    "type": "Url",
+                    "value": "https://idtransfer.icu/www.google-analytics.com/aromaonlinestore.com.js"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x5b36ecea>",
+                            "type": "Url",
+                            "value": "https://idtransfer.icu/www.google-analytics.com/aromaonlinestore.com.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x5d9a3e99>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9pzhryyw5zzmvylmljds93d3cuz29vz2xllwfuywx5dgljcy5jb20vyxjvbwfvbmxpbmvzdg9yzs5jb20uanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0xe1227a08>",
+                    "type": "Url",
+                    "value": "https://cilent-tracking.com/js/tracking-2.1.min.js"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xe1227a08>",
+                            "type": "Url",
+                            "value": "https://cilent-tracking.com/js/tracking-2.1.min.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9e66ed7f>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9jawxlbnqtdhjhy2tpbmcuy29tl2pzl3ryywnraw5nltiums5taw4uanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x271cc24d>",
+                    "type": "Url",
+                    "value": "https://106.15.179.255"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x271cc24d>",
+                            "type": "Url",
+                            "value": "https://106.15.179.255"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x32f08061>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly8xmdyumtuumtc5lji1nq"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<URL_0x6ba13c8e>",
+                    "type": "Url",
+                    "value": "https://103.233.11.28/jquery_stxlfiisxcdn.php?hash=06d08a204bddfebe2858408a62c742e944824164"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Encoded URLs"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x6ba13c8e>",
+                            "type": "Url",
+                            "value": "https://103.233.11.28/jquery_stxlfiisxcdn.php?hash=06d08a204bddfebe2858408a62c742e944824164"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x97b2fdee>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly8xmdmumjmzljexlji4l2prdwvyev9tdfhsrmlpc3hdre4ucghwp2hhc2g9mdzkmdhhmja0ymrkzmvizti4ntg0mdhhnjjjnzqyztk0ndgynde2na"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x533d2840>",
+                    "type": "UnknownWord",
+                    "value": "beneath"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Beneath the surface: Uncovering the shift in web skimming"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xabb01dd4>",
+                    "type": "UnknownWord",
+                    "value": "pixel"
+                },
+                "references": {
+                    "sentences": [
+                        "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open.",
+                        "The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflares infrastructure.",
+                        "Figure 13. Encoded skimming script in a spoofed Meta Pixel code",
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel.",
+                        "Google Analytics and Meta Pixel script spoofing",
+                        "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection."
+                    ],
+                    "titles": [
+                        "Google Analytics and Meta Pixel script spoofing"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x55baf51c>",
+                    "type": "UnknownWord",
+                    "value": "conspicuously"
+                },
+                "references": {
+                    "sentences": [
+                        "Microsoft security researchers recently observed that web skimming campaigns now employ various obfuscation techniques to deliver and hide skimming scripts. Its a shift from earlier tactics where attackers conspicuously injected malicious scripts into e-commerce platforms and content management systems (CMSs) via vulnerability exploitation, making this threat highly evasive to traditional security solutions. As of this writing, some of the latest skimming HTML and JavaScript files uploaded in VirusTotal have very low detection rates."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9fe661fc>",
+                    "type": "UnknownWord",
+                    "value": "prestashop"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands.",
+                        "PrestaShop skimmer"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x34aa3acf>",
+                    "type": "UnknownWord",
+                    "value": "shops"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa6e59776>",
+                    "type": "UnknownWord",
+                    "value": "ease"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf29104b1>",
+                    "type": "UnknownWord",
+                    "value": "portability"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x453b4cc0>",
+                    "type": "UnknownWord",
+                    "value": "coverage"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9703c294>",
+                    "type": "UnknownWord",
+                    "value": "filea"
+                },
+                "references": {
+                    "sentences": [
+                        "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa10f2837>",
+                    "type": "UnknownWord",
+                    "value": "formerly"
+                },
+                "references": {
+                    "sentences": [
+                        "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open.",
+                        "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x127c97ce>",
+                    "type": "UnknownWord",
+                    "value": "enriched"
+                },
+                "references": {
+                    "sentences": [
+                        "Given the scale of web skimming campaigns and the impact they have on organizations and their customers, a comprehensive security solution is needed to detect and block this threat. Microsoft 365 Defender provides a coordinated defense thats enriched by our visibility into attacker infrastructure and continuous monitoring of the threat landscape."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x235b5e6f>",
+                    "type": "UnknownWord",
+                    "value": "checkout"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 4. Portion of the skimming script that creates and serves the fake checkout payment form",
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts.",
+                        "In both images cases, once the embedded PHP script was run, it first retrieved the current pages URL and looked for the checkout and onepage keywords, both of which are mapped to Magentos checkout page.",
+                        "Figure 5. Sample screenshot of the fake checkout form that collects user payment details",
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent.",
+                        "We also came across four lines of JavaScript injected into a compromised webpage. Like the malicious images we previously analyzed, the script in this scenario would run only when it finds the checkout keyword in the target web page URL. It would then fetch the skimming script hosted on an attacker-controlled domain to load a fake checkout form.",
+                        "The boms() function (Figure 4) was responsible for creating and serving the fake checkout payment form (Figure 5) that collected target users payment details.",
+                        "Figure 2. Screenshot of a Magento shopping cart page with the checkout keyword in the URL",
+                        "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5066a0c5>",
+                    "type": "UnknownWord",
+                    "value": "web-based"
+                },
+                "references": {
+                    "sentences": [
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9adf3c33>",
+                    "type": "UnknownWord",
+                    "value": "inevitably"
+                },
+                "references": {
+                    "sentences": [
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x251a47d1>",
+                    "type": "UnknownWord",
+                    "value": "consent"
+                },
+                "references": {
+                    "sentences": [
+                        "This primary goal of web skimming campaigns is to harvest and later exfiltrate users payment information, such as credit card details, during checkout. To achieve this, attackers typically take advantage of vulnerabilities in e-commerce platforms and CMSs to gain access to pages they want to inject the skimming script into. Another common method is web-based supply chain attacks, where attackers use vulnerabilities in installed third-party plugins and themes or compromise ad networks that may inevitably serve malicious ads without the site owners knowledge or consent."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb62dc418>",
+                    "type": "UnknownWord",
+                    "value": "stealthier"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x17def8a3>",
+                    "type": "UnknownWord",
+                    "value": "heavy"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf5341feb>",
+                    "type": "UnknownWord",
+                    "value": "magecartfrom"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x38e07a88>",
+                    "type": "UnknownWord",
+                    "value": "ticketing"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb78fb19>",
+                    "type": "UnknownWord",
+                    "value": "sports"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa44baa85>",
+                    "type": "UnknownWord",
+                    "value": "transporter"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe39e5b42>",
+                    "type": "UnknownWord",
+                    "value": "tens"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe6f70764>",
+                    "type": "UnknownWord",
+                    "value": "misconfiguration"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8d0378b7>",
+                    "type": "UnknownWord",
+                    "value": "prompted"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf1d95265>",
+                    "type": "UnknownWord",
+                    "value": "pci"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5ccee7f7>",
+                    "type": "UnknownWord",
+                    "value": "ssc"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xff69ada3>",
+                    "type": "UnknownWord",
+                    "value": "dss"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf8746cc8>",
+                    "type": "UnknownWord",
+                    "value": "iterations"
+                },
+                "references": {
+                    "sentences": [
+                        "In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x91a9db58>",
+                    "type": "UnknownWord",
+                    "value": "conspicuous"
+                },
+                "references": {
+                    "sentences": [
+                        "In their earlier iterations, most web skimming campaigns directly targeted unpatched e-commerce platforms like Magento. Also, the malicious JavaScript they injected were very conspicuous. However, as the campaigns attack vectors and routines evolved, attackers also started using different techniques to hide their skimming scripts."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x266e7d4e>",
+                    "type": "UnknownWord",
+                    "value": "magento-hosted"
+                },
+                "references": {
+                    "sentences": [
+                        "During our research, we came across two instances of malicious image files being uploaded to a Magento-hosted server. Both images contained a PHP script with a Base64-encoded JavaScript, and while they had identical JavaScript code, they slightly differed in their PHP implementation. The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team. Their hashes are included in the section below."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe30fbd6c>",
+                    "type": "UnknownWord",
+                    "value": "conventional"
+                },
+                "references": {
+                    "sentences": [
+                        "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2f585e02>",
+                    "type": "UnknownWord",
+                    "value": "csp"
+                },
+                "references": {
+                    "sentences": [
+                        "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3084ab61>",
+                    "type": "UnknownWord",
+                    "value": "wysiwyg"
+                },
+                "references": {
+                    "sentences": [
+                        "We first observed the malicious favicon in November 2021, when a few campaigns started dropping remote access trojans (RATs) on target web servers, in addition to injecting scripts into web pages. This delivery method moves away from the usual modus; it appears that attackers are now targeting the server side to inject their scripts, enabling them to bypass conventional browser protections like Content Security Policy (CSP), which prevents the loading of any external scripts. Meanwhile, the more recent image file was uploaded on the /media/wysiwyg/ directory, most likely by leveraging a vulnerability in the Magento CMS."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf97a15fa>",
+                    "type": "UnknownWord",
+                    "value": "insertion"
+                },
+                "references": {
+                    "sentences": [
+                        "The insertion of the PHP script in an image file is interesting because, by default, the web server wouldnt run the said code. Based on previous similar attacks, we believe that the attacker used a PHP include expression to include the image (that contains the PHP code) in the websites index page, so that it automatically loads at every webpage visit."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa5feaade>",
+                    "type": "UnknownWord",
+                    "value": "wouldnt"
+                },
+                "references": {
+                    "sentences": [
+                        "The insertion of the PHP script in an image file is interesting because, by default, the web server wouldnt run the said code. Based on previous similar attacks, we believe that the attacker used a PHP include expression to include the image (that contains the PHP code) in the websites index page, so that it automatically loads at every webpage visit."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87ce0ae>",
+                    "type": "UnknownWord",
+                    "value": "onepage"
+                },
+                "references": {
+                    "sentences": [
+                        "In both images cases, once the embedded PHP script was run, it first retrieved the current pages URL and looked for the checkout and onepage keywords, both of which are mapped to Magentos checkout page.",
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa056af50>",
+                    "type": "UnknownWord",
+                    "value": "cart"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 2. Screenshot of a Magento shopping cart page with the checkout keyword in the URL"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf401c6b5>",
+                    "type": "UnknownWord",
+                    "value": "werent"
+                },
+                "references": {
+                    "sentences": [
+                        "Before serving the skimming script, the PHP script also checked that administrator cookies werent set to ensure that a web admin isnt currently signed in. Such a check ensured that the script only targeted the site visitors (online shoppers)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7b5a3160>",
+                    "type": "UnknownWord",
+                    "value": "shoppers"
+                },
+                "references": {
+                    "sentences": [
+                        "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats.",
+                        "Before serving the skimming script, the PHP script also checked that administrator cookies werent set to ensure that a web admin isnt currently signed in. Such a check ensured that the script only targeted the site visitors (online shoppers)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd1974a42>",
+                    "type": "UnknownWord",
+                    "value": "base16"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd9b82573>",
+                    "type": "UnknownWord",
+                    "value": "substituted"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1beddbd>",
+                    "type": "UnknownWord",
+                    "value": "construct"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaf7dd5f0>",
+                    "type": "UnknownWord",
+                    "value": "__ffse"
+                },
+                "references": {
+                    "sentences": [
+                        "The said function is only triggered if the __ffse cookie value wasnt set to 236232342323626326most probably a check to ensure that the website isnt already infected."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9253a6e1>",
+                    "type": "UnknownWord",
+                    "value": "236232342323626326most"
+                },
+                "references": {
+                    "sentences": [
+                        "The said function is only triggered if the __ffse cookie value wasnt set to 236232342323626326most probably a check to ensure that the website isnt already infected."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6dfcb334>",
+                    "type": "UnknownWord",
+                    "value": "glob_snsd"
+                },
+                "references": {
+                    "sentences": [
+                        "When the user submitted their details in the fake form, the glob_snsd() function is triggered (Figure 7), which then collected the said details in the form elements (input, select), encoded them in hex and Base64, and finally added them to the cookies (Figure 8)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x97da09bd>",
+                    "type": "UnknownWord",
+                    "value": "hex"
+                },
+                "references": {
+                    "sentences": [
+                        "When the user submitted their details in the fake form, the glob_snsd() function is triggered (Figure 7), which then collected the said details in the form elements (input, select), encoded them in hex and Base64, and finally added them to the cookies (Figure 8)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc7aacc30>",
+                    "type": "UnknownWord",
+                    "value": "attacker-controlled"
+                },
+                "references": {
+                    "sentences": [
+                        "The encoded stolen information was then exfiltrated to an attacker-controlled C2 via PHP curl requests.",
+                        "The attacker-controlled domain was encoded in Base64 and concatenated from several strings. As of this writing, the said domain is still active.",
+                        "We also came across four lines of JavaScript injected into a compromised webpage. Like the malicious images we previously analyzed, the script in this scenario would run only when it finds the checkout keyword in the target web page URL. It would then fetch the skimming script hosted on an attacker-controlled domain to load a fake checkout form."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1327af56>",
+                    "type": "UnknownWord",
+                    "value": "getdata"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc43b1b76>",
+                    "type": "UnknownWord",
+                    "value": "__send"
+                },
+                "references": {
+                    "sentences": [
+                        "The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64.",
+                        "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x592203e>",
+                    "type": "UnknownWord",
+                    "value": "converting"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc688a1bc>",
+                    "type": "UnknownWord",
+                    "value": "crawlers"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x16f6371c>",
+                    "type": "UnknownWord",
+                    "value": "googlebot"
+                },
+                "references": {
+                    "sentences": [
+                        "if (devtools.open) return;<crlf>if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x16f6371c>",
+                            "type": "UnknownWord",
+                            "value": "googlebot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1305958a>",
+                    "type": "UnknownWord",
+                    "value": "crawler"
+                },
+                "references": {
+                    "sentences": [
+                        "if (devtools.open) return;<crlf>if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x1305958a>",
+                            "type": "UnknownWord",
+                            "value": "crawler"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfcaf82ee>",
+                    "type": "UnknownWord",
+                    "value": "crawling"
+                },
+                "references": {
+                    "sentences": [
+                        "if (devtools.open) return;<crlf>if (/bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent)) return;"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x6a6c0990>",
+                            "type": "File",
+                            "value": "navigator.useragent"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xfcaf82ee>",
+                            "type": "UnknownWord",
+                            "value": "crawling"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaaa9ce1>",
+                    "type": "UnknownWord",
+                    "value": "prepared"
+                },
+                "references": {
+                    "sentences": [
+                        "The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc0b2c739>",
+                    "type": "UnknownWord",
+                    "value": "formed"
+                },
+                "references": {
+                    "sentences": [
+                        "The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4e56284>",
+                    "type": "UnknownWord",
+                    "value": "dataparameter"
+                },
+                "references": {
+                    "sentences": [
+                        "The __send() function, in turn, created an image object and prepared the URL for exfiltration. Note that while it formed the image, this function loaded the URL with the captured data in the dataparameter. The parameter value was also encoded in Base64."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc83d0e08>",
+                    "type": "UnknownWord",
+                    "value": "theyre"
+                },
+                "references": {
+                    "sentences": [
+                        "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf02629a5>",
+                    "type": "UnknownWord",
+                    "value": "non-malicious"
+                },
+                "references": {
+                    "sentences": [
+                        "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x22ba5654>",
+                    "type": "UnknownWord",
+                    "value": "trafficapps"
+                },
+                "references": {
+                    "sentences": [
+                        "The screenshot below illustrates how a Base64-encoded string was placed inside a spoofed Google Tag Manager code. This string decoded to trafficapps[.]business/data[.]php?p=form."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcec70af5>",
+                    "type": "UnknownWord",
+                    "value": "mimicked"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa9cc5e24>",
+                    "type": "UnknownWord",
+                    "value": "pixels"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x123ea5db>",
+                    "type": "UnknownWord",
+                    "value": "sotech"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x146797fe>",
+                    "type": "UnknownWord",
+                    "value": "fun"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc2252b11>",
+                    "type": "UnknownWord",
+                    "value": "gtm-34px2so"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x740417be>",
+                    "type": "UnknownWord",
+                    "value": "nrds"
+                },
+                "references": {
+                    "sentences": [
+                        "The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflares infrastructure."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9e3514cf>",
+                    "type": "UnknownWord",
+                    "value": "budget"
+                },
+                "references": {
+                    "sentences": [
+                        "The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflares infrastructure."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7a6a4e4>",
+                    "type": "UnknownWord",
+                    "value": "de-obfuscate"
+                },
+                "references": {
+                    "sentences": [
+                        "The hosted script had multiple layers of obfuscation. Based on what we were able to partially de-obfuscate, not only did the code serve the skimming script, but it also did the following:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x878b92f5>",
+                    "type": "UnknownWord",
+                    "value": "billing"
+                },
+                "references": {
+                    "sentences": [
+                        "steal passwords input[name=billing[customer_password]]<crlf>perform an anti-debugging technique function isDebugEnabled()"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x840004b4>",
+                    "type": "UnknownWord",
+                    "value": "customer_password"
+                },
+                "references": {
+                    "sentences": [
+                        "steal passwords input[name=billing[customer_password]]<crlf>perform an anti-debugging technique function isDebugEnabled()"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x924464f0>",
+                    "type": "UnknownWord",
+                    "value": "isdebugenabled"
+                },
+                "references": {
+                    "sentences": [
+                        "steal passwords input[name=billing[customer_password]]<crlf>perform an anti-debugging technique function isDebugEnabled()"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x97521527>",
+                    "type": "UnknownWord",
+                    "value": "translate"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x22156d48>",
+                    "type": "UnknownWord",
+                    "value": "monetary"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x137b5c42>",
+                    "type": "UnknownWord",
+                    "value": "eye"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4aada79>",
+                    "type": "UnknownWord",
+                    "value": "resemble"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3ff2770>",
+                    "type": "UnknownWord",
+                    "value": "arent"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb2aa1424>",
+                    "type": "UnknownWord",
+                    "value": "css"
+                },
+                "references": {
+                    "sentences": [
+                        "For organizations, the impact of web skimming campaigns could translate into monetary loss, reputation damage, and loss of customer trust. Web administrators and other defenders should therefore keep a close eye on such attacks. As it is, web skimming scripts closely resemble other JavaScript code used to perform legitimate business functions like web analytics. In addition, skimming scripts arent only found in HTML files; CSS, SVG, and other file types can also embed code that runs JavaScript once the related web pages load."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbbcad605>",
+                    "type": "UnknownWord",
+                    "value": "atob javascript"
+                },
+                "references": {
+                    "sentences": [
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5668c351>",
+                    "type": "UnknownWord",
+                    "value": "clues"
+                },
+                "references": {
+                    "sentences": [
+                        "Given the increasingly evasive tactics employed in skimming campaigns, organizations should ensure that their e-commerce platforms, CMSs, and installed plugins are up to date with the latest security patches and that they only download and use third-party plugins and services from trusted sources. They must also perform a regular and thorough check of their web assets for any compromised or suspicious content. Among the similarities we found in these recent skimming scripts include the presence of Base64-encoded strings such as checkout and onepage and the presence of the atob() JavaScript function in compromised pages. Such clues could help defenders surface these malicious scripts."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x86e81f5>",
+                    "type": "UnknownWord",
+                    "value": "complement"
+                },
+                "references": {
+                    "sentences": [
+                        "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x20351683>",
+                    "type": "UnknownWord",
+                    "value": "coordinating"
+                },
+                "references": {
+                    "sentences": [
+                        "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ad47007>",
+                    "type": "UnknownWord",
+                    "value": "enriches"
+                },
+                "references": {
+                    "sentences": [
+                        "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x43517abe>",
+                    "type": "UnknownWord",
+                    "value": "profiled"
+                },
+                "references": {
+                    "sentences": [
+                        "Organizations should also complement best practices with a comprehensive security solution like Microsoft 365 Defender, which can detect and block skimming scripts on endpoints and servers by coordinating threat defense across various domains. Its also backed by threat experts whose continuous monitoring of the computing landscape for new attacker tools and techniques enriches our protection technologies. For example, in the case of Magecart, RiskIQ published a report that profiled the attacker groups behind it. Updates about the latest skimming campaigns observed are also provided."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7f96ceb3>",
+                    "type": "UnknownWord",
+                    "value": "unexpected"
+                },
+                "references": {
+                    "sentences": [
+                        "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfeab8aad>",
+                    "type": "UnknownWord",
+                    "value": "artificial"
+                },
+                "references": {
+                    "sentences": [
+                        "Meanwhile, online shoppers can protect themselves from web skimming attacks by ensuring their browser sessions are secure, especially during the checkout process. They should be wary of any unexpected or suspicious pop-ups that ask for payment details. Finally, users should turn on cloud-delivered protection and automatic sample submission on Microsoft Defender Antivirus (or a similar feature in their security product). This capability utilizes artificial intelligence and machine learning to quickly identify and stop new and unknown threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf71197e5>",
+                    "type": "UnknownWord",
+                    "value": "cross-domain"
+                },
+                "references": {
+                    "sentences": [
+                        "Learn how you can stop attacks through automated, cross-domain security with Microsoft 365 Defender."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2205221f>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9zdgf0exn0awnzlnboca"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xf97196ea>",
+                            "type": "Url",
+                            "value": "https://45.197.141.250/statystics.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x2205221f>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9zdgf0exn0awnzlnboca"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72638285>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9hbmfsexrpy3mucghw"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xaeb3f436>",
+                            "type": "Url",
+                            "value": "https://45.197.141.250/analytics.php"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x72638285>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly80ns4xotcumtqxlji1mc9hbmfsexrpy3mucghw"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x405a0273>",
+                    "type": "UnknownWord",
+                    "value": "ly9hcgl1anf1zxj5lmnvbs9hamf4l2xpynmvanf1zxj5lzmuns4xl2pxdwvyes0zljexljaubwlulmpzp2k9"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb69668b3>",
+                    "type": "UnknownWord",
+                    "value": "apiujquery"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8f22ea53>",
+                    "type": "UnknownWord",
+                    "value": "ajax"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x99b9e6d0>",
+                    "type": "UnknownWord",
+                    "value": "libs"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x46ef5c45>",
+                    "type": "UnknownWord",
+                    "value": "jquery-3"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xae6664a6>",
+                    "type": "UnknownWord",
+                    "value": "dhjhzmzpy2fwchmuynvzaw5lc3mvzgf0ys5waha"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3b336825>",
+                    "type": "UnknownWord",
+                    "value": "cd1mb3jt"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaccf051>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly9qcxvlcmlkzxyuyxqvanf1zxj5lmjhlwhhc2hjagfuz2uubwlulmpz"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x7c67ed5c>",
+                            "type": "Url",
+                            "value": "https://jqueridev.at/jquery.ba-hashchange.min.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xaccf051>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9qcxvlcmlkzxyuyxqvanf1zxj5lmjhlwhhc2hjagfuz2uubwlulmpz"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6242786a>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly9qcxvlcnlzdgf0awmuehl6l2pxdwvyes1zdgf0awmuanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x5e1335a4>",
+                            "type": "Url",
+                            "value": "https://jquerystatic.xyz/jquery-static.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6242786a>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9qcxvlcnlzdgf0awmuehl6l2pxdwvyes1zdgf0awmuanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc0ef3332>",
+                    "type": "UnknownWord",
+                    "value": "ly9zb3rly2guznvul2lkzw50axr5lmpz"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe184c394>",
+                    "type": "UnknownWord",
+                    "value": "ly90zwnobg9rlmjhci9zy2v2zw50lm1pbi5qcw"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xff677a3e>",
+                    "type": "UnknownWord",
+                    "value": "techlok"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa573c9c0>",
+                    "type": "UnknownWord",
+                    "value": "bar"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x313d7ace>",
+                    "type": "UnknownWord",
+                    "value": "scevent"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72347189>",
+                    "type": "UnknownWord",
+                    "value": "ly9kcmf0c2vydi5iyxivc2nyaxb0lw1pbi0yljuunc5taw4uanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x37875090>",
+                    "type": "UnknownWord",
+                    "value": "dratserv"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x975fa20d>",
+                    "type": "UnknownWord",
+                    "value": "script-min-2"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5d9a3e99>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly9pzhryyw5zzmvylmljds93d3cuz29vz2xllwfuywx5dgljcy5jb20vyxjvbwfvbmxpbmvzdg9yzs5jb20uanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x5b36ecea>",
+                            "type": "Url",
+                            "value": "https://idtransfer.icu/www.google-analytics.com/aromaonlinestore.com.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x5d9a3e99>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9pzhryyw5zzmvylmljds93d3cuz29vz2xllwfuywx5dgljcy5jb20vyxjvbwfvbmxpbmvzdg9yzs5jb20uanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x847f5c>",
+                    "type": "UnknownWord",
+                    "value": "dhjhzmzpy2fwchmub3jnl2rhdgeucghwp3a9zje2atez"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb4c72acd>",
+                    "type": "UnknownWord",
+                    "value": "f16i13"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9e66ed7f>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly9jawxlbnqtdhjhy2tpbmcuy29tl2pzl3ryywnraw5nltiums5taw4uanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0xe1227a08>",
+                            "type": "Url",
+                            "value": "https://cilent-tracking.com/js/tracking-2.1.min.js"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9e66ed7f>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly9jawxlbnqtdhjhy2tpbmcuy29tl2pzl3ryywnraw5nltiums5taw4uanm"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9643aeff>",
+                    "type": "UnknownWord",
+                    "value": "z29vz2xlc2vydmljzxmub25saw5ll3y0l2fwas9hcglwmi5qcw"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x95db4f09>",
+                    "type": "UnknownWord",
+                    "value": "googleservices"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9b8d41df>",
+                    "type": "UnknownWord",
+                    "value": "apiv2"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x65061087>",
+                    "type": "UnknownWord",
+                    "value": "bglnahrnzxrqcy5jb20vbglnahquanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf3bd3c8d>",
+                    "type": "UnknownWord",
+                    "value": "lightgetjs"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd54b5ee5>",
+                    "type": "UnknownWord",
+                    "value": "annwywnrlnbyby9hcgkuanm"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd343893e>",
+                    "type": "UnknownWord",
+                    "value": "jspack"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbbbfd0f6>",
+                    "type": "UnknownWord",
+                    "value": "bwfnzwvudg8uy29tl3yzl2fwas9sb2dzlmpz"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x83b874ba>",
+                    "type": "UnknownWord",
+                    "value": "v3"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa443d903>",
+                    "type": "UnknownWord",
+                    "value": "mageento"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd3e82039>",
+                    "type": "UnknownWord",
+                    "value": "ywdpbgl0exnjcmlwdhmuy29tl2pzl3nhzmvmawxllmpz"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2f598cb0>",
+                    "type": "UnknownWord",
+                    "value": "agilityscripts"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x25e64236>",
+                    "type": "UnknownWord",
+                    "value": "safefile"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x32f08061>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly8xmdyumtuumtc5lji1nq"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x271cc24d>",
+                            "type": "Url",
+                            "value": "https://106.15.179.255"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x32f08061>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly8xmdyumtuumtc5lji1nq"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x97b2fdee>",
+                    "type": "UnknownWord",
+                    "value": "ahr0chm6ly8xmdmumjmzljexlji4l2prdwvyev9tdfhsrmlpc3hdre4ucghwp2hhc2g9mdzkmdhhmja0ymrkzmvizti4ntg0mdhhnjjjnzqyztk0ndgynde2na"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x6ba13c8e>",
+                            "type": "Url",
+                            "value": "https://103.233.11.28/jquery_stxlfiisxcdn.php?hash=06d08a204bddfebe2858408a62c742e944824164"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x97b2fdee>",
+                            "type": "UnknownWord",
+                            "value": "ahr0chm6ly8xmdmumjmzljexlji4l2prdwvyev9tdfhsrmlpc3hdre4ucghwp2hhc2g9mdzkmdhhmja0ymrkzmvizti4ntg0mdhhnjjjnzqyztk0ndgynde2na"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2ede4d33>",
+                    "type": "UnknownWord",
+                    "value": "suspbanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3e991e55>",
+                    "type": "UnknownWord",
+                    "value": "magebanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6ed19208>",
+                    "type": "UnknownWord",
+                    "value": "gtagmanagerbanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7495f00d>",
+                    "type": "UnknownWord",
+                    "value": "genwebbanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6378643a>",
+                    "type": "UnknownWord",
+                    "value": "fbpixelskimming"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd0adf302>",
+                    "type": "UnknownWord",
+                    "value": "possibleskimmer"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/Banker.AA<crlf>TrojanSpy:JS/SuspBanker.AA<crlf>TrojanSpy:JS/MageBanker.CC<crlf>TrojanSpy:JS/GTagManagerBanker.A<crlf>TrojanSpy:JS/GTagManagerBanker.B<crlf>TrojanSpy:JS/GenWebBanker.A<crlf>TrojanSpy:JS/FbPixelSkimming.A<crlf>TrojanSpy:JS/Banker.BB<crlf>TrojanSpy:JS/PossibleSkimmer.A"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc86fd726>",
+                    "type": "UnknownWord",
+                    "value": "woocommbanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/WooCommBanker.BB"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x43b596a6>",
+                    "type": "UnknownWord",
+                    "value": "prestabanker"
+                },
+                "references": {
+                    "sentences": [
+                        "TrojanSpy:JS/PrestaBanker.BB"
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0xabb01dd4>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xabb01dd4>",
+                    "type": "UnknownWord",
+                    "value": "pixel"
+                },
+                "references": {
+                    "sentences": [
+                        "In one of the campaigns weve observed, attackers obfuscated the skimming script by encoding it in PHP, which, in turn, was embedded inside an image filea likely attempt to leverage PHP calls when a websites index page is loaded. Recently, weve also seen compromised web applications injected with malicious JavaScript masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts. Some skimming scripts even had anti-debugging mechanisms, in that they first checked if the browsers developer tools were open.",
+                        "The attackers behind the Meta Pixel spoofing used newly registered domains (NRDs) hosted on HTTPS to carry out their attacks. All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below. However, the actual hosting sites were hidden behind Cloudflares infrastructure.",
+                        "Figure 13. Encoded skimming script in a spoofed Meta Pixel code",
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel.",
+                        "Google Analytics and Meta Pixel script spoofing",
+                        "Attackers have also started masquerading as Google Analytics and Meta Pixel (formerly Facebook Pixel) scripts to trick site administrators or developers into thinking theyre looking at non-malicious codes, thus evading detection."
+                    ],
+                    "titles": [
+                        "Google Analytics and Meta Pixel script spoofing"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0x9fe661fc>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9fe661fc>",
+                    "type": "UnknownWord",
+                    "value": "prestashop"
+                },
+                "references": {
+                    "sentences": [
+                        "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins. Unfortunately, these platforms and plugins come with vulnerabilities that the attackers have constantly attempted to leverage. One notable web skimming campaign/group is Magecart, which gained media coverage over the years for affecting thousands of websites, including several popular brands.",
+                        "PrestaShop skimmer"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xf5341feb>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf5341feb>",
+                    "type": "UnknownWord",
+                    "value": "magecartfrom"
+                },
+                "references": {
+                    "sentences": [
+                        "As mentioned earlier, one notable skimming campaign is Magecart. First observed in 2010, Magecart campaigns have increased in number and become stealthier through heavy obfuscation techniques, new injection points, and delivery methods. In the last five years, popular organizations or brands have been affected by Magecartfrom an airline company and online ticketing services to a sports brand and personal transporter. In 2019, tens of thousands of websites got compromised because of a misconfiguration in the cloud service provider where these sites were hosted. Such an increase in these types of attacks prompted the Payment Card Industry Security Standards Council (PCI SSC) to release a bulletin that warns users about the threat. In April 2022, PCI also released a major revision in its Data Security Standard (DSS), which now includes additional requirements for e-commerce environments to help prevent skimming."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x266e7d4e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x266e7d4e>",
+                    "type": "UnknownWord",
+                    "value": "magento-hosted"
+                },
+                "references": {
+                    "sentences": [
+                        "During our research, we came across two instances of malicious image files being uploaded to a Magento-hosted server. Both images contained a PHP script with a Base64-encoded JavaScript, and while they had identical JavaScript code, they slightly differed in their PHP implementation. The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team. Their hashes are included in the section below."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xd1974a42>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd1974a42>",
+                    "type": "UnknownWord",
+                    "value": "base16"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script was encoded multiple times using hexadecimal (Base16) and then Base64. When decoded, it had an array of strings that were referenced and substituted further to construct a complete JavaScript code. Below are snippets of the decoded skimming script."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x1327af56>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1327af56>",
+                    "type": "UnknownWord",
+                    "value": "getdata"
+                },
+                "references": {
+                    "sentences": [
+                        "The skimming script itself wasnt obfuscated and had two main functions: getData() and __send(). getData() was responsible for getting form data on the web page, converting them to JSON, and passing it onto __send(). Interestingly, this function also checked for crawlers and other possible debugging attempts before skimming data. It specifically checked if the user had opened the browser developer tool, as seen in the snippet below:"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xa9cc5e24>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa9cc5e24>",
+                    "type": "UnknownWord",
+                    "value": "pixels"
+                },
+                "references": {
+                    "sentences": [
+                        "We also observed a similar technique where the skimming script mimicked Meta Pixels function parameters and JavaScript file name to avoid detection. Like the example in the previous section, the URL in this technique was encoded in Base64 and split into several strings. The concatenated string decoded to //sotech[.]fun/identity[.]js, and it contained obfuscated code. Interestingly, the decoded URL also had the query string d=GTM-34PX2SO, which is specific to Google Tag Manager and not Meta Pixel."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x924464f0>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x924464f0>",
+                    "type": "UnknownWord",
+                    "value": "isdebugenabled"
+                },
+                "references": {
+                    "sentences": [
+                        "steal passwords input[name=billing[customer_password]]<crlf>perform an anti-debugging technique function isDebugEnabled()"
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [
+            "The first image, disguised as a favicon (also known as a shortcut or URL icon), was available on VirusTotal, while the other one was a typical web image file discovered by our team"
+        ],
+        "associated": [
+            "All the domains we saw associated with this skimming campaign were registered around the same time via a popular budget hosting provider, as seen in the list below"
+        ],
+        "targets": [
+            "Defending against web skimming",
+            "Web skimming typically targets platforms like Magento, PrestaShop, and WordPress, which are popular choices for online shops because of their ease of use and portability with third-party plugins",
+            "defending against web skimming"
+        ],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [
+                "https://www.pcisecuritystandards.org/pdfs/PCISSC_Magecart_Bulletin_RHISAC_FINAL.pdf",
+                "https://cdn.riskiq.com/wp-content/uploads/2018/11/RiskIQ-Flashpoint-Inside-MageCart-Report.pdf"
+            ],
+            "other": [
+                "https://www.riskiq.com/what-is-magecart/",
+                "https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender",
+                "https://www.riskiq.com/blog/magecart/",
+                "https://www.riskiq.com/what-is-magecart/",
+                "https://www.riskiq.com/blog/labs/magecart-british-airways-breach/",
+                "https://www.riskiq.com/blog/labs/magecart-ticketmaster-breach/",
+                "https://sansec.io/research/puma-magecart",
+                "https://www.bleepingcomputer.com/news/security/segway-store-hacked-to-steal-customers-credit-cards/",
+                "https://www.riskiq.com/blog/labs/cloudcms-picreel-magecart/",
+                "https://www.pcisecuritystandards.org/pdfs/PCISSC_Magecart_Bulletin_RHISAC_FINAL.pdf",
+                "https://portswigger.net/daily-swig/credit-card-industry-standard-revised-to-repel-card-skimmer-attacks",
+                "https://www.microsoft.com/security/business/threat-protection/microsoft-365-defender",
+                "https://cdn.riskiq.com/wp-content/uploads/2018/11/RiskIQ-Flashpoint-Inside-MageCart-Report.pdf",
+                "https://www.riskiq.com/blog/magecart/",
+                "https://docs.microsoft.com/microsoft-365/security/defender-endpoint/enable-cloud-protection-microsoft-defender-antivirus?view=o365-worldwide",
+                "https://www.microsoft.com/microsoft-365/security/microsoft-365-defender",
+                "https://www.virustotal.com/gui/file/a6fc14a7bb5e05c1d271add5b38744523fed01a18ce5578b965ee02e19589e77/detection",
+                "https://www.virustotal.com/gui/file/b397e7ad2d00dcef4cf4ba5df363684b1fefcc64c23ab110032a7b2ebb77ab4a",
+                "https://www.virustotal.com/gui/file/88e9d5eddd24546ab78ce8db1eb474a20b9694f52d4c7ad976fbfa683b7ce635"
+            ]
+        },
+        "images": [
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig1-skimming-attack-overview.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig2-magento-shopping-cart-page-checkout.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig3-php-script-checks-admin-cookies.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig4-script-fake-checkout-payment-form.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig5-fake-checkout-form.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig6-script-cookie-value.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig7-script-credential-theft-exfiltration.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig8-script-credential-theft.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig9-script-exfiltration.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig10-encoded-concatenated-skimming-url.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig11-hosted-script-that-exfiltrates-data.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig12-spoofed-google-tag-manager-with-skimming-script-628b54a675694.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig13-spoofed-meta-pixel-with-skimming-script.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig14-encoded-skimming-script.png",
+            "https://www.microsoft.com/security/blog/uploads/securityprod/2022/05/fig15-defender-for-endpoint-detecting-skimming-malware.png"
+        ]
+    }
+}

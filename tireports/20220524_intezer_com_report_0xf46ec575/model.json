@@ -1,0 +1,695 @@
+{
+    "id": "<report_0xf46ec575>",
+    "url": "https://www.intezer.com/blog/incident-response/automate-analysis-phishing-email-files",
+    "title": "How to Analyze Phishing Email Files",
+    "meta": [
+        {
+            "id": "<chapter_0x76e6bfbb>",
+            "title": "How to Analyze Phishing Email Files",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xdbaee694>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Written by Nicole Fishbein - 24 May 2022",
+                    "html": "Written by Nicole Fishbein - 24 May 2022"
+                },
+                {
+                    "id": "<sentence_0x270d45c5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xda516206>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/email-phishing-investigation-pipeline-blog-graphic-1.png"
+                    },
+                    "text": "",
+                    "html": "<img class=\"featured-img\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2022/05/email-phishing-investigation-pipeline-blog-graphic-1.png\"/>"
+                },
+                {
+                    "id": "<sentence_0x1bec5e5f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "How Email Files Are Used by Threat Actors?",
+                    "html": "<p id=\"h-how-email-files-are-used-by-threat-actors\">How Email Files Are Used by Threat Actors?</p>"
+                },
+                {
+                    "id": "<sentence_0xdcb2c208>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "How to Inspect Phishing Email Files",
+                    "html": "<p id=\"h-how-to-inspect-phishing-email-files\">How to Inspect Phishing Email Files</p>"
+                },
+                {
+                    "id": "<sentence_0x700f10ad>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Inspecting Attachments",
+                    "html": "<p id=\"h-inspecting-attachments\">Inspecting Attachments </p>"
+                },
+                {
+                    "id": "<sentence_0xdac45877>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Most Commonly Used Attachment File Types In Malicious Emails",
+                    "html": "<p id=\"h-most-commonly-used-attachment-file-types-in-malicious-emails\">Most Commonly Used Attachment File Types In Malicious Emails</p>"
+                },
+                {
+                    "id": "<sentence_0xb2c87b8c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Investigating Phishing Email Campaigns Real Life Examples",
+                    "html": "<p id=\"h-investigating-phishing-email-campaigns-real-life-examples\">Investigating Phishing Email Campaigns \u2013 Real Life Examples</p>"
+                },
+                {
+                    "id": "<sentence_0x4900cd8c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Inspecting Links, Manually or Automatically",
+                    "html": "<p id=\"h-inspecting-links-manually-or-automatically\">Inspecting Links, Manually or Automatically</p>"
+                },
+                {
+                    "id": "<sentence_0x3992e73d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Inspecting the Sender Address",
+                    "html": "<p id=\"h-inspecting-the-sender-address\">Inspecting the Sender Address</p>"
+                },
+                {
+                    "id": "<sentence_0xb839b515>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Email File Header",
+                    "html": "<p id=\"h-email-file-header\">Email File Header</p>"
+                },
+                {
+                    "id": "<sentence_0xad375f1b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Real Life Examples",
+                    "html": "<p id=\"h-real-life-examples\">Real Life Examples</p>"
+                },
+                {
+                    "id": "<sentence_0xd73e4fa8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Conclusion",
+                    "html": "<p id=\"h-conclusion\">Conclusion</p>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xa4027022>",
+            "title": "How to Analyze Phishing Email Files",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x70fee63a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emails were created as a method to pass messages between users, and now they are used by individuals and organizations all around the globe, by both big and small companies across all industries. But emails also have a dark side phishing emails that are used by threat actors to gain access to victims systems.",
+                    "html": "<p>Emails were created as a method to pass messages between users, and now they are used by individuals and organizations all around the globe, by both big and small companies across all industries. But emails also have a dark side \u2013 phishing emails that are used by threat actors to gain access to victims\u2019 systems. </p>"
+                },
+                {
+                    "id": "<sentence_0x12cc202d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x52c10293>": "https://attack.mitre.org/techniques/T1566/"
+                    },
+                    "text": "Traditionally phishing emails are associated with credential harvesting attacks, but thats not the only goal of these attacks. As defined by MITRE ATT&CK framework, adversaries also send phishing emails containing malicious links or attachments to deploy malware (such as backdoors and ransomware) and further exploit the system.",
+                    "html": "<p>Traditionally phishing emails are associated with credential harvesting attacks, but that\u2019s not the only goal of these attacks. As defined by <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1566/\">MITRE ATT&amp;CK framework</a>, adversaries also send phishing emails containing malicious links or attachments to deploy malware (such as backdoors and ransomware) and further exploit the system.</p>"
+                },
+                {
+                    "id": "<sentence_0xb19393b0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf1a90444>": "https://www.cybertalk.org/2022/03/30/top-15-phishing-attack-statistics-and-they-might-scare-you/#:~:text=in%202021%2C%2083%25%20of%20organizations%20reported%20experiencing%20phishing%20attacks"
+                    },
+                    "text": "These days, we know better than to open and respond to sketchy emails that make wild promises. Consequently, threat actors adapt their techniques and messages to increase the chances of successfully luring the victims. Through 2021, phishing attacks remained one of their top attack methods 83% of organizations reported experiencing phishing attacks.",
+                    "html": "<p>These days, we know better than to open and respond to sketchy emails that make wild promises. Consequently, threat actors adapt their techniques and messages to increase the chances of successfully luring the victims. Through 2021, phishing attacks remained one of their top attack methods \u2013 <a class=\"blog-text-link\" href=\"https://www.cybertalk.org/2022/03/30/top-15-phishing-attack-statistics-and-they-might-scare-you/#:~:text=in%202021%2C%2083%25%20of%20organizations%20reported%20experiencing%20phishing%20attacks\">83% of organizations</a> reported experiencing phishing attacks. </p>"
+                },
+                {
+                    "id": "<sentence_0x145c4fa2>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p><a class=\"blog-text-link\" href=\"#h-investigating-phishing-email-campaigns-real-life-examples\">Know the basics about phishing emails? Jump down to learn about automating tasks in your phishing email investigation pipeline.</a></p>"
+                },
+                {
+                    "id": "<sentence_0xd554f64b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Since emails are widely used as a means of communication between the company and the outside world, security teams have to deal with large amounts of files, filtering and inspecting them to prevent phishing emails from reaching the end users mailbox. In addition, threat actors implement different techniques to evade detection.",
+                    "html": "<p>Since emails are widely used as a means of communication between the company and the outside world, security teams have to deal with large amounts of files, filtering and inspecting them to prevent phishing emails from reaching the end user\u2019s mailbox. In addition, threat actors implement different techniques to evade detection. </p>"
+                },
+                {
+                    "id": "<sentence_0x64be1008>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blog, we will cover the techniques used by threat actors to make phishing emails look legitimate and deliver malware to the victims endpoint. We will show practical tools in which you can identify malicious emails and what are the next steps of the investigation you need to take following the discovery of malicious emails in your organization.",
+                    "html": "<p>In this blog, we will cover the techniques used by threat actors to make phishing emails look legitimate and deliver malware to the victim\u2019s endpoint. We will show practical tools in which you can identify malicious emails and what are the next steps of the investigation you need to take following the discovery of malicious emails in your organization. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x867656a4>",
+            "title": "How Email Files Are Used by Threat Actors?",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x88d3f9da>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x16a0d5e4>": "https://attack.mitre.org/techniques/T1566/001/",
+                        "<a_0xfade48b4>": "https://attack.mitre.org/techniques/T1566/002/"
+                    },
+                    "text": "Threat actors use emails to get initial access to the victim, from there they can launch an attack and steal sensitive information, install backdoors, set persistence and cause further damage. Attackers mainly use attachments or links, to deploy and execute their malicious intentions.",
+                    "html": "<p>Threat actors use emails to get initial access to the victim, from there they can launch an attack and steal sensitive information, install backdoors, set persistence and cause further damage. Attackers mainly use <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1566/001/\">attachments</a> or <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1566/002/\">links</a>, to deploy and execute their malicious intentions.</p>"
+                },
+                {
+                    "id": "<sentence_0xb2503c46>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emails can be sent with attachments that can be of any type: documents, executables, images, video, scripts, etc. Usually, threat actors create phishing emails with a message that lures the victim into opening the attached files. Once the file is opened the first stage of the attack is executed.",
+                    "html": "<p>Emails can be sent with attachments that can be of any type: documents, executables, images, video, scripts, etc. Usually, threat actors create phishing emails with a message that lures the victim into opening the attached files. Once the file is opened the first stage of the attack is executed. </p>"
+                },
+                {
+                    "id": "<sentence_0x868c5ba4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Another way of delivering threats to the victims endpoint is by using links in the message, either displayed in plain sight or hidden behind text or images. The end goal of the attackers is to trick users into opening the links, so they can steal sensitive information or deploy the first stage of the attack to the endpoint.",
+                    "html": "<p>Another way of delivering threats to the victim\u2019s endpoint is by using links in the message, either displayed in plain sight or hidden behind text or images. The end goal of the attackers is to trick users into opening the links, so they can steal sensitive information or deploy the first stage of the attack to the endpoint.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb5fd949>",
+            "title": "How to Inspect Phishing Email Files",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3a1d3478>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Emails consist of a header and body, inspecting them can provide helpful information for an investigation and indicate whether the emails are malicious. The message of the email can raise suspicion for a trained eye, the attachments and the sender domain can also be a trigger to investigate the email. As SOC analysts and investigators, it is important to recognize the signs and methods of malicious emails because the threat can be delivered in several ways, and some of them are sneaky.",
+                    "html": "<p>Emails consist of a header and body, inspecting them can provide helpful information for an investigation and indicate whether the emails are malicious. The message of the email can raise suspicion \u2013 for a trained eye, the attachments and the sender domain can also be a trigger to investigate the email. As SOC analysts and investigators, it is important to recognize the signs and methods of malicious emails because the threat can be delivered in several ways, and some of them are sneaky. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xd46bd656>",
+            "title": "Inspecting Attachments",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb0481e3a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As described above, emails support a wide variety of attachments, and these files can contain malicious code (especially executables or scripts). Commonly the email provider will alert upon opening emails that contain executables. But thats not always the case for documents like pdfs and Office files which are often used and shared between organizations and individuals. These non-binary files are also commonly used by threat actors to deliver malicious payloads, and using different techniques, execute the first stage of the attack.",
+                    "html": "<p>As described above, emails support a wide variety of attachments, and these files can contain malicious code (especially executables or scripts). Commonly the email provider will alert upon opening emails that contain executables. But that\u2019s not always the case for documents like pdfs and Office files which are often used and shared between organizations and individuals. These non-binary files are also commonly used by threat actors to deliver malicious payloads, and using different techniques, execute the first stage of the attack.</p>"
+                },
+                {
+                    "id": "<sentence_0x9722c07d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdbae9537>": "https://attack.mitre.org/techniques/T1036/007/"
+                    },
+                    "text": "Threat actors use double extensions to masquerade the true file type to trick users into opening files that might seem safe (such as images or text) while it is actually an executable file. By default, Windows hides file extensions, so example.txt.exe would appear as example.txt",
+                    "html": "<p>Threat actors use <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1036/007/\">double extensions</a> to masquerade the true file type to trick users into opening files that might seem safe (such as images or text) while it is actually an executable file. By default, Windows hides file extensions, so example.txt.exe would appear as example.txt</p>"
+                },
+                {
+                    "id": "<sentence_0xbd30048c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x2455e0d>": "https://attack.mitre.org/techniques/T1036/002/"
+                    },
+                    "text": "The second extension is the real extension of the file and defines which tool will be used to open the file. Another technique used to hide the real file extension is Right-to-Left Override (RLTO) Windows supports languages that are written from right to left using a Unicode character that causes the text that follows it to be displayed in reverse. Threat actors use this method to blend the real file extension with the file name.",
+                    "html": "<p>The second extension is the real extension of the file and defines which tool will be used to open the file. Another technique used to hide the real file extension is <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1036/002/\">Right-to-Left Override (RLTO)</a> \u2013 Windows supports languages that are written from right to left using a Unicode character that causes the text that follows it to be displayed in reverse. Threat actors use this method to blend the real file extension with the file name. </p>"
+                },
+                {
+                    "id": "<sentence_0x2069c37c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfbe1b4be>": "https://lh3.googleusercontent.com/qmcB-jd8QWAp0CXcl9Bo31PftIDQPqgrkUYYjM9dZe1mIgilPaJpY9IDfcL4_PdHwPcuR5VdgoWo1L_2DnZUV0cW8QoYpB41rUwgIKNhRDUjX6poIRuugMeE7niDX3czbL-9tvRurqjFkHpWGw"
+                    },
+                    "text": "Double extension in Windows when (by default) file name extension is hidden.",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"hidden extension on phishing email attachment\" src=\"https://lh3.googleusercontent.com/qmcB-jd8QWAp0CXcl9Bo31PftIDQPqgrkUYYjM9dZe1mIgilPaJpY9IDfcL4_PdHwPcuR5VdgoWo1L_2DnZUV0cW8QoYpB41rUwgIKNhRDUjX6poIRuugMeE7niDX3czbL-9tvRurqjFkHpWGw\"/><figcaption>Double extension in Windows when (by default) file name extension is hidden. </figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x933aaa0a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Tools for inspecting attachments:",
+                    "html": "<p>Tools for inspecting attachments:</p>"
+                },
+                {
+                    "id": "<sentence_0x1eb46e38>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Before inspecting the attached files you will need to extract them (if the email service provider didnt do that for you), there are several free tools you can use:",
+                    "html": "<p>Before inspecting the attached files you will need to extract them (if the email service provider didn\u2019t do that for you), there are several free tools you can use:</p>"
+                },
+                {
+                    "id": "<sentence_0xfb72d9b1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x5cb66b1a>": "http://www.nirsoft.net/utils/outlook_attachment.html",
+                        "<a_0xccc28830>": "https://github.com/TeamMsgExtractor/msg-extractor",
+                        "<a_0x70227022>": "https://github.com/diogo-alves/eml-extractor",
+                        "<a_0x196e0e73>": "https://www.marks-lab.com/"
+                    },
+                    "text": "OutlookAttachView NirSoft software to collect all of the attachments in your Outlook mailbox, you can download certain files and investigate them.<crlf>Msg-extractor Open-source tool to extract attachments from Outlook.<crlf>Eml-extractor Open-source CLI tool to extract attachments from eml messages.<crlf>UUDWIN Software that extracts attachments from eml and msg emails.",
+                    "html": "<ul><li><a class=\"blog-text-link\" href=\"http://www.nirsoft.net/utils/outlook_attachment.html\">OutlookAttachView</a> \u2013 NirSoft software to collect all of the attachments in your Outlook mailbox, you can download certain files and investigate them.</li><li><a class=\"blog-text-link\" href=\"https://github.com/TeamMsgExtractor/msg-extractor\">Msg-extractor</a> \u2013 Open-source tool to extract attachments from Outlook.</li><li><a class=\"blog-text-link\" href=\"https://github.com/diogo-alves/eml-extractor\">Eml-extractor</a> \u2013 Open-source CLI tool to extract attachments from eml messages.</li><li><a class=\"blog-text-link\" href=\"https://www.marks-lab.com/\">UUDWIN</a> \u2013 Software that extracts attachments from eml and msg emails. </li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x68ab5d13>",
+            "title": "Most Commonly Used Attachment File Types In Malicious Emails",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xfde08010>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x758baec>": "https://www.sonicwall.com/medialibrary/en/white-paper/mid-year-2021-cyber-threat-report.pdf"
+                    },
+                    "text": "As mentioned, emails can have different types of attachments, so usually threat actors use specific file types that can be relatively easily exploited to deliver threats. Based on SonicWalls 2021 cyber threat report, the following types of attachments are commonly used by both legitimate and malicious emails, therefore emails that contain these types of attachments should be carefully inspected.",
+                    "html": "<p>As mentioned, emails can have different types of attachments, so usually threat actors use specific file types that can be relatively easily exploited to deliver threats. Based on <a class=\"blog-text-link\" href=\"https://www.sonicwall.com/medialibrary/en/white-paper/mid-year-2021-cyber-threat-report.pdf\">SonicWall\u2019s 2021 cyber threat report</a>, the following types of attachments are commonly used by both legitimate and malicious emails, therefore emails that contain these types of attachments should be carefully inspected.</p>"
+                },
+                {
+                    "id": "<sentence_0x5f72fe31>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x550676c4>": "https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53",
+                        "<a_0x7eb953e9>": "https://analyze.intezer.com/families/b70bfda8-0db1-4559-bc12-2525e7ac9e3b",
+                        "<a_0xf90f13c9>": "https://www.intezer.com/blog/malware-analysis/analyze-malicious-microsoft-office-files/",
+                        "<a_0x5d509569>": "https://www.intezer.com/blog/incident-response/analyze-malicious-pdf-files/",
+                        "<a_0x374dda97>": "https://www.bleepingcomputer.com/news/security/specially-crafted-zip-files-used-to-bypass-secure-email-gateways/",
+                        "<a_0xd7378ece>": "https://attack.mitre.org/techniques/T1553/005/"
+                    },
+                    "text": "Microsoft Office files Utilize the macros or embedded OLE objects to deliver threats such as Emotet or Trickbot. To properly analyze these files you need to understand the format and the techniques threat actors implement to hide malware check out our previous blog about how to analyze malicious office files.<crlf>PDFs By nature these files can have links, JavaScript code, and any file type can be embedded into a PDF file. All of these features are used by threat actors to hide and deliver threats. On top of that, there are hundreds of PDF readers and many known vulnerabilities that can be exploited by specially crafted PDF files and allow threat actors to execute code on an endpoint. There are tools and methods to inspect PDF files and identify malicious files, check out this post about how to analyze PDF files.<crlf>ZIP and RAR archive files These are compressed file formats, a malicious executable can be compressed and attached to an email using one of the archive types. But a well-configured email gateway should be able to alert and possibly prevent the email from arriving at its final destination. But thats not always the case for password-protected archive files, which usually are not blocked, as its contents are not able to be inspected due to encryption. Another technique threat actors use to evade detection is sending one archive that contains a decoy file and another archive that contains the actual malware. This technique was used by the group behind NanoCore RAT.<crlf>ISO and IMG disk image These files are commonly used by attackers to evade detection from email-based Antivirus scanners. The use of ISO files allows the threat actor to bypass the Mark-of-the-Web controls, resulting in execution of the malware without warning to the user. In addition, starting from Windows 8.1, double clicking the file will automatically mount the ISO file and install the software (malware in the case of malicious files). Threat actors use this format to evade detection while fairly easily installing malware.",
+                    "html": "<ul><li>Microsoft Office files \u2013 Utilize the macros or embedded OLE objects to deliver threats such as <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/db6abbcc-d292-4991-bc90-207c077f5e53\">Emotet</a> or <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/families/b70bfda8-0db1-4559-bc12-2525e7ac9e3b\">Trickbot</a>. To properly analyze these files you need to understand the format and the techniques threat actors implement to hide malware \u2013 check out our previous blog about <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/analyze-malicious-microsoft-office-files/\">how to analyze malicious office files</a>.</li><li>PDFs \u2013 By nature these files can have links, JavaScript code, and any file type can be embedded into a PDF file. All of these features are used by threat actors to hide and deliver threats. On top of that, there are hundreds of PDF readers and many known vulnerabilities that can be exploited by specially crafted PDF files and allow threat actors to execute code on an endpoint. There are tools and methods to inspect PDF files and identify malicious files, check out this post about <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/incident-response/analyze-malicious-pdf-files/\">how to analyze PDF files</a>.</li><li>ZIP and RAR archive files \u2013 These are compressed file formats, a malicious executable can be compressed and attached to an email using one of the archive types. But a well-configured email gateway should be able to alert and possibly prevent the email from arriving at its final destination. But that\u2019s not always the case for password-protected archive files, which usually are not blocked, as its contents are not able to be inspected due to encryption. Another technique threat actors use to evade detection is sending one archive that contains a decoy file and another archive that contains the actual malware. This technique was used by the group behind <a class=\"blog-text-link\" href=\"https://www.bleepingcomputer.com/news/security/specially-crafted-zip-files-used-to-bypass-secure-email-gateways/\">NanoCore RAT</a>.</li><li>ISO and IMG disk image \u2013 These files are commonly used by attackers to evade detection from email-based Antivirus scanners. The use of ISO files allows the threat actor to <a class=\"blog-text-link\" href=\"https://attack.mitre.org/techniques/T1553/005/\">bypass the Mark-of-the-Web controls</a>, resulting in execution of the malware without warning to the user. In addition, starting from Windows 8.1, double clicking the file will automatically mount the ISO file and install the software (malware in the case of malicious files). Threat actors use this format to evade detection while fairly easily installing malware. </li></ul>"
+                },
+                {
+                    "id": "<sentence_0x9a050d9a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x278223d>": "https://analyze.intezer.com/"
+                    },
+                    "text": "Inspecting attachments can be time consuming and hard and in some cases you may come to the conclusion that the file is trusted. To reduce the time you spend on analysis of files, you can automatically pipe them into Intezer that uses a proprietary code reuse database that extracts valuable information about the file: whether the file is malicious, and does it share code, behavior, IOC or strings with other samples in the database. This way you will not have to waste time on trusted files or known malicious files.",
+                    "html": "<p>Inspecting attachments can be time consuming and hard and in some cases you may come to the conclusion that the file is trusted. To reduce the time you spend on analysis of files, you can automatically pipe them into <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/\">Intezer</a> that uses a proprietary code reuse database that extracts valuable information about the file: whether the file is malicious, and does it share code, behavior, IOC or strings with other samples in the database. This way you will not have to waste time on trusted files or known malicious files.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5828aebd>",
+            "title": "Investigating Phishing Email Campaigns Real Life Examples",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xff40fff6>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x15028318>": "https://www.intezer.com/blog/research/global-phishing-campaign-targets-energy-sector-and-its-suppliers/"
+                    },
+                    "text": "Our research team discovered a phishing campaign that used spoofed or typosquatted emails to make them look like part of a normal business-to-business (B2B) correspondence, targeting large international companies in the energy, oil & gas, and electronics industries. The attachments were primarily an IMG, ISO or CAB file. We submitted the attachments to Intezer and discovered that they belong to known information stealer malware such as Agent Tesla, Loki, Snake Keylogger, and Formbook.",
+                    "html": "<p>Our research team discovered a <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/research/global-phishing-campaign-targets-energy-sector-and-its-suppliers/\">phishing campaign</a> that used spoofed or typosquatted emails to make them look like part of a normal business-to-business (B2B) correspondence, targeting large international companies in the energy, oil &amp; gas, and electronics industries. The attachments were primarily an IMG, ISO or CAB file. We submitted the attachments to Intezer and discovered that they belong to known information stealer malware such as Agent Tesla, Loki, Snake Keylogger, and Formbook.</p>"
+                },
+                {
+                    "id": "<sentence_0x72582e04>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x855a33dd>": "https://lh6.googleusercontent.com/va0JSIiGMFAHjbmr_Xce4fMnTC6Z4n7Y9VDWFDfxZGmiHzJ7cR03YgipBwxYPRzTsUG60gs4IB8g9irccfuI52uKrFPJjJOZ_rbYjjADv9Eo6gvmClAA6SE2m7A5f4UMyGGzDWYmZVqy-ZGN_A"
+                    },
+                    "text": "Genetic analysis of the ISO sample containing Snake Keylogger.",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"automated phishing email analysis in Intezer\" src=\"https://lh6.googleusercontent.com/va0JSIiGMFAHjbmr_Xce4fMnTC6Z4n7Y9VDWFDfxZGmiHzJ7cR03YgipBwxYPRzTsUG60gs4IB8g9irccfuI52uKrFPJjJOZ_rbYjjADv9Eo6gvmClAA6SE2m7A5f4UMyGGzDWYmZVqy-ZGN_A\"/><figcaption>Genetic analysis of the ISO sample containing Snake Keylogger.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x52758d45>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If the investigation of the file concludes that the file is malicious, it means that the email that deliverd it is also malicious and should be further investigated.",
+                    "html": "<p>If the investigation of the file concludes that the file is malicious, it means that the email that deliverd it is also malicious and should be further investigated. </p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xc2388d64>",
+            "title": "Inspecting Links, Manually or Automatically",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe1eab02d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8f781492>": "https://www.intezer.com/blog/malware-analysis/url-analysis-phishing-part-1/"
+                    },
+                    "text": "Most of the malicious emails use links and trick victims into visiting malicious URLs from which malware will be downloaded or victims sensitive information will be stolen. Links can be in plain sight and appear as legitimate links to known sites such Amazon or Facebook, where in fact the domain is fake or a typosquatter. In other cases, the links are hidden behind text or images such as buttons or coupons, making it harder to notice the malicious URL.",
+                    "html": "<p>Most of the malicious emails use links and trick victims into visiting <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/url-analysis-phishing-part-1/\">malicious URLs</a> from which malware will be downloaded or victim\u2019s sensitive information will be stolen. Links can be in plain sight and appear as legitimate links to known sites such Amazon or Facebook, where in fact the domain is fake or a typosquatter. In other cases, the links are hidden behind text or images such as buttons or coupons, making it harder to notice the malicious URL. </p>"
+                },
+                {
+                    "id": "<sentence_0x57937f8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Youll need to collect any URLs from the emails and inspect them using a URL scanner, to know if the URL was seen in previous attacks. If it is a known malicious address then the email is certainly malicious as well. But if the results are not conclusive or you wish to dig deeper, it is worth to further investigate the domain and see if it was linked to any known campaigns or threat actors.",
+                    "html": "<p>You\u2019ll need to collect any URLs from the emails and inspect them using a URL scanner, to know if the URL was seen in previous attacks. If it is a known malicious address then the email is certainly malicious as well. But if the results are not conclusive or you wish to dig deeper, it is worth to further investigate the domain and see if it was linked to any known campaigns or threat actors.</p>"
+                },
+                {
+                    "id": "<sentence_0xf99b7b3c>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xfce4ec16>": "https://www.intezer.com/blog/product-updates/automatically-scan-urls-and-analyze-malware/"
+                    },
+                    "text": "One of the tools you can use for inspecting URLs is Intezers URL scanner. Intezer can connect to abuse inboxes or email security systems to automatically collect and classify file attachments or URLs, allowing you to accelerate response. When you submit the extracted URL, then the scanner will produce a report that includes a screenshot of the website, the verdict of the URL (is it malicious or not), information about the domain and indicators such as if the address is blacklisted, was it used in phishing campaigns, etc.",
+                    "html": "<p>One of the tools you can use for inspecting URLs is <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/product-updates/automatically-scan-urls-and-analyze-malware/\">Intezer\u2019s URL scanner</a>. Intezer can connect to abuse inboxes or email security systems to automatically collect and classify file attachments or URLs, allowing you to accelerate response. When you submit the extracted URL, then the scanner will produce a report that includes a screenshot of the website, the verdict of the URL (is it malicious or not), information about the domain and indicators such as if the address is blacklisted, was it used in phishing campaigns, etc.</p>"
+                },
+                {
+                    "id": "<sentence_0x6865f925>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x6882a9>": "https://analyze.intezer.com/url/f63ba0c3-8355-4cc8-8c54-b4d4b3622ecf",
+                        "<img_0x86db041d>": "https://lh3.googleusercontent.com/J0m0FFkkgyN98iHzIIo8i5PBrvgFU5ROdjp9Qs04X-VMbJ3mn0ueQORnVnNDTUe0mm5oKozfkF9MgnnUHE8833hxEIbp0OogbfW0yTeb9-p-6VWyHVAX77JNCoO6HTrQHJdnXcBrt-GWijrKGQ"
+                    },
+                    "text": "URL scan report in Intezer.",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"Intezer analysis of URL from phishing email\" src=\"https://lh3.googleusercontent.com/J0m0FFkkgyN98iHzIIo8i5PBrvgFU5ROdjp9Qs04X-VMbJ3mn0ueQORnVnNDTUe0mm5oKozfkF9MgnnUHE8833hxEIbp0OogbfW0yTeb9-p-6VWyHVAX77JNCoO6HTrQHJdnXcBrt-GWijrKGQ\"/><figcaption>URL scan <a class=\"blog-text-link\" href=\"https://analyze.intezer.com/url/f63ba0c3-8355-4cc8-8c54-b4d4b3622ecf\">report</a> in Intezer.</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x4358a9f3>",
+            "title": "Inspecting the Sender Address",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x6be077d1>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Assuming that you have blocked a known spam address and you monitor specific keywords that indicate that an email is malicious, phishing emails still can find their way into your inbox. To identify a malicious email you need to closely inspect and understand who is the original sender of the email and whether its a legitimate entity or an attacker.",
+                    "html": "<p>Assuming that you have blocked a known spam address and you monitor specific keywords that indicate that an email is malicious, phishing emails still can find their way into your inbox. To identify a malicious email you need to closely inspect and understand who is the original sender of the email and whether it\u2019s a legitimate entity or an attacker. </p>"
+                },
+                {
+                    "id": "<sentence_0xec97a0c8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "First, examine the email in the inbox, where there are several indicators that can give away malicious emails in this stage:",
+                    "html": "<p>First, examine the email in the inbox, where there are several indicators that can give away malicious emails in this stage:</p>"
+                },
+                {
+                    "id": "<sentence_0xa0b7c881>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "You didnt expect to receive this email in many cases phishing emails do not relate to previous connection or correspondence. If you havent had any contact with the sender or their organization, flag the email as suspicious.<crlf>Misspelled domain or poorly written emails are a strong indication of suspicious emails and you must proceed with caution when handling these emails.<crlf>Take into consideration that big organizations and service providers will not send emails from free domains such as gmail[.]com or outlook[.]com. Usually these organizations have their own private domain in the format of XXX@<domain_organisation>.com",
+                    "html": "<ol><li>You didn\u2019t expect to receive this email \u2013 in many cases phishing emails do not relate to previous connection or correspondence. If you haven\u2019t had any contact with the sender or their organization, flag the email as suspicious. </li><li>Misspelled domain or poorly written emails are a strong indication of suspicious emails and you must proceed with caution when handling these emails. </li><li>Take into consideration that big organizations and service providers will not send emails from free domains such as gmail[.]com or outlook[.]com. Usually these organizations have their own private domain in the format of XXX@&lt;domain_organisation&gt;.com </li></ol>"
+                },
+                {
+                    "id": "<sentence_0x5126aa36>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "A common method used by attackers to lure victims into opening emails is by using spoofed email addresses (to make the email look like it came from a known and trusted entity) there are sites that let you send emails from a given domain or use a certain name that will appear in the sender field. But using the information in the emails header makes it possible to detect this method.",
+                    "html": "<p>A common method used by attackers to lure victims into opening emails is by using spoofed email addresses (to make the email look like it came from a known and trusted entity) \u2013 there are sites that let you send emails from a given domain or use a certain name that will appear in the sender field. But using the information in the email\u2019s header makes it possible to detect this method.</p>"
+                },
+                {
+                    "id": "<sentence_0x3b7be491>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "So, if you decide to dig deeper into the email, you need to view the full email body and header. Usually you can get it by opening the additional option menu of the email service provider.",
+                    "html": "<p>So, if you decide to dig deeper into the email, you need to view the full email body and header. Usually you can get it by opening the additional option menu of the email service provider.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe4338f05>",
+            "title": "Email File Header",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xb07eb954>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The header contains important fields that can help in identifying malicious emails:",
+                    "html": "<p>The header contains important fields that can help in identifying malicious emails:</p>"
+                },
+                {
+                    "id": "<sentence_0x4091971e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "From: Who sent the message, however this field can be modified as mentioned above. The anomalies we mentioned about the sender apply here as well. To: Recipients name and email address. This field can help in determining the real target of an email, in case we determine that the email is malicious the recipient can determine if the attack targets specific victims. Received: The most reliable field that provides information about the origin of the email. An email that is being sent from one user to another passes through one or more servers until it reaches its destination, similar to post offices. Each agent adds a layer of information that contains a timestamp and information about the server from which the email was received from, thats the reason that some emails contain several Received fields. Therefore, you should inspect the header from the bottom to the top. Return-Path: Address to return the mail. DKIM signature: Checks the DKIM DNS record of the sender to confirm the authenticity of the sender using public key cryptography. SPF: Defines which mail servers are authorized to send emails for a certain domain based on DNS record, the goal is to prevent attackers from sending emails using your domain from any server. Received-SPF field email sent from permitted servers will show up as Pass but it can still be a non legitimate email if the account has been compromised. If the value of the field is either Fail or Softfail, it indicates that the email may be spoofed or the domains didnt update their SPF records. Here is an example of an email that pretends to be sent by Haesung Tech, but the address is spoofed and the doesnt pass the SPF check:",
+                    "html": "<ul><li>From: Who sent the message, however this field can be modified as mentioned above. The anomalies we mentioned about the sender apply here as well. </li><li>To: Recipient\u2019s name and email address. This field can help in determining the real target of an email, in case we determine that the email is malicious the recipient can determine if the attack targets specific victims. </li><li>Received: The most reliable field that provides information about the origin of the email. An email that is being sent from one user to another passes through one or more servers until it reaches its destination, similar to post offices. Each agent adds a layer of information that contains a timestamp and information about the server from which the email was received from, that\u2019s the reason that some emails contain several Received fields. Therefore, you should inspect the header from the bottom to the top. </li><li>Return-Path: Address to return the mail. </li><li>DKIM signature: Checks the DKIM DNS record of the sender to confirm the authenticity of the sender using public key cryptography. </li><li>SPF: Defines which mail servers are authorized to send emails for a certain domain based on DNS record, the goal is to prevent attackers from sending emails using your domain from any server. <ul><li>Received-SPF field \u2013 email sent from permitted servers will show up as \u201cPass\u201d but it can still be a non legitimate email if the account has been compromised. If the value of the field is either \u201cFail\u201d or \u201cSoftfail\u201d, it indicates that the email may be spoofed or the domains didn\u2019t update their SPF records. Here is an example of an email that pretends to be sent by Haesung Tech, but the address is spoofed and the doesn\u2019t pass the SPF check:</li></ul></li></ul>"
+                },
+                {
+                    "id": "<sentence_0xf88d639a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x52bb67c>": "https://lh3.googleusercontent.com/a4JPyiRSkMHNwbLWC40HApI7cw6lx_WIBC0hZihZenyPuo5a-RIsj0ZmtBQ_fbmFM5FtAeb2xhV4OMw6YlpwAVPwBIHUL-OcOoyFLVaLH5v13dXj65hZAwr83ujBv6MBHx_49YSENYdG8pUe8g"
+                    },
+                    "text": "Sender Policy Framework (SPF) record of a spoofed address.",
+                    "html": "<figure class=\"wp-block-image\"><img alt=\"\" src=\"https://lh3.googleusercontent.com/a4JPyiRSkMHNwbLWC40HApI7cw6lx_WIBC0hZihZenyPuo5a-RIsj0ZmtBQ_fbmFM5FtAeb2xhV4OMw6YlpwAVPwBIHUL-OcOoyFLVaLH5v13dXj65hZAwr83ujBv6MBHx_49YSENYdG8pUe8g\"/><figcaption>Sender Policy Framework (SPF) record of a spoofed address.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x2c21a620>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Domain-based Message Authentication, Reporting and Conformance (DMARC) is another email authentication protocol that uses the information provided by either DKIM or SPF (or both). DMARC is implemented to protect the domain from unauthorized use in phishing and spoofing attacks. And DMARC enforces predefined policy to handle unwanted emails. DMARC, DKIM and SPF are used to prevent phishing and unauthorized use of domains. When you inspect emails make sure to validate the values in these fields.",
+                    "html": "<p>Domain-based Message Authentication, Reporting and Conformance (DMARC) is another email authentication protocol that uses the information provided by either DKIM or SPF (or both). DMARC is implemented to protect the domain from unauthorized use in phishing and spoofing attacks. And DMARC enforces predefined policy to handle unwanted emails. DMARC, DKIM and SPF are used to prevent phishing and unauthorized use of domains. When you inspect emails make sure to validate the values in these fields. </p>"
+                },
+                {
+                    "id": "<sentence_0x6304dcfb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Other fields in the header that you should know about:",
+                    "html": "<p>Other fields in the header that you should know about:</p>"
+                },
+                {
+                    "id": "<sentence_0xd846ef97>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "MIME-version Multipurpose Internet Mail Extensions (MIME) extends the standard email format, it provides support for non-ASCII character sets, audio, video and applications. Messages that use MIME must contain the version field. Message-ID unique identifier used in emails.X-header custom email headers that can be added to the other standard headers. Email providers add specific headers for authentication, information about spam, etc. Microsoft Outlook uses X-MS-Exchange header and Google uses X-Google-DKIM. For example:X-Originating-IP- the ip address of the sender<crlf>X-Spam-Status & X-Spam-Level- Spam record set by the mail service.",
+                    "html": "<ul><li>MIME-version \u2013 Multipurpose Internet Mail Extensions (MIME) extends the standard email format, it provides support for non-ASCII character sets, audio, video and applications. Messages that use MIME must contain the version field. </li><li>Message-ID \u2013 unique identifier used in emails.</li><li>X-header \u2013 custom email headers that can be added to the other standard headers. Email providers add specific headers for authentication, information about spam, etc. Microsoft Outlook uses X-MS-Exchange header and Google uses X-Google-DKIM. For example:<ul><li>X-Originating-IP- the ip address of the sender</li><li>X-Spam-Status &amp; X-Spam-Level- Spam record set by the mail service. </li></ul></li></ul>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe54d987b>",
+            "title": "Real Life Examples",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa8981031>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x80500fe8>": "https://www.intezer.com/blog/malware-analysis/targeted-phishing-attack-against-ukrainian-government-expands-to-georgia/"
+                    },
+                    "text": "Intezers research team discovered a phishing campaign that targeted government entities in Georgia. The attack flow starts with a phishing email containing a malicious shortened URL, as can be seen in the screenshot below. The URL redirects to a Command and control (C2) where a ZIP file or malicious document is hosted. The ZIP file contains a malicious file and in some emails also a harmless PDF file. The malicious attachment varies between RTF, DOC, PDF, JS, LNK or EXE. The main goal of the attachment is to drop the packed payloads from the C2. The packed executable loads an AutoIt payload into memory, once executed the malware steals files with predefined extensions.",
+                    "html": "<p>Intezer\u2019s research team discovered a <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/malware-analysis/targeted-phishing-attack-against-ukrainian-government-expands-to-georgia/\">phishing campaign</a> that targeted government entities in Georgia. The attack flow starts with a phishing email containing a malicious shortened URL, as can be seen in the screenshot below. The URL redirects to a Command and control (C2) where a ZIP file or malicious document is hosted. The ZIP file contains a malicious file and in some emails also a harmless PDF file. The malicious attachment varies between RTF, DOC, PDF, JS, LNK or EXE. The main goal of the attachment is to drop the packed payloads from the C2. The packed executable loads an AutoIt payload into memory, once executed the malware steals files with predefined extensions. </p>"
+                },
+                {
+                    "id": "<sentence_0xc8ac1d9d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The campaign demonstrates the challenge of inspecting emails, the variety of file types that are compressed into the ZIP file, can make the analysis more challenging and time consuming you will need the skills and the tools to analyze each file type. There is a solution automate your email pipeline. Automatically extract the attachments and submit them to platforms such as Intezer, this way instead of spending time on files that are trusted or known threats you can focus on other aspects of the suspicious email.",
+                    "html": "<p>The campaign demonstrates the challenge of inspecting emails, the variety of file types that are compressed into the ZIP file, can make the analysis more challenging and time consuming \u2013 you will need the skills and the tools to analyze each file type. There is a solution \u2013 automate your email pipeline. Automatically extract the attachments and submit them to platforms such as Intezer, this way instead of spending time on files that are trusted or known threats you can focus on other aspects of the suspicious email. </p>"
+                },
+                {
+                    "id": "<sentence_0xd6b8dc59>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xcdc8b988>": "https://lh6.googleusercontent.com/LmfnOM1rnucGJx1rP10GkF7ht19ZXFqZr5VKvL4V-xiL2BqYr5h-Fj0_63gJgjux3kRPHBA9iw0q9Y7JhTHjPTCNEFdliy47bOmTvwPF0Z1aD9XRYFv1H0wHiOdCMHsPp482ewdsvgvqPtis5A"
+                    },
+                    "text": "Phishing email targeting government entities in Georgia.",
+                    "html": "<figure class=\"wp-block-image is-resized\"><img alt=\"\" height=\"310\" src=\"https://lh6.googleusercontent.com/LmfnOM1rnucGJx1rP10GkF7ht19ZXFqZr5VKvL4V-xiL2BqYr5h-Fj0_63gJgjux3kRPHBA9iw0q9Y7JhTHjPTCNEFdliy47bOmTvwPF0Z1aD9XRYFv1H0wHiOdCMHsPp482ewdsvgvqPtis5A\" width=\"840\"/><figcaption>Phishing email targeting government entities in Georgia.</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x8b02dd6b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Phishing email sent to the Ukrainian government. Translation from Ukrainian Subject: Payments to ATO Veterans. Content: It must be filled in and sent back.",
+                    "html": "<p>Phishing email sent to the Ukrainian government. Translation from Ukrainian \u2013 Subject: \u201cPayments to ATO Veterans.\u201d Content: \u201cIt must be filled in and sent back.\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0xbffadefb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x1250a228>": "https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid/"
+                    },
+                    "text": "Another campaign that was recently discovered by our research team is a new IcedID campaign that was delivered using a phishing email that uses conversation hijacking threat actors use previously stolen email messages and use them in future attacks. This technique makes the emails look more legitimate and convincing. This campaign takes the hijacking a step further; the threat actors are now using the email address of the victim that they stole the original email from to make the phishing email even more convincing.",
+                    "html": "<p>Another campaign that was recently discovered by our research team is a <a class=\"blog-text-link\" href=\"https://www.intezer.com/blog/research/conversation-hijacking-campaign-delivering-icedid/\">new IcedID campaign</a> that was delivered using a phishing email that uses conversation hijacking \u2013threat actors use previously stolen email messages and use them in future attacks. This technique makes the emails look more legitimate and convincing. This campaign takes the hijacking a step further; the threat actors are now using the email address of the victim that they stole the original email from to make the phishing email even more convincing. </p>"
+                },
+                {
+                    "id": "<sentence_0xb737b29c>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x74d83e40>": "https://lh3.googleusercontent.com/iUwNQfmbcZJPQmi1vHsHcQU6EWwoC7zgmtln1q1Asrr52NRmrtzIYnWug3As2mspTVOC7MwSNtHwTvgRCx3FtLU9QTL1riO369NmHob8I6hZBSIREo5RRLVdFZXy85-EL4GG5i9P_CLf5VkLSg"
+                    },
+                    "text": "",
+                    "html": "<figure class=\"aligncenter\"><img alt=\"\" src=\"https://lh3.googleusercontent.com/iUwNQfmbcZJPQmi1vHsHcQU6EWwoC7zgmtln1q1Asrr52NRmrtzIYnWug3As2mspTVOC7MwSNtHwTvgRCx3FtLU9QTL1riO369NmHob8I6hZBSIREo5RRLVdFZXy85-EL4GG5i9P_CLf5VkLSg\"/></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xde5f0329>",
+            "title": "Conclusion",
+            "title_level": 2,
+            "sentences": [
+                {
+                    "id": "<sentence_0xe56b9455>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Inspecting email files can be hard because emails are frequently used, meaning there are lots of files to cover. Also because emails can contain URLs to malicious sites or different types of attachments, all of which require different sorts of skills and methods to thoroughly inspect all of the artifacts.",
+                    "html": "<p>Inspecting email files can be hard because emails are frequently used, meaning there are lots of files to cover. Also because emails can contain URLs to malicious sites or different types of attachments, all of which require different sorts of skills and methods to thoroughly inspect all of the artifacts.</p>"
+                },
+                {
+                    "id": "<sentence_0x347f4bcf>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To make this task easier and less demanding you should consider automating your email pipeline. The goal is to put time and effort only into truly malicious files. By extracting all of the attachments and piping them into Intezer you will get a comprehensive report about each file, which will allow you to proceed to the next step. If the file is malicious, start an incident response process. Otherwise, continue to the next task in your queue until the next email.",
+                    "html": "<p>To make this task easier and less demanding you should consider automating your email pipeline. The goal is to put time and effort only into truly malicious files. By extracting all of the attachments and piping them into Intezer you will get a comprehensive report about each file, which will allow you to proceed to the next step. If the file is malicious, start an incident response process. Otherwise, continue to the next task in your queue until the next email.</p>"
+                },
+                {
+                    "id": "<sentence_0x90123cd2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4ff5d9fc>": "https://www.intezer.com/book-a-demo-analyze/"
+                    },
+                    "text": "Want to learn more about automating your email pipeline? Lets book a time to talk.",
+                    "html": "<p>Want to learn more about automating your email pipeline? <a class=\"blog-text-link\" href=\"https://www.intezer.com/book-a-demo-analyze/\">Let\u2019s book a time to talk.</a></p>"
+                },
+                {
+                    "id": "<sentence_0x418870c1>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x417b2c4>": "https://149520725.v2.pressablecdn.com/wp-content/uploads/2020/07/Screenshot_20200720-202117__01-60x60.png"
+                    },
+                    "text": "",
+                    "html": "<img class=\"user-photo\" src=\"https://149520725.v2.pressablecdn.com/wp-content/uploads/2020/07/Screenshot_20200720-202117__01-60x60.png\"/>"
+                },
+                {
+                    "id": "<sentence_0x370de803>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Nicole Fishbein",
+                    "html": " Nicole Fishbein"
+                },
+                {
+                    "id": "<sentence_0xeb49145d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x46cd2aab>": "https://twitter.com/NicoleFishi19"
+                    },
+                    "text": "",
+                    "html": "<a class=\"twitter-link blog-text-link\" href=\"https://twitter.com/NicoleFishi19\" target=\"_blank\"></a>"
+                },
+                {
+                    "id": "<sentence_0xaa072c3d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Nicole is a malware analyst and reverse engineer. Prior to Intezer she was an embedded researcher in the Israel Defense Forces (IDF) Intelligence Corps.",
+                    "html": "<p>Nicole is a malware analyst and reverse engineer. Prior to Intezer she was an embedded researcher in the Israel Defense Forces (IDF) Intelligence Corps.</p>"
+                },
+                {
+                    "id": "<sentence_0x45d2e4e2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x54983f51>": "https://www.intezer.com/tag/attachments/"
+                    },
+                    "text": "attachments",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/attachments/\" rel=\"tag\">attachments</a>"
+                },
+                {
+                    "id": "<sentence_0xa31a9565>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x8a45704>": "https://www.intezer.com/tag/incident-response/"
+                    },
+                    "text": "Incident Response",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/incident-response/\" rel=\"tag\">Incident Response</a>"
+                },
+                {
+                    "id": "<sentence_0xfe5a9cb2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xba20da6e>": "https://www.intezer.com/tag/phishing-emails/"
+                    },
+                    "text": "phishing emails",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/phishing-emails/\" rel=\"tag\">phishing emails</a>"
+                },
+                {
+                    "id": "<sentence_0xf37eb4fd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xec98fff9>": "https://www.intezer.com/tag/phishing-investigation-pipeline/"
+                    },
+                    "text": "phishing investigation pipeline",
+                    "html": "<a class=\"blog-text-link\" href=\"https://www.intezer.com/tag/phishing-investigation-pipeline/\" rel=\"tag\">phishing investigation pipeline</a>"
+                }
+            ]
+        }
+    ]
+}

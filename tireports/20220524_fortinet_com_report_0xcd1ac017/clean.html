@@ -1,0 +1,162 @@
+<div>
+<p>Nokoyawa is a new Windows ransomware that appeared earlier this year. The earliest samples collected by FortiGuard researchers were compiled in February 2022 and share substantial code similarities with Karma, another ransomware that traces its lineage to Nemty through a long string of variants. Nemty is a ransomware family that FortiGuard Labs researchers reported on <a href="https://www.fortinet.com/blog/threat-research/nemty-ransomware-early-stage-threat">back in 2019</a>.</p>
+<p>Recently, FortiGuard Labs encountered a new variant of this ransomware campaign and observed that it has been improving itself by reusing code from publicly available sources. In this article, we discuss the general behavior of Nokoyawa Ransomware as well as the new features it recently added to maximize the number of files that can be encrypted.</p>
+<p>Affected Platforms: Windows
+Impacted Parties: Windows users
+Impact: Potential loss of files
+Severity Level: Medium</p>
+<h2>Nokoyawa Ransomware Overview</h2>
+<p>A general overview of how Nokoyawa works is provided here to avoid rehashing information previously presented by other researchers. Links to prior research can be referenced near the bottom of this article.</p>
+<p>Curiously, unlike its alleged ransomware predecessor Karma, that runs on both 32-bit and 64-bit Windows, FortiGuard Labs has only observed samples compiled to run exclusively on 64-bit Windows.</p>
+<p>Nokoyawa provides several command line options for customized executions:</p>
+<ul>
+<li>-help: Print the list of command line options</li>
+<li>-network: Encrypt files on all drives and volumes (both local and networked)</li>
+<li>-file filePath: Encrypt a single file</li>
+<li>-dir dirPath: Encrypt all files in specified directory and sub-directories</li>
+</ul>
+<p>If no argument is provided, Nokoyawa encrypts all local drives and volumes by default. The “-help” argument is interesting as it suggests that the ransomware developers might be a separate team from the operators deploying and executing the ransomware on infected machines.</p>
+<p>For speed and efficiency, Nokoyawa creates multiple threads for encrypting files that do not end with .exe, .dll, or .lnk extensions. Files with NOKOYAWA in their names are also skipped. In addition, some directories and their sub-directories are excluded from encryption by comparing the hash of their names with a list of hardcoded hashes.</p>
+<p>For each sample, the ransomware operators generate a fresh pair of Elliptic-Curve Cryptography (ECC) public and private keys (aka keypair) and then embed the public key into the ransomware binary. This pair of keys can be considered as “master” keys necessary for decrypting the files upon ransom payment. Assuming that each sample is deployed for a different victim, the ransomware operators eliminate the possibility of victims using a decryptor provided to another victim since each victim is linked to a separate “master” keypair.</p>
+<p>Before encrypting each file, Nokoyawa creates a new ephemeral keypair (victim file keys) unique to each file. Using the victim file’s private key and the “master” public key from the threat actors, a 64-byte shared secret is generated with Elliptic-Curve Diffie-Hellmann (ECDH). The first 32 bytes of this shared secret are used as a Salsa20 key together with the hardcoded nonce ‘lvcelvce’ for encrypting the contents of each file.</p>
+<p>A SHA1 hash is generated based on the previously generated shared secret and the file content and is appended at the end of each encrypted file together with the victim file’s public key and the string “NOKOYAWA”. This hash is likely to be used for checking data integrity during decryption.</p>
+<p>Consequently, the victim file’s public key and the “master” private key owned by the ransomware operator are required to regenerate the Salsa20 key for decrypting each encrypted file.</p>
+<p>Files encrypted by the ransomware are appended with a .NOKOYAWA extension. The ransom note is written into NOKOYAWA_readme.txt in every directory included for encryption.</p>
+<h2>Ransomware Development Cheat Codes</h2>
+<p>The April 2022 samples we collected contain three new features to maximize the number of files that can be encrypted by Nokoyawa. These features were already present in contemporary ransomware families and their addition simply suggests an attempt by Nokoyawa developers to catch up with other operators in terms of technical capabilities.</p>
+<p>FortiGuard Labs researchers were able to determine that most of the added code was copied verbatim from publicly available sources, including the source of the now-defunct Babuk ransomware leaked in September 2021.</p>
+<p>One example of such blatant copying is the inclusion of functions to terminate processes and services to reduce the number of files locked by other programs so the encryption code can encrypt those files. The code (including the list of processes and service names) exactly matches the implementation in Babuk. The image in Figure 1 shows a side-by-side comparison of the service killer functions taken from Babuk’s leaked source code (left) and Nokoyawa’s decompiled code (right).</p>
+<img alt="Example of Service killer functions from Babuk and Nokoyawa" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 1. Service killer functions from Babuk and Nokoyawa
+<p>The applications and services impacted by Nokoyawa include Microsoft Office applications, email clients, browsers, backup programs, security products, and database servers. Please refer to Appendix A for a complete list of the affected processes and services.</p>
+<p>It also includes code to enumerate and mount volumes to encrypt the files on these volumes, again reusing the exact code copied from the leaked Babuk source.</p>
+<p>In the latest samples we collected, it deletes volume snapshots by resizing the allocated space for snapshots of volume shadow copies to 1 byte via the DeviceIoControl API using the IOCTL_VOLSNAP_SET_MAX_DIFF_AREA_SIZE (0x53c028) control code. This size would be too small to store snapshots, resulting in Windows deleting them. This technique was previously <a href="https://www.fortinet.com/blog/threat-research/stomping-shadow-copies-a-second-look-into-deletion-methods">reported</a> by Fortinet and the implementation appears to be copied from a publicly available PoC. Previous samples did not delete volume shadow copies.</p>
+<p>For the above functionality to operate correctly, administrator privileges are required. Since we did not observe any Windows User Access Control (UAC) bypass being performed by the sample, it is likely that the operators use other means to escalate or obtain administrative privileges prior to executing the ransomware.</p>
+<h2>New Ransom Note with Onion URL</h2>
+<p>The ransom note and the way victims communicate with the perpetrators have also undergone a major change in the new variants.</p>
+<p>In the older samples from February, victims were instructed to contact the ransomware operators via email, as shown in Figure 2. </p>
+<img alt="Screenshot of Previous ransomware note with redacted emails" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 2. Previous ransomware note with redacted emails
+<p>In the Apr 2022 samples, however, the email addresses were removed. They were replaced with instructions to contact the ransomware operators through a .onion URL via a TOR browser. Each sample uses the same .onion domain in the ransom notes but the id parameter, which we presume to be the victim identifier, is unique for each sample (Figure 3).</p>
+<img alt="Example of New ransomware note with the Onion URL" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 3. New ransomware note with the Onion URL
+<h2>New Ransom Payment Page</h2>
+<p>Visiting the Onion URL leads to a page with an online chat box for communicating with the operators for negotiating and paying the ransom. FortiGuard Labs researchers observed an ongoing conversation between a possible victim (Company) and the ransomware operator (User). Based on this chat history, the threat actors offer free decryption of up to 3 files to prove that they can decrypt the victim’s files (Figure 4).</p>
+<img alt="New payment page with chat box " class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 4. New payment page with chat box 
+<p>The “Instructions” page shows the ransom amount, in this case a hefty 1,500,000 (presumably in USD), that could be paid in either BTC (Bitcoin) or XMR (Monero). After payment, the operators claim to provide the tool to decrypt the victim’s files (Figure 5).</p>
+<img alt="Ransom payment instruction page" class="loading" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="max-width:80%;height:auto;width:auto;"/>
+Figure 5. Ransom payment instruction page
+<p>Given the increasing professionalization of some ransomware campaigns, this TOR website may be an attempt to improve “branding” or it may be a way to have a separate team handle ransom negotiations.</p>
+<p>Oddly enough, the ransom note includes the following message “Contact us to reach an agreement or we will leak your black s**t to media,” which suggests that the victim's data might have been exfiltrated during the infection. However, FortiGuard Labs researchers did not find such capabilities in the Nokoyawa samples. In fact, apart from the enumeration of networked drives, no network-related behaviors were observed at all. It may be possible that data exfiltration is performed separately by the operators, or they might be bluffing to further pressure victims into paying the ransom.</p>
+<h2>Conclusion</h2>
+<p>In this article, we highlighted the improvements that have been made to the new variant of Nokoyawa Ransomware. It also shows how threat actors can quickly add new capabilities to their malware with minimal effort by reusing publicly available code.</p>
+<p>FortiGuard Labs will continue to monitor Nokoyawa and emerging trends in the ransomware threat landscape.</p>
+<h2>Fortinet Protections</h2>
+<p>The FortiGuard Antivirus service detects and blocks this threat as W64/Filecoder.EV!tr.</p>
+<p>Fortinet customers are protected from this malware through FortiGuard’s <a href="https://www.fortinet.com/support-and-training/support-services/fortiguard-security-subscriptions/web-filtering.html?utm_source=blog&amp;utm_campaign=web-filtering">Web Filtering</a>, <a href="https://www.fortinet.com/support/support-services/fortiguard-security-subscriptions/antivirus">Antivirus</a>, and <a href="https://www.fortinet.com/support/support-services/fortiguard-security-subscriptions/content-disarm-reconstruction">CDR</a> (content disarm and reconstruction) services and <a href="https://www.fortinet.com/products/email-security/fortimail.html?utm_source=blog&amp;utm_campaign=fortimail-main-page">FortiMail</a>, <a href="https://www.fortinet.com/products/endpoint-security/forticlient.html?utm_source=blog&amp;utm_campaign=endpoint-web-page">FortiClient</a>, and <a href="https://www.fortinet.com/products/endpoint-security/fortiedr.html?utm_source=blog&amp;utm_campaign=fortiedr">FortiEDR</a> solutions.</p>
+<p>Due to the ease of disruption, damage to daily operations, potential impact to the reputation of an organization, and the unwanted destruction or release of personally identifiable information (PII), etc., it is important to keep all AV and IPS signatures up to date.</p>
+<p>Since the majority of ransomware is delivered via phishing, organizations should consider leveraging the Fortinet solutions designed to train users to understand and detect phishing threats:</p>
+<p>The <a href="https://www.fortinet.com/products/phishing-simulation">FortiPhish Phishing Simulation Service </a>uses real-world simulations to help organizations test user awareness and vigilance to phishing threats and to train and reinforce proper practices when users encounter targeted phishing attacks.</p>
+<p>We also suggest that organizations have their end users go through our free <a href="https://training.fortinet.com/?utm_source=blog&amp;utm_campaign=nse-institute">NSE training</a>: <a href="https://training.fortinet.com/local/staticpage/view.php?page=nse_1&amp;utm_source=blog&amp;utm_campaign=nse-1">NSE 1 – Information Security Awareness</a>. It includes a module on Internet threats that is designed to help end users learn how to identify and protect themselves from various types of phishing attacks.</p>
+<h2>IOCs</h2>
+<p>Files (SHA256)</p>
+<p>A32b7e40fc353fd2f13307d8bfe1c7c634c8c897b80e72a9872baa9a1da08c46</p>
+<p>304e01db6da020fc1e0e02fdaccd60467a9e01579f246a8846dcfc33c1a959f8</p>
+<p>The existence of the following files might also indicate an infection:</p>
+<ul>
+<li>NOKOYAWA_readme.txt</li>
+<li>Filenames with “.NOKOYAWA” extension</li>
+</ul>
+<h2>References</h2>
+<ul>
+<li><a href="https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise" target="_blank">https://www.sentinelone.com/labs/nokoyawa-ransomware-new-karma-nemty-variant-wears-thin-disguise</a></li>
+<li><a href="https://www.trendmicro.com/en_us/research/22/c/nokoyawa-ransomware-possibly-related-to-hive-.html" target="_blank">https://www.trendmicro.com/en_us/research/22/c/nokoyawa-ransomware-possibly-related-to-hive-.html</a></li>
+<li><a href="https://www.sentinelone.com/labs/karma-ransomware-an-emerging-threat-with-a-hint-of-nemty-pedigree/" target="_blank">https://www.sentinelone.com/labs/karma-ransomware-an-emerging-threat-with-a-hint-of-nemty-pedigree/</a></li>
+<li><a href="https://securelist.com/evolution-of-jsworm-ransomware/102428/" target="_blank">https://securelist.com/evolution-of-jsworm-ransomware/102428/</a></li>
+</ul>
+<h2>Appendix A</h2>
+<p>List of process names</p>
+<ul>
+<li>sql.exe </li>
+<li>oracle.exe</li>
+<li>ocssd.exe</li>
+<li>dbsnmp.exe</li>
+<li>synctime.exe</li>
+<li>agntsvc.exe</li>
+<li>isqlplussvc.exe</li>
+<li>xfssvccon.exe</li>
+<li>mydesktopservice.exe</li>
+<li>ocautoupds.exe</li>
+<li>encsvc.exe</li>
+<li>firefox.exe</li>
+<li>tbirdconfig.exe</li>
+<li>mydesktopqos.exe</li>
+<li>ocomm.exe</li>
+<li>dbeng50.exe</li>
+<li>sqbcoreservice.exe</li>
+<li>excel.exe</li>
+<li>infopath.exe</li>
+<li>msaccess.exe</li>
+<li>mspub.exe</li>
+<li>onenote.exe</li>
+<li>outlook.exe</li>
+<li>powerpnt.exe</li>
+<li>steam.exe</li>
+<li>thebat.exe</li>
+<li>thunderbird.exe</li>
+<li>visio.exe</li>
+<li>winword.exe</li>
+<li>wordpad.exe</li>
+<li>notepad.exe</li>
+</ul>
+<p>List of service names</p>
+<ul>
+<li>vss</li>
+<li>sql</li>
+<li>svc$</li>
+<li>memtas</li>
+<li>mepocs</li>
+<li>sophos</li>
+<li>veeam</li>
+<li>backup</li>
+<li>GxVss</li>
+<li>GxBlr</li>
+<li>GxFWD</li>
+<li>GxCVD</li>
+<li>GxCIMgr</li>
+<li>DefWatch</li>
+<li>ccEvtMgr</li>
+<li>ccSetMgr</li>
+<li>SavRoam</li>
+<li>RTVscan</li>
+<li>QBFCService</li>
+<li>QBIDPService</li>
+<li>Intuit.QuickBooks.FCS</li>
+<li>QBCFMonitorService</li>
+<li>YooBackup</li>
+<li>YooIT</li>
+<li>zhudongfangyu</li>
+<li>sophos</li>
+<li>stc_raw_agent</li>
+<li>VSNAPVSS</li>
+<li>VeeamTransportSvc</li>
+<li>VeeamDeploymentService</li>
+<li>VeeamNFSSvc</li>
+<li>veeam</li>
+<li>PDVFSService</li>
+<li>BackupExecVSSProvider</li>
+<li>BackupExecAgentAccelerator</li>
+<li>BackupExecAgentBrowser</li>
+<li>BackupExecDiveciMediaService</li>
+<li>BackupExecJobEngine</li>
+<li>BackupExecManagementService</li>
+<li>BackupExecRPCService</li>
+<li>AcrSch2Svc</li>
+<li>AcronisAgent</li>
+<li>CASAD2DWebSvc</li>
+<li>CAARCUpdateSvc</li>
+</ul>
+ 
+Learn more about Fortinet’s <a href="https://www.fortinet.com/fortiguard/labs?utm_source=blog&amp;utm_campaign=fortiguard-labs">FortiGuard Labs</a> threat research and intelligence organization and the FortiGuard Security Subscriptions and Services <a href="https://www.fortinet.com/fortiguard/labs?tab=security-bundles&amp;utm_source=blog&amp;utm_campaign=security-bundles">portfolio</a>.
+</div>

@@ -1,0 +1,2842 @@
+{
+    "title": "Malware Analysis: Trickbot",
+    "url": "https://thehackernews.com/2022/05/malware-analysis-trickbot.html",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x9eab715c>",
+                    "type": "Threat",
+                    "value": "trickbot"
+                },
+                "references": {
+                    "sentences": [
+                        "Trickbot",
+                        "When the user opens the document with macros enabled, an HTA file will be dropped on the system and launched using cmd.exe. The HTA file is used to download the Trickbot DLL from a remote server.",
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques.",
+                        "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).",
+                        "After the successful initial system compromise, Trickbot can collect a lot of information about its target using legitimate Windows executables and identify if the system is member of an Active Directory domain.",
+                        "All requests to a Trickbot C2 use the following format:",
+                        "Origins of Trickbot",
+                        "NB: The Threat Actor used the same modus operandi before/in parallel to Trickbot to deliver other malware. We observed during the same period, from June 2021 to September 2021, the use of Bazarloader on the initial access payload.",
+                        "This threat analysis will be focused on the threat actor named TA551, and its use of Trickbot as an example. I will present how we are able to perform detection at the different steps of the kill chain, starting from the initial infection through malspam campaigns, moving on to the detection of tools used by the threat actor during compromise. We will also provide some additional information about how the threat actor is using this malware and the evolution it took.",
+                        "Of course, there is no such thing as bullet-proof preventive protection in cyber. It's all the more important to have the capability of detecting Trickbot at an early stage. Though the attack chain can be broken at every stage along the way: the later it is, the higher the risk of full compromise and the resulting damage. Trickbot is used by different threat actors, but the detection approach stays the same on most of its specific stages. Some of the indicators of compromise are explained here. But malware gets updates too.",
+                        "Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\"",
+                        "When the system is infected, it can contact several kinds of Trickbot C2. The main C2 is the one with which the victim system will communicate, mainly to get new instructions.",
+                        "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups.",
+                        "Trickbot is also able to collect sensitive information like banking data or credentials, and exfiltrate it to a dedicated command and control server (C2).",
+                        "Additionally, to this collection, Trickbot will scan more information like Windows build, the public IP address, the user that is running Trickbot, and also if the system is behind an NAT firewall.",
+                        "All data collected is sent to a separate Exfiltration Trickbot C2 using HTTP POST request methods. The request format keeps the same, but the command \"90\" is specific to data exfiltration, more precisely system data collected off the infected system.",
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": [
+                        "1 Initial access",
+                        "Origins of Trickbot",
+                        "2 Execution",
+                        "3 Collection",
+                        "Malware Analysis: Trickbot",
+                        "4 Command & Control",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x2ff279a6>",
+                            "type": "Category",
+                            "value": "phishing"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x2735402a>",
+                            "type": "IP",
+                            "value": "202.165.47.106"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xbc564159>",
+                            "type": "File",
+                            "value": "wermgr.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xa55e91a9>",
+                            "type": "Threat",
+                            "value": "wizard_spider_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x408ad617>",
+                            "type": "IP",
+                            "value": "24.242.237.172:443"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xeea812c6>",
+                            "type": "Threat",
+                            "value": "comrade_circle"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x954e3ae4>",
+                            "type": "File",
+                            "value": "request.zip"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x9ae8ac7c>",
+                            "type": "File",
+                            "value": "info.zip"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xf4f1f185>",
+                            "type": "Threat",
+                            "value": "bazarbackdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xfda51682>",
+                            "type": "Category",
+                            "value": "scan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x151cee5c>",
+                            "type": "Category",
+                            "value": "trojan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xff6ba3c2>",
+                    "type": "Threat",
+                    "value": "cobalt_strike"
+                },
+                "references": {
+                    "sentences": [
+                        "Follow-up attacks: Cobalt Strike, Ryuk, Conti",
+                        "The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks.",
+                        "[1] MITRE ATT&CK Cobaltstrike :",
+                        "Cobalt Strike"
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "Origins of Trickbot",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xbc18f550>",
+                    "type": "Threat",
+                    "value": "ryuk"
+                },
+                "references": {
+                    "sentences": [
+                        "Follow-up attacks: Cobalt Strike, Ryuk, Conti",
+                        "The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks.",
+                        "Ryuk"
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "Origins of Trickbot",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x25e6074e>",
+                    "type": "Threat",
+                    "value": "conti"
+                },
+                "references": {
+                    "sentences": [
+                        "Follow-up attacks: Cobalt Strike, Ryuk, Conti",
+                        "The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks.",
+                        "Conti"
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "Origins of Trickbot",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xa55e91a9>",
+                    "type": "Threat",
+                    "value": "wizard_spider_group"
+                },
+                "references": {
+                    "sentences": [
+                        "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks)."
+                    ],
+                    "titles": [
+                        "Origins of Trickbot"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xa55e91a9>",
+                            "type": "Threat",
+                            "value": "wizard_spider_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x52e8560a>",
+                    "type": "Threat",
+                    "value": "shathak_group"
+                },
+                "references": {
+                    "sentences": [
+                        "This threat analysis will be focused on the threat actor named TA551, and its use of Trickbot as an example. I will present how we are able to perform detection at the different steps of the kill chain, starting from the initial infection through malspam campaigns, moving on to the detection of tools used by the threat actor during compromise. We will also provide some additional information about how the threat actor is using this malware and the evolution it took.",
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques.",
+                        "This behavior is related to TA551, we can identify it with the pattern \"/bdfh/\" in the GET request.",
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": [
+                        "Origins of Trickbot",
+                        "1 Initial access",
+                        "2 Execution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xeea812c6>",
+                    "type": "Threat",
+                    "value": "comrade_circle"
+                },
+                "references": {
+                    "sentences": [
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": [
+                        "1 Initial access"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xeea812c6>",
+                            "type": "Threat",
+                            "value": "comrade_circle"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xeea812c6>",
+                            "type": "Threat",
+                            "value": "comrade_circle"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xf4f1f185>",
+                    "type": "Threat",
+                    "value": "bazarbackdoor"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: The Threat Actor used the same modus operandi before/in parallel to Trickbot to deliver other malware. We observed during the same period, from June 2021 to September 2021, the use of Bazarloader on the initial access payload."
+                    ],
+                    "titles": [
+                        "1 Initial access"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xf4f1f185>",
+                            "type": "Threat",
+                            "value": "bazarbackdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xf4f1f185>",
+                            "type": "Threat",
+                            "value": "bazarbackdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {
+        "TTP": [
+            {
+                "token": {
+                    "id": "<TTP_0x4ac053a1>",
+                    "type": "TTP",
+                    "value": "ta0001"
+                },
+                "references": {
+                    "sentences": [
+                        "1 Initial access"
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "1 Initial access"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x954e3ae4>",
+                            "type": "File",
+                            "value": "request.zip"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x9ae8ac7c>",
+                            "type": "File",
+                            "value": "info.zip"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xf4f1f185>",
+                            "type": "Threat",
+                            "value": "bazarbackdoor"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xeea812c6>",
+                            "type": "Threat",
+                            "value": "comrade_circle"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<TTP_0x82bb17ed>",
+                    "type": "TTP",
+                    "value": "ta0002"
+                },
+                "references": {
+                    "sentences": [
+                        "2 Execution"
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "2 Execution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x52e8560a>",
+                            "type": "Threat",
+                            "value": "shathak_group"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xbc564159>",
+                            "type": "File",
+                            "value": "wermgr.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<TTP_0xdb0e99e0>",
+                    "type": "TTP",
+                    "value": "ta0009"
+                },
+                "references": {
+                    "sentences": [
+                        "3 Collection"
+                    ],
+                    "titles": [
+                        "3 Collection",
+                        "Malware Analysis: Trickbot"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xfda51682>",
+                            "type": "Category",
+                            "value": "scan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!",
+                        "banking malware",
+                        "Well, it does, but the apparent professionalization actually does have some good sides too. One factor is that certain reused modules commonly found in malware can be used to identify, track, and analyze professional attack software. Ultimately this means that, with enough experience, skilled analysts can detect and stop malware in its tracks, often with minimal or no damage (if the attackers make it through the first defense lines at all).",
+                        "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).",
+                        "NB: The Threat Actor used the same modus operandi before/in parallel to Trickbot to deliver other malware. We observed during the same period, from June 2021 to September 2021, the use of Bazarloader on the initial access payload.",
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?",
+                        "Of course, there is no such thing as bullet-proof preventive protection in cyber. It's all the more important to have the capability of detecting Trickbot at an early stage. Though the attack chain can be broken at every stage along the way: the later it is, the higher the risk of full compromise and the resulting damage. Trickbot is used by different threat actors, but the detection approach stays the same on most of its specific stages. Some of the indicators of compromise are explained here. But malware gets updates too.",
+                        "This threat analysis will be focused on the threat actor named TA551, and its use of Trickbot as an example. I will present how we are able to perform detection at the different steps of the kill chain, starting from the initial infection through malspam campaigns, moving on to the detection of tools used by the threat actor during compromise. We will also provide some additional information about how the threat actor is using this malware and the evolution it took.",
+                        "Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\"",
+                        "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups.",
+                        "Analysts have to stay vigilant. Tracking and watching a specific malware or a threat actor is a key to follow its evolution, improvement, and keep up to date about an efficient detection of the threat.",
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": [
+                        "Malware Analysis: Trickbot",
+                        "Origins of Trickbot",
+                        "1 Initial access",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xff6ba3c2>",
+                            "type": "Threat",
+                            "value": "cobalt_strike"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x25e6074e>",
+                            "type": "Threat",
+                            "value": "conti"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x151cee5c>",
+                    "type": "Category",
+                    "value": "trojan"
+                },
+                "references": {
+                    "sentences": [
+                        "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups."
+                    ],
+                    "titles": [
+                        "Origins of Trickbot"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x151cee5c>",
+                            "type": "Category",
+                            "value": "trojan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xa179f90c>",
+                    "type": "Category",
+                    "value": "ransomware"
+                },
+                "references": {
+                    "sentences": [
+                        "The threat actor behind it is known to act quickly, using the well-known post-exploitation tool Cobalt Strike to move laterally on the company network infrastructure and deploy ransomware like Ryuk or Conti as a final stage. As it is used for initial access, being able to detect this threat as quickly as possible is a key element of success for preventing further attacks."
+                    ],
+                    "titles": [
+                        "Origins of Trickbot"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xa179f90c>",
+                            "type": "Category",
+                            "value": "ransomware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xfda51682>",
+                    "type": "Category",
+                    "value": "scan"
+                },
+                "references": {
+                    "sentences": [
+                        "Additionally, to this collection, Trickbot will scan more information like Windows build, the public IP address, the user that is running Trickbot, and also if the system is behind an NAT firewall."
+                    ],
+                    "titles": [
+                        "3 Collection"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xfda51682>",
+                            "type": "Category",
+                            "value": "scan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xfda51682>",
+                            "type": "Category",
+                            "value": "scan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "Trickbot is also able to collect sensitive information like banking data or credentials, and exfiltrate it to a dedicated command and control server (C2).",
+                        "All data collected is sent to a separate Exfiltration Trickbot C2 using HTTP POST request methods. The request format keeps the same, but the command \"90\" is specific to data exfiltration, more precisely system data collected off the infected system.",
+                        "When the system is infected, it can contact several kinds of Trickbot C2. The main C2 is the one with which the victim system will communicate, mainly to get new instructions.",
+                        "All requests to a Trickbot C2 use the following format:"
+                    ],
+                    "titles": [
+                        "3 Collection",
+                        "4 Command & Control"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x2ff279a6>",
+                    "type": "Category",
+                    "value": "phishing"
+                },
+                "references": {
+                    "sentences": [
+                        "Threat actors often still use basic techniques to get into the network like phishing emails. Raising awareness about phishing is definitely a great first step in building up cyber resilience. The best attacks are, after all, the ones that never even get started."
+                    ],
+                    "titles": [
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x2ff279a6>",
+                            "type": "Category",
+                            "value": "phishing"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "Trickbot is also able to collect sensitive information like banking data or credentials, and exfiltrate it to a dedicated command and control server (C2).",
+                        "banking malware",
+                        "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups."
+                    ],
+                    "titles": [
+                        "3 Collection",
+                        "Origins of Trickbot",
+                        "Key learnings"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0xdb0e99e0>",
+                            "type": "TTP",
+                            "value": "ta0009"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x954e3ae4>",
+                    "type": "File",
+                    "value": "request.zip"
+                },
+                "references": {
+                    "sentences": [
+                        "The attachment includes a .zip file which again includes a document. The zip file always uses the same name as \"request.zip\" or \"info.zip\", and the same name for the document file."
+                    ],
+                    "titles": [
+                        "1 Initial access"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x954e3ae4>",
+                            "type": "File",
+                            "value": "request.zip"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x954e3ae4>",
+                            "type": "File",
+                            "value": "request.zip"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x9ae8ac7c>",
+                    "type": "File",
+                    "value": "info.zip"
+                },
+                "references": {
+                    "sentences": [
+                        "The attachment includes a .zip file which again includes a document. The zip file always uses the same name as \"request.zip\" or \"info.zip\", and the same name for the document file."
+                    ],
+                    "titles": [
+                        "1 Initial access"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x9ae8ac7c>",
+                            "type": "File",
+                            "value": "info.zip"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x9ae8ac7c>",
+                            "type": "File",
+                            "value": "info.zip"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x4ac053a1>",
+                            "type": "TTP",
+                            "value": "ta0001"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0x4178cab0>",
+                    "type": "File",
+                    "value": "cmd.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "When the user opens the document with macros enabled, an HTA file will be dropped on the system and launched using cmd.exe. The HTA file is used to download the Trickbot DLL from a remote server."
+                    ],
+                    "titles": [
+                        "2 Execution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x4178cab0>",
+                            "type": "File",
+                            "value": "cmd.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xcc1cdbf>",
+                    "type": "File",
+                    "value": "regsvr32.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques."
+                    ],
+                    "titles": [
+                        "2 Execution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xbc564159>",
+                    "type": "File",
+                    "value": "wermgr.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques."
+                    ],
+                    "titles": [
+                        "2 Execution"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xbc564159>",
+                            "type": "File",
+                            "value": "wermgr.exe"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x82bb17ed>",
+                            "type": "TTP",
+                            "value": "ta0002"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xbc564159>",
+                            "type": "File",
+                            "value": "wermgr.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<MD5_0xd51314bb>",
+                    "type": "Hash",
+                    "hash_type": "MD5",
+                    "value": "42df9f315753f31b13f17f5e731b7787"
+                },
+                "references": {
+                    "sentences": [
+                        "POST /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/90/ HTTP/1.1",
+                        "GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120"
+                    ],
+                    "titles": [
+                        "4 Command & Control"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb8e174d4>",
+                            "type": "UnknownWord",
+                            "value": "xx xx xx"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x651cdad6>",
+                            "type": "UnknownWord",
+                            "value": "56dlznyzsmbh06b_w10010240"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x4fb13b6d>",
+                            "type": "UnknownWord",
+                            "value": "zev4"
+                        }
+                    }
+                ]
+            }
+        ],
+        "IP": [
+            {
+                "token": {
+                    "id": "<IP_0x2735402a>",
+                    "type": "IP",
+                    "value": "202.165.47.106"
+                },
+                "references": {
+                    "sentences": [
+                        "Host: 202.165.47.106"
+                    ],
+                    "titles": [
+                        "4 Command & Control"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x2735402a>",
+                            "type": "IP",
+                            "value": "202.165.47.106"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<IP_0x408ad617>",
+                    "type": "IP",
+                    "value": "24.242.237.172:443"
+                },
+                "references": {
+                    "sentences": [
+                        "Host: 24.242.237.172:443"
+                    ],
+                    "titles": [
+                        "4 Command & Control"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x408ad617>",
+                            "type": "IP",
+                            "value": "24.242.237.172:443"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4843e491>",
+                    "type": "UnknownWord",
+                    "value": "pieced"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe87f58cc>",
+                    "type": "UnknownWord",
+                    "value": "viruses"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x98874a18>",
+                    "type": "UnknownWord",
+                    "value": "anymore"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9f46ae28>",
+                    "type": "UnknownWord",
+                    "value": "deliberate"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e86c76e>",
+                    "type": "UnknownWord",
+                    "value": "multi-layer"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd8dde3c6>",
+                    "type": "UnknownWord",
+                    "value": "attack-chain"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa150b17>",
+                    "type": "UnknownWord",
+                    "value": "rented"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8234ba24>",
+                    "type": "UnknownWord",
+                    "value": "obviously"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72d53575>",
+                    "type": "UnknownWord",
+                    "value": "largely"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc9bef566>",
+                    "type": "UnknownWord",
+                    "value": "sound"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x21fcca52>",
+                    "type": "UnknownWord",
+                    "value": "scary"
+                },
+                "references": {
+                    "sentences": [
+                        "In this day and age, we are not dealing with roughly pieced together, homebrew type of viruses anymore. Malware is an industry, and professional developers are found to exchange, be it by stealing one's code or deliberate collaboration. Attacks are multi-layer these days, with diverse sophisticated software apps taking over different jobs along the attack-chain from initial compromise to ultimate data exfiltration or encryption. The specific tools for each stage are highly specialized and can often be rented as a service, including customer support and subscription models for professional (ab)use. Obviously, this has largely increased both the availability and the potential effectiveness and impact of malware. Sound scary?"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x45092ab1>",
+                    "type": "UnknownWord",
+                    "value": "professionalization"
+                },
+                "references": {
+                    "sentences": [
+                        "Well, it does, but the apparent professionalization actually does have some good sides too. One factor is that certain reused modules commonly found in malware can be used to identify, track, and analyze professional attack software. Ultimately this means that, with enough experience, skilled analysts can detect and stop malware in its tracks, often with minimal or no damage (if the attackers make it through the first defense lines at all)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x717a7fc0>",
+                    "type": "UnknownWord",
+                    "value": "skilled"
+                },
+                "references": {
+                    "sentences": [
+                        "Well, it does, but the apparent professionalization actually does have some good sides too. One factor is that certain reused modules commonly found in malware can be used to identify, track, and analyze professional attack software. Ultimately this means that, with enough experience, skilled analysts can detect and stop malware in its tracks, often with minimal or no damage (if the attackers make it through the first defense lines at all)."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf7b70c7b>",
+                    "type": "UnknownWord",
+                    "value": "mechanic"
+                },
+                "references": {
+                    "sentences": [
+                        "Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\""
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ae9aa79>",
+                    "type": "UnknownWord",
+                    "value": "cyberdefense"
+                },
+                "references": {
+                    "sentences": [
+                        "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).",
+                        "Orange Cyberdefense",
+                        "This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense.",
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcdbb8ac0>",
+                    "type": "UnknownWord",
+                    "value": "progressively"
+                },
+                "references": {
+                    "sentences": [
+                        "Trickbot is a popular and modular Trojan initially used in targeting the banking industry, that has meanwhile been used to compromise companies from other industries as well. It delivers several types of payloads. Trickbot evolved progressively to be used as Malware-as-a-Service (MaaS) by different attack groups."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x92a750f7>",
+                    "type": "UnknownWord",
+                    "value": "pretext"
+                },
+                "references": {
+                    "sentences": [
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb2d5dd80>",
+                    "type": "UnknownWord",
+                    "value": "vigilance"
+                },
+                "references": {
+                    "sentences": [
+                        "Since June 2021, the group TA551 started delivering the Trickbot malware using an encrypted zip. The email pretext mimics an important information to reduce the vigilance of the user."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x491a08e>",
+                    "type": "UnknownWord",
+                    "value": "bdfh"
+                },
+                "references": {
+                    "sentences": [
+                        "This behavior is related to TA551, we can identify it with the pattern \"/bdfh/\" in the GET request.",
+                        "GET /bdfh/M8v[..]VUb HTTP/1.1"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa623c63b>",
+                    "type": "UnknownWord",
+                    "value": "m8v"
+                },
+                "references": {
+                    "sentences": [
+                        "GET /bdfh/M8v[..]VUb HTTP/1.1"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa5e61ab>",
+                    "type": "UnknownWord",
+                    "value": "vub"
+                },
+                "references": {
+                    "sentences": [
+                        "GET /bdfh/M8v[..]VUb HTTP/1.1"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x31388bb3>",
+                    "type": "UnknownWord",
+                    "value": "content-type"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: application/octet-stream",
+                        "Content-Type: multipart/form-data; boundary=------Bound"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3ae55f85>",
+                    "type": "UnknownWord",
+                    "value": "octet-stream"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: application/octet-stream"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2c66ce74>",
+                    "type": "UnknownWord",
+                    "value": "mid-august"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5cca8213>",
+                    "type": "UnknownWord",
+                    "value": "bmdff"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2d1d04fc>",
+                    "type": "UnknownWord",
+                    "value": "member"
+                },
+                "references": {
+                    "sentences": [
+                        "After the successful initial system compromise, Trickbot can collect a lot of information about its target using legitimate Windows executables and identify if the system is member of an Active Directory domain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7fcdfb09>",
+                    "type": "UnknownWord",
+                    "value": "<gtag>"
+                },
+                "references": {
+                    "sentences": [
+                        "\"/<gtag>/<Client_ID>/<command>/<additionnal"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x668ad8ac>",
+                    "type": "UnknownWord",
+                    "value": "<client_id>"
+                },
+                "references": {
+                    "sentences": [
+                        "\"/<gtag>/<Client_ID>/<command>/<additionnal"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf1d9fb7d>",
+                    "type": "UnknownWord",
+                    "value": "<command>"
+                },
+                "references": {
+                    "sentences": [
+                        "\"/<gtag>/<Client_ID>/<command>/<additionnal"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x549d0a33>",
+                    "type": "UnknownWord",
+                    "value": "<additionnal"
+                },
+                "references": {
+                    "sentences": [
+                        "\"/<gtag>/<Client_ID>/<command>/<additionnal"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa0e599dc>",
+                    "type": "UnknownWord",
+                    "value": "command>"
+                },
+                "references": {
+                    "sentences": [
+                        "information about the command>/\""
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb8e174d4>",
+                    "type": "UnknownWord",
+                    "value": "xx xx xx"
+                },
+                "references": {
+                    "sentences": [
+                        "GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb8e174d4>",
+                            "type": "UnknownWord",
+                            "value": "xx xx xx"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4fb13b6d>",
+                    "type": "UnknownWord",
+                    "value": "zev4"
+                },
+                "references": {
+                    "sentences": [
+                        "POST /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/90/ HTTP/1.1",
+                        "GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x4fb13b6d>",
+                            "type": "UnknownWord",
+                            "value": "zev4"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x651cdad6>",
+                    "type": "UnknownWord",
+                    "value": "56dlznyzsmbh06b_w10010240"
+                },
+                "references": {
+                    "sentences": [
+                        "POST /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/90/ HTTP/1.1",
+                        "GET /zev4/56dLzNyzsmBH06b_W10010240.42DF9F315753F31B13F17F5E731B7787/0/Windows 10 x64/1108/XX.XX.XX.XX/38245433F0E3D5689F6EE84483106F4382CC92EAFAD5120"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<MD5_0xd51314bb>",
+                            "type": "Hash",
+                            "hash_type": "MD5",
+                            "value": "42df9f315753f31b13f17f5e731b7787"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x651cdad6>",
+                            "type": "UnknownWord",
+                            "value": "56dlznyzsmbh06b_w10010240"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb8516637>",
+                    "type": "UnknownWord",
+                    "value": "6571d97a519a2ef29"
+                },
+                "references": {
+                    "sentences": [
+                        "6571D97A519A2EF29/0bqjxzSOQUSLPRJMQSWKDHTHKEG/ HTTP/1.1"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7f35c6bb>",
+                    "type": "UnknownWord",
+                    "value": "0bqjxzsoquslprjmqswkdhthkeg"
+                },
+                "references": {
+                    "sentences": [
+                        "6571D97A519A2EF29/0bqjxzSOQUSLPRJMQSWKDHTHKEG/ HTTP/1.1"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x761a8528>",
+                    "type": "UnknownWord",
+                    "value": "precisely"
+                },
+                "references": {
+                    "sentences": [
+                        "All data collected is sent to a separate Exfiltration Trickbot C2 using HTTP POST request methods. The request format keeps the same, but the command \"90\" is specific to data exfiltration, more precisely system data collected off the infected system."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xddfdac9d>",
+                    "type": "UnknownWord",
+                    "value": "multipart"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: multipart/form-data; boundary=------Bound"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa5238dc6>",
+                    "type": "UnknownWord",
+                    "value": "form-data"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: multipart/form-data; boundary=------Bound"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe6d76890>",
+                    "type": "UnknownWord",
+                    "value": "boundary"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: multipart/form-data; boundary=------Bound"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe70f87d2>",
+                    "type": "UnknownWord",
+                    "value": "------bound"
+                },
+                "references": {
+                    "sentences": [
+                        "Content-Type: multipart/form-data; boundary=------Bound"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x464fa52d>",
+                    "type": "UnknownWord",
+                    "value": "ary0f79c562"
+                },
+                "references": {
+                    "sentences": [
+                        "ary0F79C562"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x866c1c1d>",
+                    "type": "UnknownWord",
+                    "value": "ghost"
+                },
+                "references": {
+                    "sentences": [
+                        "User-Agent: Ghost"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x623375ab>",
+                    "type": "UnknownWord",
+                    "value": "definitely"
+                },
+                "references": {
+                    "sentences": [
+                        "Threat actors often still use basic techniques to get into the network like phishing emails. Raising awareness about phishing is definitely a great first step in building up cyber resilience. The best attacks are, after all, the ones that never even get started."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x773d4d5a>",
+                    "type": "UnknownWord",
+                    "value": "resilience"
+                },
+                "references": {
+                    "sentences": [
+                        "Threat actors often still use basic techniques to get into the network like phishing emails. Raising awareness about phishing is definitely a great first step in building up cyber resilience. The best attacks are, after all, the ones that never even get started."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfec739c3>",
+                    "type": "UnknownWord",
+                    "value": "bullet-proof"
+                },
+                "references": {
+                    "sentences": [
+                        "Of course, there is no such thing as bullet-proof preventive protection in cyber. It's all the more important to have the capability of detecting Trickbot at an early stage. Though the attack chain can be broken at every stage along the way: the later it is, the higher the risk of full compromise and the resulting damage. Trickbot is used by different threat actors, but the detection approach stays the same on most of its specific stages. Some of the indicators of compromise are explained here. But malware gets updates too."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4833e8a4>",
+                    "type": "UnknownWord",
+                    "value": "watching"
+                },
+                "references": {
+                    "sentences": [
+                        "Analysts have to stay vigilant. Tracking and watching a specific malware or a threat actor is a key to follow its evolution, improvement, and keep up to date about an efficient detection of the threat."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e59cbff>",
+                    "type": "UnknownWord",
+                    "value": "trenches"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xee77a651>",
+                    "type": "UnknownWord",
+                    "value": "navigator"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x21eacd09>",
+                    "type": "UnknownWord",
+                    "value": "stuff"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe67e6aaf>",
+                    "type": "UnknownWord",
+                    "value": "scientist"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8d1d978f>",
+                    "type": "UnknownWord",
+                    "value": "tons"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4a786c58>",
+                    "type": "UnknownWord",
+                    "value": "mitre att"
+                },
+                "references": {
+                    "sentences": [
+                        "[1] MITRE ATT&CK Cobaltstrike :"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72074d9d>",
+                    "type": "UnknownWord",
+                    "value": "goutin"
+                },
+                "references": {
+                    "sentences": [
+                        "This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6871c8d0>",
+                    "type": "UnknownWord",
+                    "value": "thn"
+                },
+                "references": {
+                    "sentences": [
+                        "Found this article interesting? Follow THN on"
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x9ae9aa79>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ae9aa79>",
+                    "type": "UnknownWord",
+                    "value": "cyberdefense"
+                },
+                "references": {
+                    "sentences": [
+                        "Orange Cyberdefense's CyberSOCs have been tracking the specific malware named Trickbot for quite some time. It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks).",
+                        "Orange Cyberdefense",
+                        "This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense.",
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x2c66ce74>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2c66ce74>",
+                    "type": "UnknownWord",
+                    "value": "mid-august"
+                },
+                "references": {
+                    "sentences": [
+                        "NB: Patterns related to TA551 evolved with time, since mid-August 2021, the pattern changed to \"/bmdff/\". The DLL is registered as a jpg file to hide the real extension, and it tries to be run via regsvr32.exe. Then, Trickbot will be injected into \"wermgr.exe\" using Process Hollowing techniques."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x866c1c1d>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x866c1c1d>",
+                    "type": "UnknownWord",
+                    "value": "ghost"
+                },
+                "references": {
+                    "sentences": [
+                        "User-Agent: Ghost"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xee77a651>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xee77a651>",
+                    "type": "UnknownWord",
+                    "value": "navigator"
+                },
+                "references": {
+                    "sentences": [
+                        "This is a story from the trenches found in the Security Navigator. More malware analysis and other interesting stuff including accounts of emergency response operations and a criminal scientist's view on cyber extortion, as well as tons of facts and figures on the security landscape in general can be found there as well. The full report is available for download on the Orange Cyberdefense website, so have a look. It's worth it!"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x72074d9d>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x72074d9d>",
+                    "type": "UnknownWord",
+                    "value": "goutin"
+                },
+                "references": {
+                    "sentences": [
+                        "This article was written by Florian Goutin, CyberSOC analyst at Orange Cyberdefense."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [
+            "Let's see this mechanic in action as we follow an actual CyberSOC analyst investigating the case of the malware dubbed \"Trickbot.\""
+        ],
+        "associated": [],
+        "targets": [],
+        "attributed": [
+            "It is commonly attributed to a specific Threat Actor generally known under the name of Wizard Spider (Crowdstrike), UNC1778 (FireEye) or Gold Blackburn (Secureworks)"
+        ]
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://thehackernews.com/p/authors.html",
+                "https://orangecyberdefense.com/global/security-navigator/",
+                "https://attack.mitre.org/software/S0154/",
+                "https://www.facebook.com/thehackernews",
+                "https://twitter.com/thehackersnews",
+                "https://www.linkedin.com/company/thehackernews/",
+                "https://thehackernews.com/search/label/banking%20malware",
+                "https://thehackernews.com/search/label/Cobalt%20Strike",
+                "https://thehackernews.com/search/label/Conti",
+                "https://thehackernews.com/search/label/Orange%20Cyberdefense",
+                "https://thehackernews.com/search/label/Ryuk",
+                "https://thehackernews.com/search/label/Trickbot",
+                "https://go.thn.li/THNLite",
+                "https://go.thn.li/scw-q2"
+            ]
+        },
+        "images": [
+            "https://thehackernews.com/new-images/img/a/AVvXsEiN2CRfA_ceqxVqUhWgQghksIlR--dFXivRiP_Zg-Imyju-DxkJsRqAwMZTHptnxs57fD9WZmF-r0rSMTTmTsDQxuSSveVz3PCX_3vRCCJfInCb6CwrA7DzHnLFlcTMEcG5unhBWOA42n8TdYPH4Zbev3is3ygxwbqRjajda3u7AchyDh0rSt5_WqXjyQ",
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAD6AQMAAAAho+iwAAAAA1BMVEXm5+i1+56pAAAAH0lEQVQYGe3AAQ0AAADCIPuntscHAwAAAAAAAAAAIOQmFgAB/YLDRAAAAABJRU5ErkJggg=="
+        ]
+    }
+}

@@ -1,0 +1,102 @@
+<div>
+PDF Malware Is Not Yet Dead
+<a href="https://threatresearch.ext.hp.com/blog/">HP Threat Research Blog</a> • PDF Malware Is Not Yet Dead
+<p><img alt="" class="attachment-large size-large wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/blogImage__b2.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/></p>
+ May 20, 2022 •
+Category: <a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a>
+• By: <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+• Comments: 0
+<a class="fusion-social-network-icon fusion-tooltip fusion-twitter fusion-icon-twitter" href="https://twitter.com/share?url=https://threatresearch.ext.hp.com/pdf-malware-is-not-yet-dead/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-linkedin fusion-icon-linkedin" href="https://www.linkedin.com/shareArticle?url=https://threatresearch.ext.hp.com/pdf-malware-is-not-yet-dead/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-facebook fusion-icon-facebook" href="https://www.facebook.com/sharer.php?u=https://threatresearch.ext.hp.com/pdf-malware-is-not-yet-dead/" rel="noopener noreferrer" target="_blank" title=""></a><a class="fusion-social-network-icon fusion-tooltip fusion-mail fusion-icon-mail" href="mailto:?subject=I%20wanted%20to%20share%20this%20post%20with%20you%20from%20https://threatresearch.ext.hp.com/pdf-malware-is-not-yet-dead/&amp;body=PDF%20Malware%20Is%20Not%20Yet%20Dead" rel="noopener noreferrer" target="_self" title=""></a>
+<h1 class="title-heading-left fusion-responsive-typography-calculated">PDF Malware Is Not Yet Dead</h1><p>For the past decade, attackers have preferred to package malware in Microsoft Office file formats, particularly Word and Excel. In fact, in Q1 2022 nearly half (45%) of malware stopped by <a href="https://www.hp.com/uk-en/security/endpoint-security-solutions.html" rel="noopener" target="_blank">HP Wolf Security</a> used Office formats. The reasons are clear: users are familiar with these file types, the applications used to open them are ubiquitous, and they are suited to social engineering lures.</p>
+<p>In this post, we look at a malware campaign isolated by HP Wolf Security earlier this year that had an unusual infection chain. The malware arrived in a PDF document – a format attackers less commonly use to infect PCs – and relied on several tricks to evade detection, such as embedding malicious files, loading remotely-hosted exploits, and shellcode encryption.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_01.png"><img alt="" class="size-full wp-image-22303 aligncenter" height="362" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_01.png" style="max-width:800px;height:auto;width:auto;" width="695"/></a>Figure 1 – Alert timeline in HP Wolf Security Controller showing the malware being isolated.</p>
+<h2 class="fusion-responsive-typography-calculated">PDF Campaign Delivering Snake Keylogger</h2>
+<p>A PDF document named “REMMITANCE INVOICE.pdf” was sent as an email attachment to a target. Since the document came from a risky vector – email, in this case – when the user opened it, HP Sure Click ran the file in an isolated micro virtual machine, preventing their system from being infected.</p>
+<p>After opening the document, Adobe Reader prompts the user to open a .docx file. The attackers sneakily named the Word document “has been verified. However PDF, Jpeg, xlsx, .docx” to make it look as though the file name was part of the Adobe Reader prompt (Figure 2).</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_02.png"><img alt="" class="size-full wp-image-22304 aligncenter" height="908" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_02.png" style="max-width:800px;height:auto;width:auto;" width="701"/></a>Figure 2 – PDF document prompting the user to open another document.</p>
+<p>Analyzing the PDF file reveals that the .docx file is stored as an EmbeddedFile object. Investigators can quickly summarize the most important properties of a PDF document using Didier Stevens’ <a href="https://blog.didierstevens.com/programs/pdf-tools/" rel="noopener" target="_blank">pdfid</a> script (Figure 3).</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_03.png"><img alt="" class="size-full wp-image-22305 aligncenter" height="565" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_03.png" style="max-width:800px;height:auto;width:auto;" width="809"/></a>Figure 3 – PDFiD analysis of document.</p>
+<p>To analyze the EmbeddedFile, we can use another tool from Didier Stevens’ toolbox, <a href="https://blog.didierstevens.com/programs/pdf-tools/" rel="noopener" target="_blank">pdf-parser</a>. This script allows us to extract the file from the PDF document and save it to disk.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_04.png"><img alt="" class="size-full wp-image-22306 aligncenter" height="251" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_04.png" style="max-width:800px;height:auto;width:auto;" width="1628"/></a>Figure 4 – Using pdf-parser to save embedded file to disk.</p>
+<h2 class="fusion-responsive-typography-calculated">Embedded Word Document</h2>
+<p>If we return to our PDF document and click on “Open this file” at the prompt, Microsoft Word opens. If Protected View is disabled, Word downloads a Rich Text Format (.rtf) file from a web server, which is then run in the context of the open document.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_05.png"><img alt="" class="size-full wp-image-22307 aligncenter" height="992" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_05.png" style="max-width:800px;height:auto;width:auto;" width="1048"/></a>Figure 5 – Word document contacting web server.</p>
+<p>Since Microsoft Word does not say which server it contacted, we can use Wireshark to record the network traffic and identify the HTTP stream that was created (Figure 6).</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_06.png"><img alt="" class="size-full wp-image-22308 aligncenter" height="706" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_06.png" style="max-width:800px;height:auto;width:auto;" width="856"/></a>Figure 6 – HTTP GET request returning RTF file.</p>
+<p>Let’s switch back to the Word document to understand how it downloads the .rtf. Since it is an OOXML (Office Open XML) file, we can unzip its contents and look for URLs in the document using the command shown in Figure 7.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_07.png"><img alt="" class="size-full wp-image-22309 aligncenter" height="195" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_07.png" style="max-width:800px;height:auto;width:auto;" width="922"/></a>Figure 7 – List of URLs in the Word document.</p>
+<p>The highlighted URL caught our eye because it’s not a legitimate domain found in Office documents. This URL is in the document.xml.rels file, which lists the document’s relationships. The relationship that caught our eye shows an external object linking and embedding (OLE) object being loaded from this URL (Figure 8).</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_08.png"><img alt="" class="size-full wp-image-22310 aligncenter" height="200" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_08.png" style="max-width:800px;height:auto;width:auto;" width="1599"/></a>Figure 8 – XML document relationships.</p>
+<h2 class="fusion-responsive-typography-calculated">External OLE Object
+</h2>
+<p>Connecting to this URL leads to a redirect and then downloads an RTF document called f_document_shp.doc. To examine this document more closely, we can use <a href="https://github.com/decalage2/oletools/wiki/rtfobj" rel="noopener" target="_blank">rtfobj</a> to check if it contains any OLE objects.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_09.png"><img alt="" class="size-full wp-image-22311 aligncenter" height="318" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_09.png" style="max-width:800px;height:auto;width:auto;" width="784"/></a>Figure 9 – RTFObj output showing two OLE objects.</p>
+<p>Here there are two OLE objects we can save to disk using the same tool. As indicated in the console output, both objects are not well-formed, meaning analyzing them with <a href="http://www.decalage.info/python/oletools" rel="noopener" target="_blank">oletools</a> could lead to confusing results. To fix this, we can use <a href="http://foremost.sourceforge.net/">foremost</a> to reconstruct the malformed objects. Then we can view basic information about the objects using <a href="https://github.com/decalage2/oletools/wiki/oleid" rel="noopener" target="_blank">oleid</a>. This tells us the object relates to Microsoft Equation Editor, a feature in Word that is commonly exploited by attackers to run arbitrary code.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_10.png"><img alt="" class="size-full wp-image-22312 aligncenter" height="508" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_10.png" style="max-width:800px;height:auto;width:auto;" width="738"/></a>Figure 10 – Basic OLE information extracted with oleid.</p>
+<h2 class="fusion-responsive-typography-calculated">Encrypted Equation Editor Exploit</h2>
+<p>Examining the OLE object reveals shellcode that exploits the <a href="https://msrc.microsoft.com/update-guide/vulnerability/CVE-2017-11882" rel="noopener" target="_blank">CVE-2017-11882</a> remote code execution vulnerability in Equation Editor. There are many analyses of this vulnerability, so we won’t analyze it in detail. Instead we focus below on how the attacker encrypted the shellcode to evade detection.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_11.png"><img alt="" class="size-full wp-image-22313 aligncenter" height="530" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_11.png" style="max-width:800px;height:auto;width:auto;" width="683"/></a>Figure 11 – Shellcode that exploits CVE-2017-11882.</p>
+<p>The shellcode is stored in the OLENativeStream structure at the end of the object. We can then run the shellcode in a debugger, looking for a call to <a href="https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-globallock" rel="noopener" target="_blank">GlobalLock</a>. This function returns a pointer to the first byte of the memory block, a technique used by shellcode to locate itself in memory. Using this information, the shellcode jumps to a defined offset and runs a decryption routine.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_12.png"><img alt="" class="size-full wp-image-22314 aligncenter" height="101" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_12.png" width="541"/></a>Figure 12 – Multiplication and addition part of decryption routine.</p>
+<p>The key is multiplied by a constant and added at each iteration. The ciphertext is then decrypted each time with an XOR operation. The decrypted data is more shellcode, which is executed afterwards.</p>
+<p><a href="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_13.png"><img alt="" class="size-full wp-image-22315 aligncenter" height="402" src="https://threatresearch.ext.hp.com/wp-content/uploads/2022/05/pdf_malware_13.png" width="526"/></a>Figure 13 – Decrypted shellcode presenting the payload URL.</p>
+<p>Without running it further, we see that the malware downloads an executable called fresh.exe and runs it in the public user directory using <a href="https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecuteexw" rel="noopener" target="_blank">ShellExecuteExW</a>. The executable is Snake Keylogger, a family of information-stealing malware that <a href="https://threatresearch.ext.hp.com/the-many-skins-of-snake-keylogger/">we have written about before</a>. We can now extract indicators of compromise (IOCs) from this malware, for example using dynamic analysis. At this point, we have analyzed the complete infection chain and collected IOCs, which can now be used for threat hunts or building new detections.</p>
+<h2 class="fusion-responsive-typography-calculated">Conclusion</h2>
+<p>While Office formats remain popular, this campaign shows how attackers are also using weaponized PDF documents to infect systems. Embedding files, loading remotely-hosted exploits and encrypting shellcode are just three techniques attackers use to run malware under the radar. The exploited vulnerability in this campaign (CVE-2017-11882) is over four years old, yet continues being used, suggesting the exploit remains effective for attackers.</p>
+<h2 class="fusion-responsive-typography-calculated">IOCs
+</h2>
+<p>REMMITANCE INVOICE.pdf
+05dc0792a89e18f5485d9127d2063b343cfd2a5d497c9b5df91dc687f9a1341d</p>
+<p>has been verified. however pdf, jpeg, xlsx, .docx
+250d2cd13474133227c3199467a30f4e1e17de7c7c4190c4784e46ecf77e51fe</p>
+<p>f_document_shp.doc
+165305d6744591b745661e93dc9feaea73ee0a8ce4dbe93fde8f76d0fc2f8c3f</p>
+<p>f_document_shp.doc_object_00001707.raw
+297f318975256c22e5069d714dd42753b78b0a23e24266b9b67feb7352942962</p>
+<p>Exploit shellcode
+f1794bfabeae40abc925a14f4e9158b92616269ed9bcf9aff95d1c19fa79352e</p>
+<p>fresh.exe (Snake Keylogger)
+20a3e59a047b8a05c7fd31b62ee57ed3510787a979a23ce1fde4996514fae803</p>
+<p>External OLE reference URL
+hxxps://vtaurl[.]com/IHytw</p>
+<p>External OLE reference final URL
+hxxp://192.227.196[.]211/tea_shipping/f_document_shp.doc</p>
+<p>Snake Keylogger payload URL
+hxxp://192.227.196[.]211/FRESH/fresh.exe</p>
+<p>Snake Keylogger exfiltration via SMTP
+mail.saadzakhary[.]com:587</p>
+<h6 class="title-heading-left fusion-responsive-typography-calculated">Tags</h6><a href="https://threatresearch.ext.hp.com/blog/?post-tag=CVE-2017-11882">CVE-2017-11882</a> <a href="https://threatresearch.ext.hp.com/blog/?post-tag=PDF">PDF</a> <a href="https://threatresearch.ext.hp.com/blog/?post-tag=snake">snake</a>
+<h1 class="title-heading-left fusion-responsive-typography-calculated">About the Author</h1>
+<p><a class="fusion-modal-text-link fusion-no-lightbox" href="#"><img class="avatar pp-user-avatar avatar-96 photo wpv-profile-picture-shape-circle" height="96" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/01/profile_img-150x150.jpg" width="96"/></a></p>
+Patrick Schläpfer
+<a class="fusion-modal-text-link" href="#">Author bio
+ &gt;</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Posts by this author &gt;</a>
+<h3 class="title-heading-left fusion-responsive-typography-calculated">Recent Posts</h3>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/10/blogImage_refresh_001.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>May 4, 2022
+<a href="https://threatresearch.ext.hp.com/tips-for-automating-ioc-extraction-from-gootloader-a-changing-javascript-malware/">Tips for Automating IOC Extraction from GootLoader, a Changing JavaScript Malware</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0008.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>April 19, 2022
+<a href="https://threatresearch.ext.hp.com/zero-trust-in-reverse-why-the-current-definition-of-zero-trust-is-only-half-full/">Zero Trust in Reverse: Why the Current Definition of Zero Trust is Only Half Full</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=12">Dan Allen</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/blogImage__b7.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>April 12, 2022
+<a href="https://threatresearch.ext.hp.com/malware-campaigns-targeting-african-banking-sector/">Malware Campaigns Targeting African Banking Sector</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0001.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>February 8, 2022
+<a href="https://threatresearch.ext.hp.com/redline-stealer-disguised-as-a-windows-11-upgrade/">Attackers Disguise RedLine Stealer as a Windows 11 Upgrade</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<img alt="" class="attachment-small size-small wp-post-image" height="470" src="https://threatresearch.ext.hp.com/wp-content/uploads/2021/05/BromiumBlog_Images_0004.jpg" style="max-width:800px;height:auto;width:auto;" width="900"/>January 14, 2022
+<a href="https://threatresearch.ext.hp.com/how-attackers-use-xll-malware-to-infect-systems/">How Attackers Use XLL Malware to Infect Systems</a>
+<a href="https://threatresearch.ext.hp.com/blog/?wpv-category=threat-research">Threat Research</a> • <a href="https://threatresearch.ext.hp.com/blog/?author-filter=46">Patrick Schläpfer</a>
+<h6 class="title-heading-left fusion-responsive-typography-calculated">Categories</h6>
+<ul> <li class="cat-item cat-item-4414"><a href="https://threatresearch.ext.hp.com/category/web-of-profit/" title="Into the Web of Profit is a series of four in-depth studies into the murky world of cybercrime, criminals and money. The reports are sponsored by HP, and researched and written by Dr. Mike McGuire, Senior Lecturer in Criminology at the University of Surrey. ">Into the Web of Profit</a>
+</li>
+<li class="cat-item cat-item-849"><a href="https://threatresearch.ext.hp.com/category/threat-insights-reports/" title="HP's Threat Insights Reports share insights about the most notable malware and cyber threats analyzed by our experts. They highlight new techniques used by attackers, and give you practical and actionable information about how to protect your organization against cyber attacks.">Threat Insights Reports</a>
+</li>
+<li class="cat-item cat-item-986"><a href="https://threatresearch.ext.hp.com/category/threat-research/" title="Threat Research blog posts.">Threat Research</a>
+</li>
+<li class="cat-item cat-item-1"><a href="https://threatresearch.ext.hp.com/category/uncategorized/">Uncategorized</a>
+</li>
+</ul>
+ 
+2022-05-20T06:12:39-07:00May 20th, 2022|<a href="https://threatresearch.ext.hp.com/category/threat-research/" rel="category tag">Threat Research</a>|
+</div>

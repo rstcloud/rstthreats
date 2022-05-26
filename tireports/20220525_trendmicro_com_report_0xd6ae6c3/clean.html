@@ -1,0 +1,125 @@
+<div>
+<p>Ransomware</p>
+<h1 class="article-details__title">New Linux-Based Ransomware Cheerscrypt Targets ESXi Devices</h1>
+<p>Trend Micro Research detected “Cheerscrypt”, a new Linux-based ransomware variant that compromises ESXi servers. We discuss our initial findings on in this report. </p>
+<p>By: Arianne Dela Cruz, Byron Gelera, McJustine De Guzman, Warren Sto.Tomas
+		
+			May 25, 2022
+Read time: 2 min (673 words)
+	</p>
+<a class="addthis_button_compact addthis_link">
+<img alt="Share" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/share-more.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="addthis_button_print addthis_link">
+<img alt="Print" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/printer.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<p>Save to Folio</p>
+<a href="https://www.trendmicro.com/subscription" target="target" title="Subscribe">
+ Subscribe
+</a>
+<p>We recently observed multiple Linux-based <a href="https://www.trendmicro.com/vinfo/us/threat-encyclopedia/malware/ransomware" target="_self">ransomware</a> detections that malicious actors launched to target <a href="https://www.vmware.com/products/esxi-and-esx.html">VMware ESXi</a> servers, a bare-metal hypervisor for creating and running several virtual machines (VMs) that share the same hard drive storage. We encountered <a href="http://www.trendmicro.com/vinfo/us/threat-encyclopedia/malware/Ransom.Linux.CHEERSCRYPT.A/" target="_blank">Cheerscrypt</a>, a new ransomware family, that has been targeting a customer’s EXSi server used to manage VMware files.</p>
+<p>In the past, ESXi servers were also attacked by other known ransomware families such as <a href="https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-lockbit" target="_blank">LockBit</a>, <a href="https://www.trendmicro.com/vinfo/us/security/news/ransomware-spotlight/ransomware-spotlight-hive" target="_blank">Hive</a>, and <a href="https://www.trendmicro.com/vinfo/ph/security/news/ransomware-spotlight/ransomware-spotlight-ransomexx" target="_blank">RansomEXX</a> as an efficient way to infect many computers with ransomware.</p>
+<p>This blog entry provides an overview of Cheerscrypt’s infection routine based on the information we have gathered so far.</p>
+<p>Infection routine</p>
+<p>The ransomware requires an input parameter specifying the path to encrypt so that it can proceed to its Infection routine.</p>
+<figure class="image-figure">
+<img alt="Figure 1. Ransomware command line" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices/cheerscrypt01.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 1. Ransomware command line</figcaption>
+</figure>
+<p>Upon execution, it implements the following command to terminate VM processes using <a href="https://developer.vmware.com/web/tool/7.0/esxcli" target="_blank">ESXCLI</a>:</p>
+“esxcli vm process kill –type=force –world-id=$(esxcli vm process list|grep ‘World ID’|awk ‘{print $3}’)”
+<p>The termination of the VM processes ensures that the ransomware can successfully encrypt VMware-related files. Similar to other infamous ransomware families, Cheerscrypt employs the <a href="https://www.trendmicro.com/vinfo/us/security/news/cybercrime-and-digital-threats/ransomware-double-extortion-and-beyond-revil-clop-and-conti">double extortion</a> scheme to coerce its victim to pay the ransom, as shown on their ransom note in Figure 2.</p>
+<figure class="image-figure">
+<img alt="Figure 2. Cheerscrypt’s ransom note" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices/cheerscrypt02.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 2. Cheerscrypt’s ransom note</figcaption>
+</figure>
+<p>Successfully encrypted files are renamed with the .Cheers extension. However, the ransomware first renames the files it will encrypt before encrypting the files. Thus, if the access permission for the file was not granted, it cannot proceed with the actual encryption.</p>
+<figure class="image-figure">
+<img alt="Figure 3. Cheerscrypt renames the sample before encryption." src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices/cheerscrypt03.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 3. Cheerscrypt renames the sample before encryption.</figcaption>
+</figure>
+<p>For each directory it encrypts, it will drop the ransom note named, “How to Restore Your Files.txt”. It seeks out log files and VMware-related files with the following extensions:</p>
+<ul>
+<li class="rich-text-li">· .log</li>
+<li class="rich-text-li">· .vmdk</li>
+<li class="rich-text-li">· .vmem</li>
+<li class="rich-text-li">· .vswp</li>
+<li class="rich-text-li">· .vmsn</li>
+</ul>
+<p>After successful encryption, it displays the following console that contains the data statistics of its routine:</p>
+<figure class="image-figure">
+<img alt="Figure 4. Displayed console after encryption" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices/cheerscrypt04.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 4. Console displayed after encryption</figcaption>
+</figure>
+<p>Encryption algorithm</p>
+<p>Cheerscrypt’s executable file contains the public key of a matching key pair with the private key being held by the malicious actor. The ransomware uses <a href="https://www.ecrypt.eu.org/stream/e2-sosemanuk.html" target="_blank">SOSEMANUK</a> stream cipher to encrypt files and <a href="https://en.wikipedia.org/wiki/Elliptic-curve_Diffie%E2%80%93Hellman" target="_blank">ECDH</a> to generate the SOSEMANUK key. For each file to encrypt, it generates an ECDH public-private key pair on the machine through Linux’s /dev/urandom. It then uses its embedded public key and the generated private key to create a secret key that will be used as a SOSEMANUK key. After encrypting the file, it will append the generated public key to it. Since the generated private key is not saved, one cannot use the embedded public key with the generated private key to produce the secret key. Therefore, decryption is only possible if the malicious actor’s private key is known. The infection chain is shown on Figure 5.</p>
+<figure class="image-figure">
+<img alt="Figure 5. Cheerscrypt’s encryption algorithm" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices/cheerscrypt05REV3.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 5. Cheerscrypt’s encryption algorithm</figcaption>
+</figure>
+<p>Conclusion</p>
+<p>ESXi is widely used in enterprise settings for server virtualization. It is therefore a popular target for ransomware attacks. As mentioned, compromising EXSi servers has been a scheme used by some notorious cybercriminal groups because it is a means to swiftly spread the ransomware to many devices. Organizations should thus expect malicious actors to upgrade their malware arsenal and breach as many systems and platforms as they can for monetary gain.</p>
+<p>Recommendations </p>
+<p>A proactive stance that ensures solid cybersecurity defenses against modern ransomware threats is crucial for organizations to thrive in an ever-changing threat landscape. To protect systems against similar attacks, organizations can establish security frameworks that systematically allocate resources based on an enterprise’s needs. </p>
+<p>Organizations can benefit from following the security frameworks established by the <a href="https://www.cisecurity.org/controls/" target="_blank">Center of Internet Security</a> and the <a href="https://www.nist.gov/cyberframework" target="_blank">National Institute of Standards and Technology</a> when developing their own cybersecurity strategies. The frameworks they created help security teams to mitigate risks and minimize exposure to threats. Adopting the best practices discussed in their respective frameworks can save organizations the time and effort when they customize their own. Their frameworks guide organizations through the entire process of planning while providing suggestions on measures that need to be established first.</p>
+Tags
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:environments/endpoints">Endpoints</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/ransomware">Ransomware</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:article-type/research">Research</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:medium/article">Articles, News, Reports</a>
+<h3 class="article-authors__title">
+	
+		Authors
+	
+</h3>
+<ul class="article-authors__list">
+<li class="article-authors__list-items">
+<p>Arianne Dela Cruz</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Byron Gelera</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>McJustine De Guzman</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Warren Sto.Tomas</p>
+<p>Sr. Threat Research Engineer</p>
+</li>
+</ul>
+<a class="article-authors__button" href="mailto:tm_research@trendmicro.com" id="article-authors-contact-us-button" target="target">
+		Contact Us
+	</a>
+<a class="article-authors__button subscribe" href="https://www.trendmicro.com/subscription" target="target">
+		Subscribe
+	</a>
+<h3 class="related--articles-title">Related Articles</h3>
+<ul class="related--articles-items">
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/e/pwn2own-video.html">
+					Celebrating 15 Years of Pwn2Own
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/d/new-apt-group-earth-berberoka-targets-gambling-websites-with-old.html">
+					New APT Group Earth Berberoka Targets Gambling Websites With Old and New Malware
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/e/the-fault-in-our-kubelets-analyzing-the-security-of-publicly-exposed-kubernetes-clusters.html">
+					The Fault in Our kubelets: Analyzing the Security of Publicly Exposed Kubernetes Clusters
+				</a>
+</li>
+</ul>
+<a href="https://www.trendmicro.com/en_us/research.html">
+				See all articles
+			</a>
+<a href="https://www.trendmicro.com/en_us/research.html">
+</a>
+</div>
