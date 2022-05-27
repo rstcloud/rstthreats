@@ -7,6 +7,7 @@ https://blog.morphisec.com/syk-crypter-discord
 
 *Threats*:
 Babadeda (tags: ransomware)
+Dnetloader (tags: rat, ransomware, malware, stealer)
 Asyncrat\_rat (tags: ransomware)
 Njrat\_rat (tags: ransomware)
 Quasar\_rat (tags: ransomware)

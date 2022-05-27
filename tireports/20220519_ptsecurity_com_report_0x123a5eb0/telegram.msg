@@ -1,12 +1,12 @@
 #ParsedReport
 *19-05-2022*
 
-Space Pirates:
+Space Pirates: Explore the tools and connections of a new hacker group
 
 https://www.ptsecurity.com/ru-ru/research/pt-esc-threat-intelligence/space-pirates-tools-and-connections
 
 *Actors/Campaigns*:
-Spacepirates (tags: dropper, dns, phishing, rat, proxy, backdoor)
+Spacepirates (tags: dropper, malware, dns, backdoor, rat, phishing, proxy)
 Axiom
 Emissary\_panda
 Ta428
@@ -14,25 +14,33 @@ Red\_delta
 Redfoxtrot
 Stealthytrident
 Nightscout
-Lazarus
 
 *Threats*:
+Zupdax (tags: rat)
 Former\_first\_rat
-Plugx\_rat (tags: dropper, rat, backdoor)
+Climax\_loader
+Rtlshare
+Plugx\_rat (tags: backdoor, dropper)
 9002 (tags: rat)
+Deed\_rat (tags: dns, rat)
 Pcshare
 Poison\_ivy
 Shadowpad
 Revbshell
+Tmanger
 Albaniiutas\_rat
+Bluetraveller\_rat
 Hyperbro
 Smokeloader\_backdoor
-Bluetraveller\_rat
 Reactorbot
-Gh0st\_rat (tags: rat)
+Gh0st\_rat
+Chromepass\_tool
+
+*Industry*:
+Aerospace, Financial, Government, Energy
 
 *Geo*:
-Japanese
+Russian, Asian, Chinese, Russia, Mongolia, Georgia, Japanese
 
 *CVEs*:
 CVE-2017-0213  \[[Vulners](https://vulners.com/cve/CVE-2017-0213)]
@@ -53,7 +61,7 @@ Tactics: 10
 Technics: 54
 
 *IOCs*:
-File: 50
+File: 51
 Path: 20
 Email: 1
 IP: 23
@@ -61,7 +69,7 @@ Hash: 156
 Registry: 8
 
 *Links*:
-`https://github.com/bitsadmin/ReVBShell`
-`https://github.com/LiveMirror/pcshare`
-`https://github.com/vzex/dog-tunnel`
-`https://github.com/obfuscator-llvm/obfuscator/wiki/Control-Flow-Flattening`
+`https://translate.google.com/website?sl=auto&tl=en&hl=ru&client=webapp&u=https://github.com/obfuscator-llvm/obfuscator/wiki/Control-Flow-Flattening`
+`https://translate.google.com/website?sl=auto&tl=en&hl=ru&client=webapp&u=https://github.com/bitsadmin/ReVBShell`
+`https://translate.google.com/website?sl=auto&tl=en&hl=ru&client=webapp&u=https://github.com/vzex/dog-tunnel`
+`https://translate.google.com/website?sl=auto&tl=en&hl=ru&client=webapp&u=https://github.com/LiveMirror/pcshare`

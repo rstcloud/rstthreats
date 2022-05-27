@@ -1,0 +1,17 @@
+#ParsedReport
+*21-05-2022*
+
+Rewterz Threat Alert APT Group Gamaredon Active IOCs
+
+https://www.rewterz.com/rewterz-news/rewterz-threat-alert-apt-group-gamaredon-active-iocs-7
+
+*Actors/Campaigns*:
+Gamaredon (tags: malware)
+
+*TTPs*:
+Tactics: 1
+Technics: 0
+
+*IOCs*:
+Hash: 9
+

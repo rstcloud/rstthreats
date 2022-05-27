@@ -9,8 +9,9 @@ https://www.fortinet.com/blog/threat-research/phishing-campaign-delivering-filel
 Keksec (tags: malware, phishing)
 
 *Threats*:
-Avemaria\_rat (tags: malware, spam, ransomware, botnet, phishing, ddos, rat, proxy)
-Sbit\_rat (tags: malware, spam, ransomware, botnet, phishing, ddos, rat, proxy)
+Avemaria\_rat (tags: ransomware, spam, malware, phishing, rat, ddos, proxy, botnet)
+Sbit\_rat (tags: ransomware, spam, malware, phishing, rat, ddos, proxy, botnet)
+Pandorahvnc (tags: spam, botnet, malware, phishing, rat, ddos, proxy, ransomware)
 Emotet (tags: malware, phishing)
 Enemybot (tags: malware, phishing)
 Vba/agent.ddon!tr (tags: malware)
