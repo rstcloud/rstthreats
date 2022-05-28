@@ -1,0 +1,813 @@
+<div>
+<h2>Executive summary</h2>
+<p>AT&amp;T Alien Labs™ has been tracking a new IoT botnet dubbed “EnemyBot”, which is believed to be distributed by threat actor Keksec. During our investigations, Alien Labs has discovered that EnemyBot is expanding its capabilities, exploiting recently identified vulnerabilities (2022), and now targeting IoT devices, web servers, Android devices and content management system (CMS) servers. In addition, the malware base source code can now be found online on Github, making it widely accessible.</p>
+<h2>Key takeaways:</h2>
+<ul>
+<li>EnemyBot’s base source code can be found on Github, making it available to anyone who wants to leverage the malware in their attacks.</li>
+<li>The malware is rapidly adopting one-day vulnerabilities as part of its exploitation capabilities.</li>
+<li>Services such as VMware Workspace ONE, Adobe ColdFusion, WordPress, PHP Scriptcase and more are being targeted as well as IoT and Android devices.</li>
+<li>The threat group behind EnemyBot, Keksec, is well-resourced and has the ability to update and add new capabilities to its arsenal of malware on a daily basis (see below for more detail on Keksec)</li>
+</ul>
+<h2>Background</h2>
+<p>First discovered by <a href="https://www.securonix.com/blog/detecting-the-enemybot-botnet-advisory/" rel="noopener" target="_blank">Securonix</a> in March 2022 and later <a href="https://www.fortinet.com/blog/threat-research/enemybot-a-look-into-keksecs-latest-ddos-botnet" rel="noopener" target="_blank">detailed in an in-depth analysis</a> by Fortinet, EnemyBot is a new malware distributed by the threat actor “Keksec” targeting Linux machines and IoT devices.</p>
+<p>According to the malware <a href="https://github.com/freakanonymous/enemy" rel="noopener" target="_blank">Github’s repository</a>, EnemyBot derives its source code from multiple botnets to a powerful and more adjustable malware. The original botnet code that EnemyBot is using includes: Mirai, Qbot, and Zbot. In addition, the malware includes custom development (see figure 1).</p>
+<p><img alt="flame botnet" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 1. EnemyBot page on Github.</p>
+<p>The Keksec threat group is reported to have formed back in 2016 by a number of experienced botnet actors. In November 2021, researchers from Qihoo 360 <a href="https://vblocalhost.com/uploads/VB2021-Jin-Tu.pdf" rel="noopener" target="_blank">described in detail</a> the threat actor’s activity in a presentation, attributing to the Keksec the development of botnets for different platforms including Windows and Linux:</p>
+<ul>
+<li>Linux based botnets: Tsunami and Gafgyt</li>
+<li>Windows based botnets: DarkIRC, DarkHTTP</li>
+<li>Dual systems: Necro (developed in Python)</li>
+</ul>
+<h2>Source code analysis</h2>
+<p>The developer of the Github page on EnemyBot self describes as a “full time malware dev,” that is also available for contract work. The individual states their workplace as “Kek security,” implying a potential relationship with the broader Keksec group (see figure 2).</p>
+<p><img alt="contract work availability" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 2. EnemyBot developer description.</p>
+<p>The malware repository on Github contains four main sections:</p>
+<h3>cc7.py</h3>
+<p>This module is a Python script file that downloads all dependencies and compiles the malware into different OS architectures including x86, ARM, macOS, OpenBSD, PowerPC, MIPS, and more (see figure 3)</p>
+<p><img alt="macOS malware" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 3. Compiling malware source code to macOS executable.</p>
+<p>Once compilation is complete, the script then creates a batch file ‘update.sh’ which is used by the bot as a downloader that is then delivered to any identified vulnerable targets to spread the malware.</p>
+<p><img alt="spreading EnemyBot" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 4. Generated `update.sh` file to spread EnemyBot on different architectures.</p>
+<h3>enemy.c</h3>
+<p>This is the main bot source code. Though it is missing the main exploitation function, it includes all other functionality of the malware and the attacks the bot supports by mixing the various botnet source codes as mentioned above (Mirai, Qbot, and Zbot) — mainly Mirai and Qbot (see figure 5).</p>
+<p> <img alt="EnemyBot source code" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 5. EnemyBot source code.</p>
+<h3>hide.c</h3>
+<p>This module is compiled and manually executed to encode / decode the malware’s strings by the attacker to hide strings in binary. For that, the malware is using a simple swap table, in which each char is replaced with a corresponding char in the table (see in figure 6).</p>
+<p><img alt="EnemyBot decode" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 6. String decode.</p>
+<h3>servertor.c</h3>
+<p>Figure 7 shows the command-and-control component (C&amp;C) botnet controller. C&amp;C will be executed on a dedicated machine that is controlled by the attacker. It can control and send commands to infected machines. (figure 7)</p>
+<p><img alt="EnemyBot C&amp;C" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 7. C&amp;C component.</p>
+<h2>New variant analysis</h2>
+<p>Most of EnemyBot functionality relates to the malware’s spreading capabilities, as well as its ability to scan public-facing assets and look for vulnerable devices. However, the malware also has DDoS capabilities and can receive commands to download and execute new code (modules) from its operators that give the malware more functionality.</p>
+<p>In new variants of EnemyBot, the malware added a webscan function containing a total of 24 exploits to attack vulnerabilities of different devices and web servers (see figure 8).</p>
+<p><img alt="figure 8" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 8. EnemyBot calls for a new function “webscan_xywz”.</p>
+<p>To perform these functions, the malware randomly scans IP addresses and when it gets a response via SYN/ACK, EnemyBot then scans for vulnerabilities on the remote server by executing multiple exploits.</p>
+<p>The first exploit is for the Log4j vulnerability discovered last year as CVE-2021-44228 and CVE-2021-45046:</p>
+<p><img alt="EnemyBot Log4j" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 9. Exploiting the Log4J vulnerability.</p>
+<p>The malware also can adopt new vulnerabilities within days of those vulnerabilities being discovered. Some examples are Razer Sila (April 2022) which was published without a CVE (see figure 10) and a remote code execution (RCE) vulnerability impacting VMWare Workspace ONE with CVE-2022-22954 the same month (see figure 11).</p>
+<p><img alt="Razar sila vuln" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 10. Exploiting vulnerability in Razar Sila.</p>
+<p><img alt="VMWare vuln" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 11. Exploiting vulnerability in VMWare Workspace ONE.</p>
+<p>EnemyBot has also begun targeting content management systems (e.g. Wordpress) by searching for vulnerabilities in various plugins, such as “Video Synchro PDF” (see figure 12).</p>
+<p><img alt="EnemyBot WordPress" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 12. EnemyBot targeting WordPress servers.</p>
+<p>In the example shown in figure 12, notice that the malware elevates a local file inclusion (LFI) vulnerability into a RCE by injecting malicious code into the ‘/proc/self/environ’. This method is not new and was <a href="https://www.exploit-db.com/papers/12886" rel="noopener" target="_blank">described</a> in 2009. The malware uses LFI to call ‘environ’ and passes the shell command in the user agent http header.</p>
+<p>Another example of how the malware uses this method is shown in figure 13. In this example the malware is exploiting a vulnerability in DBltek GoIP.</p>
+<p><img alt="DBItek" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 13. Executing shell command through LFI vulnerability in DBltek.</p>
+<p>After infection, EnemyBot will wait for further commands from its C&amp;C. However, in parallel it will also further propogate by scanning for additional vulnerable devices. Alien Labs has listed below the commands the bot can receive from its C&amp;C (accurate as of the publishing of this article). </p>
+<p>In case an Android device is connected through USB, or Android emulator running on the machine, EnemyBot will try to infect it by executing shell command. (figure 14)</p>
+<p><img alt="Android case" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 14. EnemyBot "adb_infect" function to attack Android devices.</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>Command</p>
+</td>
+<td>
+<p>Action</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SH</p>
+</td>
+<td>
+<p>Execute shell command</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>PING</p>
+</td>
+<td>
+<p>Ping to server, wait for command</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>LDSERVER</p>
+</td>
+<td>
+<p>Change loader server for payload.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>TCPON</p>
+</td>
+<td>
+<p>Turn on sniffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>RSHELL</p>
+</td>
+<td>
+<p>Create a reverse shell on an infected machine.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>TCPOFF</p>
+</td>
+<td>
+<p>Turn off sniffer.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>UDP</p>
+</td>
+<td>
+<p>Start UDP flood attack.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>TCP</p>
+</td>
+<td>
+<p>Start TCP flood attack.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>HTTP</p>
+</td>
+<td>
+<p>Start HTTP flood attack.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>HOLD</p>
+</td>
+<td>
+<p>Start TCP connection flooder.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>TLS</p>
+</td>
+<td>
+<p>Start TLS attack, start handshake without closing the socket.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>STD</p>
+</td>
+<td>
+<p>Start non spoofed UDP flooder.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>DNS</p>
+</td>
+<td>
+<p>Start DNS flooder.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SCANNER ON | OFF</p>
+</td>
+<td>
+<p>Start/Stop scanner - scan and infect vulnerable devices.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>OVH</p>
+</td>
+<td>
+<p>Start DDos attack on OVH.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>BLACKNURSE</p>
+</td>
+<td>
+<p>Start ICMP flooder.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>STOP</p>
+</td>
+<td>
+<p>Stop ongoing attacks. kill child processes</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>ARK</p>
+</td>
+<td>
+<p>Start targeted attack on ARK: Survivor Evolved video game server.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>ADNS</p>
+</td>
+<td>
+<p>Receive targets list from C&amp;C and start DNS attack.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>ASSDP</p>
+</td>
+<td>
+<p>Start SSDP flood attack.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>We have also listed the current vulnerabilities EnemyBot uses. As mentioned, some of them have not been assigned a CVE yet. (As of the publishing of this article.)</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>CVE Number</p>
+</td>
+<td>
+<p>Affected devices</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2021-44228, CVE-2021-45046</p>
+</td>
+<td>
+<p>Log4J RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2022-1388</p>
+</td>
+<td>
+<p>F5 BIG IP RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2022-02)</p>
+</td>
+<td>
+<p>Adobe ColdFusion 11 RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2020-7961</p>
+</td>
+<td>
+<p>Liferay Portal - Java Unmarshalling via JSONWS RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2022-04)</p>
+</td>
+<td>
+<p>PHP Scriptcase 9.7 RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2021-4039</p>
+</td>
+<td>
+<p>Zyxel NWA-1100-NH Command injection</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2022-04)</p>
+</td>
+<td>
+<p>Razar Sila - Command injection</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2022-22947</p>
+</td>
+<td>
+<p>Spring Cloud Gateway - Code injection vulnerability</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2022-22954</p>
+</td>
+<td>
+<p>VMWare Workspace One RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2021-36356, CVE-2021-35064</p>
+</td>
+<td>
+<p>Kramer VIAware RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2022-03)</p>
+</td>
+<td>
+<p>WordPress Video Synchro PDF plugin LFI</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2022-02)</p>
+</td>
+<td>
+<p>Dbltek GoIP LFI</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE(vulnerability published on 2022-03)</p>
+</td>
+<td>
+<p>WordPress Cab Fare Calculator plugin LFI</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE(vulnerability published on 2022-03)</p>
+</td>
+<td>
+<p>Archeevo 5.0 LFI</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2018-16763</p>
+</td>
+<td>
+<p>Fuel CMS 1.4.1 RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2020-5902</p>
+</td>
+<td>
+<p>F5 BigIP RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2019)</p>
+</td>
+<td>
+<p>ThinkPHP 5.X RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>No CVE (vulnerability published on 2017)</p>
+</td>
+<td>
+<p>Netgear DGN1000 1.1.00.48 ‘Setup.cgi’ RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2022-25075</p>
+</td>
+<td>
+<p>TOTOLink A3000RU command injection vulnerability</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2015-2051</p>
+</td>
+<td>
+<p>D-Link devices - HNAP SOAPAction - Header command injection vulnerability</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2014-9118</p>
+</td>
+<td>
+<p>ZHOME &lt; S3.0.501 RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2017-18368</p>
+</td>
+<td>
+<p>Zyxel P660HN - unauthenticated command injection</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2020-17456</p>
+</td>
+<td>
+<p>Seowon SLR 120 router RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>CVE-2018-10823</p>
+</td>
+<td>
+<p>D-Link DWR command injection in various models</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Recommended actions</h2>
+<ol>
+<li>Maintain minimal exposure to the Internet on Linux servers and IoT devices and use a properly configured firewall.</li>
+<li>Enable automatic updates to ensure your software has the latest security updates.</li>
+<li>Monitor network traffic, outbound port scans, and unreasonable bandwidth usage.</li>
+</ol>
+<h2>Conclusion</h2>
+<p>Keksec’s EnemyBot appears to be just starting to spread, however due to the authors’ rapid updates, this botnet has the potential to become a major threat for IoT devices and web servers. The malware can quickly adopt one-day vulnerabilities (within days of a published proof of concept). This indicates that the Keksec group is well resourced and that the group has developed the malware to take advantage of vulnerabilities before they are patched, thus increasing the speed and scale at which it can spread.</p>
+<h2>Detection methods</h2>
+<p>The following associated detection methods are in use by Alien Labs. They can be used by readers to tune or deploy detections in their own environments or for aiding additional research.</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>SURICATA IDS SIGNATURES</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Log4j sids: 2018202, 2018203, 2034647, 2034648, 2034649, 2034650, 2034651, 2034652, 2034653, 2034654, 2034655, 2034656, 2034657, 2034658, 2034659, 2034660, 2034661, 2034662, 2034663, 2034664, 2034665, 2034666, 2034667, 2034668, 2034671, 2034672, 2034673, 2034674, 2034676, 2034699, 2034700, 2034701, 2034702, 2034703, 2034706, 2034707, 2034708, 2034709, 2034710, 2034711, 2034712, 2034713, 2034714, 2034715, 2034716, 2034717, 2034723, 2034743, 2034744, 2034747, 2034748, 2034749, 2034750, 2034751, 2034755, 2034757, 2034758, 2034759, 2034760, 2034761, 2034762, 2034763, 2034764, 2034765, 2034766, 2034767, 2034768, 2034781, 2034782, 2034783, 2034784, 2034785, 2034786, 2034787, 2034788, 2034789, 2034790, 2034791, 2034792, 2034793, 2034794, 2034795, 2034796, 2034797, 2034798, 2034799, 2034800, 2034801, 2034802, 2034803, 2034804, 2034805, 2034806, 2034807, 2034808, 2034809, 2034810, 2034811, 2034819, 2034820, 2034831, 2034834, 2034835, 2034836, 2034839, 2034886, 2034887, 2034888, 2034889, 2034890, 2838340, 2847596, 4002714, 4002715</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>4001913: AV EXPLOIT LifeRay RCE (CVE-2020-7961)</p>
+<p>4001943: AV EXPLOIT Liferay Portal Java Unmarshalling RCE (CVE-2020-7961)</p>
+<p>4002589: AV EXPLOIT LifeRay Remote Code Execution - update-column (CVE-2020-7961)</p>
+<p>2031318: ET CURRENT_EVENTS 401TRG Liferay RCE (CVE-2020-7961)</p>
+<p>2031592: ET WEB_SPECIFIC_APPS Liferay Unauthenticated RCE via JSONWS Inbound (CVE-2020-7961)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2035955: ET EXPLOIT Razer Sila Router - Command Injection Attempt Inbound (No CVE)</p>
+<p>2035956: ET EXPLOIT Razer Sila Router - LFI Attempt Inbound (No CVE)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2035380: ET EXPLOIT VMware Spring Cloud Gateway Code Injection (CVE-2022-2294) (set)</p>
+<p>2035381: ET EXPLOIT VMware Spring Cloud Gateway Code Injection (CVE-2022-2294)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2035876: ET EXPLOIT VMWare Server-side Template Injection RCE (CVE-2022-22954)</p>
+<p>2035875: ET EXPLOIT VMWare Server-side Template Injection RCE (CVE-2022-22954)</p>
+<p>2035874: ET EXPLOIT VMWare Server-side Template Injection RCE (CVE-2022-22954)</p>
+<p>2036416: ET EXPLOIT Possible VMware Workspace ONE Access RCE via Server-Side Template Injection Inbound (CVE-2022-22954)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>4002364: AV EXPLOIT Fuel CMS RCE (CVE-2018-16763)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2030469: ET EXPLOIT F5 TMUI RCE vulnerability CVE-2020-5902 Attempt M1</p>
+<p>2030483: ET EXPLOIT F5 TMUI RCE vulnerability CVE-2020-5902 Attempt M2</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2836503: ETPRO EXPLOIT Attempted THINKPHP &lt; 5.2.x RCE Inbound</p>
+<p>2836504: ETPRO EXPLOIT Attempted THINKPHP &lt; 5.2.x RCE Outbound</p>
+<p>2836633: ETPRO EXPLOIT BlackSquid Failed ThinkPHP Payload Inbound</p>
+<p>2026731: ET WEB_SERVER ThinkPHP RCE Exploitation Attempt</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2024916: ET EXPLOIT Netgear DGN Remote Command Execution</p>
+<p>2029215: ET EXPLOIT Netgear DGN1000/DGN2200 Unauthenticated Command Execution Outbound</p>
+<p>2034576: ET EXPLOIT Netgear DGN Remote Code Execution</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2035746: ET EXPLOIT Totolink - Command Injection Attempt Inbound (CVE-2022-25075)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>4001488: AV TROJAN Mirai Outbound Exploit Scan, D-Link HNAP RCE (CVE-2015-2051)</p>
+<p>2034491: ET EXPLOIT D-Link HNAP SOAPAction Command Injection (CVE-2015-2051)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>4000095: AV EXPLOIT Unauthenticated Command Injection (ZyXEL P660HN-T v1)</p>
+<p>4002327: AV TROJAN Mirai faulty Zyxel exploit attempt</p>
+<p>2027092: ET EXPLOIT Possible ZyXEL P660HN-T v1 RCE</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>4002226: AV EXPLOIT Seowon Router RCE (CVE-2020-17456)</p>
+<p>2035950: ET EXPLOIT SEOWON INTECH SLC-130/SLR-120S RCE Inbound M1 (CVE-2020-17456)</p>
+<p>2035951: ET EXPLOIT SEOWON INTECH SLC-130/SLR-120S RCE Inbound M2 (CVE-2020-17456)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>2035953: ET EXPLOIT D-Link DWR Command Injection Inbound (CVE-2018-10823)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p> </p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>AGENT SIGNATURES</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Java Process Spawning Scripting Process</p>
+<p> </p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Java Process Spawning WMIC</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Java Process Spawning Scripting Process via Commandline (For Jenkins servers)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Suspicious process executed by Jenkins Groovy scripts (For Jenkins servers)</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>Suspicious command executed by a Java listening process (For Linux servers)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Associated indicators (IOCs)</h2>
+<p>The following technical indicators are associated with the reported intelligence. A list of indicators is also available in the <a href="https://otx.alienvault.com/pulse/6256ce1dcbcd4dc9ed5cff00" rel="noopener" target="_blank">OTX Pulse</a>. Please note, the pulse may include other activities related but out of the scope of the report.</p>
+<table>
+<tbody>
+<tr>
+<td>
+<p>TYPE</p>
+</td>
+<td>
+<p>INDICATOR</p>
+</td>
+<td>
+<p>DESCRIPTION</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>IP ADDRESS</p>
+</td>
+<td>
+<p>80.94.92[.]38</p>
+</td>
+<td>
+<p>Malware C&amp;C</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>7c0fe3841af72d55b55bc248167665da5a9036c972acb9a9ac0a7a21db016cc6</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>2abf6060c8a61d7379adfb8218b56003765c1a1e701b346556ca5d53068892a5</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>7785efeeb495ab10414e1f7e4850d248eddce6be91738d515e8b90d344ed820d</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>8e711f38a80a396bd4dacef1dc9ff6c8e32b9b6d37075cea2bbef6973deb9e68</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>31a9c513a5292912720a4bcc6bd4918fc7afcd4a0b60ef9822f5c7bd861c19b8</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>139e1b14d3062881849eb2dcfe10b96ee3acdbd1387de82e73da7d3d921ed806</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>4bd6e530db1c7ed7610398efa249f9c236d7863b40606d779519ac4ccb89767f</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>7a2a5da50e87bb413375ecf12b0be71aea4e21120c0c2447d678ef73c88b3ba0</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>ab203b50226f252c6b3ce2dd57b16c3a22033cd62a42076d09c9b104f67a3bc9</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>70674c30ed3cf8fc1f8a2b9ecc2e15022f55ab9634d70ea3ba5e2e96cc1e00a0</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>f4f9252eac23bbadcbd3cf1d1cada375cb839020ccb0a4e1c49c86a07ce40e1e</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>6a7242683122a3d4507bb0f0b6e7abf8acef4b5ab8ecf11c4b0ebdbded83e7aa</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>b63e841ded736bca23097e91f1f04d44a3f3fdd98878e9ef2a015a09950775c8</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>4869c3d443bae76b20758f297eb3110e316396e17d95511483b99df5e7689fa0</p>
+</td>
+<td>
+<p>Malware hash</p>
+</td>
+</tr>
+<tr>
+<td>
+<p>SHA256</p>
+</td>
+<td>
+<p>cdf2c0c68b5f8f20af448142fd89f5980c9570033fe2e9793a15fdfdadac1281</p>
+</td>
+<td>
+<p>Malware hash</p>
+<p> </p>
+</td>
+</tr>
+</tbody>
+</table>
+<h2>Mapped to MITRE ATT&amp;CK</h2>
+<h3>The findings of this report are mapped to the following <a href="https://attack.mitre.org/" rel="noopener" target="_blank">MITRE ATT&amp;CK Matrix</a> techniques:</h3>
+<ul>
+<li>TA0001: Initial Access:
+	<ul>
+<li>T1190: Exploit Public-Facing Application</li>
+</ul>
+</li>
+<li>TA0008: Lateral Movement:
+	<ul>
+<li>T1210: Exploitation of Remote Services</li>
+<li>T1021: Remote Services</li>
+</ul>
+</li>
+<li>TA0011: Command and Control
+	<ul>
+<li>T1132: Data Encoding</li>
+<li>T1001: Data Obfuscation</li>
+<li>T1030: Proxy:
+		<ul>
+<li>003: Multi-hop Proxy</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
