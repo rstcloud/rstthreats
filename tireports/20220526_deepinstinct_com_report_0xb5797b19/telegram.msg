@@ -9,7 +9,7 @@ https://www.deepinstinct.com/blog/types-of-dropper-malware-in-microsoft-office
 Aggaa (tags: malware)
 
 *Threats*:
-Emotet (tags: dropper, malware)
+Emotet (tags: malware, dropper)
 Revenge\_rat (tags: malware)
 Dridex (tags: dropper)
 
