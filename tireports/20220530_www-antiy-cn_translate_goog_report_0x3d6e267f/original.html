@@ -1,0 +1,1475 @@
+<html lang="en" class="js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers no-applicationcache svg inlinesvg smil svgclippaths translated-ltr"><!--<![endif]--><head>
+  <base href="https://www.antiy.cn/research/notice&amp;report/research_report/20220527.html"> 
+  <!-- Basic Page Needs
+================================================== --> 
+  <meta charset="utf-8"> 
+  <title>Analysis of Active Kthmimu Mining Trojans</title> 
+  <meta name="keywords" content="安天，反病毒引擎，终端安全、蜜罐、资产安全、态势感知、监控预警，威胁检测，流量监测，安全服务，安全监测、渗透测试服务、政企安全、威胁情报、 活跃的Kthmimu挖矿木马分析"> 
+  <meta name="description" content="安天是引领威胁检测与防御能力发展的网络安全国家队，为客户构建端点防护、流量监测、边界防护、导流捕获、深度分析、应急处置的安全基石"> 
+  <meta name="author" content="安天"> 
+  <!-- Mobile Specific Metas================================================== --> 
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> 
+  <!-- CSS================================================== --> 
+  <!-- Bootstrap  --> 
+  <link type="text/css" rel="stylesheet" href="https://www.antiy.cn/bootstrap/css/bootstrap.min.css"> 
+  <!-- web font  --> 
+  <!-- icon fonts --> 
+  <link type="text/css" rel="stylesheet" href="../../../font-icons/custom-icons/css/custom-icons.css"> 
+  <link type="text/css" rel="stylesheet" href="../../../font-icons/custom-icons/css/custom-icons-ie7.css"> 
+  <!-- nekoAnim--> 
+  <!-- Custom css --> 
+  <link type="text/css" rel="stylesheet" href="https://www.antiy.cn/css/layout.css"> 
+  <link type="text/css" id="colors" rel="stylesheet" href="https://www.antiy.cn/css/light.css"> 
+  <link type="text/css" rel="stylesheet" href="../../../css/custom.css"> 
+  <!--[if lt IE 9]>
+<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script> <![endif]--> 
+  <script src="https://hm.baidu.com/hm.js?a571b859015fa68cdd85f28397487ecf"></script><script src="https://www.antiy.cn/js/modernizr-2.6.1.min.js"></script> 
+  <!-- Favicons================================================== --> 
+  <link rel="shortcut icon" href="https://www.antiy.cn/images/favicon.ico"> 
+  <meta http-equiv="X-Translated-By" content="Google">
+  <meta http-equiv="X-Translated-To" content="en">
+  <script type="text/javascript" src="https://www.gstatic.com/_/translate_http/_/js/k=translate_http.tr.lt.fn0-lnBbvt8.O/d=1/rs=AN8SPfp0Ofg3nqK-AFpjg5F8cAeiRoixLw/m=ajaxproxy" data-sourceurl="https://www.antiy.cn/research/notice&amp;report/research_report/20220527.html"></script>
+  <meta name="robots" content="none">
+ <script async="" src="https://www.gstatic.com/feedback/js/help/prod/service/lazy.min.js"></script><link type="text/css" rel="stylesheet" charset="UTF-8" href="https://translate.googleapis.com/translate_static/css/translateelement.css"><script type="text/javascript" charset="UTF-8" src="https://translate.googleapis.com/_/translate_http/_/js/k=translate_http.tr.ru.USSoQEBfVZw.O/am=Bg/d=1/exm=el_conf/ed=1/rs=AN8SPfpBLzeB9VrVzSE1l__jnquUKE85Ug/m=el_main"></script></head> 
+ <body style="margin-top: 56px;"><iframe title="Google Translate navigation" frameborder="0" id="gt-nvframe" role="navigation" aria-label="Google Translate navigation" src="https://translate.google.com/websitetranslationui?parent=https%3A%2F%2Fwww-antiy-cn.translate.goog&amp;pfu=https%3A%2F%2Fwww-antiy-cn.translate.goog%2Fresearch%2Fnotice%26report%2Fresearch_report%2F20220527.html%3F_x_tr_sl%3Dauto%26_x_tr_tl%3Den%26_x_tr_hl%3Dru%26_x_tr_pto%3Dwapp&amp;u=https%3A%2F%2Fwww.antiy.cn%2Fresearch%2Fnotice%26report%2Fresearch_report%2F20220527.html&amp;sl=auto&amp;tl=en&amp;opu=https%3A%2F%2Ftranslate.google.com%2Fwebsite%3Fsl%3Dauto%26tl%3Den%26hl%3Dru%26client%3Dwebapp%26u%3Dhttps%3A%2F%2Fwww.antiy.cn%2Fresearch%2Fnotice%2526report%2Fresearch_report%2F20220527.html%26anno%3D2&amp;hl=ru&amp;lang=zh-CN" style="border: none; border-radius: 0px; box-shadow: none; height: 57px; left: 0px; right: auto; position: fixed; top: 0px; transition: none 0s ease 0s; width: 100%; z-index: 2147483646;"></iframe>
+  <script type="text/javascript" src="https://www.gstatic.com/_/translate_http/_/js/k=translate_http.tr.lt.fn0-lnBbvt8.O/d=1/exm=ajaxproxy,el_conf/ed=1/rs=AN8SPfp0Ofg3nqK-AFpjg5F8cAeiRoixLw/m=navigationui" data-environment="prod" data-proxy-url="https://www-antiy-cn.translate.goog" data-proxy-full-url="https://www-antiy-cn.translate.goog/research/notice&amp;report/research_report/20220527.html?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" data-source-url="https://www.antiy.cn/research/notice&amp;report/research_report/20220527.html" data-source-language="auto" data-target-language="en" data-display-language="ru" data-detected-source-language="zh-CN" data-is-source-untranslated="false" data-source-untranslated-url="https://translate.google.com/website?sl=auto&amp;tl=en&amp;hl=ru&amp;client=webapp&amp;u=https://www.antiy.cn/research/notice%26report/research_report/20220527.html&amp;anno=2"></script> 
+  <!-- Primary Page Layout================================================== --> 
+  <!-- globalWrapper --> 
+  <div id="globalWrapper"> 
+   <!-- header --> 
+   <div id="headCommon"><header class="navbar-fixed-top">
+    <div id="mainHeader" role="banner">
+        <div class="container">
+            <nav class="navbar navbar-default scrollMenu" role="navigation">
+                <div class="navbar-header">
+                    <!-- responsive navigation -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Toggle navigation</font></font></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!-- Logo -->
+                    <a class="navbar-brand" href="https://www.antiy.cn/index.html"><img src="https://www.antiy.cn/images/main-logo.png" alt="antiy"></a>
+                </div>
+                <div class="collapse navbar-collapse" id="mainMenu">
+                    <!-- Main navigation -->
+                    <ul class="nav navbar-nav pull-right" id="nav">
+
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/index.html" class="firstLevel active" id="menu1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">front page</font></font></a>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/safety_concept/index.html" class="firstLevel  hasSubMenu" id="menu2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">safety concept</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/safety_concept/index.html" data-id="menu2"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">safety concept</font></font></a></li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/Security_Product/index.html" class="firstLevel hasSubMenu" id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">safety product</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/Security_Product/IEP.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Unified Endpoint Defense</font></font></a>
+                                    <ul class="subMenu"> 
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/IEP.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Intelligent Armor Terminal Defense System</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/edr.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Intelligent terminal detection and response system</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zjfwq.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Wisdom Armor Server Protection Edition</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/iepm.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Smart Armor Mobile Terminal Defense System</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zjbg.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Smart office application defense system</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zjey.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhijia Malicious Code Aided Detection System</font></font></a> 
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/xc.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Wisdom Armor Terminal Defense System (Xinchuang Edition)</font></font></a> 
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/PTD.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Border and Traffic Security</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/PTD.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Sea Exploring Threat Detection System</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zgfhq.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan Next Generation Firewall</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zgrqjc.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan Intrusion Detection System</font></font></a>
+                                        </li> 
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/sdfx.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Advanced Threat Discovery and Intelligence Production</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/sdfx.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Shadow Chasing Threat Analysis System</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/ACS.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Hunting and Deception Defense Products</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/ACS.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Wind Catching Honeypot System</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/eht.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Emergency Response and Threat Hunting Support</font></font></a>
+                                    <ul class="subMenu">
+                                         <li>
+                                            <a href="https://www.antiy.cn/Security_Product/eht.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tuoken Emergency Disposal Toolbox</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/tsgz.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Security and IT Operation Platform</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/tsgz.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Tactical Situational Awareness Platform</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zc.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Asset security operation and maintenance management platform</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/tid.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">threat intelligence</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/tid.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Intelligence Analysis System</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/wxqbapi.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Intelligence API Query Service</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/kjdwxqb.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Machine-readable threat intelligence</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/wxqbjc.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Intelligence Detection System</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zlqb.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Strategic Intelligence/Information Intelligence Services</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/zgweb.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Super-Empowered, New Compliance Products</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zgweb.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan WEB application security protection system</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/ptfscan.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan Vulnerability Scanning System</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zgfbd.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan Antivirus Gateway</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/ptfosm.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Zhenguan operation and maintenance safety management system</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/zgaqgl.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Town customs security isolation and information one-way import system</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/ptflas.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Town customs log audit and analysis system</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/avl_sdk.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Foundation and Supply Chain Security Enablement Products</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/AVL_SDK.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Antiy Threat Detection Engine</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/SSC.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Antiy System Security Components</font></font></a>
+                                        </li> 
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Security_Product/rdt.html" class="firstLevel  hasSubMenu" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Antiy Vertical Response Service Platform</font></font></a>
+                                    <ul class="subMenu">  
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/rdt.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Ransomware Risk Detection Tool</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/Security_Product/avlpk.html" data-id="menu3"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">special disposal tool</font></font></a>
+                                        </li> 
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/Service_Support/index.html" class="firstLevel hasSubMenu" id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">service and support</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/Service_Support/Monitoring_Analysis.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Monitoring and Analysis Services</font></font></a>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Emergency.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">emergency response service</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Safety_Guarantee.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">security service</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Threat_Intelligence.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Intelligence Service</font></font></a>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Security_Consulting.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Advanced Security Consulting Services</font></font></a>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Logical_deduction.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Network attack and defense logic deduction service</font></font></a>
+                                </li>
+                                <li><a href="https://www.antiy.cn/Service_Support/Other_Security.html" data-id="menu4"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Other security services</font></font></a></li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/Partner/Channel_Policy.html" class="firstLevel hasSubMenu" id="menu5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Partner</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/Partner/Channel_Policy.html" data-id="menu5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">channel policy</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/Partner/Application_Form.html" data-id="menu5"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Apply for cooperation</font></font></a></li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/research/index.html" class="firstLevel hasSubMenu" id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Analysis and Research</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="#" class="firstLevel  hasSubMenu" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Special Report</font></font></a>
+                                    <ul class="subMenu">
+                                        <li><a href="https://www.antiy.cn/research/Lecture/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Technical Lecture Hall</font></font></a></li>
+                                        <li><a href="#" class="firstLevel  hasSubMenu" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">research report</font></font></a>
+                                            <ul class="subMenu">
+                                                <li>
+                                                    <a href="https://www.antiy.cn/research/notice&amp;report/research_report/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">research report</font></font></a>
+                                                </li>
+                                                <li>
+                                                    <a href="https://www.antiy.cn/research/special/single_copy.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">one-liner</font></font></a>
+                                                </li>
+                                                <li><a href="https://www.antiy.cn/research/special/annual_report.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Annual Report</font></font></a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/research/notice&amp;report/frontier_tech/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Weekly Typical Threat Analysis</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="#" class="firstLevel  hasSubMenu" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">threat information</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/research/respond/safe_info/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Daily Safety Information</font></font></a>
+                                        </li>
+                                        <li><a href="https://www.antiy.cn/research/respond/threaten_info/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">weekly security events</font></font></a>
+                                        </li>
+                                        <li>
+                                            <a href="https://www.antiy.cn/research/notice&amp;report/Malicious_Code/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Weekly virus alert</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/research/team/index.html" data-id="menu6"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">security team</font></font></a></li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/Market/index.html" class="firstLevel hasSubMenu" id="menu7"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">marketing activity</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/Market/Meeting/index.html" data-id="menu7"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Exhibition/Conference Coverage</font></font></a></li>
+                                <li><a href="#" class="firstLevel hasSubMenu" data-id="menu7"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Conferences</font></font></a>
+                                    <ul class="subMenu">
+                                        <li>
+                                            <a href="https://www.antiy.cn/Market/Subject/WTC/index.html" data-id="menu7"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Antiy Network Security Winter Training Camp Series</font></font></a>
+                                        </li>
+                                        <li><a href="https://www.antiy.cn/Market/Subject/RSA/index.html" data-id="menu7"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">RSA series of special topics</font></font></a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="sep"></li>
+                        <li class="primary">
+                            <a href="https://www.antiy.cn/About/index.html" class="firstLevel hasSubMenu" id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">about us</font></font></a>
+                            <ul class="subMenu">
+                                <li><a href="https://www.antiy.cn/About/news/index.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">company news</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/about.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">About Antiy</font></font></a></li>
+                                <li><a href="#" class="firstLevel hasSubMenu" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">engineer culture</font></font></a>
+                                    <ul class="subMenu">
+                                        <li><a href="https://www.antiy.cn/About/viruses.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Virus Wanted</font></font></a></li>
+                                        <li><a href="https://www.antiy.cn/About/technical_articles.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">A compilation of technical articles</font></font></a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="https://www.antiy.cn/About/Media/index.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">media coverage</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/honor.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Honor</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/history.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Memorabilia</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/part.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Typical customers</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/Ecological_System.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ecosystem</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/public.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Antiy Open Data Platform</font></font></a></li>
+                                <li><a href="https://www.antiy.cn/About/contact.html" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">contact us</font></font></a></li>
+                                <li><a target="_blank" href="http://hr.antiy.com/job/" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">social recruitment</font></font></a></li>
+                                <li><a target="_blank" href="https://hr.antiy.com/" data-id="menu8"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Campus Recruiting</font></font></a></li>
+                            </ul>
+                        </li>
+                        <!--<li id="lastMenu" class="last"><a href="template-contact.html" class="firstLevel last">Contact</a></li>-->
+                    </ul>
+                    <!-- End main navigation -->
+                </div>
+            </nav>
+        </div>
+    </div>
+</header>
+<script type="text/javascript" src="https://www.antiy.cn/js/custom.js"></script></div> 
+   <!-- header --> 
+   <!-- ======================================= content ======================================= --> 
+   <section id="page"> 
+    <header class="page-header"> 
+     <div class="container"> 
+      <div class="row"> 
+       <div class="col-md-12"> 
+        <h1><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">research report</font></font></h1> 
+        <ul class="breadcrumb visible-md visible-lg"> 
+         <li><a href="https://www-antiy-cn.translate.goog/?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">front page</font></font></a></li> 
+         <li><a href="https://www-antiy-cn.translate.goog/research/index.html?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Threat Analysis and Research</font></font></a></li> 
+         <li><a href="https://www-antiy-cn.translate.goog/research/notice&amp;report/research_report/index.html?_x_tr_sl=auto&amp;_x_tr_tl=en&amp;_x_tr_hl=ru&amp;_x_tr_pto=wapp" style="color: #00A0EA;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">research report</font></font></a></li> 
+        </ul> 
+       </div> 
+      </div> 
+     </div> 
+    </header> 
+    <section id="content" class="mt30 pb30"> 
+     <div class="container"> 
+      <div class="bs-docs-section"> 
+       <h1 style="text-align:center;text-transform: capitalize;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Analysis of Active Kthmimu Mining Trojans</font></font></h1> 
+       <p style="text-align:center; margin-top:10px;"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Time: May 27, 2022 Source: Antiy CERT</font></font></p> 
+       <div class="researchCont"> 
+        <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">1 Overview</font></font></h3>
+        <hr> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Since March 2022, Antiy CERT has successively captured attack samples of the Kthmimu mining Trojan, which is mainly spread through the Log4j 2 vulnerability. </font><font style="vertical-align: inherit;">Since the exposure of the Log4j 2 vulnerability, the Trojan has been active in mining activities. At the same time, it has spread malicious scripts to both Windows and Linux platforms, and downloaded the Monero mining program for mining.</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The mining Trojan uses a PowerShell script to download and execute the Monero open source mining program XMRig on the Windows platform. </font><font style="vertical-align: inherit;">In addition, the script also has the functions of creating scheduled task persistence, judging that the system user contains key strings, and creating scheduled tasks. </font><font style="vertical-align: inherit;">On the Linux platform, the Trojan uses a shell script to download mining programs, and the script also clears competing mining programs, downloads other scripts, and creates scheduled tasks.</font></font></p> 
+        <p><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">It has been verified that the Windows and Linux versions of the Antiy Zhijia Terminal Defense System (IEP) can effectively detect and kill the mining Trojan.</font></font></b></p> 
+        <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. ATT&amp;CK mapping map corresponding to the event</font></font></h3>
+        <hr> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The attacker launched a mining Trojan on the target system, and the ATT&amp;CK mapping map corresponding to this attack event is shown in the following figure.</font></font></p> 
+        <p><img src="../../../images/20220527/2-1.png" alt="" class="imgSize"></p> 
+        <p class="imgIns"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Figure 2-1 ATT&amp;CK mapping map corresponding to events</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">The technical points used by attackers are shown in the following table:</font></font></p> 
+        <p class="tableIns"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Table 2-1 ATT&amp;CK technical behavior description table corresponding to events</font></font></p> 
+        <div align="center"> 
+         <table class="MsoTable15Grid5DarkAccent2" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+          <tbody>
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-right:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-left-alt:solid white .5pt;
+							  mso-border-left-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">ATT&amp;CK </font></font></span></b><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:
+							  background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Stage </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">/</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> Category</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:solid white 1.0pt;
+							  mso-border-top-themecolor:background1;border-left:none;border-bottom:solid white 1.0pt;
+							  mso-border-bottom-themecolor:background1;border-right:none;mso-border-top-alt:
+							  solid white .5pt;mso-border-top-themecolor:background1;mso-border-bottom-alt:
+							  solid white .5pt;mso-border-bottom-themecolor:background1;background:#2683C6;
+							  mso-background-themecolor:accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">specific behavior</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-left:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;mso-border-right-alt:solid white .5pt;
+							  mso-border-right-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Notes</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">reconnaissance</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Active scan</font></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Scan </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">for log4j 2</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> vulnerabilities</font></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">initial visit</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Leverage public-facing applications</font></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Leverage </font><font style="vertical-align: inherit;">public-facing applications such as </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Java</font></font></span><font style="vertical-align: inherit;"></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" rowspan="2" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">implement</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Utilize command and script interpreters</font></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Using </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">PowerShell</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> and </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Shell</font></font></span><font style="vertical-align: inherit;"><font style="vertical-align: inherit;"> Scripting</font></font><span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">利用<span lang="EN-US">Windows</span>管理规范（<span lang="EN-US">WMI</span>）<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">删除现有<span lang="EN-US">WMI</span>类的实例<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">持久化<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">利用计划任务<span lang="EN-US">/</span>工作<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">设置计划任务<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">防御规避<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">混淆文件或信息<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">使用<span lang="EN-US">Base64</span>进行混淆<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" rowspan="2" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">发现<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">发现系统所有者<span lang="EN-US">/</span>用户<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">判断系统用户名<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">发现进程<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">发现竞品进程<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="123" valign="top" style="width:91.9pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">影响<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">资源劫持<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+            <td width="189" valign="top" style="width:5.0cm;border-top:none;border-left:none;
+							  border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">利用系统<span lang="EN-US">CPU</span>资源<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+          </tbody>
+         </table> 
+        </div> 
+        <h3>3.攻击流程和传播途径 </h3>
+        <hr> 
+        <h5>3.1 攻击流程</h5> 
+        <p>Kthmimu挖矿木马在Windows平台中使用名为“lr.ps1”的PowerShell脚本执行主要功能，具体功能为下载挖矿程序和配置文件，删除现有Windows Management Instrumentation (WMI)类的实例，判断系统用户名中是否包含“SYSTEM”字符串，如果包含，使用PowerShell命令下载字符串，执行后续指令。如果不包含“SYSTEM”字符串，创建名为“log4”的计划任务，每隔5分钟重复一次。结束竞品进程程序，下载开源门罗币挖矿程序XMRig和配置文件并执行。在Linux平台中使用名为“lr.sh”的Shell脚本执行主要功能，具体功能为下载并执行挖矿程序、结束竞品挖矿程序和创建计划任务等。 </p> 
+        <p><img src="../../../images/20220527/3-1.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图3-1 攻击流程</p> 
+        <h5>3.2 传播途径</h5> 
+        <p>攻击者使用Log4j 2漏洞进行传播攻击脚本，以下是Windows和Linux双平台Log4j 2漏洞利用代码。</p> 
+        <p><img src="../../../images/20220527/3-2.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图3-2 下载lr.ps1</p> 
+        <p><img src="../../../images/20220527/3-3.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图3-3 下载lr.sh</p> 
+        <h5>3.3 攻击事件样本整理</h5> 
+        <p>根据攻击事件对样本进行梳理得到如下信息：</p> 
+        <p class="tableIns">表3-1 攻击事件样本整理</p> 
+        <div align="center"> 
+         <table class="MsoTable15Grid5DarkAccent2" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+          <tbody>
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-right:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-left-alt:solid white .5pt;
+							  mso-border-left-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">样本下载地址<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-left:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;mso-border-right-alt:solid white .5pt;
+							  mso-border-right-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">详细说明<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/x.exe
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Windows</span><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">门罗币挖矿程序<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+							  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/lr.ps1
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Windows</span><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">恶意<span lang="EN-US">PowerShell
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/config.json
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">门罗币挖矿配置文件<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+							  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/x.rar
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Linux</span><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">门罗币挖矿程序<span lang="EN-US">
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/lr.sh
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Linux</span><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">恶意<span lang="EN-US">Shell
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="314" valign="top" style="width:235.4pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+							  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/apache.sh
+               <o:p></o:p></span></p> </td> 
+            <td width="272" valign="top" style="width:203.8pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Linux</span><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">恶意<span lang="EN-US">Shell
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+          </tbody>
+         </table> 
+        </div> 
+        <p class="tableIns">表3-2 挖矿脚本中的矿池地址和钱包地址</p> 
+        <div align="center"> 
+         <table class="MsoTable15Grid5DarkAccent2" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+          <tbody>
+           <tr> 
+            <td width="160" valign="top" style="width:120.25pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-right:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-left-alt:solid white .5pt;
+							  mso-border-left-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">矿池地址<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="489" valign="top" style="width:366.85pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-left:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-bottom-alt:solid white .5pt;
+							  mso-border-bottom-themecolor:background1;mso-border-right-alt:solid white .5pt;
+							  mso-border-right-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">钱包地址<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="160" valign="top" style="width:120.25pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">91.121.140.167:80
+               <o:p></o:p></span></p> </td> 
+            <td width="489" rowspan="2" valign="top" style="width:366.85pt;border-top:none;
+							  border-left:none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:
+							  background1;border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+							  mso-char-indent-count:0;layout-grid-mode:char;mso-layout-grid-align:none;
+							  mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;line-height:150%;
+							  font-family:&quot;微软雅黑&quot;,sans-serif">45tdM15BthJWCKScmdxF9nGKfnZJpV8jK3ZmBDUofM5fdzoXURTrb9QQeCwiNXHyvibVFqtxeWwx57FnCqL4Z3y4S4G2tTy</span><span lang="EN-US" style="font-size:9.0pt;line-height:150%;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  mso-fareast-font-family:宋体;mso-fareast-theme-font:minor-fareast">
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr> 
+            <td width="160" valign="top" style="width:120.25pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+							  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="MsoNormal"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">pool.supportxmr.com:80
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+          </tbody>
+         </table> 
+        </div> 
+        <p>根据矿池地址记录，目前，该钱包现在平均算力约170KH/s。 </p> 
+        <p><img src="../../../images/20220527/3-4.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图3-4 挖矿算力</p> 
+        <h3>4.防护建议 </h3>
+        <hr> 
+        <h5></h5> 
+        <p> </p> 
+        <p><img src="../../../images/20220527/2-1.png" alt="" class="imgSize"></p> 
+        <p class="imgIns"></p> 
+        <p></p> 
+        <p class="tableIns"></p> 
+        <p>针对非法挖矿，安天建议企业采取如下防护措施：</p> 
+        <p>1.安装终端防护：安装反病毒软件，针对不同平台建议安装安天智甲终端防御系统Windows/Linux版本；</p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2. Strengthen SSH password strength: Avoid weak passwords. It is recommended to use 16-bit or longer passwords, including combinations of uppercase and lowercase letters, numbers and symbols, and avoid using the same password for multiple servers;</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">3. Update patches in a timely manner: It is recommended to enable the automatic update function to install system patches, and vulnerable parts such as servers, databases, and middleware should update system patches in time;</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">4. Update third-party application patches in time: It is recommended to update third-party application patches such as Tomcat, WebLogic, JBoss, Redis, Hadoop and Apache Struts in a timely manner;</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. Enable logs: enable key log collection functions (security logs, system logs, error logs, access logs, transfer logs, and cookie logs) to provide a basis for tracking security events;</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">6. Host reinforcement: Penetration testing and security reinforcement of the system;</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">7. Deploy Intrusion Detection System (IDS): Deploy traffic monitoring software or equipment to facilitate the discovery and traceability of malicious code. </font><font style="vertical-align: inherit;">Antiy Ocean Exploration Threat Detection System</font></font></p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">(PTD) takes network traffic as the detection and analysis object, can accurately detect the known massive malicious code and network attack activities, and effectively discover network suspicious behaviors, assets and various unknown threats;
+        </font></font><p></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">8. Antiy service: If you are attacked by malware, it is recommended to isolate the attacked host in time, and protect the site and wait for the security engineer to check the computer; Antiy 7*24 hours service hotline: 400-840-9234.</font></font></p> 
+        <p><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">It has been verified that both Windows and Linux versions of Antiy Zhijia Terminal Defense System (IEP) can effectively detect and kill the mining program.</font></font></p> 
+        <p><img src="../../../images/20220527/4-1.png" alt="" class="imgSize"></p> 
+        <p class="imgIns"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Figure 4-1 Effective protection of Antiy Zhijia for Windows</font></font></p> 
+        <p><img src="../../../images/20220527/4-2.png" alt="" class="imgSize"></p> 
+        <p class="imgIns"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Figure 4-2 Antiy Zhijia Linux version effectively scans and kills</font></font></p> 
+        <h3><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5. Sample Analysis</font></font></h3>
+        <hr> 
+        <h5><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5.1 Analysis of Windows samples</font></font></h5> 
+        <p><b><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">5.1.1 lr.ps1</font></font></b> </p> 
+        <p class="tableIns"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Table 5-1 Script files</font></font></p> 
+        <div align="center"> 
+         <table class="a" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+          <tbody>
+           <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;mso-border-alt:solid white .5pt;mso-border-themecolor:
+							  background1;background:#2683C6;mso-background-themecolor:accent2;padding:
+							  0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">virus name</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-left:none;mso-border-left-alt:solid white .5pt;
+							  mso-border-left-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">Trojan/Win32.Ymacco
+               </font></font><o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:1;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">original file name</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">lr.ps1
+               </font></font><o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:2;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:
+							  &quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">MD5
+                </font></font><o:p></o:p></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">701EDFC11EE90B8A0D106B6FD98F5B42
+               </font></font><o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:3;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">File size</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">2.84KB (2,904 </font></font></span><span style="font-size:
+							  9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">bytes </font></font><span lang="EN-US"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">)
+                </font></font><o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:4;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">interpreted language</font></font><span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">PowerShell
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:5;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">VT</span></b><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:
+							  background1">首次上传时间<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif">2022-03-06 02:22:32
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:6;mso-yfti-lastrow:yes;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:
+							  &quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:background1">VT</span></b><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:
+							  background1">检测结果<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">12/59
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+          </tbody>
+         </table> 
+        </div> 
+        <p>删除现有Windows Management Instrumentation (WMI)类的实例，判断系统用户名中是否包含“SYSTEM”字符串，如果包含，使用PowerShell命令下载字符串，执行后续指令。</p> 
+        <p><img src="../../../images/20220527/5-1.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-1 删除WMI类的实例</p> 
+        <p>如果不包含“SYSTEM”字符串，创建名为“log4”的计划任务，每隔5分钟重复一次。结束竞品进程程序，下载开源门罗币挖矿程序XMRig和配置文件并执行。</p> 
+        <p><img src="../../../images/20220527/5-2.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-2 下载挖矿程序</p> 
+        <h5>5.2 Linux样本分析</h5> 
+        <p><b>5.2.1 lr.sh</b></p> 
+        <p class="tableIns">表5-2 脚本文件</p> 
+        <div align="center"> 
+         <table class="a" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+          <tbody>
+           <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;mso-border-alt:solid white .5pt;mso-border-themecolor:
+							  background1;background:#2683C6;mso-background-themecolor:accent2;padding:
+							  0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">病毒名称<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-left:none;mso-border-left-alt:solid white .5pt;
+							  mso-border-left-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+							  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Trojan[Downloader]/Shell.Agent
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:1;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">原始文件名<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif">lr.sh
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:2;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:
+							  &quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:background1">MD5
+                <o:p></o:p></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">E06704BCBED0CE2D7CADE20FA1D8A7B6
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:3;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">文件大小<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif">2.09KB(2,138</span><span style="font-size:
+							  9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">字节<span lang="EN-US">)
+                <o:p></o:p></span></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:4;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">解释语言<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">Shell
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:5;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;
+							  color:white;mso-themecolor:background1">VT</span></b><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:
+							  background1">首次上传时间<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #D0E6F6;mso-background-themecolor:accent2;mso-background-themetint:51;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;
+							  font-family:&quot;微软雅黑&quot;,sans-serif">2022-03-05 22:26:41
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+           <tr style="mso-yfti-irow:6;mso-yfti-lastrow:yes;height:15.6pt"> 
+            <td width="113" valign="top" style="width:84.8pt;border:solid white 1.0pt;
+							  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+							  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+							  mso-border-themecolor:background1;background:#2683C6;mso-background-themecolor:
+							  accent2;padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal"><b><span lang="EN-US" style="font-size:9.0pt;font-family:
+							  &quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:background1">VT</span></b><b><span style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:
+							  background1">检测结果<span lang="EN-US">
+                 <o:p></o:p></span></span></b></p> </td> 
+            <td width="359" valign="top" style="width:269.35pt;border-top:none;border-left:
+							  none;border-bottom:solid white 1.0pt;mso-border-bottom-themecolor:background1;
+							  border-right:solid white 1.0pt;mso-border-right-themecolor:background1;
+							  mso-border-top-alt:solid white .5pt;mso-border-top-themecolor:background1;
+							  mso-border-left-alt:solid white .5pt;mso-border-left-themecolor:background1;
+							  mso-border-alt:solid white .5pt;mso-border-themecolor:background1;background:
+							  #A3CEED;mso-background-themecolor:accent2;mso-background-themetint:102;
+							  padding:0cm 5.4pt 0cm 5.4pt;height:15.6pt"> <p class="MsoNormal" align="left"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">20/58
+               <o:p></o:p></span></p> </td> 
+           </tr> 
+          </tbody>
+         </table> 
+        </div> 
+        <p>结束竞品挖矿进程。 </p> 
+        <p><img src="../../../images/20220527/5-3.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-3 结束竞品挖矿程序</p> 
+        <p>创建计划任务，查询重要目录下的挖矿关键字符串等信息，如果则强制结束相关进程。 </p> 
+        <p><img src="../../../images/20220527/5-4.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-4 创建计划任务</p> 
+        <p>下载挖矿程序和配置文件以及脚本文件并执行，最后删除脚本文件。 </p> 
+        <p><img src="../../../images/20220527/5-5.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-5 下载挖矿程序和配置文件</p> 
+        <p><b>5.2.2 apache.sh</b></p> 
+        <p>结束竞品程序，独占系统资源。</p> 
+        <p><img src="../../../images/20220527/5-6.png" alt="" class="imgSize"></p> 
+        <p class="imgIns">图5-6 结束竞品进程</p> 
+        <h3>6.IoCs </h3>
+        <hr> 
+        <table class="MsoTable15Grid5DarkAccent2" border="1" cellspacing="0" cellpadding="0" style="border: none;"> 
+         <tbody>
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;mso-border-alt:solid white .5pt;mso-border-themecolor:
+						  background1;background:#2683C6;mso-background-themecolor:accent2;padding:
+						  0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:1"><b><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif;color:white;mso-themecolor:background1">IoCs</span></b><b><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">
+               <o:p></o:p></span></b></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">3EDCDE37DCECB1B5A70B727EA36521DE
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">701EDFC11EE90B8A0D106B6FD98F5B42
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">BF9CC5DF6A9FF24395BD10631369ACBF
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">D6E55C081CCABD81E5DE99ABFE9597F4
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">135276572F4C6A8B10BD31342997B458
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">E06704BCBED0CE2D7CADE20FA1D8A7B6
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">639825B85E02E6B9DFFCA50EE4DE9B6B
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">56BB7858F60C026DF6D48C32099EA2E7
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">14.55.65.217
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">14.55.65.199
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">91.121.140.167
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">pool.supportxmr.com:80
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/x.exe
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/lr.ps1
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/config.json
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/lrr.txt
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/x.rar
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#D0E6F6;mso-background-themecolor:
+						  accent2;mso-background-themetint:51;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto"><span lang="EN-US" style="font-size:9.0pt;font-family:&quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/lr.sh
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+          <tr> 
+           <td width="274" valign="top" style="width:205.55pt;border:solid white 1.0pt;
+						  mso-border-themecolor:background1;border-top:none;mso-border-top-alt:solid white .5pt;
+						  mso-border-top-themecolor:background1;mso-border-alt:solid white .5pt;
+						  mso-border-themecolor:background1;background:#A3CEED;mso-background-themecolor:
+						  accent2;mso-background-themetint:102;padding:0cm 5.4pt 0cm 5.4pt"> <p class="a" style="margin-bottom:0cm;margin-bottom:.0001pt;text-indent:0cm;
+						  mso-char-indent-count:0;line-height:normal;layout-grid-mode:both;mso-layout-grid-align:
+						  auto;mso-yfti-cnfc:64"><span lang="EN-US" style="font-size:9.0pt;font-family:
+						  &quot;微软雅黑&quot;,sans-serif">hxxp[:]//14.55.65.217:8080/a/apache.sh
+              <o:p></o:p></span></p> </td> 
+          </tr> 
+         </tbody>
+        </table> 
+       </div> 
+      </div> 
+     </div> 
+    </section> 
+   </section> 
+   <!-- content --> 
+   <!-- footer --> 
+   <div id="footerCommon"><footer id="footerWrapper" class="footer2">
+	<section id="mainFooter">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-3 col-sm-6">
+					<div class="footerWidget">
+
+						<h3>关于我们</h3>
+						<ul class="list-unstyled iconList">
+							<li><a href="https://www.antiy.cn/About/about.html">公司介绍</a></li>
+							<li><a href="https://www.antiy.cn/About/news/index.html">公司新闻</a></li>
+							<li><a href="https://www.antiy.cn/About/history.html">公司历程</a></li>
+							<li><a href="https://www.antiy.cn/About/honor.html">公司荣誉</a></li>
+							<li><a href="https://www.antiy.cn/About/contact.html">联系我们</a></li>
+							<li><a href="http://hr.antiy.com/job">诚聘英才</a></li>
+							<li><a href="https://www.antiy.cn/About/20th/index.html">安天20年</a></li>
+							<li><a href="https://www.antiy.cn/public.html">安天开放资料平台</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="footerWidget">
+						<h3>服务与支持</h3>
+						<ul class="list-unstyled iconList">
+							<li><a href="https://www.antiy.cn/Service_Support/Monitoring_Analysis.html">监测分析服务</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Emergency.html">应急处置服务</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Safety_Guarantee.html">安全保障服务</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Threat_Intelligence.html">威胁情报服务</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Security_Consulting.html">高级安全咨询服务</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Logical_deduction.html">网络攻防逻辑推演服务</a></li>
+							<li><a href="https://vs.antiy.cn/">安天垂直响应平台</a></li>
+							<li><a href="https://www.antiy.cn/Service_Support/Other_Security.html">其他安全服务</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="footerWidget">
+
+						<h3>常用链接</h3>
+						<ul class="list-unstyled iconList">
+						    <li><a href="http://wtc.antiy.cn/">2022年安天网络安全冬训营</a></li>
+							<li><a href="https://www.antiy.cn/Security_Product/sdfx.html">威胁响应</a></li>
+							<li><a href="https://www.antiy.cn/Security_Product/AVL_SDK.html">引擎类</a></li>
+							<li><a href="https://www.antiy.cn/Security_Product/tsgz.html">态势感知</a></li>
+							<li><a href="https://www.antiy.cn/Security_Product/IEP.html">终端防御</a></li>
+							<li><a href="https://www.antiy.cn/research/index.html">安全研究</a></li>
+							<li><a href="https://www.antiy.cn/Market/Meeting/index.html">展会/会议</a></li>
+							<li><a href="https://www.antiy.cn/research/Lecture/index.html">演讲厅</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-6">
+					<div class="footerWidget">
+
+						<h3>关注我们</h3>
+						<address>
+							<p>
+								<i class="icon-location"></i>哈尔滨：哈尔滨市松北区世坤路838号科技创新城7号楼<br>
+                                <i class="icon-location"></i>北京：北京市海淀区闵庄路3号清华科技园玉泉慧谷一期1号楼<br>
+
+								</p><div class="row team mt20">
+			                    	<div class="col-sm-6">
+					                     <article>
+						                 <div><img src="https://www.antiy.cn/images/slider/flex/weixin.jpg" width="143" height="143" alt="" class="img-responsive"></div>
+							             <p style="line-height:35px;">关注安天官方微信</p>
+					                     </article>
+				                    </div>
+			                    	<div class="col-sm-6">
+					                     <article>
+						                 <div><img src="https://www.antiy.cn/images/slider/flex/weibo-1.png" width="143" height="143" alt="" class="img-responsive"></div>
+							             <p style="line-height:35px;">关注安天官方微博</p>
+					                    </article>
+				                   </div>
+			                    </div>
+							<p></p>
+						</address>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<section id="footerRights">
+		<div class="container">
+			<div class="row">
+				
+				<div class="col-md-12">
+					<p><a href="http://www.antiy.com/">安天实验室</a>|&nbsp;<a href="http://www.antiy.net/">安天英文站</a>|&nbsp;<a href="http://www.antiy.cn/About/about.html">公司介绍</a>|&nbsp;<a href="http://www.antiy.cn/About/contact.html">联系方式</a>|&nbsp;<a href="http://www.antiy.cn/Partner/Application_Form.html">申请合作</a>|&nbsp;<a href="http://www.antiy.cn/map.html">网站地图</a> <br>
+					© 2020 ANTIY 北京安天网络安全技术有限公司 WWW.ANTIY.CN All Rights Reserved . <br>
+					<a target="_blank" href="https://beian.miit.gov.cn">京ICP备09068574号-1</a>
+					&nbsp;&nbsp;&nbsp;<a target="_blank" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010802029032">京公网安备11010802029032号</a>
+				</p>
+				</div>
+			</div>
+		</div>
+	</section>
+</footer></div> 
+   <!-- End footer --> 
+  </div> 
+  <!-- global wrapper --> 
+  <!-- End Document
+================================================== --> 
+  <script type="text/javascript" src="https://www.antiy.cn/js-plugin/jquery/jquery-1.10.2.min.js"></script> 
+  <script type="text/javascript" src="https://www.antiy.cn/js-plugin/jquery-ui/jquery-ui-1.8.23.custom.min.js"></script> 
+  <!-- third party plugins  --> 
+  <script type="text/javascript" src="https://www.antiy.cn/bootstrap/js/bootstrap.js"></script> 
+  <!-- Custom  --> 
+  <script type="text/javascript" src="https://www.antiy.cn/js/custom.js"></script> 
+  <script>
+    var _hmt = _hmt || [];
+    (function () {
+        var hm = document.createElement("script");
+        hm.src = "https://hm.baidu.com/hm.js?a571b859015fa68cdd85f28397487ecf";
+        var s = document.getElementsByTagName("script")[0];
+        s.parentNode.insertBefore(hm, s);
+    })();
+    //引入公共头部和底部
+    $('#headCommon').load("../../header.html");
+    $('#footerCommon').load("../../../footer.html");
+</script>   
+  <script>function gtElInit() {var lib = new google.translate.TranslateService();lib.translatePage('zh-CN', 'en', function () {});}</script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=gtElInit&amp;hl=ru&amp;client=wt" type="text/javascript"></script><div id="goog-gt-tt" class="skiptranslate" dir="ltr"><div style="padding: 8px;"><div><div class="logo"><img src="https://www.gstatic.com/images/branding/product/1x/translate_24dp.png" width="20" height="20" alt="Google Переводчик"></div></div></div><div class="top" style="padding: 8px; float: left; width: 100%;"><h1 class="title gray">Исходный текст</h1></div><div class="middle" style="padding: 8px;"><div class="original-text"></div></div><div class="bottom" style="padding: 8px;"><div class="activity-links"><span class="activity-link">Предложить лучший вариант перевода</span><span class="activity-link"></span></div><div class="started-activity-container"><hr style="color: #CCC; background-color: #CCC; height: 1px; border: none;"><div class="activity-root"></div></div></div><div class="status-message" style="display: none;"></div></div>
+ 
+<div class="goog-te-spinner-pos"><div class="goog-te-spinner-animation"><svg xmlns="http://www.w3.org/2000/svg" class="goog-te-spinner" width="96px" height="96px" viewBox="0 0 66 66"><circle class="goog-te-spinner-path" fill="none" stroke-width="6" stroke-linecap="round" cx="33" cy="33" r="30"></circle></svg></div></div><a href="#" id="nekoToTop"><i class="icon-up-open"></i></a></body></html>

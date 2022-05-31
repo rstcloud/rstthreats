@@ -1,0 +1,403 @@
+<div>
+<h1>Analysis of Active Kthmimu Mining Trojans</h1>
+<p>Time: May 27, 2022 Source: Antiy CERT</p>
+<h3>1 Overview</h3>
+<p>Since March 2022, Antiy CERT has successively captured attack samples of the Kthmimu mining Trojan, which is mainly spread through the Log4j 2 vulnerability. Since the exposure of the Log4j 2 vulnerability, the Trojan has been active in mining activities. At the same time, it has spread malicious scripts to both Windows and Linux platforms, and downloaded the Monero mining program for mining.</p>
+<p>The mining Trojan uses a PowerShell script to download and execute the Monero open source mining program XMRig on the Windows platform. In addition, the script also has the functions of creating scheduled task persistence, judging that the system user contains key strings, and creating scheduled tasks. On the Linux platform, the Trojan uses a shell script to download mining programs, and the script also clears competing mining programs, downloads other scripts, and creates scheduled tasks.</p>
+<p>It has been verified that the Windows and Linux versions of the Antiy Zhijia Terminal Defense System (IEP) can effectively detect and kill the mining Trojan.</p>
+<h3>2. ATT&amp;CK mapping map corresponding to the event</h3>
+<p>The attacker launched a mining Trojan on the target system, and the ATT&amp;CK mapping map corresponding to this attack event is shown in the following figure.</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/2-1.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 2-1 ATT&amp;CK mapping map corresponding to events</p>
+<p>The technical points used by attackers are shown in the following table:</p>
+<p>Table 2-1 ATT&amp;CK technical behavior description table corresponding to events</p>
+<table border="1" cellpadding="0" cellspacing="0" class="MsoTable15Grid5DarkAccent2">
+<tbody>
+<tr>
+<td valign="top" width="123"> <p>ATT&amp;CK Stage / Category
+</p><p></p> </td>
+<td valign="top" width="189"> <p>specific behavior
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Notes
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="123"> <p>reconnaissance
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Active scan
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Scan for log4j 2 vulnerabilities
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="123"> <p>initial visit
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Leverage public-facing applications
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Leverage public-facing applications such as Java
+</p><p></p> </td>
+</tr>
+<tr>
+<td rowspan="2" valign="top" width="123"> <p>implement
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Utilize command and script interpreters
+</p><p></p> </td>
+<td valign="top" width="189"> <p>Using PowerShell and Shell Scripting
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="189"> <p>利用Windows管理规范（WMI）
+</p><p></p> </td>
+<td valign="top" width="189"> <p>删除现有WMI类的实例
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="123"> <p>持久化
+</p><p></p> </td>
+<td valign="top" width="189"> <p>利用计划任务/工作
+</p><p></p> </td>
+<td valign="top" width="189"> <p>设置计划任务
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="123"> <p>防御规避
+</p><p></p> </td>
+<td valign="top" width="189"> <p>混淆文件或信息
+</p><p></p> </td>
+<td valign="top" width="189"> <p>使用Base64进行混淆
+</p><p></p> </td>
+</tr>
+<tr>
+<td rowspan="2" valign="top" width="123"> <p>发现
+</p><p></p> </td>
+<td valign="top" width="189"> <p>发现系统所有者/用户
+</p><p></p> </td>
+<td valign="top" width="189"> <p>判断系统用户名
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="189"> <p>发现进程
+</p><p></p> </td>
+<td valign="top" width="189"> <p>发现竞品进程
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="123"> <p>影响
+</p><p></p> </td>
+<td valign="top" width="189"> <p>资源劫持
+</p><p></p> </td>
+<td valign="top" width="189"> <p>利用系统CPU资源
+</p><p></p> </td>
+</tr>
+</tbody>
+</table>
+<h3>3.攻击流程和传播途径 </h3>
+<h5>3.1 攻击流程</h5>
+<p>Kthmimu挖矿木马在Windows平台中使用名为“lr.ps1”的PowerShell脚本执行主要功能，具体功能为下载挖矿程序和配置文件，删除现有Windows Management Instrumentation (WMI)类的实例，判断系统用户名中是否包含“SYSTEM”字符串，如果包含，使用PowerShell命令下载字符串，执行后续指令。如果不包含“SYSTEM”字符串，创建名为“log4”的计划任务，每隔5分钟重复一次。结束竞品进程程序，下载开源门罗币挖矿程序XMRig和配置文件并执行。在Linux平台中使用名为“lr.sh”的Shell脚本执行主要功能，具体功能为下载并执行挖矿程序、结束竞品挖矿程序和创建计划任务等。 </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/3-1.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图3-1 攻击流程</p>
+<h5>3.2 传播途径</h5>
+<p>攻击者使用Log4j 2漏洞进行传播攻击脚本，以下是Windows和Linux双平台Log4j 2漏洞利用代码。</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/3-2.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图3-2 下载lr.ps1</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/3-3.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图3-3 下载lr.sh</p>
+<h5>3.3 攻击事件样本整理</h5>
+<p>根据攻击事件对样本进行梳理得到如下信息：</p>
+<p>表3-1 攻击事件样本整理</p>
+<table border="1" cellpadding="0" cellspacing="0" class="MsoTable15Grid5DarkAccent2">
+<tbody>
+<tr>
+<td valign="top" width="314"> <p>样本下载地址
+</p><p></p> </td>
+<td valign="top" width="272"> <p>详细说明
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/x.exe
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>Windows门罗币挖矿程序
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/lr.ps1
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>Windows恶意PowerShell
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/config.json
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>门罗币挖矿配置文件
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/x.rar
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>Linux门罗币挖矿程序
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/lr.sh
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>Linux恶意Shell
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="314"> <p>hxxp[:]//14.55.65.217:8080/a/apache.sh
+ </p><p></p> </td>
+<td valign="top" width="272"> <p>Linux恶意Shell
+ </p><p></p> </td>
+</tr>
+</tbody>
+</table>
+<p>表3-2 挖矿脚本中的矿池地址和钱包地址</p>
+<table border="1" cellpadding="0" cellspacing="0" class="MsoTable15Grid5DarkAccent2">
+<tbody>
+<tr>
+<td valign="top" width="160"> <p>矿池地址
+</p><p></p> </td>
+<td valign="top" width="489"> <p>钱包地址
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="160"> <p>91.121.140.167:80
+ </p><p></p> </td>
+<td rowspan="2" valign="top" width="489"> <p>45tdM15BthJWCKScmdxF9nGKfnZJpV8jK3ZmBDUofM5fdzoXURTrb9QQeCwiNXHyvibVFqtxeWwx57FnCqL4Z3y4S4G2tTy
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="160"> <p>pool.supportxmr.com:80
+ </p><p></p> </td>
+</tr>
+</tbody>
+</table>
+<p>根据矿池地址记录，目前，该钱包现在平均算力约170KH/s。 </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/3-4.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图3-4 挖矿算力</p>
+<h3>4.防护建议 </h3>
+<h5></h5>
+<p> </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/2-1.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p></p>
+<p></p>
+<p></p>
+<p>针对非法挖矿，安天建议企业采取如下防护措施：</p>
+<p>1.安装终端防护：安装反病毒软件，针对不同平台建议安装安天智甲终端防御系统Windows/Linux版本；</p>
+<p>2. Strengthen SSH password strength: Avoid weak passwords. It is recommended to use 16-bit or longer passwords, including combinations of uppercase and lowercase letters, numbers and symbols, and avoid using the same password for multiple servers;</p>
+<p>3. Update patches in a timely manner: It is recommended to enable the automatic update function to install system patches, and vulnerable parts such as servers, databases, and middleware should update system patches in time;</p>
+<p>4. Update third-party application patches in time: It is recommended to update third-party application patches such as Tomcat, WebLogic, JBoss, Redis, Hadoop and Apache Struts in a timely manner;</p>
+<p>5. Enable logs: enable key log collection functions (security logs, system logs, error logs, access logs, transfer logs, and cookie logs) to provide a basis for tracking security events;</p>
+<p>6. Host reinforcement: Penetration testing and security reinforcement of the system;</p>
+<p>7. Deploy Intrusion Detection System (IDS): Deploy traffic monitoring software or equipment to facilitate the discovery and traceability of malicious code. Antiy Ocean Exploration Threat Detection System</p>(PTD) takes network traffic as the detection and analysis object, can accurately detect the known massive malicious code and network attack activities, and effectively discover network suspicious behaviors, assets and various unknown threats;
+ <p></p>
+<p>8. Antiy service: If you are attacked by malware, it is recommended to isolate the attacked host in time, and protect the site and wait for the security engineer to check the computer; Antiy 7*24 hours service hotline: 400-840-9234.</p>
+<p>It has been verified that both Windows and Linux versions of Antiy Zhijia Terminal Defense System (IEP) can effectively detect and kill the mining program.</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/4-1.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 4-1 Effective protection of Antiy Zhijia for Windows</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/4-2.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>Figure 4-2 Antiy Zhijia Linux version effectively scans and kills</p>
+<h3>5. Sample Analysis</h3>
+<h5>5.1 Analysis of Windows samples</h5>
+<p>5.1.1 lr.ps1 </p>
+<p>Table 5-1 Script files</p>
+<table border="1" cellpadding="0" cellspacing="0" class="a">
+<tbody>
+<tr>
+<td valign="top" width="113"> <p>virus name
+</p><p></p> </td>
+<td valign="top" width="359"> <p>Trojan/Win32.Ymacco
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>original file name
+</p><p></p> </td>
+<td valign="top" width="359"> <p>lr.ps1
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>MD5
+ </p><p></p> </td>
+<td valign="top" width="359"> <p>701EDFC11EE90B8A0D106B6FD98F5B42
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>File size
+</p><p></p> </td>
+<td valign="top" width="359"> <p>2.84KB (2,904 bytes )
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>interpreted language
+</p><p></p> </td>
+<td valign="top" width="359"> <p>PowerShell
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>VT首次上传时间
+</p><p></p> </td>
+<td valign="top" width="359"> <p>2022-03-06 02:22:32
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>VT检测结果
+</p><p></p> </td>
+<td valign="top" width="359"> <p>12/59
+ </p><p></p> </td>
+</tr>
+</tbody>
+</table>
+<p>删除现有Windows Management Instrumentation (WMI)类的实例，判断系统用户名中是否包含“SYSTEM”字符串，如果包含，使用PowerShell命令下载字符串，执行后续指令。</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-1.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-1 删除WMI类的实例</p>
+<p>如果不包含“SYSTEM”字符串，创建名为“log4”的计划任务，每隔5分钟重复一次。结束竞品进程程序，下载开源门罗币挖矿程序XMRig和配置文件并执行。</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-2.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-2 下载挖矿程序</p>
+<h5>5.2 Linux样本分析</h5>
+<p>5.2.1 lr.sh</p>
+<p>表5-2 脚本文件</p>
+<table border="1" cellpadding="0" cellspacing="0" class="a">
+<tbody>
+<tr>
+<td valign="top" width="113"> <p>病毒名称
+</p><p></p> </td>
+<td valign="top" width="359"> <p>Trojan[Downloader]/Shell.Agent
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>原始文件名
+</p><p></p> </td>
+<td valign="top" width="359"> <p>lr.sh
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>MD5
+ </p><p></p> </td>
+<td valign="top" width="359"> <p>E06704BCBED0CE2D7CADE20FA1D8A7B6
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>文件大小
+</p><p></p> </td>
+<td valign="top" width="359"> <p>2.09KB(2,138字节)
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>解释语言
+</p><p></p> </td>
+<td valign="top" width="359"> <p>Shell
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>VT首次上传时间
+</p><p></p> </td>
+<td valign="top" width="359"> <p>2022-03-05 22:26:41
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="113"> <p>VT检测结果
+</p><p></p> </td>
+<td valign="top" width="359"> <p>20/58
+ </p><p></p> </td>
+</tr>
+</tbody>
+</table>
+<p>结束竞品挖矿进程。 </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-3.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-3 结束竞品挖矿程序</p>
+<p>创建计划任务，查询重要目录下的挖矿关键字符串等信息，如果则强制结束相关进程。 </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-4.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-4 创建计划任务</p>
+<p>下载挖矿程序和配置文件以及脚本文件并执行，最后删除脚本文件。 </p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-5.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-5 下载挖矿程序和配置文件</p>
+<p>5.2.2 apache.sh</p>
+<p>结束竞品程序，独占系统资源。</p>
+<p><img alt="" class="imgSize" src="../../../images/20220527/5-6.png" style="max-width:80%;height:auto;width:auto;"/></p>
+<p>图5-6 结束竞品进程</p>
+<h3>6.IoCs </h3>
+<table border="1" cellpadding="0" cellspacing="0" class="MsoTable15Grid5DarkAccent2">
+<tbody>
+<tr>
+<td valign="top" width="274"> <p>IoCs
+</p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>3EDCDE37DCECB1B5A70B727EA36521DE
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>701EDFC11EE90B8A0D106B6FD98F5B42
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>BF9CC5DF6A9FF24395BD10631369ACBF
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>D6E55C081CCABD81E5DE99ABFE9597F4
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>135276572F4C6A8B10BD31342997B458
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>E06704BCBED0CE2D7CADE20FA1D8A7B6
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>639825B85E02E6B9DFFCA50EE4DE9B6B
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>56BB7858F60C026DF6D48C32099EA2E7
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>14.55.65.217
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>14.55.65.199
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>91.121.140.167
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>pool.supportxmr.com:80
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/x.exe
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/lr.ps1
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/config.json
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/lrr.txt
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/x.rar
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/lr.sh
+ </p><p></p> </td>
+</tr>
+<tr>
+<td valign="top" width="274"> <p>hxxp[:]//14.55.65.217:8080/a/apache.sh
+ </p><p></p> </td>
+</tr>
+</tbody>
+</table>
+</div>
