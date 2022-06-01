@@ -1,0 +1,39 @@
+<div>
+<h2 id="heading-0">Executive Summary</h2>
+<ul>
+<li>On May 27th 2022, <a href="https://twitter.com/nao_sec/status/1530196847679401984" rel="noopener noreferrer" target="_blank">@nao_sec identified</a> a malicious Microsoft Word document using a “ms-msdt” protocol scheme for arbitrary code execution.</li>
+<li>As the industry continues to identify novel ways to abuse this ability over the weekend, Microsoft assigned it as CVE-2022-30190.</li>
+<li>Similar to what we observed with Log4j, the methods of execution and outcomes of this vulnerability continue to expand as it gains more researcher and attacker attention.</li>
+<li>Specific attackers have been observed exploiting the vulnerability. Chinese APTs have potentially made use of it around May 20th, 2022, but first samples identified as easily as mid-April 2022.</li>
+<li>Defenders should consider it a critical vulnerability and seek mitigation steps immediately. Additional effort should then be made to hunt for execution prior to public knowledge as attackers could have already abused it.</li>
+</ul>
+<p><img alt="" class="aligncenter size-full wp-image-67592" height="628" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/Staying-Ahead-of-CVE-2022-30190-Follina-2.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1200"/></p>
+<h2 id="heading-1">Background</h2>
+<p>Concerns are rising after Microsoft confirmed that its Microsoft Windows Support Diagnostic Tool (ms-msdt) contains a zero-click remote code execution vulnerability. The zero day appears to have been exploited in the wild since at least early April 2022, based on current reports.</p>
+<p>The vulnerability, <a href="https://doublepulsar.com/follina-a-microsoft-office-code-execution-vulnerability-1a47fce5629e" rel="noopener noreferrer" target="_blank">dubbed</a> “Follina”, makes use of how the ms-msdt handles URLs. In its simplest form, calling ms-msdt can allow attackers to execute code on a machine. The vulnerability impacts all Windows versions currently supported by Microsoft.</p>
+<p>The call to ms-msdt with code execution is most commonly being reported on through the abuse of Microsoft ,<code>.doc</code> and <code>.rtf</code> files. However, as we continue to gain new insight into the vulnerability, newer methods are coming to light. For example as <a href="https://twitter.com/wdormann/status/1531619222295568384/photo/1" rel="noopener noreferrer" target="_blank">Will Dormann observed</a>, a WGET to an attacker domain can return HTML content with the call to ms-msdt to run code on the machine running the WGET.</p>
+<h2 id="heading-2">Observed Threat Activity</h2>
+<p>Since we are in the very early stages of this vulnerability being publicly known, we expect to update this section as we continue our analysis and research. However, at the time of writing our <a href="https://twitter.com/h2jazi/status/1513870903590936586" rel="noopener noreferrer" target="_blank">colleagues from Malwarebytes</a> identified the first public sample (<a href="https://www.virustotal.com/gui/file/710370f6142d945e142890eb427a368bfc6c5fe13a963f952fb884c38ef06bfa/detection" rel="noopener noreferrer" target="_blank">f531a7c270d43656e34d578c8e71bc39</a>) of a matching Word document on April 12th 2022. This sample is themed around the Russian invasion of Ukraine.</p>
+<p>On May 27th 2022, <a href="https://twitter.com/nao_sec/status/1530196847679401984" rel="noopener noreferrer" target="_blank">@nao_sec</a> tweeted about a file uploaded to VirusTotal from Belarus (<a href="https://www.virustotal.com/gui/file/4a24048f81afbe9fb62e7a6a49adbd1faf41f266b5f9feecdceb567aec096784/detection" rel="noopener noreferrer" target="_blank">52945af1def85b171870b31fa4782e52</a>) that uses Word’s external link to load HTML and then uses the “ms-msdt” scheme to execute PowerShell code. In this sample, the file beacons out to <code>xmlformats[.]com</code>, which at the time of discovery resolved to <code>141[.]105.65.149</code>. Note that the actor behind this particular sample began their infrastructure build around May 20th.</p>
+<p>Subsequently, on May 30th 2022, a Chinese APT was <a href="https://twitter.com/threatinsight/status/1531688214993555457/photo/1" rel="noopener noreferrer" target="_blank">observed by Proofpoint</a> abusing the vulnerability through the C2 domain <code>tibet-gov.web[.]app</code>.</p>
+<h2 id="heading-3">Mitigation Guidance</h2>
+<p>You can disable “<a href="https://admx.help/?Category=Windows_10_2016&amp;Policy=Microsoft.Policies.ScriptedDiagnostics::ScriptedDiagnosticsExecutionPolicy" rel="noopener noreferrer" target="_blank">Troubleshooting wizards</a>” in one of two ways. Either <a href="https://twitter.com/gentilkiwi/status/1531384447219781634" rel="noopener" target="_blank">through GPO</a>:</p>
+HKLM\SOFTWARE\Policies\Microsoft\Windows\ScriptedDiagnostics - EnableDiagnostics - 0
+<p>or in the <a href="https://twitter.com/wdormann/status/1531630522534875140?s=20&amp;t=l98OnlcTprPHuqZytCXYBg" rel="noopener" target="_blank">user interface</a>:</p>
+Group Policy Editor -&gt; Computer Configuration -&gt; Administrative Templates -&gt; System -&gt; Troubleshooting and Diagnostics -&gt; Scripted Diagnostics. Set "Troubleshooting: Allow users to access and run Troubleshooting Wizards" to "disabled".
+<p>Microsoft has also <a href="https://msrc-blog.microsoft.com/2022/05/30/guidance-for-cve-2022-30190-microsoft-support-diagnostic-tool-vulnerability/" rel="noopener noreferrer" target="_blank">recommended</a> disabling the MSDT URL Protocol by executing the following command:</p>
+reg delete HKEY_CLASSES_ROOT\ms-msdt /f
+<h2 id="heading-4">SentinelOne vs CVE-2022-30190 (Follina)</h2>
+<p>The SentinelOne agent detects the execution of known “Fallina” samples exploiting CVE-2022-30190.</p>
+<p><img alt="" class="aligncenter size-full wp-image-67594" height="932" src="https://899029.smushcdn.com/2131410/wp-content/uploads/2022/05/follina-detection.jpg?lossy=0&amp;strip=1&amp;webp=0" style="max-width:800px;height:auto;width:auto;" width="1999"/></p>
+<p></p>
+<p>SentinelOne customers can use the following STAR rule for real-time behavioral detection or as a hunting rule in Deep Visibility:</p>
+EndpointOS = "windows" AND EventType = "Process Creation" AND SrcProcName In Contains Anycase ("winword.exe","excel.exe","powerpnt.exe","outlook.exe") AND TgtProcName Contains Anycase "msdt.exe"
+<h2 id="heading-5">Additional Resources</h2>
+<ul>
+<li><a href="https://msrc-blog.microsoft.com/2022/05/30/guidance-for-cve-2022-30190-microsoft-support-diagnostic-tool-vulnerability/" rel="noopener noreferrer" target="_blank">Guidance for CVE-2022-30190 Microsoft Support Diagnostic Tool Vulnerability</a></li>
+<li><a href="https://isc.sans.edu/forums/diary/New+Microsoft+Office+Attack+Vector+via+msmsdt+Protocol+Scheme+CVE202230190/28694" rel="noopener noreferrer" target="_blank">SANS Internet Storm Center Analysis and Summary</a></li>
+<li><a href="https://doublepulsar.com/follina-a-microsoft-office-code-execution-vulnerability-1a47fce5629e" rel="noopener noreferrer" target="_blank">Summary and Analysis by researcher Kevin Beaumont </a></li>
+<li><a href="https://twitter.com/wdormann/status/1531256385031352321" rel="noopener noreferrer" target="_blank">Additional Research by Will Dormann </a></li>
+</ul>
+</div>

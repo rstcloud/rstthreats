@@ -1,0 +1,207 @@
+<div>
+<p>Exploits &amp; Vulnerabilities</p>
+<h1 class="article-details__title">Patch Your WSO2: CVE-2022-29464 Exploited to Install Linux-Compatible Cobalt Strike Beacons, Other Malware </h1>
+<p>Users of WSO2 products are advised to update their respective products and platforms or to apply the temporary mitigation steps immediately.</p>
+<p>By: Hitomi Kimura, Abraham Camba, Ryan Soliven
+		
+			May 31, 2022
+Read time: 6 min (1579 words)
+	</p>
+<a class="addthis_button_compact addthis_link">
+<img alt="Share" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/share-more.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<a class="addthis_button_print addthis_link">
+<img alt="Print" class="addthis-icon" src="https://www.trendmicro.com/etc.clientlibs/trendresearch/clientlibs/clientlib-trendresearch/resources/img/printer.svg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<p>Save to Folio</p>
+<a class="bs-modal" href="#" target="target" title="Subscribe">
+ Subscribe
+</a>
+<p>We <a href="https://twitter.com/TrendMicroRSRCH/status/1518907747944869889">observed</a> vulnerability <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=2022-29464">CVE-2022-29464</a> being exploited in the wild since April, allowing unrestricted file uploads resulting to arbitrary remote code execution (RCE). Disclosed and patched in April, the security gap was ranked Critical at <a href="https://nvd.nist.gov/vuln/detail/CVE-2022-29464">9.8</a> and affects a number of WSO2 products. It requires no user interaction and administrative privileges for abuse, and can be used to infiltrate networks when left unpatched.</p>
+<p>The vulnerability in WSO2 products was disclosed on April 18 by a user named <a href="https://twitter.com/orange_8361">Orange Tsai</a>, and subsequently given its respective CVE ID and <a href="https://docs.wso2.com/display/Security/Security+Advisory+WSO2-2021-1738">patched</a>. On April 20, a GitHub user with the handle “<a href="https://github.com/hakivvi">hakkivi</a>” published a <a href="https://github.com/hakivvi/CVE-2022-29464/blob/main/exploit.py">proof of the exploit</a>, and we observed exploits to the affected environments the next day. Approximately a week later, the <a href="https://packetstormsecurity.com/files/166921/WSO-Arbitrary-File-Upload-Remote-Code-Execution.html">Metasploit module</a> for the affected environment was available. The gap specifically affects WSO2 API Manager 2.2.0 and above, Identity Server 5.2.0 and above, Identity Server Analytics 5.4.0 to 5.6.0, Identity Server as Key Manager 5.3.0 and above, Open Banking AM 1.4.0 and above, and Enterprise Integrator 6.2.0 and above.</p>
+<p>Vulnerability abuse</p>
+<figure class="image-figure">
+<img alt="figure1-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-1-01.jpg" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 1. Infection chain</figcaption>
+</figure>
+<p>We observed the installation of web shells abusing the vulnerability, and looking at <a href="https://github.com/hakivvi/CVE-2022-29464/blob/main/exploit.py">the proof of concept</a> for this gap, a single malicious Jakarta Server Pages (.JSP, formerly JavaServer Pages) file can be uploaded under locations such as &lt;/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/&gt;. The PoC explains the possibility of placing files in other paths of /authenticationendpoint/, but it is notable that many of the observed attacks are very persistent in the existing PoC implementations.</p>
+<p>However, during analysis, we found other uploaded and installed web application resource (.WAR) files in other locations where the web shells were installed, likely due to the launch of the Metasploit module. From this .war file, Payload.class is extracted by the legitimate Java application server function in the user environment:
+</p>
+<ul>
+<li class="rich-text-li">/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/{5 letters like HcTnA}.war</li>
+<li class="rich-text-li">/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/{5 letters like HcTnA}/WEB-INF/classes/metasploit/Payload.class</li>
+</ul>
+<p>The location /authenticationendpoint/ appears to be a common location among WSO2 products, and we found the web shell installation for this location as well as others occurring in at least four of the seven products affected using either .JSP or .WAR files. Using Trend Micro™ Vision One™, we observed the techniques of the web shell:</p>
+<figure class="image-figure">
+<img alt="figure2-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-2-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 2. Tracking the web shell detection using Trend Micro Vision One Observed Attack Techniques (OATs)</figcaption>
+</figure>
+<p>After the web shell installation, the wget command is called by the Java process to retrieve the auto.sh file. We analyzed this file and found that it was a coinminer installer (detected by Trend Micro as Trojan.SH.MALXMR.UWELO), likely installed via web shell abusing the vulnerability.</p>
+<figure class="image-figure">
+<img alt="figure3-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-3-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 3. Tracking the suspicious execution</figcaption>
+</figure>
+<figure class="image-figure">
+<img alt="figure4-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-4-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 4. Observed wget command execution</figcaption>
+</figure>
+<p>In addition, we also observed a change in permissions by a chmod command running from the Java process. We saw that the threat actor can execute an arbitrary operating system command with the same privileges as the Java process owner. The chmod command was also observed in a Mirai botnet malware sample exploiting the vulnerability <a href="https://success.trendmicro.com/dcx/s/solution/000290730?language=en_US">Spring4Shell</a> (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-22965">CVE-2022-22965</a>) <a href="https://www.trendmicro.com/en_us/research/22/d/cve-2022-22965-analyzing-the-exploitation-of-spring4shell-vulner.html">documented</a> in April.</p>
+<figure class="image-figure">
+<img alt="figure5-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-5-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 5. Tracking chmod command</figcaption>
+</figure>
+<figure class="image-figure">
+<img alt="figure6-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-6-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 6. chmod command execution </figcaption>
+</figure>
+<p>Vision One’s OATs feature shows these command executions as “Low Risk.” As some executions and processes are used by teams and administrators as part of normal operations such as wget and chmod, Low Risk level detections are typically analyzed in combination with High or Critical Risk level items of interest and are therefore tracked:</p>
+<figure class="image-figure">
+<img alt="figure7-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-7-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 7. OATs shows the wget and chmod command executions</figcaption>
+</figure>
+<p>Developed Cobalt Strike beacon for Linux</p>
+<p>After the chmod command execution, the process “LBcgqCymZQhm” (detected by Trend Micro as <a href="https://www.trendmicro.com/vinfo/us/threat-encyclopedia/malware/Backdoor.Linux.COBEACON.AA/">Backdoor.Linux.COBEACON.AA</a>) also executes from the Java process. The process runs on the Linux operating system and performs an outbound connection to the IP address 179[.]60[.]150[.]29:4444. Our analysis found that the IP address is a malicious Cobalt Strike callback destination and command and control (C&amp;C) server that we have been tracking and blocking since March 2021.</p>
+<p>We identified this small 207-byte ELF executable as a Linux-compatible Cobalt Strike beacon during our initial investigation. Considering this environment is running on a Linux operating system and that Cobalt Strike only provides beacons for Windows, it is likely that this sample has been developed by the threat actor for compatibility with Cobalt Strike.</p>
+<figure class="image-figure">
+<img alt="figure8-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-8-wso2-patch-cve-2022-29464-exploited.png" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 8. Tracking an unknown suspicious execution </figcaption>
+</figure>
+<figure class="image-figure">
+<img alt="figure9-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/figure-9-wso2-patch-cve-2022-29464-exploited.jpg" style="max-width:80%;height:auto;width:auto;"/>
+<figcaption>Figure 9. Unknown process execution observed making an outbound connection to a Cobalt Strike callback</figcaption>
+</figure>
+<p>Detection feedback from Trend Micro™ Smart Protection Network™ also showed the installation of malware such as Cobalt Strike beacon for Windows (detected by Trend Micro as Backdoor.Win64.COBEACON.SMA) and hacktool <a href="https://github.com/shadow1ng/fscan">fscan</a> (detected by Trend Micro as HackTool.Win64.NetScan.AE), especially in Windows environments. And while the threat actor should have executed the file placed on the affected computers, the execution was terminated by the solution.</p>
+<p>Conclusion</p>
+<p>Users with the affected products should immediately patch or apply the temporary mitigation procedures recommended by following the steps identified in the <a href="https://docs.wso2.com/display/Security/Security+Advisory+WSO2-2021-1738">WSO2 security advisory</a>. We also released an <a href="https://twitter.com/TrendMicroRSRCH/status/1518907747944869889">initial notification</a> in April after we made a preliminary analysis to inform users and organizations. Three days after the vulnerability was disclosed and a day after the PoC was published, attacks abusing this gap have since been observed and are notably aggressive in installing web shells. Cobalt Strike beacons were also observed in both Linux and Windows environments. Since there is no official beacon provided for Linux, the compatible one we observed would have been prepared by the threat actor. We also observed scan tool fscan for Windows and cryptocurrency miners in the Linux environment. Looking at the vulnerability’s vector analysis, exploiting this gap is easy as the servers using the affected products can be found with a Google or a Shodan search. Moreover, the threat actors appear to be persistent in implementing the existing PoC, and the availability of the Metasploit module is one milestone in the increased exploit of vulnerabilities for cybercriminals.</p>
+<p>While there were previous reports of a Linux-compatible Cobalt Strike beacon we detect as Trojan.Linux.VERMILLIONSTRIKE.A in September 2021, our analysis found that this recent beacon had a different structure. We also observed the installation of other samples of the beacon from the same family in other environments affected by the vulnerability. Considering this, we expect to see samples of this family in vulnerable Linux environments more actively in the future as the installation of backdoor beacons indicate the potential for more malicious and damaging activities than the installation of coinminers.</p>
+<p>WSO2 products are often used in a number of industries such as healthcare, banking, energy, education, government, and communications, <a href="https://wso2.com/about/customers/">among others</a>. A quick scan of their API Manager's GitHub <a href="https://github.com/wso2/product-apim">page</a> shows the source code to be committed at least once a day, and <a href="https://github.com/wso2/product-apim/issues?q=is%3Aopen+is%3Aissue">show</a> over 8,000 tickets — a combination of open issues yet to be addressed and issues already remediated — which are indications that its users and contributors are active in its development. Looking at these factors, an abuse of this exploit to infiltrate or infect these critical sectors with malware would not only mean a significant amount of disruption, but also affect a trove of personal and proprietary information that can significantly affect customers, organizations, economy, and national security.</p>
+<p>Compared to other servers, WSO2 Identity Server can be considered one of the most valuable assets for infiltration for threat actors as it is an open source Identity Access Management (IAM) product. Threat actors getting access to the IAM servers could gain access to all services and user data that have access management under the WSO2 products server at will. Administrators and IT teams assigned for clean up should check around the WSO2 product to see if there are any files, users, and/or processes that do not belong and delete them all. We continue to observe other attacks and infections that can potentially exploit this vulnerability. </p>
+<p>While the patching of products reportedly affected by the exploit and abuse is strongly recommended, some of the best practices include knowing your environment’s inventory, assessing the impact of vulnerability announcements from vendors, and patching before abuses in the wild are reported. A quick response is necessary especially in cases of RCE vulnerabilities such as this. In situations where immediate patching cannot be done and even if you are not a user of the affected products, we recommend that teams and users check their criteria and workflow preparations to verify the procedures for performing irregular operations as quickly as necessary.</p>
+<p>Trend Micro solutions</p>
+<p>Trend Micro™ TippingPoint™ customers are protected under this rule:</p>
+<ul>
+<li class="rich-text-li">41286: HTTP: WSO2 API Manager ToolsAnyFileUploadExecutor Directory Traversal Vulnerability</li>
+</ul>
+<p>Trend Micro™ Vision One™ Observed Attack Techniques (OATs) informs customers of this attack as:</p>
+<ul>
+<li class="rich-text-li">File detection for web shell</li>
+<li class="rich-text-li">Wget execution</li>
+<li class="rich-text-li">Download via curl or wget</li>
+<li class="rich-text-li">Set execute attribute via chmod<ul>
+<li class="rich-text-li">The Execution Profile also shows the execution of OS commands from Java processes such as wget/chmod.</li>
+</ul>
+</li>
+</ul>
+<p>Indicators of Compromise (IOCs)</p>
+<table border="1" cellpadding="1" cellspacing="0">
+<tbody><tr><th scope="col">File/Path</th>
+<th scope="col">SHA256</th>
+<th scope="col">Detections</th>
+</tr><tr><td>/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/{6 Random letters}.jsp</td>
+<td>2effebac6dc4fe8924315403f3dbda2fddfd7ea616faaf5cac2d7f6c85254e9e</td>
+<td rowspan="3">Backdoor.Java.WEBSHELL.SMC</td>
+</tr><tr><td>/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/temp.jsp</td>
+<td>d2ec9ec31013320eb3f4e1886a0e1a4720919761bd0cb62dbd66a9b8f13cc23d</td>
+</tr><tr><td>/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/unit.jsp</td>
+<td>9afec5620d7cfd959b3ec81442fefc05b4d0200194bc4443de47ea0b9f452b0f</td>
+</tr><tr><td>/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/wso2is-08-22-2019_19_29.jsp</td>
+<td>293eca7343c5cab11427431c93f66f972ce14061691ceb9bd7546b9fb283b1d0</td>
+<td>Backdoor.Java.WEBSHELL.YXCDVZ</td>
+</tr><tr><td>/&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/authenticationendpoint/9.jsp</td>
+<td>5c0970c2c253c2120d722c37aa397b1ce5fa61108f8441a84001eed5b565dc78</td>
+<td>Backdoor.Java.WEBSHELL.YXCD4Z</td>
+</tr><tr><td>&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/{5 letters like HcTnA}.war</td>
+<td>&lt;Hash values are shuffled for each sample&gt;</td>
+<td>JAVA_EXPLOIT.SBGX
+Trojan.Java.CVE20124681.D</td>
+</tr><tr><td>&lt;Install Path for WSO2 Product&gt;/repository/deployment/server/webapps/{5 letters like HcTnA}/WEB-INF/classes/metasploit/Payload.class</td>
+<td>0c4c5c036272eb19d5617c9ce072e14ffb795a354dc682e6b0d144143ac4c7b4</td>
+<td>Trojan.Java.CVE20124681.D</td>
+</tr><tr><td>&lt;Install Path for WSO2 Product&gt;/tmp/LBcgqCymZQhm</td>
+<td>4993806d2f77096ab28d589f8ee91869fc6045725ec9bc83b9e57f78cf86a5b8</td>
+<td>Backdoor.Linux.COBEACON.AA</td>
+</tr><tr><td>&lt;Install Path for WSO2 Product&gt;/tmp/uCQeONYQ</td>
+<td>58c0dd936dd314637a7a85db5227ed0ebbfcf33508372a646c09c98ec2dd4e5d</td>
+<td>Backdoor.Linux.COBEACON.AB</td>
+</tr><tr><td>B0300521ED21DD328FA3A989E8229423</td>
+<td>92443dfd40df1dc87976fc827e46a264979d5ed2a8e2153864d6f2725a9aab0c</td>
+<td>Backdoor.Win64.COBEACON.SMA</td>
+</tr><tr><td>C:\Windows\Temp\fscan.exe</td>
+<td>d26437cc6ff9d094d42947d214c80a313e064ca403e9dd33a8110d7e859dd10e</td>
+<td>HackTool.Win64.NetScan.AE</td>
+</tr><tr><td>/dev/shm/hezb</td>
+<td>aaa4aaa14e351350fccbda72d442995a65bd1bb8281d97d1153401e31365a3e9</td>
+<td>Coinminer.Linux.MALXMR.SMDSL64</td>
+</tr><tr><td>auto.sh</td>
+<td>a3f08adadb93ee760f81ef96cc08810070f4f5a75d5417191975da5ab778766c</td>
+<td>Trojan.SH.MALXMR.UWELO</td>
+</tr><tr><td>setup_c3pool_miner.sh</td>
+<td>0bade474b812222dbb9114125465f9dd558e6368f155a6cd20ca352ddd20549e</td>
+<td>Coinminer.SH.MALXMR.YXBLU</td>
+</tr></tbody></table>
+<p>URLs</p>
+<p>hxxp://13[.]94[.]40[.]162:8088/auto[.]sh</p>
+<p>179[.]60[.]150[.]29:4444</p>
+<p>MITRE ATT&amp;CK Tactics and Techniques</p>
+<figure class="image-figure">
+<img alt="MITRE-patch-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware" src="https://marvel-b1-cdn.bc0a.com/f00000000017219/www.trendmicro.com/content/dam/trendmicro/global/en/research/22/e/patch-your-wso2-cve-2022-29464-exploited-to-install-linux-compatible-cobalt-strike-beacons-other-malware/Mitre%20table-01.jpg" style="max-width:80%;height:auto;width:auto;"/>
+</figure>
+Tags
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/malware">Malware</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:environments/endpoints">Endpoints</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/exploits-and-vulnerabilities">Exploits &amp; Vulnerabilities</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:medium/article">Articles, News, Reports</a>
+|
+<a class="tag--list-anchor" href="https://www.trendmicro.com/en_us/research.html?category=trend-micro-research:threats/cyber-threats">Cyber Threats</a>
+<h3 class="article-authors__title">
+	
+		Authors
+	
+</h3>
+<ul class="article-authors__list">
+<li class="article-authors__list-items">
+<p>Hitomi Kimura</p>
+<p>Incident Response Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Abraham Camba</p>
+<p>Threats Analyst</p>
+</li>
+<li class="article-authors__list-items">
+<p>Ryan Soliven</p>
+<p>Incident Response Analyst</p>
+</li>
+</ul>
+<a class="article-authors__button" href="mailto:tm_research@trendmicro.com" id="article-authors-contact-us-button" target="target">
+		Contact Us
+	</a>
+<a class="article-authors__button subscribe bs-modal" href="#" target="target">
+		Subscribe
+	</a>
+<h3 class="related--articles-title">Related Articles</h3>
+<ul class="related--articles-items">
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/e/new-linux-based-ransomware-cheerscrypt-targets-exsi-devices.html">
+					New Linux-Based Ransomware Cheerscrypt Targets ESXi Devices
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/e/uncovering-a-kingminer-botnet-attack-using-trend-micro-managed-x.html">
+					Uncovering a Kingminer Botnet Attack Using Trend Micro™ Managed XDR
+				</a>
+</li>
+<li class="related--articles-item">
+<a class="related--articles-item-anchor" href="https://www.trendmicro.com/en_us/research/22/e/pwn2own-video.html">
+					Celebrating 15 Years of Pwn2Own
+				</a>
+</li>
+</ul>
+<a href="https://www.trendmicro.com/en_us/research.html">
+				See all articles
+			</a>
+<a href="https://www.trendmicro.com/en_us/research.html">
+</a>
+</div>

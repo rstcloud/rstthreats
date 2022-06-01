@@ -1,0 +1,44 @@
+<div>
+<img alt="" class="object-cover wp-post-image" height="800" src="https://news.sophos.com/wp-content/uploads/2022/05/recaptioned.png?w=1200" style="max-width:800px;height:auto;width:auto;" width="1200"/>
+<img alt="SophosLabs Uncut" src="https://news.sophos.com/wp-content/uploads/2021/05/Category-Icon-Threat-Research@2x.min_.png" style="max-width:80%;height:auto;width:auto;"/>
+<h1 class="text-style-h1 mb-8">Malicious Word doc taps previously unknown Microsoft Office vulnerability</h1>
+						MSDT.exe misuse in May makes for Memorial Day Monday mayhem					
+		Written by 				
+<a class="author url fn" href="https://news.sophos.com/en-us/author/andrew-brandt/" rel="author" title="Posts by Andrew Brandt">Andrew Brandt</a>
+<a href="https://news.sophos.com/en-us/2022/05/30/malicious-word-doc-taps-previously-unknown-microsoft-office-vulnerability/" rel="bookmark">May 30, 2022</a>
+<a class="category-tag-pill" href="https://news.sophos.com/en-us/category/threat-research/sophoslabs-uncut/">SophosLabs Uncut</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/category/threat-research/">Threat Research</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/featured/">featured</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/follina/">Follina</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/microsoft-office/">Microsoft Office</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/ms-msdt/">ms-msdt</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/msdt/">msdt</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/msdt-exe/">msdt.exe</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/vulnerability/">vulnerability</a> <a class="category-tag-pill" href="https://news.sophos.com/en-us/tag/zero-day/">Zero-day</a>
+<p>Over the weekend, several security researchers <a href="https://twitter.com/nao_sec/status/1530196847679401984">noticed</a> that an unknown threat actor has been spreading a malicious Word document that appears to invoke a previously undisclosed vulnerability in Microsoft Office. The vulnerability permits the malicious document to open a URL and begin an infection chain.</p>
+<p>The infection process leverages the Windows utility msdt.exe, which is used to run various Windows troubleshooter packs. The malicious document that abuses this tool <a href="https://twitter.com/didierstevens/status/1530926363770855427">invokes it</a> without user interaction, and it can allegedly run even if you just “preview” the document in Windows Explorer (but only if it’s an RTF file).</p>
+<figure class="wp-caption alignnone" id="attachment_84938"><a href="https://news.sophos.com/wp-content/uploads/2022/05/L9tHNGWO.png-medium.png"><img alt="" class="wp-image-84938" height="43" src="https://news.sophos.com/wp-content/uploads/2022/05/L9tHNGWO.png-medium.png" style="max-width:800px;height:auto;width:auto;" width="917"/></a><figcaption class="wp-caption-text" id="caption-attachment-84938">An example of how the malicious document appears in Process Explorer, spawning msdt.exe as a child of WINWORD.EXE</figcaption></figure>
+<p>The researcher Kevin Beaumont has <a href="https://doublepulsar.com/follina-a-microsoft-office-code-execution-vulnerability-1a47fce5629e">published</a> a good survey of how the attack unfolds (he named it “Follina”) and has linked to other examples of malicious documents researchers have found in the past few days, some dating back to March.</p>
+<h3>How the exploit works</h3>
+<p>The script in one known-malicious Word document calls an HTML file from a remote URL. The attackers chose to use the domain xmlformats[.]com, probably because it’s very similar looking to the legitimate openxmlformats.org domain used in most Word documents.<a href="https://news.sophos.com/wp-content/uploads/2022/05/msdt-document-xml-rels-2.png"><img alt="" class="alignnone wp-image-84930" height="116" src="https://news.sophos.com/wp-content/uploads/2022/05/msdt-document-xml-rels-2.png" style="max-width:800px;height:auto;width:auto;" width="844"/></a>That HTML file contains a block of code with weird characteristics: 6324 junk bytes (61 lines of commented rows of 100 ‘A’ characters), followed by a lightly obfuscated script that, at one point, downloaded and executed a payload.</p>
+<p><a href="https://news.sophos.com/wp-content/uploads/2022/05/script-with-As-in-it.png"><img alt="" class="alignnone wp-image-84932" height="221" src="https://news.sophos.com/wp-content/uploads/2022/05/script-with-As-in-it.png" style="max-width:800px;height:auto;width:auto;" width="847"/></a>Word from my Labs colleagues is that we may not have seen the complete chain of events relating to the samples that have been publicized. But there are mitigation steps you can take right away to prevent it from being used against you (or machines you manage).</p>
+<h3>Detection and guidance</h3>
+<p>As mail appears to be a threat vector, Sophos products will detect the attachment under the CXmail/OleDl-AG detection name, when it’s embedded in a message. Additionally, we have released the Troj/DocDl-AGDX detection for known variants of the maldocs (and the HTML they bring down). The behavioral detection team is also updating our rules to enhance our in-depth protection and monitor for activity. </p>
+<p>We’ll continue working on this and will be monitoring for additional samples or abuse of this novel exploit, and plan to publish more information about the bug in the coming days.</p>
+<h3>Acknowledgments</h3>
+<p>SophosLabs acknowledges the efforts of Richard Cohen, Gabor Szappanos, Ronny Tijink, and Michael Wood, who coordinated internal efforts to track and counter the Follina bug, and the external researchers who brought this to the attention of the security community.</p>
+<p> </p>
+<ul class="flex justify-center items-center space-x-6" id="social-sharing">
+<li class="facebook">
+<a class="js-share-modal" href="http://www.facebook.com/share.php?u=https://news.sophos.com/?p=84899&amp;title=Malicious%20Word%20doc%20taps%20previously%20unknown%20Microsoft%20Office%20vulnerability" title="Share on Facebook">
+Share on Facebook
+</a>
+</li>
+<li class="twitter">
+<a class="js-share-modal" href="http://twitter.com/intent/tweet?text=Malicious%20Word%20doc%20taps%20previously%20unknown%20Microsoft%20Office%20vulnerability%20https%3A%2F%2Fnews.sophos.com%2F%3Fp%3D84899" title="Share on Twitter">
+Share on Twitter
+</a>
+</li>
+<li class="linkedin">
+<a href="http://www.linkedin.com/shareArticle?mini=true&amp;url=https://news.sophos.com/en-us/2022/05/30/malicious-word-doc-taps-previously-unknown-microsoft-office-vulnerability/" title="Share on LinkedIn">
+Share on LinkedIn
+</a>
+</li>
+<li class="comments">
+<a class="flex items-center space-x-1" href="#comments" title="Leave a Reply">
+</a>
+</li>
+</ul>
+</div>

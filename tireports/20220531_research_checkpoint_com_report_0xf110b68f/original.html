@@ -1,0 +1,1752 @@
+<html lang="en-US" class="no-js"><head>
+<meta charset="UTF-8">
+<title>XLoader Botnet: Find Me If You Can - Check Point Research</title>
+<meta class="swiftype" name="popularity" data-type="integer" content="4">
+<link href="//research.checkpoint.com/wp-content/themes/research/img/icons/favicon.ico" rel="shortcut icon">
+<link href="//research.checkpoint.com/wp-content/themes/research/img/icons/touch.png" rel="apple-touch-icon-precomposed">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Latest Research by our Team">
+<!-- Google Tag Manager -->
+<script type="text/javascript" async="" src="//munchkin.marketo.net/161/munchkin.js"></script><script type="text/javascript" async="" src="https://assets.trendemon.com/tag/trends.min.js" id="trdflame"></script><script async="" src="https://connect.facebook.net/en_US/fbevents.js"></script><script async="" type="text/javascript" src="//abrtp1-cdn.marketo.com/rtp-api/v1/rtp.js?aid=checkpoint"></script><script type="text/javascript" async="" src="https://static.ads-twitter.com/uwt.js"></script><script type="text/javascript" async="" src="https://snap.licdn.com/li.lms-analytics/insight.min.js"></script><script type="text/javascript" async="" src="https://www.google-analytics.com/analytics.js"></script><script type="text/javascript" async="" src="https://j.6sc.co/6si.min.js"></script><script async="" src="https://buttons-config.sharethis.com/js/5a3031770f16c70012a3c297.js"></script><script async="" src="https://www.googletagmanager.com/gtm.js?id=GTM-5JCRGP"></script><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5JCRGP');</script>
+<!-- End Google Tag Manager -->
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
+	<!-- This site is optimized with the Yoast SEO plugin v18.5.1 - https://yoast.com/wordpress/plugins/seo/ -->
+	<link rel="canonical" href="https://research.checkpoint.com/2022/xloader-botnet-find-me-if-you-can/">
+	<meta property="og:locale" content="en_US">
+	<meta property="og:type" content="article">
+	<meta property="og:title" content="XLoader Botnet: Find Me If You Can - Check Point Research">
+	<meta property="og:description" content="Research by: Alexey Bukhteyev &amp; Raman Ladutska Introduction In July 2021, CPR released a series of three publications covering different aspects of how the Formbook and XLoader malware families function. We described how XLoader emerged in the Darknet community to fill the empty niche after Formbook sales were abruptly stopped by its author. We did... Click to Read More">
+	<meta property="og:url" content="https://research.checkpoint.com/2022/xloader-botnet-find-me-if-you-can/">
+	<meta property="og:site_name" content="Check Point Research">
+	<meta property="article:published_time" content="2022-05-31T11:37:34+00:00">
+	<meta property="og:image" content="https://research.checkpoint.com/wp-content/uploads/2022/05/XLoader_Article.jpg">
+	<meta property="og:image:width" content="1021">
+	<meta property="og:image:height" content="580">
+	<meta property="og:image:type" content="image/jpeg">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta name="twitter:label1" content="Written by">
+	<meta name="twitter:data1" content="Alexey Bukhteyev">
+	<meta name="twitter:label2" content="Est. reading time">
+	<meta name="twitter:data2" content="14 minutes">
+	<!-- / Yoast SEO plugin. -->
+
+
+<link rel="dns-prefetch" href="//code.jquery.com">
+<link rel="dns-prefetch" href="//use.fontawesome.com">
+<link rel="stylesheet" id="wp-block-library-css" href="//research.checkpoint.com/wp-includes/css/dist/block-library/style.min.css?ver=5.9.3" media="all">
+<style id="global-styles-inline-css" type="text/css">
+body{--wp--preset--color--black: #000000;--wp--preset--color--cyan-bluish-gray: #abb8c3;--wp--preset--color--white: #ffffff;--wp--preset--color--pale-pink: #f78da7;--wp--preset--color--vivid-red: #cf2e2e;--wp--preset--color--luminous-vivid-orange: #ff6900;--wp--preset--color--luminous-vivid-amber: #fcb900;--wp--preset--color--light-green-cyan: #7bdcb5;--wp--preset--color--vivid-green-cyan: #00d084;--wp--preset--color--pale-cyan-blue: #8ed1fc;--wp--preset--color--vivid-cyan-blue: #0693e3;--wp--preset--color--vivid-purple: #9b51e0;--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple: linear-gradient(135deg,rgba(6,147,227,1) 0%,rgb(155,81,224) 100%);--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan: linear-gradient(135deg,rgb(122,220,180) 0%,rgb(0,208,130) 100%);--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange: linear-gradient(135deg,rgba(252,185,0,1) 0%,rgba(255,105,0,1) 100%);--wp--preset--gradient--luminous-vivid-orange-to-vivid-red: linear-gradient(135deg,rgba(255,105,0,1) 0%,rgb(207,46,46) 100%);--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray: linear-gradient(135deg,rgb(238,238,238) 0%,rgb(169,184,195) 100%);--wp--preset--gradient--cool-to-warm-spectrum: linear-gradient(135deg,rgb(74,234,220) 0%,rgb(151,120,209) 20%,rgb(207,42,186) 40%,rgb(238,44,130) 60%,rgb(251,105,98) 80%,rgb(254,248,76) 100%);--wp--preset--gradient--blush-light-purple: linear-gradient(135deg,rgb(255,206,236) 0%,rgb(152,150,240) 100%);--wp--preset--gradient--blush-bordeaux: linear-gradient(135deg,rgb(254,205,165) 0%,rgb(254,45,45) 50%,rgb(107,0,62) 100%);--wp--preset--gradient--luminous-dusk: linear-gradient(135deg,rgb(255,203,112) 0%,rgb(199,81,192) 50%,rgb(65,88,208) 100%);--wp--preset--gradient--pale-ocean: linear-gradient(135deg,rgb(255,245,203) 0%,rgb(182,227,212) 50%,rgb(51,167,181) 100%);--wp--preset--gradient--electric-grass: linear-gradient(135deg,rgb(202,248,128) 0%,rgb(113,206,126) 100%);--wp--preset--gradient--midnight: linear-gradient(135deg,rgb(2,3,129) 0%,rgb(40,116,252) 100%);--wp--preset--duotone--dark-grayscale: url('#wp-duotone-dark-grayscale');--wp--preset--duotone--grayscale: url('#wp-duotone-grayscale');--wp--preset--duotone--purple-yellow: url('#wp-duotone-purple-yellow');--wp--preset--duotone--blue-red: url('#wp-duotone-blue-red');--wp--preset--duotone--midnight: url('#wp-duotone-midnight');--wp--preset--duotone--magenta-yellow: url('#wp-duotone-magenta-yellow');--wp--preset--duotone--purple-green: url('#wp-duotone-purple-green');--wp--preset--duotone--blue-orange: url('#wp-duotone-blue-orange');--wp--preset--font-size--small: 13px;--wp--preset--font-size--medium: 20px;--wp--preset--font-size--large: 36px;--wp--preset--font-size--x-large: 42px;}.has-black-color{color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-color{color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-color{color: var(--wp--preset--color--white) !important;}.has-pale-pink-color{color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-color{color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-color{color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-color{color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-color{color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-color{color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-color{color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-color{color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-color{color: var(--wp--preset--color--vivid-purple) !important;}.has-black-background-color{background-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-background-color{background-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-background-color{background-color: var(--wp--preset--color--white) !important;}.has-pale-pink-background-color{background-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-background-color{background-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-background-color{background-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-background-color{background-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-background-color{background-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-background-color{background-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-background-color{background-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-background-color{background-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-background-color{background-color: var(--wp--preset--color--vivid-purple) !important;}.has-black-border-color{border-color: var(--wp--preset--color--black) !important;}.has-cyan-bluish-gray-border-color{border-color: var(--wp--preset--color--cyan-bluish-gray) !important;}.has-white-border-color{border-color: var(--wp--preset--color--white) !important;}.has-pale-pink-border-color{border-color: var(--wp--preset--color--pale-pink) !important;}.has-vivid-red-border-color{border-color: var(--wp--preset--color--vivid-red) !important;}.has-luminous-vivid-orange-border-color{border-color: var(--wp--preset--color--luminous-vivid-orange) !important;}.has-luminous-vivid-amber-border-color{border-color: var(--wp--preset--color--luminous-vivid-amber) !important;}.has-light-green-cyan-border-color{border-color: var(--wp--preset--color--light-green-cyan) !important;}.has-vivid-green-cyan-border-color{border-color: var(--wp--preset--color--vivid-green-cyan) !important;}.has-pale-cyan-blue-border-color{border-color: var(--wp--preset--color--pale-cyan-blue) !important;}.has-vivid-cyan-blue-border-color{border-color: var(--wp--preset--color--vivid-cyan-blue) !important;}.has-vivid-purple-border-color{border-color: var(--wp--preset--color--vivid-purple) !important;}.has-vivid-cyan-blue-to-vivid-purple-gradient-background{background: var(--wp--preset--gradient--vivid-cyan-blue-to-vivid-purple) !important;}.has-light-green-cyan-to-vivid-green-cyan-gradient-background{background: var(--wp--preset--gradient--light-green-cyan-to-vivid-green-cyan) !important;}.has-luminous-vivid-amber-to-luminous-vivid-orange-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-amber-to-luminous-vivid-orange) !important;}.has-luminous-vivid-orange-to-vivid-red-gradient-background{background: var(--wp--preset--gradient--luminous-vivid-orange-to-vivid-red) !important;}.has-very-light-gray-to-cyan-bluish-gray-gradient-background{background: var(--wp--preset--gradient--very-light-gray-to-cyan-bluish-gray) !important;}.has-cool-to-warm-spectrum-gradient-background{background: var(--wp--preset--gradient--cool-to-warm-spectrum) !important;}.has-blush-light-purple-gradient-background{background: var(--wp--preset--gradient--blush-light-purple) !important;}.has-blush-bordeaux-gradient-background{background: var(--wp--preset--gradient--blush-bordeaux) !important;}.has-luminous-dusk-gradient-background{background: var(--wp--preset--gradient--luminous-dusk) !important;}.has-pale-ocean-gradient-background{background: var(--wp--preset--gradient--pale-ocean) !important;}.has-electric-grass-gradient-background{background: var(--wp--preset--gradient--electric-grass) !important;}.has-midnight-gradient-background{background: var(--wp--preset--gradient--midnight) !important;}.has-small-font-size{font-size: var(--wp--preset--font-size--small) !important;}.has-medium-font-size{font-size: var(--wp--preset--font-size--medium) !important;}.has-large-font-size{font-size: var(--wp--preset--font-size--large) !important;}.has-x-large-font-size{font-size: var(--wp--preset--font-size--x-large) !important;}
+</style>
+<link rel="stylesheet" id="research-css" href="//research.checkpoint.com/wp-content/themes/research/style.css?ver=1.31" media="all">
+<link rel="stylesheet" id="bootstrap_css-css" href="//research.checkpoint.com/wp-content/themes/research/css/bootstrap.min.css?ver=4.1" media="all">
+<link rel="stylesheet" id="flickity-css" href="//research.checkpoint.com/wp-content/themes/research/css/flickity.min.css?ver=1.1" media="all">
+<link rel="stylesheet" id="fa-css" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css?ver=5.6.3" media="all">
+<link rel="stylesheet" id="enlighterjs-css" href="https://research.checkpoint.com/wp-content/plugins/enlighter/cache/enlighterjs.min.css?ver=TJ0/7+iAWMKbDKS" media="all">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.0.min.js?ver=5.9.3" id="jquery-js"></script>
+<script type="text/javascript" src="//research.checkpoint.com/wp-content/themes/research/js/lib/bootstrap.bundle.min.js?ver=4.1" id="bootstrap_js-js"></script>
+<script type="text/javascript" src="//research.checkpoint.com/wp-content/themes/research/js/lib/flickity.pkgd.min.js?ver=1.0.1" id="flickity-js"></script>
+<script type="text/javascript" src="//research.checkpoint.com/wp-content/themes/research/js/single-post.js?ver=1.0.4" id="post-js"></script>
+<!-- Stream WordPress user activity plugin v3.9.0 -->
+      <meta name="onesignal" content="wordpress-plugin">
+            <script>
+
+      window.OneSignal = window.OneSignal || [];
+
+      OneSignal.push( function() {
+        OneSignal.SERVICE_WORKER_UPDATER_PATH = "OneSignalSDKUpdaterWorker.js.php";
+                      OneSignal.SERVICE_WORKER_PATH = "OneSignalSDKWorker.js.php";
+                      OneSignal.SERVICE_WORKER_PARAM = { scope: "/" };
+        OneSignal.setDefaultNotificationUrl("//research.checkpoint.com");
+        var oneSignal_options = {};
+        window._oneSignalInitOptions = oneSignal_options;
+
+        oneSignal_options['wordpress'] = true;
+oneSignal_options['appId'] = '3ba17c77-81bb-4a83-8917-7b62de3d6e22';
+oneSignal_options['allowLocalhostAsSecureOrigin'] = true;
+oneSignal_options['welcomeNotification'] = { };
+oneSignal_options['welcomeNotification']['disable'] = true;
+oneSignal_options['path'] = "https://research.checkpoint.com/wp-content/plugins/onesignal-free-web-push-notifications/sdk_files/";
+oneSignal_options['safari_web_id'] = "web.onesignal.auto.45da02f8-0e2a-491b-9d85-c6fbaf55a283";
+oneSignal_options['promptOptions'] = { };
+                OneSignal.init(window._oneSignalInitOptions);
+                OneSignal.showSlidedownPrompt();      });
+
+      function documentInitOneSignal() {
+        var oneSignal_elements = document.getElementsByClassName("OneSignal-prompt");
+
+        var oneSignalLinkClickHandler = function(event) { OneSignal.push(['registerForPushNotifications']); event.preventDefault(); };        for(var i = 0; i < oneSignal_elements.length; i++)
+          oneSignal_elements[i].addEventListener('click', oneSignalLinkClickHandler, false);
+      }
+
+      if (document.readyState === 'complete') {
+           documentInitOneSignal();
+      }
+      else {
+           window.addEventListener("load", function(event){
+               documentInitOneSignal();
+          });
+      }
+    </script>
+<link rel="amphtml" href="https://research.checkpoint.com/2022/xloader-botnet-find-me-if-you-can/amp/"><script src="//research.checkpoint.com/wp-content/themes/research/header/inc-header.js?v=1.1"></script>
+<link rel="stylesheet" href="//research.checkpoint.com/wp-content/themes/research/header/style.css">
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<script src="https://cdn.onesignal.com/sdks/OneSignalPageSDKES6.js?v=151513" async=""></script><style type="text/css">#st-2 {
+  font-family: "Helvetica Neue", Verdana, Helvetica, Arial, sans-serif;;
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  backface-visibility: hidden;
+  display: block;
+  position: fixed;
+  opacity: 1;
+  text-align: left;
+  top: 160px;
+  z-index: 94034;
+}
+#st-2.st-left {
+  left: 0px;
+}
+#st-2.st-hidden.st-left {
+  left: -48px;
+}
+#st-2.st-hidden {
+  width: 96px;
+}
+#st-2 > div {
+  clear: left;
+  float: left;
+}
+#st-2 .st-btn {
+  -moz-box-sizing: border-box;
+-webkit-box-sizing: border-box;
+box-sizing: border-box;
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  border: none;
+  cursor: pointer;
+  display: inline-block;
+  font-size: NaNpx;
+  height: 48px;
+  line-height: 24px;
+  margin-bottom: 0;
+  opacity: 1;
+  overflow: hidden;
+  padding: 12px;
+  position: relative;
+  text-align: left;
+  top: 0;
+  vertical-align: top;
+  white-space: nowrap;
+  width: 48px;
+}
+#st-2 .st-btn.st-first {
+  border-top: none;
+  border-top-right-radius: 20px;
+}
+#st-2 .st-btn.st-last {
+  border-bottom: none;
+  border-bottom-right-radius: 20px;
+}
+#st-2 .st-btn > svg {
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  height: 24px;
+  margin-left: 0;
+  vertical-align: top;
+  width: 24px;
+}
+#st-2 .st-btn > img {
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  height: 24px;
+  margin-left: 0;
+  vertical-align: top;
+  width: 24px;
+}
+#st-2 .st-btn > span {
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  color: #fff;
+  display: inline-block;
+  font-weight: 500;
+  left: -35px;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  padding: 0 6px;
+  position: relative;
+  vertical-align: top;
+  filter: alpha(opacity=0);
+}
+#st-2 .st-btn.st-hide-label > span {
+  display: none !important;
+}
+#st-2 .st-total {
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  background: #fff;
+  color: #555;
+  display: inline-block;
+  font-weight: 500;
+  line-height: 18px;
+  margin-right: 0;
+  min-height: 34px;
+  max-width: 80px;
+  opacity: 1;
+  padding: 4px 0;
+  text-align: center;
+  width: 48px;
+}
+#st-2 .st-total.st-hidden {
+  display: none;
+}
+#st-2 .st-total > span {
+  display: block;
+  font-size: 18px;
+  line-height: 21px;
+  padding: 0;
+}
+#st-2 .st-total > span.st-shares {
+  font-size: 11px;
+  line-height: 11px;
+}
+#st-2 .st-toggle {
+  left: -48px;
+  -moz-transition: all 0.2s ease-in; -ms-transition: all 0.2s ease-in; -o-transition: all 0.2s ease-in; -webkit-transition: all 0.2s ease-in; transition: all 0.2s ease-in;
+  background: #ccc;
+  border-bottom-right-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 24px;
+  position: relative;
+  text-align: center;
+  width: 48px;
+}
+#st-2.st-hidden .st-toggle {
+  border-top-right-radius: 20px;
+}
+#st-2.st-left .st-toggle .st-left {
+  display: inline-block;
+}
+#st-2.st-left.st-hidden .st-toggle .st-left {
+  display: none;
+}
+#st-2.st-left .st-toggle .st-right {
+  display: none;
+}
+#st-2.st-left.st-hidden .st-toggle .st-right {
+  display: inline-block;
+}#st-2:hover .st-toggle {
+  left: 0;
+}
+#st-2.st-hidden:hover .st-toggle {
+  left: 48px;
+}
+#st-2.st-toggleable:hover .st-btn.st-last {
+  border-bottom-right-radius: 0;
+}
+#st-2.st-toggleable:hover .st-btn.st-last:hover {
+  border-bottom-right-radius: 20px;
+}
+#st-2 .st-btn:hover {
+  border-bottom-right-radius: 20px;
+  border-top-right-radius: 20px;
+}
+#st-2.st-has-labels .st-btn:hover {
+  width: 120px;
+}
+#st-2:not(.st-has-labels) .st-btn:hover {
+  width: 62px;
+}
+#st-2 .st-btn.st-hide-label:hover {
+  width: 62px;
+}
+#st-2 .st-btn:hover > svg {
+  margin-left: 5px;
+}
+#st-2 .st-btn:hover > img {
+  margin-left: 5px;
+}
+#st-2 .st-btn:hover > span {
+  opacity: 1;
+  display: inline-block;
+  left: 0;
+  filter: alpha(opacity=100);
+}
+@media (max-width: 1024px) {
+  #st-2 .st-btn:hover > svg {
+    margin-left: 0;
+  }
+  #st-2 .st-btn:hover > span {
+    display: none;
+  }
+}@media (max-width: 1024px) {
+  #st-2 {
+  bottom: 0;
+  display: flex;
+  left: 0;
+  right: 0;
+  top: auto;
+  width: 100%;
+}
+#st-2.st-hidden {
+  bottom: -48px;
+  width: 100%;
+}
+#st-2.st-hidden.st-left {
+  left: 0;
+}
+#st-2.st-hidden.st-right {
+  right: 0;
+}
+#st-2 > div {
+  -moz-flex: 1;
+  -ms-flex: 1;
+  -webkit-flex: 1;
+  clear: none;
+  flex: 1;
+  float: none;
+}
+#st-2 .st-total {
+  background: #fff;
+  padding: 6px 8px;
+}
+#st-2 .st-btn {
+  -moz-border-radius: 0 !important;
+-webkit-border-radius: 0 !important;
+border-radius: 0 !important;
+  text-align: center;
+  width: auto;
+}
+#st-2 .st-btn > span {
+  display: none;
+}
+#st-2 .st-toggle {
+  display: none;
+}body { padding-bottom: 48px; }
+}#st-2 .st-btn[data-network='twitter'] {
+  background-color: #55acee
+}
+#st-2 .st-btn[data-network='twitter'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='twitter'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='whatsapp'] {
+  background-color: #25d366
+}
+#st-2 .st-btn[data-network='whatsapp'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='whatsapp'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='facebook'] {
+  background-color: #4267B2
+}
+#st-2 .st-btn[data-network='facebook'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='facebook'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='sms'] {
+  background-color: #ffbd00
+}
+#st-2 .st-btn[data-network='sms'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='sms'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='linkedin'] {
+  background-color: #0077b5
+}
+#st-2 .st-btn[data-network='linkedin'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='linkedin'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='email'] {
+  background-color: #7d7d7d
+}
+#st-2 .st-btn[data-network='email'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='email'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='pinterest'] {
+  background-color: #CB2027
+}
+#st-2 .st-btn[data-network='pinterest'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='pinterest'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='sharethis'] {
+  background-color: #95D03A
+}
+#st-2 .st-btn[data-network='sharethis'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='sharethis'] > span {
+  color: #fff
+}
+#st-2 .st-btn[data-network='reddit'] {
+  background-color: #ff4500
+}
+#st-2 .st-btn[data-network='reddit'] img {
+  filter: 
+}
+#st-2 .st-btn[data-network='reddit'] > span {
+  color: #fff
+}#st-2 .st-btn[data-network='snapchat'] > span {
+  color: #333};
+}</style><script type="text/javascript" async="" src="//munchkin.marketo.net/munchkin.js"></script><link rel="stylesheet" href="https://onesignal.com/sdks/OneSignalSDKStyles.css?v=2"></head>
+<body class="single">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5JCRGP" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<header id="inc-header">
+    <div id="inc-top-nav">
+        <div class="inc-wrapper">
+            <ul>
+                <li><a href="https://www.checkpoint.com">CheckPoint.com</a></li>
+                <li><a href="https://www.facebook.com/checkpointresearch/"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/facebook.gif" alt="Facebook"></a></li>
+                <li><a href="https://plus.google.com/+checkpoint/posts"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/google-plus.gif" alt="Google Plus"></a></li>
+                <li><a href="https://www.linkedin.com/company/check-point-software-technologies"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/linkedin.gif" alt="LinkedIn"></a></li>
+                <li><a href="mailto:?to=&amp;subject=Research.CheckPoint.com&amp;body=Checkout%20the%20latest%20research%20on%20Research.CheckPoint.com!"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/email.gif" alt="E-Mail Checked Point Research"></a></li>
+                <li><a href="https://research.checkpoint.com/feed"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/rss.gif" alt="RSS"></a></li>
+                <li><a href="https://twitter.com/_cpresearch_"><img src="//sc1.checkpoint.com/sc1/inc/html/images/social/twitter.gif" alt="Twitter"></a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="inc-wrapper">
+        <div id="inc-logo">
+            <a href="https://research.checkpoint.com/" title="Check Point Research"><img src="//sc1.checkpoint.com/sc1/inc/html/images/check-point-research-logo.gif" alt="Check Point Research"></a>
+        </div>
+        <nav id="inc-nav">
+            <ul class="menu">
+                <li class="menu-item"><a href="https://research.checkpoint.com/category/threat-research/">Publications</a>
+                    <ul class="inc-sub-menu">
+                        <li><a href="https://research.checkpoint.com/category/threat-research/">Threat Research</a></li>
+                        <li><a href="https://research.checkpoint.com/category/cpradio/">CPRadio</a></li>
+                        <li><a href="https://research.checkpoint.com/category/threat-intelligence-reports/">Attack Reports</a></li>
+                    </ul>
+                </li>
+                <li class="menu-item"><a href="#">Tools</a>
+                    <ul class="inc-sub-menu">
+                    	<li><a href="https://cpr-zero.checkpoint.com/" target="_blank">CPR Zero- Vulnerability Repository</a></li>
+                    	<li><a href="https://evasions.checkpoint.com/" target="_blank">Evasion techniques Encyclopedia</a></li>
+                    	<li><a href="https://anti-debug.checkpoint.com/" target="_blank">Anti-Debug Tricks</a></li>
+                        <li><a href="https://threatemulation.checkpoint.com/" target="_blank">SandBlast File Analysis</a></li>
+                        <li><a href="https://research.checkpoint.com/category/how-to-guides/">How-To Guides</a></li>
+                        <li><a href="https://www.checkpoint.com/urlcat/" target="_blank">URL Categorization</a></li>
+                        <li><a href="http://www.cpcheckme.com/checkme/" target="_blank">Instant Security Assessment</a></li>
+                        <li><a href="https://threatmap.checkpoint.com/ThreatPortal/livemap.html" target="_blank">Live Threat Map</a></li>
+                    </ul>
+                </li>
+                <li class="menu-item"><a href="https://research.checkpoint.com/about-us/">About Us</a></li>
+                <li class="menu-item"><a href="https://research.checkpoint.com/contact/">Contact Us</a></li>
+                <li class="menu-item"><a href="https://research.checkpoint.com/subscription/">Subscribe</a></li>
+                <li class="menu-item"><a href="https://www.checkpoint.com/support-services/threatcloud-incident-response/"><img src="//research.checkpoint.com/wp-content/themes/research/img/lib/under-attack.gif" alt="Are You Under Attack?"></a></li>
+            </ul>
+            <a href="#" class="mobile-menu" data-action="toggleMenu"><i class="fa fa-bars" data-action="toggleMenu"></i> MENU</a>
+        </nav>
+        <div id="inc-search">
+            <input type="text" placeholder="Search for Research Publications, Malware Families, etc..">
+        </div>
+    </div>
+</header>
+<div class="container" id="featured-image">
+	<div class="row">
+		<div class="col-md-12">
+			<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2022/05/XLoader_Article.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">		</div>
+	</div>
+</div>
+<div class="container main clear" id="content-container">
+<div class="row">
+	<div class="col-md-12" id="content">
+					<article id="post-26211" class="post-26211 post type-post status-publish format-standard has-post-thumbnail hentry category-threat-research category-searchable category-threat-research-2 tag-botnet tag-cc tag-formbook tag-xloader">
+				<h1>XLoader Botnet: Find Me If You Can</h1>
+				<!-- Date section -->
+				<span id="post-date">
+					May 31, 2022				</span>
+				<!-- End Date section -->
+				
+<p><em>Research by: Alexey Bukhteyev &amp; Raman Ladutska</em></p>
+
+
+
+<h1>Introduction</h1>
+
+
+
+<p>In July 2021, CPR released a series of three publications covering different aspects of how the <strong>Formbook</strong> and <strong>XLoader</strong> malware families function. We described how <a href="https://research.checkpoint.com/2021/top-prevalent-malware-with-a-thousand-campaigns-migrates-to-macos/">XLoader emerged in the Darknet community</a> to fill the empty niche after Formbook sales were abruptly stopped by its author. We did a deep technical analysis followed by a description of <a href="https://research.checkpoint.com/2021/time-proven-tricks-in-a-new-environment-the-macos-evolution-of-formbook/">XLoader for macOS</a> along with common points and differences in how both malware families conceal the heart of the whole operation, the <a href="https://research.checkpoint.com/2021/stealth-is-never-enough-or-revealing-formbook-successors-cc-infrastructure/">Command-and-Control (C&amp;C) infrastructure</a>. However, the world does not stand still, and this applies to the malware cyber-world as well.</p>
+
+
+
+<p>A couple of months after our publications were released, we spotted a new XLoader version in-the-wild which was an upgrade of all the ones we described previously.&nbsp; The enhanced version features significant modifications in key parts of the malware logic to truly deserve the differentiation if compared with XLoader’s previous implementation.</p>
+
+
+
+<p>In this article, we describe the changes malware authors applied to XLoader to obscure the C&amp;C infrastructure – more than anything we saw before. Now it is significantly harder to separate the wheat from the chaff and discover the real C&amp;C servers among thousands of legitimate domains used by Xloader as a smokescreen. We explain how we got to the essence and identified the real C&amp;C nodes in the evolving botnet.</p>
+
+
+
+<h1>Deep technical dive</h1>
+
+
+
+<p>The Formbook malware has not been updated for quite a long time. The latest version of this stealer is 4.1, and we already observed samples of this version in far 2020. This gives us reason to believe that Formbook has been discontinued.</p>
+
+
+
+<p>At the same time, XLoader, Formbook’s successor which we described last year, has already received 2 updates since our publication. In this article, we describe the most important changes that we found in XLoader version 2.5.</p>
+
+
+
+<h2>Camouflaging real C&amp;C servers – methods used in 2021</h2>
+
+
+
+<p>All XLoader samples have 64 domains and one URI in their configurations. The XLoader configuration has the same structure as the Formbook configuration. In earlier versions Formbook used the URI stored separately in the configuration to access its C&amp;C server. The 64 domains from the malware configuration are actually decoys, intended to distract the researchers’ attention.</p>
+
+
+
+<p>In Formbook version 4.1, the malware developers added another level of stealth which also migrated to early versions of XLoader (up to 2.5). A domain name for the real C&amp;C server was hidden among the 64 decoys, while the URI that was always thought to be an address of the C&amp;C server became another decoy and could point to a legitimate website. The malware of versions mentioned above randomly choose 16 decoy domains, two of which are replaced with the fake C&amp;C server address and a real C&amp;C server address. The real C&amp;C server is accessed after a long delay.</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img width="1024" height="401" class="wp-image-26219" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-1-Creating-a-list-of-domains-for-CC-communication-in-XLoader-2.3-and-Formbook-4.1-1024x401.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 1 – Creating a list of domains for C&amp;C communication in XLoader 2.3 and Formbook 4.1.</em></p>
+
+
+
+<p>This already looks complicated. However, the newer version introduced an even more sophisticated algorithm.</p>
+
+
+
+<h2>New version – a new level of protection</h2>
+
+
+
+<p>The first samples of the new version of XLoader appeared in-the-wild a month after our publications in August 2021, <a href="https://research.checkpoint.com/2021/stealth-is-never-enough-or-revealing-formbook-successors-cc-infrastructure/">Revealing the XLoader’s C&amp;C infrastructure</a>. At first glance, we didn’t see any difference because the configuration structure remained exactly the same.</p>
+
+
+
+<p>However, when emulating samples in a sandbox, we noticed a change. With a long emulation time, the sample accessed more than 16 domains, unlike earlier versions. This behavior forced us to put aside automated analysis tools and arm ourselves with a disassembler. We soon discovered the part of the code responsible for the detected anomaly. As in the previous versions, XLoader first creates a list of 16 domains that are randomly selected from the 64 domains stored in the configuration. After each attempt to access the selected 16 domains, the following code is executed:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="585" height="241" class="wp-image-26220" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-2-XLoader-2.5-overwrites-the-first-8-domains-before-each-communication-cycle.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 2 – XLoader 2.5 overwrites the first 8 domains before each communication cycle.</em></p>
+
+
+
+<p>The purpose of this piece of code is to partially overwrite the list of accessed domains with new random values. Therefore, if XLoader runs long enough, it will access new randomly selected domains. It’s important to pay attention to the fact that only the first 8 values are overwritten, and the remaining 8 remain the same as those that were selected immediately after launch.</p>
+
+
+
+<p>In addition, XLoader, as we thought, saves the index of its C&amp;C server and does not allow it to be overwritten:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="627" height="149" class="wp-image-26221" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-3-XLoader-doesnt-overwrite-the-CC-domain-index.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 3 – XLoader doesn’t overwrite the C&amp;C domain index.</em></p>
+
+
+
+<p>However, while checking hosts that were supposed to be XLoader C&amp;C servers, it turned out that many of them did not respond or else looked to be legitimate, such as this one:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="929" height="403" class="wp-image-26222" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-4-Fake-CC-domain-points-to-a-likely-legitimate-site-1.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 4 – Fake C&amp;C domain points to a likely legitimate site</em>.</p>
+
+
+
+<p>Also, most of them appear only once in various configurations, making them the underdogs in our preliminary bet for the real C&amp;C candidates. From our previous research, we remembered that the number of real C&amp;C servers was relatively small (we found less than 100 C&amp;C servers among 90,000 domains used by the malware), and they were reused in many of the campaigns of different XLoader customers.</p>
+
+
+
+<p>In this case, we also found many domains that appear multiple times in samples that belong to different campaigns. However, these domains belong to the list of decoys and do not stand out at first glance. Let’s look at the websites pointed to by some of these domains. The root page looks like a parked domain page of famous domain registrars and hosting service providers (usually Hostinger and Namecheap):</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img loading="lazy" width="1024" height="424" class="wp-image-26223" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-5-–-Real-CC-servers-disguised-as-Hostinger-and-Namecheap-parked-domain-pages-1024x424.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 5 – Real C&amp;C servers disguised as Hostinger and Namecheap parked domain pages.</em></p>
+
+
+
+<p>However, if we check the source code of the page and compare it with the original page generated by the service provider, we see many differences:</p>
+
+
+
+<figure class="wp-block-image size-large"><img loading="lazy" width="1024" height="401" class="wp-image-26224" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-6-–-Differences-in-the-fake-on-the-left-side-and-the-real-on-the-right-side-Namecheap-parked-domain-page-1024x401.png" alt=""></figure>
+
+
+
+<p class="has-text-align-center"><em>Figure 6 – Differences in the fake (on the left side) and the real (on the right side) Namecheap parked domain page.</em></p>
+
+
+
+<p>In the fake Hostinger page, we also see some visual differences:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img loading="lazy" width="1024" height="463" class="wp-image-26225" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-7-–-Visual-differences-in-the-fake-on-the-left-side-and-the-real-on-the-right-side-Hostinger-parked-domain-page-1024x463.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 7 – Visual differences in the fake (on the left side) and the real (on the right side) Hostinger parked domain page.</em></p>
+
+
+
+<p>We then collected IP addresses of all presumably malicious hosts and root pages from the corresponding websites. It appeared that all the domains point to a few IP address ranges, all of which belong to Namecheap. Some domains point to the same IP addresses.</p>
+
+
+
+<figure class="wp-block-table">
+<div class="table-responsive-lg"><table class="table-striped">
+<tbody>
+<tr>
+<td><strong>Domain</strong></td>
+<td><strong>IP</strong></td>
+<td><strong>Root Page MD5 hash</strong></td>
+<td><strong>Description</strong></td>
+</tr>
+<tr>
+<td><strong>bubu3cin.com</strong></td>
+<td>162.0.214.189</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>highpacts.com</strong></td>
+<td>162.0.216.5</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>hype-clicks.com</strong></td>
+<td>162.0.223.146</td>
+<td>f891f22cd94c80844fcfe6fddb4b7912</td>
+<td>Fake Namecheap</td>
+</tr>
+<tr>
+<td><strong>moukse.com</strong></td>
+<td>162.0.223.146</td>
+<td>f891f22cd94c80844fcfe6fddb4b7912</td>
+<td>Fake Namecheap</td>
+</tr>
+<tr>
+<td><strong>besasin09.com</strong></td>
+<td>162.0.223.94</td>
+<td>8d85df16ced80502c796649e4c806d31</td>
+<td>Future home of…</td>
+</tr>
+<tr>
+<td><strong>brasbux.com</strong></td>
+<td>162.0.223.94</td>
+<td>8d85df16ced80502c796649e4c806d31</td>
+<td>Future home of…</td>
+</tr>
+<tr>
+<td><strong>finsits.com</strong></td>
+<td>162.0.225.82</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>arabatas.com</strong></td>
+<td>162.0.225.82</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>ocvcoins.com</strong></td>
+<td>162.0.238.238</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>gingure.com</strong></td>
+<td>162.0.238.238</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>coalmanses.com</strong></td>
+<td>162.213.253.206</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>fendoremi.com</strong></td>
+<td>162.213.253.206</td>
+<td>ce866938b246a89fd98fc6a6f666d21c</td>
+<td>Fake Hostinger</td>
+</tr>
+<tr>
+<td><strong>noun-bug.com</strong></td>
+<td>199.188.206.146</td>
+<td>f891f22cd94c80844fcfe6fddb4b7912</td>
+<td>Fake Namecheap</td>
+</tr>
+<tr>
+<td><strong>cobere9.com</strong></td>
+<td>199.188.206.146</td>
+<td>f891f22cd94c80844fcfe6fddb4b7912</td>
+<td>Fake Namecheap</td>
+</tr>
+<tr>
+<td><strong>…</strong></td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table></div>
+</figure>
+
+
+
+<p class="has-text-align-center"><em>Table 1 – XLoader</em><em> domains and IP addresses to which they point.</em></p>
+
+
+
+<p>All the websites display pages that appear to be “under construction”, primarily the fake Namecheap or Hostinger parked domain page, even though all the IP addresses belong to Namecheap.</p>
+
+
+
+<p>It looks like we found the C&amp;C servers, but is it possible to distinguish them in the list of 64 decoy domains in the malware configuration?</p>
+
+
+
+<p>Let’s now look at the function that fills the initial list of 16 domains in XLoader 2.5 and compare it with the function from XLoader 2.3:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-large"><img loading="lazy" width="1024" height="415" class="wp-image-26226" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-8-XLoader-2.5-replaces-three-domains-in-the-created-list-with-2-decoys-and-the-real-CC-server-domain-1024x415.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 8 – XLoader 2.5 replaces three domains in the created list with 2 decoys and the real C&amp;C server domain.</em></p>
+
+
+
+<p>As we can see, XLoader 2.5 introduced an additional code that replaces one more domain in the list with a fixed value. Interestingly, this value doesn’t appear anywhere else in the code and is not saved; its position in the list of 16 domains is chosen randomly.</p>
+
+
+
+<p>As the first 8 domains are overwritten with new values after the first hit, there is a 50% chance that this domain will be overwritten. However, we think that this is the domain which points to the real C&amp;C server.</p>
+
+
+
+<p>The domain selection scheme is as follows:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="631" height="362" class="wp-image-26227" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-9-Creating-a-list-of-domains-for-CC-communication-in-XLoader-2.5.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 9 – Creating a list of domains for C&amp;C communication in XLoader 2.5.</em></p>
+
+
+
+<p>If the real C&amp;C domain appears in the second part of the list, it is accessed in every cycle once in approximately 80-90 seconds. If it appears in the first part of the list, it will be overwritten by another random domain name.</p>
+
+
+
+<p>However, there is still a probability that this domain will appear in the list again. This is possible because the 8 domains that overwrite the first part of the list are chosen randomly, and the real C&amp;C domain might be one of them. In this case, the probability that a real C&amp;C server will be accessed in the next cycle is <strong>7/64</strong> or <strong>1/8</strong> depending on the position of the “<strong>fake c2 (2)</strong>” domain (see Figure 9 above).</p>
+
+
+
+<p>The malware authors once again proved their high technical skills and out-of-the-box approach. By implementing the Law of Large Numbers in the malware, they achieved two goals: not only did they disguise the real C&amp;C servers in common sandbox emulations (which are usually short), but also kept up the effectiveness of the malware.</p>
+
+
+
+<p>In the table below we provide the probabilities of the real C&amp;C server not being accessed again within a given time-frame. We take into consideration the lowest possible probability for the server to appear in any given cycle, which is <strong>7/64</strong>, as well as the longest possible pause between two cycles, which is <strong>90 seconds</strong>.</p>
+
+
+
+<figure class="wp-block-table">
+<div class="table-responsive-lg"><table class="table-striped">
+<tbody>
+<tr>
+<td><strong>Time passed</strong></td>
+<td><strong>Probability of the real C&amp;C server being not accessed</strong></td>
+<td><strong>Notes</strong></td>
+</tr>
+<tr>
+<td>9 minutes</td>
+<td>50%</td>
+<td>Like a coin toss</td>
+</tr>
+<tr>
+<td>15 minutes</td>
+<td>31%</td>
+<td>Less than 1 in 3</td>
+</tr>
+<tr>
+<td>18 minutes</td>
+<td>25%</td>
+<td>1 in 4</td>
+</tr>
+<tr>
+<td>30 minutes</td>
+<td>10%</td>
+<td>1 in 10</td>
+</tr>
+<tr>
+<td>1 hour</td>
+<td>1%</td>
+<td>1 in 100</td>
+</tr>
+<tr>
+<td>2 hours</td>
+<td>0.09%</td>
+<td>Less than 1 in 10,000</td>
+</tr>
+<tr>
+<td>2.5 hours</td>
+<td>0.0009%</td>
+<td>Less than 1 in 1,000,000</td>
+</tr>
+</tbody>
+</table></div>
+</figure>
+
+
+
+<p>We see from the table that out of one million launches, only in one case the malware might not access the real C&amp;C server in a period of 2.5 hours. In reality, the probability of such an event is even lower as a cycle time period can vary between 80 and 90 seconds, and the probability of the real C&amp;C server to show up in a cycle may be higher and equal to 1/8.</p>
+
+
+
+<p>Even 9 minutes are enough to fool the emulators and prevent the detection of the real C&amp;C server, based on the delays between accesses to the domains. At the same time, the regular knockback period maintained by the malware with the help of probability theory allows it to keep victims as botnet parts without sacrificing the functionality.</p>
+
+
+
+<h2>XLoader 2.6</h2>
+
+
+
+<p>On May 5, 2022, we spotted a new version of XLoader malware in-the-wild. The main update in XLoader v2.6 concerns the network communication. The random index of the real C&amp;C server is now saved in the malware state structure:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="447" height="51" class="wp-image-26228" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-10-XLoader-2.6-generates-and-stores-the-index-of-a-real-CC-server.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 10 – XLoader 2.6 generates and stores the index of a real C&amp;C server.</em></p>
+
+
+
+<p>During each communication cycle, when the malware overwrites the first 8 entries in the list of accessed domains, it keeps the values for the real and the fake C&amp;C domains:</p>
+
+
+
+<div class="wp-block-image">
+<figure class="aligncenter size-full"><img loading="lazy" width="592" height="137" class="wp-image-26229" src="//research.checkpoint.com/wp-content/uploads/2022/05/Figure-11-–-XLoader-2.6-doesnt-overwrite-the-fake-and-the-CC-domain-indices.png" alt=""></figure>
+</div>
+
+
+
+<p class="has-text-align-center"><em>Figure 11 – XLoader 2.6 doesn’t overwrite the fake and the C&amp;C domain indices.</em></p>
+
+
+
+<p>Therefore, the real C&amp;C server is now accessed in every communication cycle, or once in approximately 80-90 seconds.</p>
+
+
+
+<p>However, this logic is activated only when the malware runs in an x64 system. When it runs in an x86 system, the variable <strong>real_c2_index</strong> stores the same value as is stored in the <strong>fake_c2_index</strong>. This results in the real C&amp;C server being accessed with the same probability as any of the 63 decoys while running in x86 system. This looks like an evasion technique, as currently a lot of sandboxes still use x86 virtual machines.</p>
+
+
+
+<h1>Conclusion</h1>
+
+
+
+<p>To stay in business, malware actors have to stay in the forefront of progress and invent new tricks to prolong the lives of their creations as long as possible. In the case of XLoader malware, we see a vivid example of such a process.</p>
+
+
+
+<p>In July 2021, we described the method of uncovering real C&amp;C servers among the thousands of legitimate servers abused by XLoader v.2.3. The upgraded XLoader v.2.5 introduced significant changes in this algorithm using the power of the Law of Big Numbers from probability theory. These modifications achieve two goals at once: each node in the botnet maintains a steady knockback rate while fooling automated scripts and preventing the discovery of the real C&amp;C servers. The latter indeed became more difficult, but not impossible.</p>
+
+
+
+<p>In this article we described all the steps you need to take, and all the details you need to pay attention to in order to identify the real C&amp;C domain among the 65 encountered in every XLoader sample. We analyzed more than 100,000 domains to discover a tiny percentage of actual C&amp;C servers in the multitude of abused domains – only 120 of the real servers, which is about 0.12% of the total number.</p>
+
+
+
+<p>We continue to stay vigilant for any upcoming changes that might be implemented by future versions, not only in XLoader but in other malware families as well.</p>
+
+
+
+<h1>Check Point Protections</h1>
+
+
+
+<p>Check Point Provides&nbsp;<a href="https://www.checkpoint.com/infinity-vision/zero-day-protection/">Zero-Day Protection</a>&nbsp;across Its Network, Cloud, Users and Access Security Solutions. Whether you’re in the cloud, the data center, or both, Check Point’s Network Security solutions simplify your security without impacting network performance, provide a unified approach for streamlined operations, and enable you to scale for continued business growth.&nbsp;<a href="https://www.checkpoint.com/quantum/network-security-solutions/">Quantum</a>&nbsp;provides the best zero-day protection while reducing security overhead.&nbsp;</p>
+
+
+
+<p>SandBlast Network Protections:</p>
+
+
+
+<pre class="wp-block-preformatted">         Trojan.WIN32.Formbook.A
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.B
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.C
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.D
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.E
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.F
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.G
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.H
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.I
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.J
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.K
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.L
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.M
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.N
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.O
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.P
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.Q
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.WIN32.Formbook.R </pre>
+
+
+
+<p>Threat Emulation protections:</p>
+
+
+
+<pre class="wp-block-preformatted">         Infostealer.Win32.Formbook.C
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Infostealer.Win32.Formbook.D
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Infostealer.Win32.Formbook.E
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Infostealer.Win32.Formbook.gl.F
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Infostealer.Win32.Formbook.TC
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Formbook.TC
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Infostealer.Win32.XLoader.TC
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XLoader.TC
+ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Trojan.Mac.XLoader.B </pre>
+
+
+
+<h2>Appendix: Indicators of Compromise</h2>
+
+
+
+<h3>XLoader samples</h3>
+
+
+
+<figure class="wp-block-table is-style-stripes">
+<div class="table-responsive-lg"><table class="table-striped">
+<tbody>
+<tr>
+<td><strong>SHA256</strong></td>
+<td><strong>Version</strong></td>
+<td><strong>C&amp;C domain</strong></td>
+</tr>
+<tr>
+<td>c3bf0677dfcb32b35defb6650e1f81ccfa2080e934af6ef926fd378091a25fdb</td>
+<td>2.6</td>
+<td>travelsagas.com</td>
+</tr>
+<tr>
+<td>77ed8c0589576ecaf87167bc9e178b15da57f7b341ea2fda624ecc5874b1464b</td>
+<td>2.6</td>
+<td>click-tokens.com</td>
+</tr>
+<tr>
+<td>041992cc47137cb45d4e93658be392bb82cdc7ec53f959c6af4761d41dfc9160</td>
+<td>2.6</td>
+<td>motarasag.com</td>
+</tr>
+<tr>
+<td>e704bc09c7da872b5d430d641e9bd7c8c396cf79ea382870e138f88d166df4a8</td>
+<td>2.6</td>
+<td>tumpiums.com</td>
+</tr>
+<tr>
+<td>a7023d5b16691b20334955294a80c10d435e24048f6416d1b3af3c58d0b48954</td>
+<td>2.5</td>
+<td>sasanos.com</td>
+</tr>
+<tr>
+<td>862fba20ce7613356018ca44f665819522f862f040b34410a58892229aba6d9c</td>
+<td>2.5</td>
+<td>binbin-ads.com</td>
+</tr>
+<tr>
+<td>d56e8522cf147e2b964a5a03e51a17d24d4cb3a4a20f36ef3fd3caeda0b105f3</td>
+<td>2.5</td>
+<td>range4tis.com</td>
+</tr>
+<tr>
+<td>59048fa3b523121866f79a8a2f7a3c9c7cf609a98be5a1ec296030de2353d559</td>
+<td>2.5</td>
+<td>cablinqee.com</td>
+</tr>
+</tbody>
+</table></div>
+</figure>
+
+
+
+<h3>XLoader C&amp;C servers</h3>
+
+
+
+<figure class="wp-block-table is-style-stripes">
+<div class="table-responsive-lg"><table class="table-striped">
+<tbody>
+<tr>
+<td><strong>Domain</strong></td>
+<td><strong>IP</strong></td>
+</tr>
+<tr>
+<td>besasin09.com</td>
+<td>162.0.223.94</td>
+</tr>
+<tr>
+<td>brasbux.com</td>
+<td>162.0.223.94</td>
+</tr>
+<tr>
+<td>munixc.info</td>
+<td>162.0.223.94</td>
+</tr>
+<tr>
+<td>ceser33.com</td>
+<td>162.0.223.94</td>
+</tr>
+<tr>
+<td>ducer.info</td>
+<td>199.192.23.209</td>
+</tr>
+<tr>
+<td>amenosu.com</td>
+<td>199.192.23.209</td>
+</tr>
+<tr>
+<td>sanfireman.info</td>
+<td>199.192.23.209</td>
+</tr>
+<tr>
+<td>trc-clicks.com</td>
+<td>199.192.25.68</td>
+</tr>
+<tr>
+<td>bantasis.com</td>
+<td>199.192.25.68</td>
+</tr>
+<tr>
+<td>brass-tip.info</td>
+<td>199.192.25.68</td>
+</tr>
+<tr>
+<td>neurosise.com</td>
+<td>199.192.30.112</td>
+</tr>
+<tr>
+<td>finsith.com</td>
+<td>199.192.30.112</td>
+</tr>
+<tr>
+<td>gate334.com</td>
+<td>199.192.30.112</td>
+</tr>
+<tr>
+<td>seo-clicks6.com</td>
+<td>199.192.30.247</td>
+</tr>
+<tr>
+<td>tangodo9.info</td>
+<td>199.192.31.5</td>
+</tr>
+<tr>
+<td>nu865ci.com</td>
+<td>199.192.31.5</td>
+</tr>
+<tr>
+<td>rapibest.com</td>
+<td>199.192.31.5</td>
+</tr>
+<tr>
+<td>recbi56ni.com</td>
+<td>199.192.31.5</td>
+</tr>
+<tr>
+<td>heinousas.com</td>
+<td>66.29.143.39</td>
+</tr>
+<tr>
+<td>pordges.com</td>
+<td>66.29.143.39</td>
+</tr>
+<tr>
+<td>serenistin.com</td>
+<td>66.29.143.39</td>
+</tr>
+<tr>
+<td>aminsfy.com</td>
+<td>66.29.155.250</td>
+</tr>
+<tr>
+<td>dempius.com</td>
+<td>66.29.155.250</td>
+</tr>
+<tr>
+<td>buge-link.com</td>
+<td>66.29.155.250</td>
+</tr>
+<tr>
+<td>norllix.com</td>
+<td>66.29.155.250</td>
+</tr>
+<tr>
+<td>sacremots.com</td>
+<td>66.29.155.250</td>
+</tr>
+<tr>
+<td>beputis4.com</td>
+<td>68.65.121.46</td>
+</tr>
+<tr>
+<td>bubu3cin.com</td>
+<td>162.0.214.189</td>
+</tr>
+<tr>
+<td>highpacts.com</td>
+<td>162.0.216.5</td>
+</tr>
+<tr>
+<td>finsits.com</td>
+<td>162.0.225.82</td>
+</tr>
+<tr>
+<td>arabatas.com</td>
+<td>162.0.225.82</td>
+</tr>
+<tr>
+<td>cutos2.com</td>
+<td>162.0.225.82</td>
+</tr>
+<tr>
+<td>nropes.com</td>
+<td>162.0.233.84</td>
+</tr>
+<tr>
+<td>gogoma3.com</td>
+<td>162.0.233.84</td>
+</tr>
+<tr>
+<td>fraiuhs.com</td>
+<td>162.0.233.84</td>
+</tr>
+<tr>
+<td>busipe6.com</td>
+<td>162.0.238.116</td>
+</tr>
+<tr>
+<td>bupis44.info</td>
+<td>162.0.238.116</td>
+</tr>
+<tr>
+<td>gesips.com</td>
+<td>162.0.238.116</td>
+</tr>
+<tr>
+<td>ocvcoins.com</td>
+<td>162.0.238.238</td>
+</tr>
+<tr>
+<td>gingure.com</td>
+<td>162.0.238.238</td>
+</tr>
+<tr>
+<td>nifaji.com</td>
+<td>162.0.238.238</td>
+</tr>
+<tr>
+<td>coalmanses.com</td>
+<td>162.213.253.206</td>
+</tr>
+<tr>
+<td>fendoremi.com</td>
+<td>162.213.253.206</td>
+</tr>
+<tr>
+<td>cusio3c.com</td>
+<td>162.213.253.206</td>
+</tr>
+<tr>
+<td>nutri6si.com</td>
+<td>162.213.253.206</td>
+</tr>
+<tr>
+<td>breskizci.com</td>
+<td>192.64.116.180</td>
+</tr>
+<tr>
+<td>high-clicks.com</td>
+<td>192.64.116.180</td>
+</tr>
+<tr>
+<td>gunnipes.com</td>
+<td>199.192.23.164</td>
+</tr>
+<tr>
+<td>dugerits.com</td>
+<td>199.192.23.164</td>
+</tr>
+<tr>
+<td>keepitng.com</td>
+<td>199.192.23.164</td>
+</tr>
+<tr>
+<td>fellasies.com</td>
+<td>199.192.28.149</td>
+</tr>
+<tr>
+<td>butuns.com</td>
+<td>199.192.28.149</td>
+</tr>
+<tr>
+<td>bendisle.com</td>
+<td>66.29.155.108</td>
+</tr>
+<tr>
+<td>ci-ohio.com</td>
+<td>66.29.155.108</td>
+</tr>
+<tr>
+<td>minimi36.com</td>
+<td>66.29.155.108</td>
+</tr>
+<tr>
+<td>pedorc.com</td>
+<td>68.65.121.125</td>
+</tr>
+<tr>
+<td>cures8t.com</td>
+<td>68.65.121.125</td>
+</tr>
+<tr>
+<td>mecitiris.com</td>
+<td>162.0.222.70</td>
+</tr>
+<tr>
+<td>high-clicks2.com</td>
+<td>162.0.224.219</td>
+</tr>
+<tr>
+<td>nerosbin.info</td>
+<td>162.0.231.105</td>
+</tr>
+<tr>
+<td>b8ceex.com</td>
+<td>162.0.231.105</td>
+</tr>
+<tr>
+<td>dashmints.com</td>
+<td>162.0.231.244</td>
+</tr>
+<tr>
+<td>rap8b55d.com</td>
+<td>198.54.112.103</td>
+</tr>
+<tr>
+<td>rastipponmkh.com</td>
+<td>199.192.17.24</td>
+</tr>
+<tr>
+<td>blendeqes.com</td>
+<td>199.192.17.24</td>
+</tr>
+<tr>
+<td>private-clicks.com</td>
+<td>199.192.26.170</td>
+</tr>
+<tr>
+<td>abros88.com</td>
+<td>199.192.30.127</td>
+</tr>
+<tr>
+<td>bracunis.com</td>
+<td>199.192.30.127</td>
+</tr>
+<tr>
+<td>hugefries3.com</td>
+<td>199.192.30.127</td>
+</tr>
+<tr>
+<td>saint444.com</td>
+<td>63.250.44.164</td>
+</tr>
+<tr>
+<td>bra866.com</td>
+<td>66.29.130.171</td>
+</tr>
+<tr>
+<td>hype-clicks.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>moukse.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>ammarus.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>cablinqee.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>funtabse.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>gulebic.com</td>
+<td>162.0.223.146</td>
+</tr>
+<tr>
+<td>catdanos.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>noun-bug.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>cobere9.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>ranbix.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>tes5ci.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>blackbait6.com</td>
+<td>199.188.206.146</td>
+</tr>
+<tr>
+<td>mimihin.com</td>
+<td>199.192.18.217</td>
+</tr>
+<tr>
+<td>cesiesis.com</td>
+<td>199.192.18.217</td>
+</tr>
+<tr>
+<td>moreosin.com</td>
+<td>199.192.18.217</td>
+</tr>
+<tr>
+<td>side-clicks.com</td>
+<td>199.192.29.43</td>
+</tr>
+<tr>
+<td>davinci65.info</td>
+<td>199.192.29.43</td>
+</tr>
+<tr>
+<td>plick-click.com</td>
+<td>199.192.29.43</td>
+</tr>
+<tr>
+<td>redandseven.com</td>
+<td>199.192.29.61</td>
+</tr>
+<tr>
+<td>berdisen.com</td>
+<td>199.192.29.61</td>
+</tr>
+<tr>
+<td>arches2.com</td>
+<td>199.192.29.61</td>
+</tr>
+<tr>
+<td>price-hype.com</td>
+<td>199.192.30.202</td>
+</tr>
+<tr>
+<td>becbares.com</td>
+<td>199.192.30.202</td>
+</tr>
+<tr>
+<td>budistx.com</td>
+<td>199.192.30.202</td>
+</tr>
+<tr>
+<td>dain6544.com</td>
+<td>199.192.30.202</td>
+</tr>
+<tr>
+<td>erisibu85.com</td>
+<td>199.192.30.202</td>
+</tr>
+<tr>
+<td>piecebin.com</td>
+<td>66.29.133.181</td>
+</tr>
+<tr>
+<td>probinns.com</td>
+<td>66.29.133.181</td>
+</tr>
+<tr>
+<td>bumabagi.com</td>
+<td>66.29.133.181</td>
+</tr>
+<tr>
+<td>hughers3.com</td>
+<td>66.29.133.181</td>
+</tr>
+<tr>
+<td>n4sins.com</td>
+<td>66.29.133.181</td>
+</tr>
+<tr>
+<td>busy-clicks.com</td>
+<td>66.29.140.185</td>
+</tr>
+<tr>
+<td>minismi2.com</td>
+<td>66.29.140.185</td>
+</tr>
+<tr>
+<td>wecuxs.com</td>
+<td>66.29.140.185</td>
+</tr>
+<tr>
+<td>lopsrental.lease</td>
+<td>66.29.140.185</td>
+</tr>
+<tr>
+<td>alpeshpate.com</td>
+<td>66.29.142.52</td>
+</tr>
+<tr>
+<td>motometics.com</td>
+<td>66.29.142.52</td>
+</tr>
+<tr>
+<td>cinasing.com</td>
+<td>66.29.142.52</td>
+</tr>
+<tr>
+<td>gamusemenu.com</td>
+<td>66.29.142.52</td>
+</tr>
+<tr>
+<td>kraines3.com</td>
+<td>66.29.142.52</td>
+</tr>
+<tr>
+<td>ban-click.com</td>
+<td>66.29.145.216</td>
+</tr>
+<tr>
+<td>butsins.com</td>
+<td>66.29.145.216</td>
+</tr>
+<tr>
+<td>earches3.com</td>
+<td>66.29.145.216</td>
+</tr>
+<tr>
+<td>jervinse.com</td>
+<td>66.29.154.112</td>
+</tr>
+<tr>
+<td>gimbases.com</td>
+<td>66.29.154.112</td>
+</tr>
+<tr>
+<td>motarase.com</td>
+<td>66.29.154.112</td>
+</tr>
+<tr>
+<td>cusmose.com</td>
+<td>66.29.154.157</td>
+</tr>
+<tr>
+<td>becu84ts.com</td>
+<td>66.29.154.157</td>
+</tr>
+<tr>
+<td>buresdx.com</td>
+<td>66.29.154.157</td>
+</tr>
+<tr>
+<td>travelsagas.com</td>
+<td>162.0.216.71</td>
+</tr>
+<tr>
+<td>click-tokens.com</td>
+<td>66.29.142.85</td>
+</tr>
+<tr>
+<td>motarasag.com</td>
+<td>162.0.233.154</td>
+</tr>
+<tr>
+<td>tumpiums.com</td>
+<td>66.29.155.51</td>
+</tr>
+<tr>
+<td>sasanos.com</td>
+<td>45.132.241.87</td>
+</tr>
+<tr>
+<td>binbin-ads.com</td>
+<td>31.220.18.33</td>
+</tr>
+<tr>
+<td>range4tis.com</td>
+<td>45.15.25.154</td>
+</tr>
+</tbody>
+</table></div>
+</figure>
+							</article>
+						<div id="related">
+			<h2>Related Articles</h2>
+			<!-- Flickity HTML init -->
+			<div class="carousel flickity-enabled is-draggable" data-flickity="{ &quot;groupCells&quot;: true, &quot;pageDots&quot;: false, &quot;wrapAround&quot;: true }" tabindex="0">
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							
+						<div class="flickity-viewport" style="height: 180px; touch-action: pan-y;"><div class="flickity-slider" style="left: 0px; transform: translateX(7.01%);"><div class="carousel-cell is-selected" aria-selected="true" style="position: absolute; left: 0%;">
+					<a href="//research.checkpoint.com/2022/new-malware-capable-of-controlling-social-media-accounts-infects-5000-machines-and-is-actively-being-distributed-via-gaming-applications-on-microsofts-official-store/">
+						<img width="1024" height="512" src="//research.checkpoint.com/wp-content/uploads/2022/02/MalwareAffectingGaming_social_TW.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>New Malware Capable of Controlling Social Media Accounts Infects 5,000+ Machines and is actively being Distributed via Gaming Applications on Microsoft’s Official Store</h3>
+					</a>
+				</div><div class="carousel-cell is-selected" aria-selected="true" style="position: absolute; left: 28.99%;">
+					<a href="//research.checkpoint.com/2021/new-wormable-android-malware-spreads-by-creating-auto-replies-to-messages-in-whatsapp/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2021/04/WormableWhatsApp_blog_header.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>New Wormable Android Malware Spreads by Creating Auto-Replies to Messages in WhatsApp</h3>
+					</a>
+				</div><div class="carousel-cell is-selected" aria-selected="true" style="position: absolute; left: 57.98%;">
+					<a href="//research.checkpoint.com/2020/vulnerability-in-google-play-core-library-remains-unpatched-in-google-play-applications/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/12/GooglePlayBanner-Social-1021x580B.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Vulnerability in Google Play Core Library Remains Unpatched in Google Play Applications</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 86.96%;">
+					<a href="//research.checkpoint.com/2020/graphology-of-an-exploit-volodya/">
+						<img width="1078" height="520" src="//research.checkpoint.com/wp-content/uploads/2020/09/graphology_of_an_exploit.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Graphology of an Exploit – Hunting for exploits by looking for the author’s fingerprints</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 115.95%;">
+					<a href="//research.checkpoint.com/2020/amazons-alexa-hacked/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/08/AlexaHacked_blog_header-1.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Keeping the gate locked on your IoT devices: Vulnerabilities found on Amazon’s Alexa</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 144.94%;">
+					<a href="//research.checkpoint.com/2020/new-joker-variant-hits-google-play-with-an-old-trick/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/07/GooglePlayBanner-Social-1021x580B.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>New Joker variant hits Google Play with an old trick</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 173.93%;">
+					<a href="//research.checkpoint.com/2020/apache-guacamole-rce/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/06/Guacamole_CPR_FINAL-F-1021x580-3.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Would you like some RCE with your Guacamole?</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 202.92%;">
+					<a href="//research.checkpoint.com/2020/the-turkish-rat-distributes-evolved-adwind-in-a-massive-ongoing-phishing-campaign/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/02/CheckPointResearchTurkishRat_blog_header.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>“The Turkish Rat” Evolved Adwind in a Massive Ongoing Phishing Campaign</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 231.9%;">
+					<a href="//research.checkpoint.com/2020/remote-cloud-execution-critical-vulnerabilities-in-azure-cloud-infrastructure-part-i/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2020/01/CheckPointResearchAzureStack_blog_header-FINAL-1.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Remote Cloud Execution – Critical Vulnerabilities in Azure Cloud Infrastructure (Part I)</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 260.89%;">
+					<a href="//research.checkpoint.com/2019/canadian-banks-targeted-in-a-massive-phishing-campaign/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2019/12/PhishingCanadianBanks_blog_1021x580-1.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Canadian banks targeted in a massive phishing campaign</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 289.88%;">
+					<a href="//research.checkpoint.com/2022/30th-may-threat-intelligence-report/">
+						<img width="1024" height="512" src="//research.checkpoint.com/wp-content/uploads/2022/02/cpr_socialTWITTER_WeeklyIntelligenceReportHero.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>30th May – Threat Intelligence Report</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 318.87%;">
+					<a href="//research.checkpoint.com/2022/23rd-may-threat-intelligence-report/">
+						<img width="1024" height="512" src="//research.checkpoint.com/wp-content/uploads/2022/02/cpr_socialTWITTER_WeeklyIntelligenceReportHero.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>23rd May – Threat Intelligence Report</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 347.86%;">
+					<a href="//research.checkpoint.com/2022/twisted-panda-chinese-apt-espionage-operation-against-russians-state-owned-defense-institutes/">
+						<img width="1021" height="580" src="//research.checkpoint.com/wp-content/uploads/2022/05/TwistedPanda_header.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>Twisted Panda: Chinese APT espionage operation against Russian’s state-owned defense institutes</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: 376.84%;">
+					<a href="//research.checkpoint.com/2022/bad-alac-one-codec-to-hack-the-whole-world/">
+						<img width="1200" height="628" src="//research.checkpoint.com/wp-content/uploads/2022/04/Chip_Social_1200x628.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>#ALHACK: One codec to hack the whole world</h3>
+					</a>
+				</div><div class="carousel-cell" aria-selected="false" style="position: absolute; left: -28.99%;">
+					<a href="//research.checkpoint.com/2022/16th-may-threat-intelligence-report/">
+						<img width="1024" height="512" src="//research.checkpoint.com/wp-content/uploads/2022/02/cpr_socialTWITTER_WeeklyIntelligenceReportHero.jpg" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" loading="lazy">						<h3>16th May – Threat Intelligence Report</h3>
+					</a>
+				</div></div></div><button class="flickity-button flickity-prev-next-button previous" type="button" aria-label="Previous"><svg class="flickity-button-icon" viewBox="0 0 100 100"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z" class="arrow"></path></svg></button><button class="flickity-button flickity-prev-next-button next" type="button" aria-label="Next"><svg class="flickity-button-icon" viewBox="0 0 100 100"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z" class="arrow" transform="translate(100, 100) rotate(180) "></path></svg></button></div>
+		</div>
+	</div>
+	<!-- <div class="col-md-4" id="sidebar">
+		<div id="custom_html-3" class="widget_text widget_custom_html"><h3>Check Point Blog</h3><div class="textwidget custom-html-widget"><ul>
+<li><a class="rsswidget" href="https://blog.checkpoint.com/2020/08/06/achilles-small-chip-big-peril/">Achilles: Small chip, big peril.</a></li>
+<li><a class="rsswidget" href="https://blog.checkpoint.com/2020/07/21/how-scammers-are-hiding-their-phishing-trips-in-public-clouds/">How scammers are hiding their phishing trips in public clouds</a></li>
+<li><a class="rsswidget" href="https://blog.checkpoint.com/2020/07/16/fixing-the-zoom-vanity-clause-check-point-and-zoom-collaborate-to-fix-vanity-url-issue/">Fixing the Zoom ‘Vanity Clause’ – Check Point and Zoom collaborate to fix Vanity URL issue</a></li>
+<li><a class="rsswidget" href="https://blog.checkpoint.com/2020/07/03/nexus-zeta-from-suspicious-alerts-to-conviction/">Nexus Zeta – From Suspicious Alerts to Conviction</a></li>
+<li><a class="rsswidget" href="https://blog.checkpoint.com/2020/06/25/as-organizations-get-back-to-business-cyber-criminals-look-for-new-angles-to-exploit/">As organizations get back to business, cyber criminals look for new angles to exploit</a></li>
+</ul></div></div>	</div> -->
+</div>
+<script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5a3031770f16c70012a3c297&amp;product=sticky-share-buttons"></script>
+</div>
+<footer id="inc-footer">
+    <div class="inc-wrapper">
+        <div class="inc-footer-col">
+            <span class="inc-footer-title">Publications</span>
+            <ul>
+                <li><a href="https://research.checkpoint.com/category/threat-intelligence-reports/">GLOBAL CYBER ATTACK REPORTS</a></li>
+                <li><a href="https://research.checkpoint.com/category/threat-research/">RESEARCH PUBLICATIONS</a></li>
+                <li><a href="https://www.checkpoint.com/advisories/">IPS ADVISORIES</a></li>
+                <li><a href="http://blog.checkpoint.com/">CHECK POINT BLOG</a></li>
+                <li><a href="https://research.checkpoint.com/category/demos/">DEMOS</a></li>
+            </ul>
+        </div>
+        <div class="inc-footer-col">
+            <span class="inc-footer-title">Tools</span>
+            <ul>
+                <li><a href="https://threatemulation.checkpoint.com/">SANDBLAST FILE ANALYSIS</a></li>
+                <li><a href="https://www.checkpoint.com/urlcat/">URL CATEGORIZATION</a></li>
+                <li><a href="http://www.cpcheckme.com/checkme/">INSTANT SECURITY ASSESSMENT</a></li>
+                <li><a href="https://threatmap.checkpoint.com/ThreatPortal/livemap.html">LIVE THREAT MAP</a></li>
+            </ul>
+        </div>
+        <div class="inc-footer-col">
+            <a href="https://research.checkpoint.com/about-us/" class="inc-footer-title">About Us</a>
+        </div>
+        <div class="inc-footer-col">
+            <a href="https://research.checkpoint.com/contact/" class="inc-footer-title">Contact Us</a>
+        </div>
+        <div class="inc-footer-col">
+            <a href="https://research.checkpoint.com/subscription/" class="inc-footer-title">Subscribe</a>
+        </div>
+        <p id="inc-footer-copyright">© 1994<script>new Date().getFullYear()>1994&&document.write("-"+new Date().getFullYear());</script>-2022 Check Point Software Technologies LTD. All rights reserved. <br>Property of <a href="https://www.checkpoint.com/">CheckPoint.com</a> | <a href="https://research.checkpoint.com/privacy-policy/">Privacy Policy</a></p>
+    </div>
+</footer>
+
+<!-- Modal pop_over -->
+<div class="modal fade" id="pop_over" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 0 1rem 1rem;">
+                <button id="pop_close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <a href="https://bit.ly/2Pmx8R2" target="_blank"><img src="/wp-content/uploads/2018/11/CfP_1021x580_A.jpg" style="max-height: 290px;" alt="Call For Papers"></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="https://research.checkpoint.com/wp-content/plugins/enlighter/cache/enlighterjs.min.js?ver=TJ0/7+iAWMKbDKS" id="enlighterjs-js"></script>
+<script type="text/javascript" id="enlighterjs-js-after">
+!function(e,n){if("undefined"!=typeof EnlighterJS){var o={"selectors":{"block":"pre.EnlighterJSRAW","inline":"code.EnlighterJSRAW"},"options":{"indent":4,"ampersandCleanup":true,"linehover":true,"rawcodeDbclick":false,"textOverflow":"break","linenumbers":true,"theme":"enlighter","language":"enlighter","retainCssClasses":false,"collapse":false,"toolbarOuter":"","toolbarTop":"{BTN_RAW}{BTN_COPY}{BTN_WINDOW}{BTN_WEBSITE}","toolbarBottom":""}};(e.EnlighterJSINIT=function(){EnlighterJS.init(o.selectors.block,o.selectors.inline,o.options)})()}else{(n&&(n.error||n.log)||function(){})("Error: EnlighterJS resources not loaded yet!")}}(window,console);
+</script>
+<script type="text/javascript" src="https://cdn.onesignal.com/sdks/OneSignalSDK.js?ver=5.9.3" async="async" id="remote_sdk-js"></script>
+
+
+<script type="text/javascript" id="">var processEpsilonData=function(a){if(""!==a){a=JSON.parse(a);window.dataLayer.push({company_name:a.company.name,domain:a.company.domain,industry:a.company.industry,employee_range:a.company.employee_range,revenue_range:a.company.revenue_range,employee_count:a.company.employee_count,country:a.company.country,segments:a.segments});window.dataLayer.push({segment_ids:a.segments.ids,segment_names:a.segments.names,segment_lists:a.segments.lists});a.segments.names&&window.dataLayer.push({segments:a.segments.names.join(",")});
+if(0!==a.scores.length)for(var b=0;b<a.scores.length;b++){var d=a.scores[b].product,c={};c[d]=a.scores[b];window.dataLayer.push(c)}window.dataLayer.push({confidence:a.confidence});window.dataLayer.push({event:"6si_company_details_loaded"})}};window._6si=window._6si||[];window.dataLayer=window.dataLayer||[];window._6si.push(["enableEventTracking",!0]);window._6si.push(["setToken","af1e717890f3605d16fc823643e05b8c"]);window._6si.push(["setEndpoint","b.6sc.co"]);
+var epsilonName="enableCompanyDetails",enabled=!0,callback=processEpsilonData,version=3;window._6si.push([epsilonName,enabled,callback,version]);window._6si.push(["setEpsilonKey","87c67a7c5a9e9b4dd1824f6727ed4e43fadadde4"]);(function(){var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src=("https:"==document.location.protocol?"https://":"http://")+"j.6sc.co/6si.min.js";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b)})();</script>
+   <script type="text/javascript" id="trd-flame-load">TRD_ACC_ID=2336;(function(e,f){function c(){var d=setInterval(function(){if("complete"===document.readyState){var a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src="https://assets.trendemon.com/tag/trends.min.js";a.id="trdflame";var b=document.getElementsByTagName("script")[0];b.parentNode.insertBefore(a,b);clearInterval(d)}},500)}c()})(window,document);</script>
+<script type="text/javascript" id="">jQuery(document).ready(function(){document.cookie="referralURL\x3d"+document.referrer+";path\x3d/;domain\x3dcheckpoint.com"});</script><div id="st-2" class=" st-sticky-share-buttons st-left st-toggleable st-has-labels "><div class="st-btn st-first" data-network="twitter" style="display: inline-block;">
+  <img alt="twitter sharing button" src="https://platform-cdn.sharethis.com/img/twitter.svg">
+  <span class="st-label">Tweet</span>
+</div><div class="st-btn" data-network="whatsapp" style="display: inline-block;">
+  <img alt="whatsapp sharing button" src="https://platform-cdn.sharethis.com/img/whatsapp.svg">
+  <span class="st-label">Share</span>
+</div><div class="st-btn" data-network="facebook" style="display: inline-block;">
+  <img alt="facebook sharing button" src="https://platform-cdn.sharethis.com/img/facebook.svg">
+  <span class="st-label">Share</span>
+</div><div class="st-btn" data-network="linkedin" style="display: inline-block;">
+  <img alt="linkedin sharing button" src="https://platform-cdn.sharethis.com/img/linkedin.svg">
+  <span class="st-label">Share</span>
+</div><div class="st-btn" data-network="email" style="display: inline-block;">
+  <img alt="email sharing button" src="https://platform-cdn.sharethis.com/img/email.svg">
+  <span class="st-label">Email</span>
+</div><div class="st-btn" data-network="pinterest" style="display: inline-block;">
+  <img alt="pinterest sharing button" src="https://platform-cdn.sharethis.com/img/pinterest.svg">
+  <span class="st-label">Pin</span>
+</div><div class="st-btn" data-network="sharethis" style="display: inline-block;">
+  <img alt="sharethis sharing button" src="https://platform-cdn.sharethis.com/img/sharethis.svg">
+  <span class="st-label">Share</span>
+</div><div class="st-btn st-last" data-network="reddit" style="display: inline-block;">
+  <img alt="reddit sharing button" src="https://platform-cdn.sharethis.com/img/reddit.svg">
+  <span class="st-label">Share</span>
+</div><div class="st-toggle">
+  <div class="st-left">
+    <img alt="arrow_left sharing button" src="https://platform-cdn.sharethis.com/img/arrow_left.svg">
+  </div>
+  <div class="st-right">
+    <img alt="arrow_right sharing button" src="https://platform-cdn.sharethis.com/img/arrow_right.svg">
+  </div>
+</div></div><div style="display: none; visibility: hidden;"><script type="text/javascript">(function(){function b(){!1===c&&(c=!0,Munchkin.init("750-DQH-528"))}var c=!1,a=document.createElement("script");a.type="text/javascript";a.async=!0;a.src="//munchkin.marketo.net/munchkin.js";a.onreadystatechange=function(){"complete"!=this.readyState&&"loaded"!=this.readyState||b()};a.onload=b;document.getElementsByTagName("head")[0].appendChild(a)})();</script>
+ 
+<script type="text/javascript">(function(a,d,b,f,e,c){a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)};a[b].a=e;a[b].e=c;c=d.createElement("script");c.async=!0;c.type="text/javascript";c.src=f+"?aid\x3d"+e;d=d.getElementsByTagName("script")[0];d.parentNode.insertBefore(c,d)})(window,document,"rtp","//abrtp1-cdn.marketo.com/rtp-api/v1/rtp.js","checkpoint");rtp("send","view");rtp("get","campaign",!0);</script>
+</div><script type="text/javascript" id="">jQuery(document).ready(function(){var b=document.getElementsByClassName("mktoForm");0<b.length&&MktoForms2.whenReady(function(a){a.onSubmit(function(){a.vals();dataLayer.push({event:"marketoFormSubmit"})})})});</script>
+<script type="text/javascript" id="">!function(b,e,f,g,a,c,d){b.fbq||(a=b.fbq=function(){a.callMethod?a.callMethod.apply(a,arguments):a.queue.push(arguments)},b._fbq||(b._fbq=a),a.push=a,a.loaded=!0,a.version="2.0",a.queue=[],c=e.createElement(f),c.async=!0,c.src=g,d=e.getElementsByTagName(f)[0],d.parentNode.insertBefore(c,d))}(window,document,"script","https://connect.facebook.net/en_US/fbevents.js");fbq("init","1692853834349189");fbq("track","PageView");</script>
+<noscript>
+ <img height="1" width="1" src="https://www.facebook.com/tr?id=1692853834349189&amp;ev=PageView
+&amp;noscript=1">
+</noscript>
+<img src="https://t.co/i/adsct?type=javascript&amp;version=2.3.14&amp;p_id=Twitter&amp;p_user_id=0&amp;txn_id=nxi3o&amp;events=%5B%5B%22pageview%22%2C%7B%7D%5D%5D&amp;tw_document_href=https%3A%2F%2Fresearch.checkpoint.com%2F2022%2Fxloader-botnet-find-me-if-you-can%2F&amp;tw_iframe_status=0&amp;tw_order_quantity=0&amp;tw_sale_amount=0&amp;event_id=4be38542-c9ed-4049-b120-8281a036af23" height="1" width="1" style="display: none;"><img src="https://analytics.twitter.com/i/adsct?type=javascript&amp;version=2.3.14&amp;p_id=Twitter&amp;p_user_id=0&amp;txn_id=nxi3o&amp;events=%5B%5B%22pageview%22%2C%7B%7D%5D%5D&amp;tw_document_href=https%3A%2F%2Fresearch.checkpoint.com%2F2022%2Fxloader-botnet-find-me-if-you-can%2F&amp;tw_iframe_status=0&amp;tw_order_quantity=0&amp;tw_sale_amount=0&amp;event_id=4be38542-c9ed-4049-b120-8281a036af23" height="1" width="1" style="display: none;"></body></html>
