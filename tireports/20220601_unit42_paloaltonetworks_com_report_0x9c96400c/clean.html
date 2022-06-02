@@ -1,0 +1,71 @@
+<div>
+<h1 class="article__header__title mb-sm-30 mb-40">Threat Brief: CVE-2022-30190 – MSDT Code Execution Vulnerability</h1>
+<ul class="article__entry-meta d-flex flex-wrap align-items-center text-black">
+<li class="mr-10 mb-10 px-20 rounded-pill d-flex bg-gray-200">
+6,862
+ people reacted</li>
+<li class="d-sm-none col-12 p-0">
+</li><li class="mr-10 mb-10 px-20 rounded-pill bg-gray-200">12</li>
+<li class="mb-10 px-20 rounded-pill bg-gray-200"> 4 min. read</li>
+</ul>
+<a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Funit42.paloaltonetworks.com%2Fcve-2022-30190-msdt-code-execution-vulnerability%2F" target="_blank"></a>
+<a href="https://twitter.com/home?status=https%3A%2F%2Funit42.paloaltonetworks.com%2Fcve-2022-30190-msdt-code-execution-vulnerability%2F+-+Threat+Brief%3A+CVE-2022-30190+%E2%80%93+MSDT+Code+Execution+Vulnerability" target="_blank"></a>
+<a href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https%3A%2F%2Funit42.paloaltonetworks.com%2Fcve-2022-30190-msdt-code-execution-vulnerability%2F&amp;title=Threat+Brief%3A+CVE-2022-30190+%E2%80%93+MSDT+Code+Execution+Vulnerability&amp;summary=&amp;source=" target="_blank"></a>
+<a href="https://unit42.paloaltonetworks.com//www.reddit.com/submit?url=https://unit42.paloaltonetworks.com/cve-2022-30190-msdt-code-execution-vulnerability/" target="_blank"></a>
+<p>
+ By <a class="author url fn" href="https://unit42.paloaltonetworks.com/author/shawn-westfall/" rel="author" title="Posts by Shawn Westfall">Shawn Westfall</a> </p>
+<p>May 31, 2022 at 2:45 PM</p>
+<p>Category: <a href="https://unit42.paloaltonetworks.com/category/threat-briefs-assessments/threat-brief/" rel="category tag">Threat Brief</a>, <a href="https://unit42.paloaltonetworks.com/category/threat-briefs-assessments/" rel="category tag">Threat Briefs and Assessments</a>, <a href="https://unit42.paloaltonetworks.com/category/vulnerability/" rel="category tag">Vulnerability</a></p>
+<p>Tags: <a href="https://unit42.paloaltonetworks.com/tag/cve-2022-30190/" rel="tag">CVE-2022-30190</a>, <a href="https://unit42.paloaltonetworks.com/tag/follina/" rel="tag">Follina</a>, <a href="https://unit42.paloaltonetworks.com/tag/microsoft-office/" rel="tag">Microsoft Office</a>, <a href="https://unit42.paloaltonetworks.com/tag/remote-code-execution/" rel="tag">remote code execution</a>, <a href="https://unit42.paloaltonetworks.com/tag/zero-click/" rel="tag">zero-click</a></p>
+<p>This post is also available in: 
+ <a class="wpml-ls-link" href="https://unit42.paloaltonetworks.jp/cve-2022-30190-msdt-code-execution-vulnerability/">日本語 (Japanese)</a></p><h2><a id="post-123306-_4lt92rr5muov"></a>Executive Summary</h2>
+<p>On May 27, 2022, details began to emerge of malicious Word documents leveraging remote templates to execute PowerShell via the ms-msdt Office URI scheme. The use of this technique appeared to allow attackers to bypass local Office macro policies to execute code within the context of Word. Microsoft has since released <a href="https://msrc-blog.microsoft.com/2022/05/30/guidance-for-cve-2022-30190-microsoft-support-diagnostic-tool-vulnerability/">protection guidance</a> and assigned <a href="https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2022-30190">CVE-2022-30190</a> to this vulnerability.</p>
+<p>Due to the amount of publicly available information, ease of use, and the extreme effectiveness of this exploit, Palo Alto Networks is providing this threat brief to make our customers aware of this critical vulnerability and the options available to ensure proper protections are put into place until a patch can be issued by Microsoft. The vulnerability enables remote code execution with the same privileges as the calling application and there are proof-of-concept examples of zero-click variants. Therefore, exploits for this vulnerability have potential to be of high impact.</p>
+<figure class="mb-30 text-center">
+<img alt="An image representing threat briefs, such as the one covering CVE-2022-30190" class="attachment-single size-single" height="450" src="https://unit42.paloaltonetworks.com/wp-content/uploads/2022/05/Threat-brief-r3d1.png" style="max-width:800px;height:auto;width:auto;" width="900"/> </figure><p>We highly recommend following Microsoft’s guidance to protect your enterprise until a patch is issued to fix the problem.</p>
+<p>All known samples and URLs associated with this attack have been flagged in the Palo Alto Networks product suite so customers can receive protections.</p>
+<table>
+<tbody>
+<tr>
+<td>Vulnerability Discussed</td>
+<td>CVE-2022-30190 aka Follina</td>
+</tr>
+</tbody>
+</table>
+<h2>Table of Contents</h2>
+<p><a href="#Attack-Details">Attack Details for CVE-2022-30190</a>
+<a href="#In-The-Wild">CVE-2022-30190 in the Wild</a>
+<a href="#Conclusion">Conclusion</a></p>
+<h2><a id="Attack-Details"></a>Attack Details for CVE-2022-30190</h2>
+<p>On May 27, 2022, a cybersecurity research team out of Tokyo, Japan,<a href="https://twitter.com/nao_sec/status/1530196847679401984?ref_src=twsrc%5Etfw%7Ctwcamp%5Etweetembed%7Ctwterm%5E1530196847679401984%7Ctwgr%5E%7Ctwcon%5Es1_&amp;ref_url=https%3A%2F%2Fcdn.embedly.com%2Fwidgets%2Fmedia.html%3Ftype%3Dtext2Fhtmlkey%3Da19fcc184b9711e1b4764040d3dc5c07schema%3Dtwitterurl%3Dhttps3A%2F%2Ftwitter.com%2Fnao_sec%2Fstatus%2F1530196847679401984image%3Dhttps3A%2F%2Fi.embed.ly%2F1%2Fimage3Furl3Dhttps253A252F252Fabs.twimg.com252Ferrors252Flogo46x38.png26key3Da19fcc184b9711e1b4764040d3dc5c07" rel="wpdevart_lightbox"> nao_sec</a>, uncovered a malicious Word document uploaded to<a href="https://www.virustotal.com/gui/file/4a24048f81afbe9fb62e7a6a49adbd1faf41f266b5f9feecdceb567aec096784/detection"> VirusTotal</a> from an IP in Belarus. The document was abusing the Microsoft Word remote template feature to retrieve a malicious HTML file that subsequently used the<a href="https://docs.microsoft.com/en-us/office/client-developer/office-uri-schemes"> ms-msdt</a> Office URI scheme to execute PowerShell within the context of Word.</p>
+<p>On May 30, Keven Beaumont wrote an<a href="https://doublepulsar.com/follina-a-microsoft-office-code-execution-vulnerability-1a47fce5629e"> article</a> detailing the specifics of the initial incident. The important thing to note here is that the decoy Word document had nothing inherently malicious outside of the link to the template hosted at hxxp://xmlformats[.]com, allowing it to bypass EDR solutions. The HTML code from the remote template is shown in Figure 1 below.</p>
+<figure class="wp-caption aligncenter" id="attachment_123309"><img alt="Remote template HTML code related to CVE-2022-30190. Contains embedded JavaScript that uses the ms-mdft schema to invoke the PCVDiagnostic pack to reference the IT_BrowseForFile to execute the base64-encoded PowerShell Invoke-Expression command." class="wp-image-123309" height="661" src="https://unit42.paloaltonetworks.com/wp-content/uploads/2022/05/word-image-71.png" style="max-width:800px;height:auto;width:auto;" width="900"/><figcaption class="wp-caption-text" id="caption-attachment-123309">Figure 1. Remote template HTML code.</figcaption></figure>
+<p>The JavaScript embedded within the HTML uses the ms-msdt schema to invoke the <a href="https://lolbas-project.github.io/lolbas/Binaries/Msdt/">PCWDiagnostic</a> pack, to reference the IT_BrowseForFile to execute the base64-encoded PowerShell Invoke-Expression command.</p>
+<p>The base64-decoded text within the PowerShell Invoke-Expression is shown in Figure 2 below.</p>
+<figure class="wp-caption aligncenter" id="attachment_123311"><img alt="Base64-decoded PowerShell contents. The code shown here kills the msdt.exe process, loops through files looking for a CAB file, stores it in a file, etc. " class="wp-image-123311" height="199" src="https://unit42.paloaltonetworks.com/wp-content/uploads/2022/05/word-image-72.png" style="max-width:800px;height:auto;width:auto;" width="900"/><figcaption class="wp-caption-text" id="caption-attachment-123311">Figure 2. Base64-decoded PowerShell contents.</figcaption></figure>
+<p>This code does a few things. First it kills the msdt.exe process. Then the code loops through the files within a .rar archive looking for a CAB file (TVNDRgAAAA base64 decodes to MSCF, which is the magic header of a CAB file). It then stores it in a file called 1.t. 1.t, which gets base64 decoded to 1.c, expanded to rgb.exe and then finally executed.</p>
+<p>None of the reports we’ve seen have recovered the final payload. Therefore, the contents are unknown.</p>
+<p>The use of remote templates to deliver malicious documents is not new, however, historically they’ve been used to host .docm or dotm (macro-enabled Word documents), which would still be affected by the local systems’s Word macro policy. Therefore, the vulnerability of particular note in this attack lies in calling the Microsoft Support Diagnostic Tool (MSDT) using the ms-msdt URL Protocol within Word via the remotely loaded template file. This allows execution of code within the context of Microsoft Word, even if macros are disabled.</p>
+<p><a href="https://support.microsoft.com/en-us/topic/what-is-protected-view-d6f09ac7-e6b9-4495-8e43-2bbcdbcb6653">Protected View</a> was triggered during execution of the nao_sec example, however, John Hammond <a href="https://t.co/RYtH9Bb4rm">demonstrated</a> you can bypass Protected View by using an RTF file instead. This allows the attack to succeed even if the user simply views the file in the preview pane – with no clicks on the document necessary – making the attack much more dangerous.</p>
+<p>Microsoft has since released protection <a href="https://msrc-blog.microsoft.com/2022/05/30/guidance-for-cve-2022-30190-microsoft-support-diagnostic-tool-vulnerability/">guidance</a> and assigned CVE-2022-30190 to this vulnerability. They provided a workaround to disable the MSDT URL protocol, however, this may break other diagnostic tools that rely on the MSDT URL protocol to operate. They also recommend ensuring cloud-delivered protections and automatic sample submission for Microsoft Defender are enabled. Microsoft recommends that customers of Microsoft Defender for Endpoint enable the attack surface reduction rule BlockOfficeCreateProcessRule.</p>
+<h2><a id="In-The-Wild"></a>CVE-2022-30190 in the Wild</h2>
+<p>So far, Palo Alto Networks is only seeing indications of testing within our customer telemetry indicated by final payload execution of benign executables such as calc.exe and notepad.exe. Palo Alto Networks and Unit 42 will continue to monitor for evidence of exploitation and further novel use cases.</p>
+<h2><a id="Conclusion"></a>Conclusion</h2>
+<p>Based on the amount of publicly available information, the ease of use and the extreme effectiveness of this exploit, Palo Alto Networks highly recommends following Microsoft’s guidance to protect your enterprise until a patch is issued to fix the problem.</p>
+<p><a href="https://docs.paloaltonetworks.com/wildfire">WildFire</a> and <a href="https://docs.paloaltonetworks.com/cortex/cortex-xdr">Cortex XDR</a> categorize all known samples we’ve come across as malware.</p>
+<p>Cortex XDR detects the exploitation attempts and reports them with Behavioral Threat Protection.</p>
+<p>Additionally, all encountered URLs have been flagged as malware within PAN-DB, the <a href="https://docs.paloaltonetworks.com/pan-os/9-1/pan-os-admin/url-filtering/pan-db-categorization">Advanced URL Filtering URL</a> database.</p>
+<p>If you think you may have been compromised or have an urgent matter, get in touch with the<a href="http://start.paloaltonetworks.com/contact-unit42.html"> Unit 42 Incident Response team</a> or call:</p>
+<ul>
+<li>North America Toll-Free: 866.486.4842 (866.4.UNIT42)</li>
+<li>EMEA: +31.20.299.3130</li>
+<li>APAC: +65.6983.8730</li>
+<li>Japan: +81.50.1790.0200</li>
+</ul>
+<p>As further information or detections are put into place, Palo Alto Networks will update this publication accordingly.</p>
+<h4 class="h3 mb-10 text-black">Get updates from <br class="d-sm-none"/> Palo Alto<br class="d-sm-none"/> Networks!</h4>
+<p>Sign up to receive the latest news, cyber threat intelligence and research from us</p>
+<p>Please enter your email address!</p>
+<p>Please mark, I'm not a robot!</p>
+<p>By submitting this form, you agree to our <a href="https://www.paloaltonetworks.com/legal-notices/terms-of-use">Terms of Use</a> and acknowledge our <a href="https://www.paloaltonetworks.com/legal-notices/privacy">Privacy Statement</a>.</p>
+</div>

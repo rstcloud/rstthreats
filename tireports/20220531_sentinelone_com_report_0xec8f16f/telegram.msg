@@ -11,7 +11,7 @@ Log4shell\_vuln
 Beacon
 
 *Geo*:
-Ukraine, Russian, Belarus, Chinese
+Chinese, Ukraine, Russian, Belarus
 
 *CVEs*:
 CVE-2022-30190  \[[Vulners](https://vulners.com/cve/CVE-2022-30190)]

