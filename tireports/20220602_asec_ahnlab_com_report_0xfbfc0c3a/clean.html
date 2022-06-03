@@ -1,0 +1,48 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/34955/" rel="bookmark" title="10:09 am">June 2, 2022</a>
+<h1 class="title">NSIS Installer Malware Included with Various Malicious Files</h1>
+<p>The ASEC analysis team recently discovered attackers distributing multiple malicious files with NSIS installers.</p>
+<p>NSIS (Nullsoft Scriptable Install System) is normally used to create installers for certain programs. It can be also used for creating malware strains as it is script-based and thus makes nearly identical forms for NSIS installers.</p>
+<p>NSIS installer-type malware strains have been used a lot by attackers. The type introduced in this post includes multiple malicious files in a single installer: running one file will infect the system with various malware strains.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34828 jetpack-lazy-image jetpack-lazy-image--handled" height="360" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-50.png?resize=786%2C360&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="786"/><img alt="" class="wp-image-34828" height="360" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-50.png?resize=786%2C360&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="786"/><figcaption>Figure 1. Malware icon</figcaption></figure>
+<p></p>
+<p>Inside the NSIS installer is a file named setup_installer.exe and the NSI script as shown below.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34830 jetpack-lazy-image" height="195" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-51.png?resize=701%2C195&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="701"/><img alt="" class="wp-image-34830" height="195" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-51.png?resize=701%2C195&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="701"/><figcaption>Figure 2. Files inside the malware</figcaption></figure>
+<p></p>
+<p>The script simply has a routine for running setup_installer.exe. It does not have anti-sandbox techniques such as obfuscation or time delay.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34832 jetpack-lazy-image" height="161" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-52.png?resize=763%2C161&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="763"/><img alt="" class="wp-image-34832" height="161" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-52.png?resize=763%2C161&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="763"/><figcaption>Figure 3. Part of NSI script file</figcaption></figure>
+<p>setup_installer.exe consists of 7Zip SFX (Self-extracting archive) that can extract internally compressed files to a certain folder and run certain programs.</p>
+<p>The setup_installer.exe file contains malicious files, library files, and setup_install.exe (15 in total). When the installer is run, it is automatically decompressed in the %TEMP% (temporary folder) \7zS[random 8 characters] folder and runs setup_install.exe when the process is complete.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34838 jetpack-lazy-image" height="476" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-55.png?resize=1024%2C446&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1094"/><img alt="" class="wp-image-34838" height="476" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-55.png?resize=1024%2C446&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1094"/><figcaption>Figure 4. Decompressing setup_installer.exe</figcaption></figure>
+<p></p>
+<p>The file uses Powershell to set an exclusion for MS Defender on the %TEMP% folder and runs 15 malicious files in order.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34841 jetpack-lazy-image" height="152" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-57.png?resize=877%2C152&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="877"/><img alt="" class="wp-image-34841" height="152" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-57.png?resize=877%2C152&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="877"/><figcaption>Figure 5. Powershell used to set an exclusion for MS Defender</figcaption></figure>
+<p></p>
+<p>The figure below shows the process explained above.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34839 jetpack-lazy-image" height="545" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-56.png?resize=933%2C545&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="933"/><img alt="" class="wp-image-34839" height="545" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-56.png?resize=933%2C545&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="933"/><figcaption>Figure 6. Process tree</figcaption></figure>
+<p></p>
+<p>The file distributes various malware types in a package form including info-leaking malware such as AgentTesla, RedLine, and SmokeLoader, downloaders such as BeamWinHTTP, STOP ransomware, etc.</p>
+<p>As the malicious files mentioned above are often disguised as installers, users should take caution when downloading files from unknown sources. They should also refrain from downloading illegal software as installing it can infect the system with malware strains.</p>
+<p>Users should also update the anti-malware software they are using to the latest version. As for V3 products, you can set the compressed file option to detect the malware type more effectively.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34857 jetpack-lazy-image" height="335" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-61.png?resize=625%2C335&amp;ssl=1" width="625"/><img alt="" class="wp-image-34857" height="335" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-61.png?resize=625%2C335&amp;ssl=1" width="625"/><figcaption>Figure 7. Option for detecting compressed files</figcaption></figure>
+<p></p>
+<p>AhnLab V3 detects and blocks the malware using the aliases below.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34849 jetpack-lazy-image" height="416" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-58.png?resize=850%2C416&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="850"/><img alt="" class="wp-image-34849" height="416" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-58.png?resize=850%2C416&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="850"/><figcaption>Figure 8. V3 detection information</figcaption></figure>
+<p></p>
+<p>[File Detection]
+Trojan/Win.Muldrop.R436343
+Trojan/Win.AgentTesla.C5095736
+Infostealer/Win.ColdStealer.C5082387
+Infostealer/Win.RedLine.C4628732
+Ransomware/Win.Stop.R484442</p>
+<p>[IOC Info]
+1f63405b97e1472330b563644c3e863e
+1940b45ad2b6368f3b2a8c53c6bde8c9
+f01d8c7ecb9e450748ca65931d9dc7a7
+74df6867e4cdecfcaa15349a63b648ac
+e043798557dc106b7fdd4d0974768edc</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/en/tag/asec-en/" rel="tag">ASEC</a>, <a href="https://asec.ahnlab.com/tag/installation/" rel="tag">Installation</a>, <a href="https://asec.ahnlab.com/en/tag/malware-en/" rel="tag">malware</a></p>
+</div>

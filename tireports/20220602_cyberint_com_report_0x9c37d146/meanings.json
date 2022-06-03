@@ -1,0 +1,1482 @@
+{
+    "title": "Avoid Taking Shortcuts New Emotet Technique",
+    "url": "https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique",
+    "threats": {
+        "Threat": [
+            {
+                "token": {
+                    "id": "<THREAT_0x8bd5383c>",
+                    "type": "Threat",
+                    "value": "emotet"
+                },
+                "references": {
+                    "sentences": [
+                        "This document is an update to the technical report on Emotet from December 2021.",
+                        "Until recently, Emotets infection flow and execution included the first phase of malspam activity, which lures the user to open an attachment, thereby triggering a macro code to run on the victims system. In previous versions of Emotet, the macro would directly launch PowerShell to download the payload. After the macro phase, each version would act differently, for example, lateral spreading, dropping additional malware, and deploying Emotet modules. We have already witnessed Ryuk, Trickbot, and other notorious malware using Emotet to gain initial access.",
+                        "Figure 2: Emotet regsvr32 command",
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage.",
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain.",
+                        "Emotet, Briefly",
+                        "Figure 1: New malicious instance of Emotet",
+                        "In recent versions of Emotet, we detected something different in the infection chain: The macro code that was previously in use has been replaced with an LNK file.",
+                        "The LNK initiates an encoded Powershell code, which calls regsvr32.exe (Windows command-line utility to register and unregister OLE controls) from the Syswow64 folder to run the payload, allowing 32-bit binary to run in 64-bit OS. This might indicate that Emotets new variants will drop the ability to act on 32-bit OS.",
+                        "Figure 3: Emotet Powershell process"
+                    ],
+                    "titles": [
+                        "Avoid Taking Shortcuts New Emotet Technique",
+                        "Shortcuts, Regsvr32, and 64-bit Loaders",
+                        "Emotet, Briefly",
+                        "LNK Current Volume and Prior Usage",
+                        "High-Level Workflow"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x6a96e80d>",
+                            "type": "Threat",
+                            "value": "outsteel"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x47dcd307>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "28ddb73f9c69e88c7ff2f7be33141bb90424ba511a6199cb8d4c905623b28e64"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9c5f835c>",
+                            "type": "Threat",
+                            "value": "saintbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x151cee5c>",
+                            "type": "Category",
+                            "value": "trojan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x6c4f1a92>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "dc5de854f1d30afbeb60bc7f3d9bbff11e413aba205d6afa4abbd4edf5e45045"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x2d0b8388>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "62af1ebe8d0b1d490b3b2e5a8bcbc9c5b1e589342a53ebb37ab883d3e2ad4ae9"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x32239007>",
+                            "type": "Category",
+                            "value": "stealer"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8b7370bd>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "85272956b712e97030c676301d971e6999bb6ef35165d79a3dbf7641a12e050a"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<URL_0x55cd0015>",
+                            "type": "Url",
+                            "value": "http://ocalogullari.com/inc/qfva7tzob2eqtk5dwd"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xb50ef9c1>",
+                            "type": "SoftName",
+                            "value": "microsoft office"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<IP_0x8dd5afd7>",
+                            "type": "IP",
+                            "value": "188.132.217.108"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0xbc18f550>",
+                    "type": "Threat",
+                    "value": "ryuk"
+                },
+                "references": {
+                    "sentences": [
+                        "Until recently, Emotets infection flow and execution included the first phase of malspam activity, which lures the user to open an attachment, thereby triggering a macro code to run on the victims system. In previous versions of Emotet, the macro would directly launch PowerShell to download the payload. After the macro phase, each version would act differently, for example, lateral spreading, dropping additional malware, and deploying Emotet modules. We have already witnessed Ryuk, Trickbot, and other notorious malware using Emotet to gain initial access."
+                    ],
+                    "titles": [
+                        "High-Level Workflow"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x9eab715c>",
+                    "type": "Threat",
+                    "value": "trickbot"
+                },
+                "references": {
+                    "sentences": [
+                        "Until recently, Emotets infection flow and execution included the first phase of malspam activity, which lures the user to open an attachment, thereby triggering a macro code to run on the victims system. In previous versions of Emotet, the macro would directly launch PowerShell to download the payload. After the macro phase, each version would act differently, for example, lateral spreading, dropping additional malware, and deploying Emotet modules. We have already witnessed Ryuk, Trickbot, and other notorious malware using Emotet to gain initial access."
+                    ],
+                    "titles": [
+                        "High-Level Workflow"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0xbc18f550>",
+                            "type": "Threat",
+                            "value": "ryuk"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9eab715c>",
+                            "type": "Threat",
+                            "value": "trickbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x9c5f835c>",
+                    "type": "Threat",
+                    "value": "saintbot"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": [
+                        "LNK Current Volume and Prior Usage"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9c5f835c>",
+                            "type": "Threat",
+                            "value": "saintbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x6a96e80d>",
+                            "type": "Threat",
+                            "value": "outsteel"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9c5f835c>",
+                            "type": "Threat",
+                            "value": "saintbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<THREAT_0x6a96e80d>",
+                    "type": "Threat",
+                    "value": "outsteel"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": [
+                        "LNK Current Volume and Prior Usage"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x9c5f835c>",
+                            "type": "Threat",
+                            "value": "saintbot"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x6a96e80d>",
+                            "type": "Threat",
+                            "value": "outsteel"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<THREAT_0x6a96e80d>",
+                            "type": "Threat",
+                            "value": "outsteel"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "ttps": {},
+    "meanings": {
+        "Category": [
+            {
+                "token": {
+                    "id": "<CATEGORY_0xf1a480bb>",
+                    "type": "Category",
+                    "value": "malware"
+                },
+                "references": {
+                    "sentences": [
+                        "Until recently, Emotets infection flow and execution included the first phase of malspam activity, which lures the user to open an attachment, thereby triggering a macro code to run on the victims system. In previous versions of Emotet, the macro would directly launch PowerShell to download the payload. After the macro phase, each version would act differently, for example, lateral spreading, dropping additional malware, and deploying Emotet modules. We have already witnessed Ryuk, Trickbot, and other notorious malware using Emotet to gain initial access.",
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage.",
+                        "Figure 1: New malicious instance of Emotet",
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine.",
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users.",
+                        "In addition, the Cyberint Research Team detected several instances of LNK payload builders for sale on known Darknet Forums. This kind of payload is already gaining traction and will probably increase its presence in new malware variants."
+                    ],
+                    "titles": [
+                        "Conclusions and Recommendations",
+                        "LNK Current Volume and Prior Usage",
+                        "Emotet, Briefly",
+                        "High-Level Workflow"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xf1a480bb>",
+                            "type": "Category",
+                            "value": "malware"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xd91561a2>",
+                    "type": "Category",
+                    "value": "botnet"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage."
+                    ],
+                    "titles": [
+                        "Emotet, Briefly"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xd91561a2>",
+                            "type": "Category",
+                            "value": "botnet"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x151cee5c>",
+                    "type": "Category",
+                    "value": "trojan"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage."
+                    ],
+                    "titles": [
+                        "Emotet, Briefly"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x151cee5c>",
+                            "type": "Category",
+                            "value": "trojan"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0xb68aa214>",
+                    "type": "Category",
+                    "value": "rat"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 4: Base64 obfuscated shellcode"
+                    ],
+                    "titles": [
+                        "Shortcuts, Regsvr32, and 64-bit Loaders"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0xb68aa214>",
+                            "type": "Category",
+                            "value": "rat"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<CATEGORY_0x32239007>",
+                    "type": "Category",
+                    "value": "stealer"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain.",
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine."
+                    ],
+                    "titles": [
+                        "Conclusions and Recommendations",
+                        "LNK Current Volume and Prior Usage"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<CATEGORY_0x32239007>",
+                            "type": "Category",
+                            "value": "stealer"
+                        },
+                        "relation": "has_category",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Industry": [
+            {
+                "token": {
+                    "id": "<INDUSTRY_0xf74966f7>",
+                    "type": "Industry",
+                    "value": "financial"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage."
+                    ],
+                    "titles": [
+                        "Emotet, Briefly"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        },
+                        "relation": "use_industry",
+                        "dst": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<INDUSTRY_0xf74966f7>",
+                            "type": "Industry",
+                            "value": "financial"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ],
+        "SoftName": [
+            {
+                "token": {
+                    "id": "<SOFTNAME_0xb50ef9c1>",
+                    "type": "SoftName",
+                    "value": "microsoft office"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": [
+                        "Conclusions and Recommendations"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SOFTNAME_0xb50ef9c1>",
+                            "type": "SoftName",
+                            "value": "microsoft office"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "iocs": {
+        "File": [
+            {
+                "token": {
+                    "id": "<FILE_0xcc1cdbf>",
+                    "type": "File",
+                    "value": "regsvr32.exe"
+                },
+                "references": {
+                    "sentences": [
+                        "The LNK initiates an encoded Powershell code, which calls regsvr32.exe (Windows command-line utility to register and unregister OLE controls) from the Syswow64 folder to run the payload, allowing 32-bit binary to run in 64-bit OS. This might indicate that Emotets new variants will drop the ability to act on 32-bit OS."
+                    ],
+                    "titles": [
+                        "Shortcuts, Regsvr32, and 64-bit Loaders"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7807093>",
+                            "type": "UnknownWord",
+                            "value": "unregister"
+                        }
+                    },
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Hash": [
+            {
+                "token": {
+                    "id": "<SHA256_0x2d0b8388>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "62af1ebe8d0b1d490b3b2e5a8bcbc9c5b1e589342a53ebb37ab883d3e2ad4ae9"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x2d0b8388>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "62af1ebe8d0b1d490b3b2e5a8bcbc9c5b1e589342a53ebb37ab883d3e2ad4ae9"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x8b7370bd>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "85272956b712e97030c676301d971e6999bb6ef35165d79a3dbf7641a12e050a"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x8b7370bd>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "85272956b712e97030c676301d971e6999bb6ef35165d79a3dbf7641a12e050a"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x47dcd307>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "28ddb73f9c69e88c7ff2f7be33141bb90424ba511a6199cb8d4c905623b28e64"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x47dcd307>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "28ddb73f9c69e88c7ff2f7be33141bb90424ba511a6199cb8d4c905623b28e64"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<SHA256_0x6c4f1a92>",
+                    "type": "Hash",
+                    "hash_type": "SHA256",
+                    "value": "dc5de854f1d30afbeb60bc7f3d9bbff11e413aba205d6afa4abbd4edf5e45045"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<SHA256_0x6c4f1a92>",
+                            "type": "Hash",
+                            "hash_type": "SHA256",
+                            "value": "dc5de854f1d30afbeb60bc7f3d9bbff11e413aba205d6afa4abbd4edf5e45045"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ],
+        "Url": [
+            {
+                "token": {
+                    "id": "<URL_0x55cd0015>",
+                    "type": "Url",
+                    "value": "http://ocalogullari.com/inc/qfva7tzob2eqtk5dwd"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<URL_0x55cd0015>",
+                            "type": "Url",
+                            "value": "http://ocalogullari.com/inc/qfva7tzob2eqtk5dwd"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ],
+        "IP": [
+            {
+                "token": {
+                    "id": "<IP_0x8dd5afd7>",
+                    "type": "IP",
+                    "value": "188.132.217.108"
+                },
+                "references": {
+                    "sentences": [],
+                    "titles": [
+                        "IOC Table"
+                    ]
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<IP_0x8dd5afd7>",
+                            "type": "IP",
+                            "value": "188.132.217.108"
+                        },
+                        "relation": "use_threat",
+                        "dst": {
+                            "id": "<THREAT_0x8bd5383c>",
+                            "type": "Threat",
+                            "value": "emotet"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "unknownwords": {
+        "UnknownWord": [
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x1b86b0ef>",
+                    "type": "UnknownWord",
+                    "value": "doron"
+                },
+                "references": {
+                    "sentences": [
+                        "Doron Kapah<crlf>Jun 2, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf6f3bd4>",
+                    "type": "UnknownWord",
+                    "value": "kapah"
+                },
+                "references": {
+                    "sentences": [
+                        "Doron Kapah<crlf>Jun 2, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcc974fc7>",
+                    "type": "UnknownWord",
+                    "value": "briefly"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, Briefly"
+                    ],
+                    "titles": [
+                        "Emotet, Briefly"
+                    ]
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe08df6b9>",
+                    "type": "UnknownWord",
+                    "value": "ever-evolving"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, one of the first Malware-as-a-Service (MaaS), an ever-evolving botnet and banking trojan active since 2014, recently added new techniques to its arsenal. Initially intended to extract sensitive banking information from a victims computer and operate using other malware trojans, this notorious malware continues evolving by implementing new techniques in the malware delivery stage."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xad87df08>",
+                    "type": "UnknownWord",
+                    "value": "vba"
+                },
+                "references": {
+                    "sentences": [
+                        "One of the reasons this change took place relates to Microsofts announcement about VBA protection, which will eventually block any macro file of internet origin from being executed."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x3c9b08a6>",
+                    "type": "UnknownWord",
+                    "value": "relates"
+                },
+                "references": {
+                    "sentences": [
+                        "One of the reasons this change took place relates to Microsofts announcement about VBA protection, which will eventually block any macro file of internet origin from being executed."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6510f911>",
+                    "type": "UnknownWord",
+                    "value": "announcement"
+                },
+                "references": {
+                    "sentences": [
+                        "One of the reasons this change took place relates to Microsofts announcement about VBA protection, which will eventually block any macro file of internet origin from being executed."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x7807093>",
+                    "type": "UnknownWord",
+                    "value": "unregister"
+                },
+                "references": {
+                    "sentences": [
+                        "The LNK initiates an encoded Powershell code, which calls regsvr32.exe (Windows command-line utility to register and unregister OLE controls) from the Syswow64 folder to run the payload, allowing 32-bit binary to run in 64-bit OS. This might indicate that Emotets new variants will drop the ability to act on 32-bit OS."
+                    ],
+                    "titles": []
+                },
+                "links": [
+                    {
+                        "src": {
+                            "id": "<FILE_0xcc1cdbf>",
+                            "type": "File",
+                            "value": "regsvr32.exe"
+                        },
+                        "relation": "related",
+                        "dst": {
+                            "id": "<UNKNOWNWORD_0x7807093>",
+                            "type": "UnknownWord",
+                            "value": "unregister"
+                        }
+                    }
+                ]
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe170cb70>",
+                    "type": "UnknownWord",
+                    "value": "progresspreference"
+                },
+                "references": {
+                    "sentences": [
+                        "The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of Silently Continue (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x11e26b9d>",
+                    "type": "UnknownWord",
+                    "value": "silently"
+                },
+                "references": {
+                    "sentences": [
+                        "The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of Silently Continue (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8ed4c9e4>",
+                    "type": "UnknownWord",
+                    "value": "suppresses"
+                },
+                "references": {
+                    "sentences": [
+                        "The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of Silently Continue (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e498f26>",
+                    "type": "UnknownWord",
+                    "value": "de-obfuscated"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 5: De-obfuscated Powershell commands embedded in the LNK file"
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x575c98d0>",
+                    "type": "UnknownWord",
+                    "value": "emotet-related"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x58349638>",
+                    "type": "UnknownWord",
+                    "value": "cmdlets"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8fbb818e>",
+                    "type": "UnknownWord",
+                    "value": "inspired"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9df4b2b4>",
+                    "type": "UnknownWord",
+                    "value": "darknet"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 6: LNK exploit sale post on Darknet forum",
+                        "In addition, the Cyberint Research Team detected several instances of LNK payload builders for sale on known Darknet Forums. This kind of payload is already gaining traction and will probably increase its presence in new malware variants."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8813d985>",
+                    "type": "UnknownWord",
+                    "value": "traction"
+                },
+                "references": {
+                    "sentences": [
+                        "In addition, the Cyberint Research Team detected several instances of LNK payload builders for sale on known Darknet Forums. This kind of payload is already gaining traction and will probably increase its presence in new malware variants."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe0fa9b2e>",
+                    "type": "UnknownWord",
+                    "value": "race"
+                },
+                "references": {
+                    "sentences": [
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xae0d9cad>",
+                    "type": "UnknownWord",
+                    "value": "bypasses"
+                },
+                "references": {
+                    "sentences": [
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x80e85f61>",
+                    "type": "UnknownWord",
+                    "value": "intensity"
+                },
+                "references": {
+                    "sentences": [
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8367e1ad>",
+                    "type": "UnknownWord",
+                    "value": "mistakenly"
+                },
+                "references": {
+                    "sentences": [
+                        "As malware and stealers keep evolving and becoming more complex in their evasion methods, the race to detect new techniques and bypasses will continue at high intensity. Although the malware contains multiple layers of obfuscation and encoding, the entry point is the employee who might mistakenly enable the macro code/LNK file that will lead to the infection of the machine."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x6c9293ac>",
+                    "type": "UnknownWord",
+                    "value": "encouraging"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc29ca2a4>",
+                    "type": "UnknownWord",
+                    "value": "editing"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xf3e50f11>",
+                    "type": "UnknownWord",
+                    "value": "dkim"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xff5c86d9>",
+                    "type": "UnknownWord",
+                    "value": "spf"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9c7447ce>",
+                    "type": "UnknownWord",
+                    "value": "excessive"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8c6169ad>",
+                    "type": "UnknownWord",
+                    "value": "filetype"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            },
+            {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x700077c>",
+                    "type": "UnknownWord",
+                    "value": "filetypes"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            }
+        ]
+    },
+    "other_links": [],
+    "info": {
+        "potential_threats": {
+            "<UNKNOWNWORD_0xdf6f3bd4>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xdf6f3bd4>",
+                    "type": "UnknownWord",
+                    "value": "kapah"
+                },
+                "references": {
+                    "sentences": [
+                        "Doron Kapah<crlf>Jun 2, 2022"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xcc974fc7>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xcc974fc7>",
+                    "type": "UnknownWord",
+                    "value": "briefly"
+                },
+                "references": {
+                    "sentences": [
+                        "Emotet, Briefly"
+                    ],
+                    "titles": [
+                        "Emotet, Briefly"
+                    ]
+                }
+            },
+            "<UNKNOWNWORD_0xe170cb70>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xe170cb70>",
+                    "type": "UnknownWord",
+                    "value": "progresspreference"
+                },
+                "references": {
+                    "sentences": [
+                        "The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of Silently Continue (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x11e26b9d>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x11e26b9d>",
+                    "type": "UnknownWord",
+                    "value": "silently"
+                },
+                "references": {
+                    "sentences": [
+                        "The Obfuscated Base64 Encoded PowerShell code defines the Preference Variable (ProgressPreference) mode of Silently Continue (suppresses the error message and continues executing the command) and multiple links to communicate with in order to fetch the payload to the newly created folder."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x8e498f26>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x8e498f26>",
+                    "type": "UnknownWord",
+                    "value": "de-obfuscated"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 5: De-obfuscated Powershell commands embedded in the LNK file"
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x575c98d0>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x575c98d0>",
+                    "type": "UnknownWord",
+                    "value": "emotet-related"
+                },
+                "references": {
+                    "sentences": [
+                        "Cyberint Research Team has detected 45 LNK samples over the past month; most of the LNK files appeared as Emotet-related and shared the same cmdlets structure. However, the Powershell employment using the LNK technique appeared in the wild in 2021 while being used in the Document Stealer OutSteel and the Downloader SaintBot, according to Unit 42 Report. Emotet operators might become inspired by the technique and implement it in their infection chain."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0x9df4b2b4>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0x9df4b2b4>",
+                    "type": "UnknownWord",
+                    "value": "darknet"
+                },
+                "references": {
+                    "sentences": [
+                        "Figure 6: LNK exploit sale post on Darknet forum",
+                        "In addition, the Cyberint Research Team detected several instances of LNK payload builders for sale on known Darknet Forums. This kind of payload is already gaining traction and will probably increase its presence in new malware variants."
+                    ],
+                    "titles": []
+                }
+            },
+            "<UNKNOWNWORD_0xc29ca2a4>": {
+                "token": {
+                    "id": "<UNKNOWNWORD_0xc29ca2a4>",
+                    "type": "UnknownWord",
+                    "value": "editing"
+                },
+                "references": {
+                    "sentences": [
+                        "Ensure that your organization is set for the new VBA protection, use a Group Policy to disable macros running in Microsoft Office applications.<crlf>Educate users on the standard TTP used and reinforce the message that documents encouraging them to Enable Editing, Enable Content, or disable any other security setting are almost undoubtedly malicious.<crlf>Ensure that email security controls are applied to limit the delivery of potentially malicious attachments or links to end-users, and implement protocols and security controls such as DKIM, DMARC, and SPF.<crlf>Continuous monitoring of unusual endpoint behaviors such as excessive requests to specific web hosts using unique user-agent strings, can be an early indication of compromise.<crlf>Consider applying deep content inspection to ensure that any downloaded content filetype matches the actual file content and blocks dangerous filetypes, such as executables, for standard users."
+                    ],
+                    "titles": []
+                }
+            }
+        },
+        "sigma": false,
+        "yara": false
+    },
+    "keywords": {
+        "classified": [],
+        "dubbed": [],
+        "associated": [],
+        "targets": [],
+        "attributed": []
+    },
+    "resources": {
+        "links": {
+            "github": [],
+            "pastebin": [],
+            "text_files": [],
+            "other": [
+                "https://www.facebook.com/sharer/sharer.php?u=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://twitter.com/intent/tweet?url=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://www.linkedin.com/shareArticle?mini=true&url=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://api.whatsapp.com/send?text=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://www.facebook.com/sharer/sharer.php?u=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://twitter.com/intent/tweet?url=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://www.linkedin.com/shareArticle?mini=true&url=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://api.whatsapp.com/send?text=https://cyberint.com/blog/research/avoid-taking-shortcuts-new-emotet-technique/",
+                "https://cyberint.com/blog/research/emotet-returns/",
+                "https://cyberint.com/blog/research/info-stealers-ecosystem-introduction/",
+                "https://cyberint.com/blog/research/2022-cyber-attacks-trends/",
+                "https://cyberint.com/blog/research/emotet-returns/",
+                "https://docs.microsoft.com/en-us/deployoffice/security/internet-macros-blocked",
+                "https://unit42.paloaltonetworks.com/ukraine-targeted-outsteel-saintbot/",
+                "https://cyberint.com/contact-sales/"
+            ]
+        },
+        "images": [
+            "",
+            "https://cyberint.com/wp-content/uploads/2021/12/Emotet-is-Back-370x210.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/04/Info-Stealers-Ecosystem-Introduction-370x210.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/01/Predictions-370x210.png",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_1.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_2.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_3.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_4.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_5.png",
+            "",
+            "https://cyberint.com/wp-content/uploads/2022/06/emotet_22_6.png"
+        ]
+    }
+}

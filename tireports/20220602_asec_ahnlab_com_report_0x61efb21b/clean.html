@@ -1,0 +1,53 @@
+<div>
+Posted on <a href="https://asec.ahnlab.com/en/34793/" rel="bookmark" title="10:08 am">June 2, 2022</a>
+<h1 class="title">AgentTesla Being Distributed Through Windows Help File (*.chm)</h1>
+<p>The ASEC analysis team recently discovered AgentTesla being distributed with a new method. Previously, AgentTesla discussed in multiple ASEC blog posts was distributed by the malicious VBA macro inside PowerPoint files (*.ppt). However, the new method uses Windows Help files (*.chm) to run powershell commands.</p>
+<figure class="wp-block-embed is-type-wp-embed is-provider-asec-blog wp-block-embed-asec-blog">
+<a href="https://asec.ahnlab.com/en/29316/">AgentTesla Being Distributed via More Sophisticated Malicious PowerPoint Files</a>
+</figure>
+<p>The malicious CHM files are distributed as compressed files attached to phishing emails imitating emails sent from DHL, a transport company. As phishing emails disguised as other topics are also being distributed, users need to take caution.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34658 jetpack-lazy-image jetpack-lazy-image--handled" height="1076" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-42.png?resize=1024%2C522&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="2110"/><img alt="" class="wp-image-34658" height="1076" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-42.png?resize=1024%2C522&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="2110"/><figcaption>Figure 1. DHL phishing email</figcaption></figure>
+<p></p>
+<p>Decompressing the attachment shows a malicious CHM file. When the file is run, it creates a normal Help window to make it difficult for users to realize malicious behaviors.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34659 jetpack-lazy-image" height="453" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-43.png?resize=302%2C453&amp;ssl=1" width="302"/><img alt="" class="wp-image-34659" height="453" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-43.png?resize=302%2C453&amp;ssl=1" width="302"/><figcaption>Figure 2. Normal Help window</figcaption></figure>
+<p></p>
+<p>However, the malicious script included in the internal HTML will perform malicious behaviors. Figures 3 and 4 show the obfuscated HTML including a malicious script, while Figures 5 and 6 show the unobfuscated code. You can see that the unobfuscated code uses a method that is similar to the one applied by malicious CHM files that have been introduced in the blog since March. The code includes a malicious command in a certain id property range and uses the Click() function to automatically run the command.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34662 jetpack-lazy-image" height="1118" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-44.png?resize=1024%2C609&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1879"/><img alt="" class="wp-image-34662" height="1118" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-44.png?resize=1024%2C609&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1879"/><figcaption>Figure 3. Obfuscated HTML type 1</figcaption></figure>
+<p></p>
+<figure class="aligncenter"><img alt="" class="wp-image-34664 jetpack-lazy-image" height="605" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-45.png?resize=1024%2C330&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1878"/><img alt="" class="wp-image-34664" height="605" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-45.png?resize=1024%2C330&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1878"/><figcaption>Figure 4. Obfuscated HTML type 2</figcaption></figure>
+<p></p>
+<figure class="aligncenter"><img alt="" class="wp-image-34666 jetpack-lazy-image" height="576" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-46.png?resize=1024%2C483&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1222"/><img alt="" class="wp-image-34666" height="576" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-46.png?resize=1024%2C483&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1222"/><figcaption>Figure 5. Unobfuscated HTML Type 1</figcaption></figure>
+<p></p>
+<figure class="aligncenter"><img alt="" class="wp-image-34668 jetpack-lazy-image" height="509" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-47.png?resize=1024%2C441&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1182"/><img alt="" class="wp-image-34668" height="509" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-47.png?resize=1024%2C441&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1182"/><figcaption>Figure 6. Unobfuscated HTML Type 2</figcaption></figure>
+<p></p>
+<p>The command run from the script is a powershell type, which accesses certain URLs to download and run additional malicious data. Below is the list of malicious URLs discovered so far. Note that they all use the JPG extension.</p>
+<ul><li>Download URLs
+hxxp://pacurariu[.]com/F37.jpg
+hxxp://pk-consult[.]hr/N2.jpg
+hxxp://exipnikouzina[.]gr/S15.jpg</li></ul>
+<p>The data downloaded from the URLs are additional powershell commands. The distribution method discussed previously downloads and runs malicious data through the mshta process when the malicious VBA macro inside the PowerPoint file is run. The data downloaded from the previous method was also powershell commands. The malware type and the execution method were similar as well. Yet the process of downloading data was changed from using the malicious VBA macro inside the PowerPoint file to using the malicious powershell command within the Windows help file.</p>
+<p>The downloaded data performs a feature that is identical to the previous method: loading a malicious .NET executable. There are two binaries in total. The first one is AgentTesla which performs malicious behaviors, and the second is Loader which injects the malware into a normal process. They are run after being decompressed by gzip. The Loader decoded in the script runs the Black method of the toooyou class and includes the name of the normal process that will be targeted for injection and compressed AgentTesla binary as execution arguments.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34671 jetpack-lazy-image" height="380" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-48.png?resize=1024%2C216&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1798"/><img alt="" class="wp-image-34671" height="380" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-48.png?resize=1024%2C216&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1798"/><figcaption>Figure 7. Downloaded malicious powershell command</figcaption></figure>
+<p></p>
+<p>The following image shows the Black method that is executed. It decompresses AgentTesla and injects it into the RegAsm.exe process. The process allows the info-leaking malware AgentTesla to operate in a fileless form.</p>
+<figure class="aligncenter"><img alt="" class="wp-image-34674 jetpack-lazy-image" height="1154" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-49.png?resize=1024%2C784&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1507"/><img alt="" class="wp-image-34674" height="1154" src="https://i0.wp.com/asec.ahnlab.com/wp-content/uploads/2022/05/image-49.png?resize=1024%2C784&amp;ssl=1" style="max-width:800px;height:auto;width:auto;" width="1507"/><figcaption>Figure 8. Code inside Loader</figcaption></figure>
+<p></p>
+<p>AgentTesla is a malware type that is ranked top 3 in AhnLab’s weekly malware statistics. It continues to show intricate changes among the malware types using PowerPoint for distribution. As malware types exploiting Windows Help files (*.chm) are on the rise recently, users need to take caution. They should refrain from running files with unknown sources.</p>
+<p>AhnLab’s anti-malware product, V3, detects and blocks the malware using the alias below.</p>
+<p>[File Detection]
+Trojan/CHM.Agent (2022.05.16.01)
+Trojan/CHM.Agent (2022.05.24.00)
+Infostealer/Win.AgentTesla.R420346 (2021.05.12.04)</p>
+<p>[IOC]
+91dbec3653b27c394719fcf5341fe460
+4e5ef8e38b17fdf30961f28d4b5e2e23
+5d0fc901682170421ebdd5c1ce047c5e
+156cbb249d592230bea8fadead028b6b
+hxxp://pacurariu[.]com/F37.jpg
+hxxp://pk-consult[.]hr/N2.jpg
+hxxp://exipnikouzina[.]gr/S15.jpg</p>
+<p>Subscribe to AhnLab’s next-generation threat intelligence platform ‘AhnLab TIP’ to check related IOC and detailed analysis information.</p>
+<p>
+Categories:<a href="https://asec.ahnlab.com/en/category/malware-information/" rel="category tag">Malware Information</a> </p>
+<p>Tagged as:<a href="https://asec.ahnlab.com/en/tag/agenttesla-en/" rel="tag">AGENTTESLA</a>, <a href="https://asec.ahnlab.com/en/tag/chm-en/" rel="tag">chm</a>, <a href="https://asec.ahnlab.com/tag/help/" rel="tag">Help</a></p>
+</div>

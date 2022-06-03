@@ -1,0 +1,696 @@
+{
+    "id": "<report_0xe0e4c544>",
+    "url": "https://www.volexity.com/blog/2022/06/02/zero-day-exploitation-of-atlassian-confluence",
+    "title": "Zero-Day Exploitation of Atlassian Confluence",
+    "meta": [],
+    "chapters": [
+        {
+            "id": "<chapter_0xb666a6f7>",
+            "title": "Zero-Day Exploitation of Atlassian Confluence",
+            "title_level": 1,
+            "sentences": [
+                {
+                    "id": "<sentence_0xef017036>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "June 2, 2022",
+                    "html": "<p class=\"post-date\">June 2, 2022</p>"
+                },
+                {
+                    "id": "<sentence_0x4e3e7925>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "by Andrew Case, Sean Koessel, Steven Adair, Thomas Lancaster, Volexity Threat Research",
+                    "html": "<p class=\"post-byline\">by Andrew Case, Sean Koessel, Steven Adair, Thomas Lancaster, Volexity Threat Research</p>"
+                },
+                {
+                    "id": "<sentence_0xaff50fcd>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"post-single-social-share\">Facebook</a>"
+                },
+                {
+                    "id": "<sentence_0x53be50f1>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"post-single-social-share\">Twitter</a>"
+                },
+                {
+                    "id": "<sentence_0x14e645f2>",
+                    "is_empty": true,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "",
+                    "html": "<a class=\"post-single-social-share\">Email</a>"
+                },
+                {
+                    "id": "<sentence_0xe9400b24>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0xce77753d>": "https://www.volexity.com/wp-content/uploads/2022/06/Confluence-0-Day.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"\" class=\"alignnone size-full wp-image-2507\" height=\"1076\" src=\"https://www.volexity.com/wp-content/uploads/2022/06/Confluence-0-Day.png\" width=\"2060\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xaccf1492>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Note: There is currently no available patch or fix for the issue described in this blog post. Volexity strongly recommends that all organizations block external access to their Confluence Server instances immediately until an update is provided by Atlassian.",
+                    "html": "<p>Note: There is currently no available patch or fix for the issue described in this blog post. Volexity strongly recommends that all organizations block external access to their Confluence Server instances immediately until an update is provided by Atlassian.</p>"
+                },
+                {
+                    "id": "<sentence_0x2aff7893>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xacf883f7>": "https://www.volexity.com/products-overview/surge/"
+                    },
+                    "text": "Over the Memorial Day weekend in the United States, Volexity conducted an incident response investigation involving two Internet-facing web servers belonging to one of its customers that were running Atlassian Confluence Server software. The investigation began after suspicious activity was detected on the hosts, which included JSP webshells being written to disk. Volexity immediately used Volexity Surge Collect Pro to collect system memory and key files from the Confluence Server systems for analysis. After a thorough review of the collected data, Volexity was able to determine the server compromise stemmed from an attacker launching an exploit to achieve remote code execution. Volexity was subsequently able to recreate that exploit and identify a zero-day vulnerability impacting fully up-to-date versions of Confluence Server.",
+                    "html": "<p>Over the Memorial Day weekend in the United States, Volexity conducted an incident response investigation involving two Internet-facing web servers belonging to one of its customers that were running Atlassian Confluence Server software. The investigation began after suspicious activity was detected on the hosts, which included JSP webshells being written to disk. Volexity immediately used <a href=\"https://www.volexity.com/products-overview/surge/\">Volexity Surge Collect Pro</a> to collect system memory and key files from the Confluence Server systems for analysis. After a thorough review of the collected data, Volexity was able to determine the server compromise stemmed from an attacker launching an exploit to achieve remote code execution. Volexity was subsequently able to recreate that exploit and identify a zero-day vulnerability impacting fully up-to-date versions of Confluence Server.</p>"
+                },
+                {
+                    "id": "<sentence_0x4c28ba02>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Following the discovery and verification of this vulnerability, Volexity contacted Atlassian to report the relevant details on May 31, 2022. Atlassian has since confirmed the vulnerability and subsequently assigned the issue to CVE-2022-26134. It has been confirmed to work on current versions of Confluence Server and Data Center.",
+                    "html": "<p>Following the discovery and verification of this vulnerability, Volexity contacted Atlassian to report the relevant details on May 31, 2022. Atlassian has since confirmed the vulnerability and subsequently assigned the issue to CVE-2022-26134. It has been confirmed to work on current versions of Confluence Server and Data Center.</p>"
+                },
+                {
+                    "id": "<sentence_0x743e765f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe292bcdb>": "https://confluence.atlassian.com/doc/confluence-security-advisory-2022-06-02-1130377146.html"
+                    },
+                    "text": "This blog will provide a walkthrough of the incident, analysis results, and various indicators of compromise that organizations can use to detect and defend themselves from this threat. Volexity is not planning to provide proof-of-concept (POC) code for the exploit. At the time of writing, there is no official patch or workaround yet available from Atlassian, however they have released the following advisory.",
+                    "html": "<p>This blog will provide a walkthrough of the incident, analysis results, and various indicators of compromise that organizations can use to detect and defend themselves from this threat. Volexity is not planning to provide proof-of-concept (POC) code for the exploit. At the time of writing, there is no official patch or workaround yet available from Atlassian, however they have released the following <a href=\"https://confluence.atlassian.com/doc/confluence-security-advisory-2022-06-02-1130377146.html\">advisory</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x4280c801>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "An initial review of one of the Confluence Server systems quickly identified that a JSP file had been written into a publicly accessible web directory. The file was a well-known copy of the JSP variant of the China Chopper webshell. However, a review of the web logs showed that the file had barely been accessed. The webshell appears to have been written as a means of secondary access.",
+                    "html": "<p>An initial review of one of the Confluence Server systems quickly identified that a JSP file had been written into a publicly accessible web directory. The file was a well-known copy of the JSP variant of the China Chopper webshell. However, a review of the web logs showed that the file had barely been accessed. The webshell appears to have been written as a means of secondary access.</p>"
+                },
+                {
+                    "id": "<sentence_0x518b27c2>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x78572b2>": "https://www.volexity.com/products-overview/volcano/"
+                    },
+                    "text": "In parallel, Volexity also processed the acquired memory samples with Volexity Volcano Server. This led to identification of bash shells being launched by the Confluence web application process. This stood out because it had spawned a bash process which spawned a Python process that in turn spawned a bash shell. The process tree is shown in Figure 1.",
+                    "html": "<p>In parallel, Volexity also processed the acquired memory samples with <a href=\"https://www.volexity.com/products-overview/volcano/\">Volexity Volcano Server</a>. This led to identification of bash shells being launched by the Confluence web application process. This stood out because it had spawned a bash process which spawned a Python process that in turn spawned a bash shell. The process tree is shown in Figure 1.</p>"
+                },
+                {
+                    "id": "<sentence_0x2b5bd07a>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x552ed32b>": "https://www.volexity.com/wp-content/uploads/2022/06/Figure1.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"\" class=\"size-full wp-image-2489 aligncenter\" height=\"168\" src=\"https://www.volexity.com/wp-content/uploads/2022/06/Figure1.png\" width=\"1128\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xd685dd80>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 1. Process tree in Volexity Volcano Server from the infected Confluence server",
+                    "html": "<p>Figure 1. Process tree in Volexity Volcano Server from the infected Confluence server</p>"
+                },
+                {
+                    "id": "<sentence_0x56e28bc5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As visible in the Command Line column, the Python instance was started with a common argument used to provide an interactive shell to the attacker. With this access, an attacker can execute commands as though they were directly logged into the system. Furthermore, the UID and GID columns of Volcano Server showed that the web server process as well as its child processes created by the exploit are all running as the root (full privileges) user and group. This reinforced the severity of the incident as attackers with access to the shell would have full control over the Confluence Server. It should be noted that Volexity recommends against running Confluence software as root. Details regarding how the attacker was able to spawn the reverse shell are described in the Post-Exploitation Activity section below.",
+                    "html": "<p>As visible in the \u201cCommand Line\u201d column, the Python instance was started with a common argument used to provide an interactive shell to the attacker. With this access, an attacker can execute commands as though they were directly logged into the system. Furthermore, the \u201cUID\u201d and \u201cGID\u201d columns of Volcano Server showed that the web server process as well as its child processes created by the exploit are all running as the root (full privileges) user and group. This reinforced the severity of the incident as attackers with access to the shell would have full control over the Confluence Server. It should be noted that Volexity recommends against running Confluence software as root. Details regarding how the attacker was able to spawn the reverse shell are described in the \u201cPost-Exploitation Activity\u201d section below.</p>"
+                },
+                {
+                    "id": "<sentence_0xb7156548>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Subsequent root cause analysis of the compromise showed that the attacker had used a zero-day exploit, now assigned CVE-2022-26134, that allowed unauthenticated remote code execution on the servers. When initially analyzing the exploit, Volexity noted it looked similar to previous vulnerabilities that have also been exploited in order to gain remote code execution. These types of vulnerabilities are dangerous, as attackers can execute commands and gain full control of a vulnerable system without credentials as long as web requests can be made to the Confluence Server system. It should also be noted that CVE-2022-26134 appears to be another command injection vulnerability. This type of vulnerability is severe and demands significant attention.",
+                    "html": "<p>Subsequent root cause analysis of the compromise showed that the attacker had used a zero-day exploit, now assigned CVE-2022-26134, that allowed unauthenticated remote code execution on the servers. When initially analyzing the exploit, Volexity noted it looked similar to previous vulnerabilities that have also been exploited in order to gain remote code execution. These types of vulnerabilities are dangerous, as attackers can execute commands and gain full control of a vulnerable system without credentials as long as web requests can be made to the Confluence Server system. It should also be noted that CVE-2022-26134 appears to be another command injection vulnerability. This type of vulnerability is severe and demands significant attention.</p>"
+                },
+                {
+                    "id": "<sentence_0x819bc569>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Volexity believes the attacker launched a single exploit attempt at each of the Confluence Server systems, which in turn loaded a malicious class file in memory. This allowed the attacker to effectively have a webshell they could interact with through subsequent requests. The benefit of such an attack allowed the attacker to not have to continuously re-exploit the server and to execute commands without writing a backdoor file to disk.",
+                    "html": "<p>Volexity believes the attacker launched a single exploit attempt at each of the Confluence Server systems, which in turn loaded a malicious class file in memory. This allowed the attacker to effectively have a webshell they could interact with through subsequent requests. The benefit of such an attack allowed the attacker to not have to continuously re-exploit the server and to execute commands without writing a backdoor file to disk.</p>"
+                },
+                {
+                    "id": "<sentence_0xaed395de>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x123b63f2>": "https://confluence.atlassian.com/doc/confluence-release-notes-327.html"
+                    },
+                    "text": "Given the numerous versions of Confluence officially supported at this time, Volexity has not been able to fully enumerate all affected versions but was able to verify it works on all LTS versions and other current versions such as 7.17.3. It is likely that all current versions of the product are impacted.",
+                    "html": "<p>Given the <a href=\"https://confluence.atlassian.com/doc/confluence-release-notes-327.html\">numerous versions</a> of Confluence officially supported at this time, Volexity has not been able to fully enumerate all affected versions but was able to verify it works on all LTS versions and other current versions such as 7.17.3. It is likely that all current versions of the product are impacted.</p>"
+                },
+                {
+                    "id": "<sentence_0xf16bc0e1>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xdc9e46fe>": "https://github.com/Freakboy/Behinder"
+                    },
+                    "text": "After successfully exploiting the Confluence Server systems, the attacker immediately deployed an in-memory copy of the BEHINDER implant. This is an ever-popular web server implant with source code available on GitHub. BEHINDER provides very powerful capabilities to attackers, including memory-only webshells and built-in support for interaction with Meterpreter and Cobalt Strike. As previously noted, this method of deployment has significant advantages by not writing files to disk. At the same time, it does not allow persistence, which means a reboot or service restart will wipe it out.",
+                    "html": "<p>After successfully exploiting the Confluence Server systems, the attacker immediately deployed an in-memory copy of the BEHINDER implant. This is an ever-popular web server implant with source code <a href=\"https://github.com/Freakboy/Behinder\">available on GitHub</a>. BEHINDER provides very powerful capabilities to attackers, including memory-only webshells and built-in support for interaction with Meterpreter and Cobalt Strike. As previously noted, this method of deployment has significant advantages by not writing files to disk. At the same time, it does not allow persistence, which means a reboot or service restart will wipe it out.</p>"
+                },
+                {
+                    "id": "<sentence_0x147c150b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x35e39d42>": "https://attack.mitre.org/software/S0020/"
+                    },
+                    "text": "Once BEHINDER was deployed, the attacker used the in-memory webshell to deploy two additional webshells to disk: CHINA CHOPPER and a custom file upload shell.",
+                    "html": "<p>Once BEHINDER was deployed, the attacker used the in-memory webshell to deploy two additional webshells to disk: <a href=\"https://attack.mitre.org/software/S0020/\">CHINA CHOPPER</a> and a custom file upload shell.</p>"
+                },
+                {
+                    "id": "<sentence_0xd197d208>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Volexity discovered several commands the attacker had executed on the victim system, summarized as follows:",
+                    "html": "<p>Volexity discovered several commands the attacker had executed on the victim system, summarized as follows:</p>"
+                },
+                {
+                    "id": "<sentence_0x5c8292a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Ran reconnaissance commands, checked the operating system version, examined the contents of /etc/passwd and /etc/shadow<crlf>Explored local confluence database and dumped user tables from Confluence<crlf>Attempted to hamper forensic analysis by altering web access logs to remove evidence of exploitation<crlf>Wrote additional webshells to disk, not all of which could be recovered",
+                    "html": "<ul>\n<li>Ran reconnaissance commands, checked the operating system version, examined the contents of \u201c/etc/passwd\u201d and \u201c/etc/shadow\u201d</li>\n<li>Explored local confluence database and dumped user tables from Confluence</li>\n<li>Attempted to hamper forensic analysis by altering web access logs to remove evidence of exploitation</li>\n<li>Wrote additional webshells to disk, not all of which could be recovered</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0xe097767a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In an effort to assist defenders, Volexity aims to provide technical details of the analysis approach that led to the discovery of the zero-day exploit payload, as well as the post-exploitation activities. Defenders who follow these steps should achieve similar success in examining their own environments, assuming that memory samples are taken in a timely and valid manner and that timely web logs are available.",
+                    "html": "<p>In an effort to assist defenders, Volexity aims to provide technical details of the analysis approach that led to the discovery of the zero-day exploit payload, as well as the post-exploitation activities. Defenders who follow these steps should achieve similar success in examining their own environments, assuming that memory samples are taken in a timely and valid manner and that timely web logs are available.</p>"
+                },
+                {
+                    "id": "<sentence_0xa05568a5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "After discovering the suspicious-looking Python and bash instances running as child processes of the web server, Volexity used Volcano Server to immediately extract the memory regions of each process that mapped its heap. The heap is the area of memory where data that is dynamically generated at runtime is stored. For web servers, this will include HTTP requests and responses, file contents, and other data generated as part of servicing web applications. For the Python and bash processes, the heap will contain all data used to spawn child processes, as well as commands typed by attackers and the output those commands generated.",
+                    "html": "<p>After discovering the suspicious-looking Python and bash instances running as child processes of the web server, Volexity used Volcano Server to immediately extract the memory regions of each process that mapped its heap. The heap is the area of memory where data that is dynamically generated at runtime is stored. For web servers, this will include HTTP requests and responses, file contents, and other data generated as part of servicing web applications. For the Python and bash processes, the heap will contain all data used to spawn child processes, as well as commands typed by attackers and the output those commands generated.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0xe5b66701>",
+            "title": "Zero-Day Exploitation of Atlassian Confluence",
+            "title_level": 1,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0x8c2fee7f>",
+            "title": "Malicious Implants",
+            "title_level": 3,
+            "sentences": []
+        },
+        {
+            "id": "<chapter_0xcbe13c11>",
+            "title": "BEHINDER",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xd2ab7069>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xbbab79d2>": "https://attack.mitre.org/techniques/T1620/"
+                    },
+                    "text": "Volexitys analysis of heap data initially led to several human-readable strings related to Java classes and methods, including ones used for dynamic method reflection and process spawning. Volexity also noticed strings seen in other contexts, including the command used to spawn bash through Pythons pty.spawn function. Given this case involved an injection vulnerability against webservers powered by Java, the presence of malicious-looking Java snippets was interesting.",
+                    "html": "<p>Volexity\u2019s analysis of heap data initially led to several human-readable strings related to Java classes and methods, including ones used for <a href=\"https://attack.mitre.org/techniques/T1620/\">dynamic method reflection</a> and process spawning. Volexity also noticed strings seen in other contexts, including the command used to spawn bash through Python\u2019s pty.spawn function. Given this case involved an injection vulnerability against webservers powered by Java, the presence of malicious-looking Java snippets was interesting.</p>"
+                },
+                {
+                    "id": "<sentence_0x896b3b75>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x543f8bb>": "https://decoded.avast.io/janneduchal/analysis-of-attack-against-national-games-of-china-systems/"
+                    },
+                    "text": "To further the analysis, Volexity gathered suspicious strings and names, and then began searching for references to them in threat inteligence sources. This led to the discovery that the implant being used was BEHINDER, a powerful open source web server implant used by a variety of threat actors, as documented by Avast.",
+                    "html": "<p>To further the analysis, Volexity gathered suspicious strings and names, and then began searching for references to them in threat inteligence sources. This led to the discovery that the implant being used was BEHINDER, a powerful open source web server implant used by a variety of threat actors, as documented <a href=\"https://decoded.avast.io/janneduchal/analysis-of-attack-against-national-games-of-china-systems/\">by Avast</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0x96cf8ad3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The attacker also added backup mechanisms to ensure they retained access to the Confluence Server system in the event it was later cleaned up. These backup mechanisms came in the form of two webshells deployed to disk that are detailed in the sections that follow.",
+                    "html": "<p>The attacker also added backup mechanisms to ensure they retained access to the Confluence Server system in the event it was later cleaned up. These backup mechanisms came in the form of two webshells deployed to disk that are detailed in the sections that follow.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x5081822c>",
+            "title": "File Upload Webshell",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0xa505671d>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0x4ec9f442>": {
+                            "0": {
+                                "0": "Filename",
+                                "1": "File Size",
+                                "2": "MD5",
+                                "3": "SHA1"
+                            },
+                            "1": {
+                                "0": "noop.jsp",
+                                "1": "537 bytes",
+                                "2": "f8df4dd46f02dc86d37d46cf4793e036",
+                                "3": "4c02c3a150de6b70d6fca584c29888202cc1deef"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td width=\"133\">Filename</td>\n<td width=\"468\">noop.jsp</td>\n</tr>\n<tr>\n<td width=\"133\">File Size</td>\n<td width=\"468\">537 bytes</td>\n</tr>\n<tr>\n<td width=\"133\">MD5</td>\n<td width=\"468\">f8df4dd46f02dc86d37d46cf4793e036</td>\n</tr>\n<tr>\n<td width=\"133\">SHA1</td>\n<td width=\"468\">4c02c3a150de6b70d6fca584c29888202cc1deef</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x2caa8d3b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "This is a small custom file upload webshell with the sole purpose of allowing an attacker to upload arbitrary files to the server. A screenshot showing the full contents of the shell is shown in Figure 2.",
+                    "html": "<p>This is a small custom file upload webshell with the sole purpose of allowing an attacker to upload arbitrary files to the server. A screenshot showing the full contents of the shell is shown in Figure 2.</p>"
+                },
+                {
+                    "id": "<sentence_0xb3dae6cd>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<img_0x5a775516>": "https://www.volexity.com/wp-content/uploads/2022/06/Figure2.png"
+                    },
+                    "text": "",
+                    "html": "<p><img alt=\"\" class=\"size-full wp-image-2490 aligncenter\" height=\"316\" src=\"https://www.volexity.com/wp-content/uploads/2022/06/Figure2.png\" width=\"1452\"/></p>"
+                },
+                {
+                    "id": "<sentence_0xa59fb3fd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Figure 2. File upload shell used in post-exploitation phase",
+                    "html": "<p>Figure 2. File upload shell used in post-exploitation phase</p>"
+                },
+                {
+                    "id": "<sentence_0x782f34d4>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa731ed2f>": "https://volexity.sharepoint.com/sites/ThreatIntel/Shared%20Documents/General/Reports/SHA1,4c02c3a150de6b70d6fca584c29888202cc1deef"
+                    },
+                    "text": "The attacker replaced the existing file noop.jsp, which is a legitimate part of Confluence Server offering no functionality. Modifying this existing JSP file (located at <confluence root>/confluence/noop.jsp) is a popular move by attackers who successfully compromise Confluence Server systems, as documented by various other vendors when describing breaches of Confluence.",
+                    "html": "<p>The attacker replaced the existing file \u201cnoop.jsp\u201d, which is a legitimate part of Confluence Server offering no functionality. Modifying this existing JSP file (located at \u201c&lt;confluence root&gt;/confluence/noop.jsp\u201d) is a popular move by attackers who successfully compromise Confluence Server systems, as <a href=\"https://volexity.sharepoint.com/sites/ThreatIntel/Shared%20Documents/General/Reports/SHA1,4c02c3a150de6b70d6fca584c29888202cc1deef\">documented</a> by various other vendors when describing breaches of Confluence.</p>"
+                }
+            ]
+        },
+        {
+            "id": "<chapter_0x7188136a>",
+            "title": "Chopper Webshell",
+            "title_level": 4,
+            "sentences": [
+                {
+                    "id": "<sentence_0x717cf9a5>",
+                    "is_empty": true,
+                    "have_tags": true,
+                    "tags": {
+                        "<table_0xb75f638a>": {
+                            "0": {
+                                "0": "Filename",
+                                "1": "File Size",
+                                "2": "MD5",
+                                "3": "SHA1"
+                            },
+                            "1": {
+                                "0": "<redacted>.jsp",
+                                "1": "8624 bytes",
+                                "2": "ea18fb65d92e1f0671f23372bacf60e7",
+                                "3": "80b327ec19c7d14cc10511060ed3a4abffc821af"
+                            }
+                        }
+                    },
+                    "text": "",
+                    "html": "<table>\n<tbody>\n<tr>\n<td width=\"101\">Filename</td>\n<td width=\"500\">&lt;redacted&gt;.jsp</td>\n</tr>\n<tr>\n<td width=\"101\">File Size</td>\n<td width=\"500\">8624 bytes</td>\n</tr>\n<tr>\n<td width=\"101\">MD5</td>\n<td width=\"500\">ea18fb65d92e1f0671f23372bacf60e7</td>\n</tr>\n<tr>\n<td width=\"101\">SHA1</td>\n<td width=\"500\">80b327ec19c7d14cc10511060ed3a4abffc821af</td>\n</tr>\n</tbody>\n</table>"
+                },
+                {
+                    "id": "<sentence_0x851351a0>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x775a9888>": "https://github.com/tennc/webshell/blob/master/caidao-shell/%E8%8F%9C%E5%88%80jsp%E4%BF%AE%E6%94%B9.jsp"
+                    },
+                    "text": "Despite having access to a zero-day exploit, the attacker did not take a great deal of care in the deploying this webshell. The file referenced in the table above is in fact the default Chopper shell listed on the infamous tencc webshell GitHub repository.",
+                    "html": "<p>Despite having access to a zero-day exploit, the attacker did not take a great deal of care in the deploying this webshell. The file referenced in the table above is in fact the default Chopper shell listed on the infamous <a href=\"https://github.com/tennc/webshell/blob/master/caidao-shell/%E8%8F%9C%E5%88%80jsp%E4%BF%AE%E6%94%B9.jsp\">tencc webshell GitHub repository</a>.</p>"
+                },
+                {
+                    "id": "<sentence_0xfe9c313e>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "As part of the investigation, Volexity also extracted all web logs and web requests contained within the files collected from disk and stored inside the memory samples. This data provided the precise moment when the attacker gained initial access to the system, as well as the payload used in the initial exploit. The approach during this type of analysis is to use web logs to find requests of interest, and then search for the entire HTTP body of these specific requests throughout the entire memory sample. Even for requests and responses encrypted on the network, the decrypted and/or pre-encryption form must be stored in memory for the application to correctly process the contents. Through memory analysis, one can leverage these plaintext buffers to recover network data that would be encrypted inside of full-packet captures.",
+                    "html": "<p>As part of the investigation, Volexity also extracted all web logs and web requests contained within the files collected from disk and stored inside the memory samples. This data provided the precise moment when the attacker gained initial access to the system, as well as the payload used in the initial exploit. The approach during this type of analysis is to use web logs to find requests of interest, and then search for the entire HTTP body of these specific requests throughout the entire memory sample. Even for requests and responses encrypted on the network, the decrypted and/or pre-encryption form must be stored in memory for the application to correctly process the contents. Through memory analysis, one can leverage these plaintext buffers to recover network data that would be encrypted inside of full-packet captures.</p>"
+                },
+                {
+                    "id": "<sentence_0x66176d3>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "With the initial infection time in hand, and a deep understanding of the HTTP-based activity of the attacker, Volexity used all timestamped artifacts parsed by Volcano Server to build a precise timeline of attacker activity. This timeline started from the exact second of initial exploitation and ended with the exact second of exfiltration of gathered data. Through the combined memory and select file analysis, Volexity generated a complete view of the attackers activity on the compromised servers.",
+                    "html": "<p>With the initial infection time in hand, and a deep understanding of the HTTP-based activity of the attacker, Volexity used all timestamped artifacts parsed by Volcano Server to build a precise timeline of attacker activity. This timeline started from the exact second of initial exploitation and ended with the exact second of exfiltration of gathered data. Through the combined memory and select file analysis, Volexity generated a complete view of the attacker\u2019s activity on the compromised servers.</p>"
+                },
+                {
+                    "id": "<sentence_0xe01f4ff7>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Web logs also revealed that the attacker interacted with the BEHINDER implant by making continuous POST requests to the main index page of the Confluence Server system. This appears as POST / HTTP/1.1 in the log files with 200 status codes. It is possible that POST requests to the index page of a Confluence web server are in fact legitimate. However, this is not a path used as part of normal Confluence operations. As a result, if there is a request that looks like it may be an exploit followed by numerous POST requests to the index page, this should be flagged for further review.",
+                    "html": "<p>Web logs also revealed that the attacker interacted with the BEHINDER implant by making continuous POST requests to the main index page of the Confluence Server system. This appears as \u201cPOST / HTTP/1.1\u201d in the log files with \u201c200\u201d status codes. It is possible that POST requests to the index page of a Confluence web server are in fact legitimate. However, this is not a path used as part of normal Confluence operations. As a result, if there is a request that looks like it may be an exploit followed by numerous POST requests to the index page, this should be flagged for further review.</p>"
+                },
+                {
+                    "id": "<sentence_0x9821b1fd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "The following IP addresses were used by the attacker to interact with the webshells. Some may belong to VPN services and might be shared by the attacker and other legitimate Internet users.",
+                    "html": "<p>The following IP addresses were used by the attacker to interact with the webshells. Some may belong to VPN services and might be shared by the attacker and other legitimate Internet users.</p>"
+                },
+                {
+                    "id": "<sentence_0xece10eeb>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "154.146.34.145",
+                    "html": "<p>154.146.34.145</p>"
+                },
+                {
+                    "id": "<sentence_0x70ef9e67>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "154.16.105.147",
+                    "html": "<p>154.16.105.147</p>"
+                },
+                {
+                    "id": "<sentence_0xf506d31c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "156.146.34.46",
+                    "html": "<p>156.146.34.46</p>"
+                },
+                {
+                    "id": "<sentence_0xb91b944f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "156.146.34.52",
+                    "html": "<p>156.146.34.52</p>"
+                },
+                {
+                    "id": "<sentence_0xc2468b0b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "156.146.34.9",
+                    "html": "<p>156.146.34.9</p>"
+                },
+                {
+                    "id": "<sentence_0x3768c23>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "156.146.56.136",
+                    "html": "<p>156.146.56.136</p>"
+                },
+                {
+                    "id": "<sentence_0x6b47d8ce>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "198.147.22.148",
+                    "html": "<p>198.147.22.148</p>"
+                },
+                {
+                    "id": "<sentence_0xff66bce8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "198.147.22.148",
+                    "html": "<p>198.147.22.148</p>"
+                },
+                {
+                    "id": "<sentence_0x1e36cddd>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "221.178.126.244",
+                    "html": "<p>221.178.126.244</p>"
+                },
+                {
+                    "id": "<sentence_0x5cc355de>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "45.43.19.91",
+                    "html": "<p>45.43.19.91</p>"
+                },
+                {
+                    "id": "<sentence_0x4ad4bf1a>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "59.163.248.170",
+                    "html": "<p>59.163.248.170</p>"
+                },
+                {
+                    "id": "<sentence_0x4aaf4825>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "64.64.228.239",
+                    "html": "<p>64.64.228.239</p>"
+                },
+                {
+                    "id": "<sentence_0xcd1eb95f>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "66.115.182.102",
+                    "html": "<p>66.115.182.102</p>"
+                },
+                {
+                    "id": "<sentence_0xac66d732>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "66.115.182.111",
+                    "html": "<p>66.115.182.111</p>"
+                },
+                {
+                    "id": "<sentence_0xd81f1175>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "67.149.61.16",
+                    "html": "<p>67.149.61.16</p>"
+                },
+                {
+                    "id": "<sentence_0x35713a79>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "98.32.230.38",
+                    "html": "<p>98.32.230.38</p>"
+                },
+                {
+                    "id": "<sentence_0x8004db4d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Volexity has reason to believe this exploit is currently in use by multiple threat actors and that the likely country of origin of these attackers is China.",
+                    "html": "<p>Volexity has reason to believe this exploit is currently in use by multiple threat actors and that the likely country of origin of these attackers is China.</p>"
+                },
+                {
+                    "id": "<sentence_0x77f4c6f8>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Over the past three years, Volexity has investigated a number of incidents which began like this one, where a web-facing application was compromised via a zero-day exploit. By exploiting this kind of vulnerability, attackers can gain direct access to highly sensitive systems and networks. Further, these systems can often be difficult to investigate, as they lack the appropriate monitoring or logging capabilities.",
+                    "html": "<p>Over the past three years, Volexity has investigated a number of incidents which began like this one, where a web-facing application was compromised via a zero-day exploit. By exploiting this kind of vulnerability, attackers can gain direct access to highly sensitive systems and networks. Further, these systems can often be difficult to investigate, as they lack the appropriate monitoring or logging capabilities.</p>"
+                },
+                {
+                    "id": "<sentence_0x99f25a1d>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To generically prevent attacks like this from being successful, Volexity recommends the following:",
+                    "html": "<p>To generically prevent attacks like this from being successful, Volexity recommends the following:</p>"
+                },
+                {
+                    "id": "<sentence_0x432a94d5>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "In lieu of a patch, consider blocking external access to Internet-facing Confluence Server and Data Center systems.<crlf>Ensure Internet-facing web services have robust monitoring capabilities and log retention policies to assist in the event of an incident.<crlf>Send relevant log files from Internet-facing web servers to a SIEM or Syslog server.<crlf>Monitor child processes of web application processes for suspicious processes (in this case, the Python shell is a good example of this).<crlf>If possible, implement IP address access control lists (ACLs) in order to restrict access to Internet-facing systems.",
+                    "html": "<ul>\n<li>In lieu of a patch, consider blocking external access to Internet-facing Confluence Server and Data Center systems.</li>\n<li>Ensure Internet-facing web services have robust monitoring capabilities and log retention policies to assist in the event of an incident.</li>\n<li>Send relevant log files from Internet-facing web servers to a SIEM or Syslog server.</li>\n<li>Monitor child processes of web application processes for suspicious processes (in this case, the Python shell is a good example of this).</li>\n<li>If possible, implement IP address access control lists (ACLs) in order to restrict access to Internet-facing systems.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x4bb3ce65>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "To prevent this specific attack from being successful, Volexity recommends the following:",
+                    "html": "<p>To prevent this specific attack from being successful, Volexity recommends the following:</p>"
+                },
+                {
+                    "id": "<sentence_0xfaa7d292>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9243aaa7>": "https://github.com/volexity/threat-intel/blob/main/2022/2022-06-02%20Active%20Exploitation%20Of%20Confluence%200-day/indicators/indicators.csv",
+                        "<a_0x838a0d8b>": "https://github.com/volexity/threat-intel/blob/main/2022/2022-06-02%20Active%20Exploitation%20Of%20Confluence%200-day/indicators/yara.yar",
+                        "<a_0xcd6f5cfb>": "https://www.volexity.com/company/contact/breach-assistance/"
+                    },
+                    "text": "Block related IOCs provided here.<crlf>Use hunting rules provided here to identify related webshell activity, especially on Confluence Server systems.<crlf>Review any recent alerts related to Confluence systems you may have set up.<crlf>When Atlassian provides a fix for this vulnerability, users should immediately patch, as this vulnerability is dangerous and trivially exploited.<crlf>If you are seeing signs of compromise on your Confluence Server instances and need breach assistance, please feel free to reach out to Volexity.",
+                    "html": "<ul>\n<li>Block related IOCs provided <a href=\"https://github.com/volexity/threat-intel/blob/main/2022/2022-06-02%20Active%20Exploitation%20Of%20Confluence%200-day/indicators/indicators.csv\">here</a>.</li>\n<li>Use hunting rules provided <a href=\"https://github.com/volexity/threat-intel/blob/main/2022/2022-06-02%20Active%20Exploitation%20Of%20Confluence%200-day/indicators/yara.yar\">here</a> to identify related webshell activity, especially on Confluence Server systems.</li>\n<li>Review any recent alerts related to Confluence systems you may have set up.</li>\n<li>When Atlassian provides a fix for this vulnerability, users should immediately patch, as this vulnerability is dangerous and trivially exploited.</li>\n<li>If you are seeing signs of compromise on your Confluence Server instances and need breach assistance, please feel free to <a href=\"https://www.volexity.com/company/contact/breach-assistance/\">reach out to Volexity</a>.</li>\n</ul>"
+                },
+                {
+                    "id": "<sentence_0x7da7afb9>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": "Volexity would like to thank A.J. for assistance in identifying activity related to this issue. Further, Volexity would like to thank the Atlassian team for their quick response investigating this issue, validating it, assigning a CVE, and for their openness with the community regarding its current state.",
+                    "html": "<p>Volexity would like to thank A.J. for assistance in identifying activity related to this issue. Further, Volexity would like to thank the Atlassian team for their quick response investigating this issue, validating it, assigning a CVE, and for their openness with the community regarding its current state.</p>"
+                },
+                {
+                    "id": "<sentence_0x7adb1f84>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x4ae61148>": "https://www.volexity.com/blog/tag/0day/"
+                    },
+                    "text": "0day",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/0day/\">0day</a>"
+                },
+                {
+                    "id": "<sentence_0xa6dc78fa>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0xefd2c7b>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x9f7a98f5>": "https://www.volexity.com/blog/tag/apt/"
+                    },
+                    "text": "APT",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/apt/\">APT</a>"
+                },
+                {
+                    "id": "<sentence_0xfe30c6c4>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0xe351c7bb>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xa643a734>": "https://www.volexity.com/blog/tag/confluence/"
+                    },
+                    "text": "Confluence",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/confluence/\">Confluence</a>"
+                },
+                {
+                    "id": "<sentence_0x819cf063>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x46cb854a>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0xe527e4c6>": "https://www.volexity.com/blog/tag/dfir/"
+                    },
+                    "text": "dfir",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/dfir/\">dfir</a>"
+                },
+                {
+                    "id": "<sentence_0x7dbbe02b>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x857adb0f>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x3ceecaf8>": "https://www.volexity.com/blog/tag/exploit/"
+                    },
+                    "text": "Exploit",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/exploit/\">Exploit</a>"
+                },
+                {
+                    "id": "<sentence_0xa54077c>",
+                    "is_empty": false,
+                    "have_tags": false,
+                    "tags": {},
+                    "text": ",",
+                    "html": ", "
+                },
+                {
+                    "id": "<sentence_0x5b1d4705>",
+                    "is_empty": false,
+                    "have_tags": true,
+                    "tags": {
+                        "<a_0x3b62944f>": "https://www.volexity.com/blog/tag/threat-intelligence/"
+                    },
+                    "text": "Threat Intelligence",
+                    "html": "<a href=\"https://www.volexity.com/blog/tag/threat-intelligence/\">Threat Intelligence</a>"
+                }
+            ]
+        }
+    ]
+}

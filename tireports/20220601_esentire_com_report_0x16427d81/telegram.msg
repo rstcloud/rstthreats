@@ -6,8 +6,8 @@ The Popular Malware Downloader, GootLoader, Expands its Payloads Yet Again, Infe
 https://www.esentire.com/blog/gootloader-initial-access-as-a-service-malware-expands-its-payloads-yet-again-infecting-law-firm-with-icedid
 
 *Threats*:
-Gootloader (tags: rat, ransomware, trojan, malware)
-Icedid (tags: rat, ransomware, trojan, malware)
+Gootloader (tags: ransomware, malware, rat, trojan)
+Icedid (tags: ransomware, malware, trojan, rat)
 Cobalt\_strike (tags: ransomware, malware)
 Beacon (tags: malware)
 Conti (tags: malware)
@@ -17,7 +17,7 @@ Blackcat (tags: malware)
 Gootkit
 
 *Industry*:
-Aerospace, Financial
+Financial, Aerospace
 
 *IOCs*:
 Hash: 1
